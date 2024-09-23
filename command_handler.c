@@ -16,7 +16,9 @@ arg * create_arg_from_token(char *token) {
     char copy[strlen(token) + 1];
     memcpy(copy, token, strlen(token) + 1);
 
-    copy_str_n(&new_arg->label, token, find_word_len(token, 0));
+    int label_len = find_word_len(token, 0);
+
+    copy_str_n(&new_arg->label, token, label_len);
     
     printf("len: %d| label:%s\n",label_len, new_arg->label);
 
