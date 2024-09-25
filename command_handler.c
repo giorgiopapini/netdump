@@ -9,14 +9,18 @@
 
 
 arg * create_arg_from_token(char *token) {
+    int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
+    int label_len;
+    int value_len;
+    char copy[token_len];
     arg *new_arg = (arg *)malloc(sizeof(arg));
     new_arg->label = NULL;
     new_arg->val = NULL;
+    
+    memcpy(copy, token, token_len);
 
-    char copy[strlen(token) + 1];
-    memcpy(copy, token, strlen(token) + 1);
-
-    int label_len = find_word_len(token, 0);
+    label_len = find_word_len(token, 0);
+    if (0 >= label_len) raise(WRONG_OPTIONS_FORMAT_ERROR, 0);
 
     copy_str_n(&new_arg->label, token, label_len);
     
@@ -25,9 +29,9 @@ arg * create_arg_from_token(char *token) {
     /* IMPORTANT! value_len keeps track of leading and trailing white spaces. IT SHOULD NOT*/
     /* it should only keep track of the actual value length */
     
-    int value_len = strlen(token) - label_len;
+    value_len = strlen(token) - label_len;
     new_arg->val = (char *)malloc(value_len);
-    memset(new_arg->val, '\0', value_len);
+    memset(new_arg->val, '\0', value_len);      // get new str trimmed before setting new_arg->val
     strcpy(new_arg->val, token + label_len);
     
     printf("value len: %d| value:%s\n", value_len, new_arg->val);
@@ -39,7 +43,7 @@ void create_cmd_from_buff(command *cmd, buffer *buff) {
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
     char *token = strtok(copy, " ");
-    
+
     while (NULL != token) {
         if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
             cmd->label = (char *)malloc(strlen(token));

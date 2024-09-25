@@ -19,4 +19,9 @@ void copy_str_n(char **dest, char *src, int n) {
     *dest = (char *)malloc(n + 1);
     memset(*dest, '\0', n + 1);
     strncpy(*dest, src, n);
+    /* add trim functionality and change function name (from "copy_str_n" to something else) */
+}
+
+void trim(char *str) {
+
 }

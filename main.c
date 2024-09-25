@@ -20,6 +20,10 @@ int main(int argv, char *argc[]) {
 
 	// deallocate char string in buffer (where?)
 	// write the destroy_cmd() function
+	
+	// find a way to manage error message precedence. (e.g. if print - n (which is wrong), print WRONG_OPTION_FORMAT_ERROR)
+	// and go to the next netdump iteration (netdump > ). Skip errors like (INDEX_ERROR, ecc...). The WRONG_OPTION_FORMAT_ERROR
+	// should abort the command and instantaneously go to the next while iteration
 
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
