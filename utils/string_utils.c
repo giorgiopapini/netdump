@@ -19,15 +19,14 @@ void copy_str_n(char **dest, char *src, int n) {
     *dest = (char *)malloc(n + 1);
     memset(*dest, '\0', n + 1);
     strncpy(*dest, src, n);
-    remove_spaces(src);
-    /* add trim functionality and change function name (from "copy_str_n" to something else) */
 }
 
-void remove_spaces(char *str) {
+char * get_trimmed_str(char *str) {
     char new_str[strlen(str) + 1];
     size_t new_index = 0;
     char *start = str;
     char *end;
+    char *result;
     
     while (*start != '\0') {
         if (*start != ' ') {
@@ -42,8 +41,12 @@ void remove_spaces(char *str) {
         }
         new_index ++;
     }
-    printf("new_index: %d,\n", new_index);
-    printf("len: %d", strlen(new_str));
-    printf("\nNEW_STR:%s\n", new_str);
-    /* check eventual unnecessary leading and trailing whitespaces */
+
+    if (new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
+
+    result = (char *)malloc(new_index  + 1);
+    memset(result, '\0', new_index + 1);
+    strncpy(result, new_str, new_index);
+
+    return result;
 }

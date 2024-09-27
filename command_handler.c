@@ -9,6 +9,7 @@
 
 
 arg * create_arg_from_token(char *token) {
+    printf("token:%s\n", token);
     int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
     int label_len;
     int value_len;
