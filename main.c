@@ -25,9 +25,6 @@ int main(int argv, char *argc[]) {
 	// and go to the next netdump iteration (netdump > ). Skip errors like (INDEX_ERROR, ecc...). The WRONG_OPTION_FORMAT_ERROR
 	// should abort the command and instantaneously go to the next while iteration
 
-	/* CALL get_trimmed_str() (remove useless whitespaces) ON THE BUFFER. 
-		MAYBE CREATE A SPECIFIC FUNCTION IN THE BUFFER MODULE FOR IT */
-
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();

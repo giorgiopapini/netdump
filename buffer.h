@@ -11,5 +11,4 @@ typedef struct buffer {
 void populate(buffer *);
 void destroy_buff(buffer *);
 
-
 #endif
