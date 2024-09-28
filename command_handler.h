@@ -12,16 +12,17 @@
 #define EXIT_COMMAND        "exit"
 #define HELP_COMMAND        "help"
 
-#define MAX_ARGS 256
+#define MAX_ARGS 128
 
 typedef struct arg {
     char *label;
-    char *val;    /* Saved as string because the input is a string. Then should be correctly converted to the right time in runtime */
+    char *val;    /* Saved as string because the input is a string. Then should be correctly converted to the right type at runtime */
 } arg;
 
 typedef struct command {
     char *label;
-    arg *args[MAX_ARGS];    /* only single char keys allowed (for now) (ascii code as index). Retrival: (args["n"] -> pointer) */
+    arg *args[MAX_ARGS];  /* create an hash function, *args should be an hash map (O(1) read time complexity) */
+
 } command;
 
 arg * create_arg_from_token(char *token);

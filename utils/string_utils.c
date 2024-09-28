@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include "string_utils.h"
+#include "../status_handler.h"
 
 int find_word_len(char *sentence, int word_pos) {
     int i;
@@ -17,6 +19,7 @@ int find_word_len(char *sentence, int word_pos) {
 
 void copy_str_n(char **dest, char *src, int n) {
     *dest = (char *)malloc(n + 1);
+    if (NULL == *dest) raise(NULL_POINTER, 1, "char **dest", __FILE__);
     memset(*dest, '\0', n + 1);
     strncpy(*dest, src, n);
 }
@@ -45,6 +48,8 @@ char * get_trimmed_str(char *str) {
     if (new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
 
     result = (char *)malloc(new_index  + 1);
+    if (NULL == result) raise(NULL_POINTER, 1, "char *result", __FILE__);
+
     memset(result, '\0', new_index + 1);
     strncpy(result, new_str, new_index);
 

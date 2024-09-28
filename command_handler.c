@@ -9,12 +9,12 @@
 
 
 arg * create_arg_from_token(char *token) {
-    printf("token:%s\n", token);
     int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
     int label_len;
     int value_len;
     char copy[token_len];
     arg *new_arg = (arg *)malloc(sizeof(arg));
+    if (NULL == new_arg) raise(NULL_POINTER, 1, "arg *new_arg", __FILE__);
     new_arg->label = NULL;
     new_arg->val = NULL;
     
@@ -25,17 +25,12 @@ arg * create_arg_from_token(char *token) {
 
     copy_str_n(&new_arg->label, token, label_len);
     
-    printf("len: %d| label:%s\n",label_len, new_arg->label);
-
-    /* IMPORTANT! value_len keeps track of leading and trailing white spaces. IT SHOULD NOT*/
-    /* it should only keep track of the actual value length */
-    
-    value_len = strlen(token) - label_len;
+    value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
     new_arg->val = (char *)malloc(value_len);
-    memset(new_arg->val, '\0', value_len);      // get new str trimmed before setting new_arg->val
-    strcpy(new_arg->val, token + label_len);
-    
-    printf("value len: %d| value:%s\n", value_len, new_arg->val);
+    if (NULL == new_arg->val) raise(NULL_POINTER, 1, "new_arg->val", __FILE__);
+
+    memset(new_arg->val, '\0', value_len);
+    strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
 
     return new_arg;
 }
