@@ -9,6 +9,12 @@
 
 
 arg * create_arg_from_token(char *token) {
+    /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
+        be recognizable)    */
+
+    int len = strlen(token);
+    if (' ' == token[len - 1]) token[len - 1] = '\0';
+
     int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
     int label_len;
     int value_len;
