@@ -22,11 +22,14 @@ typedef struct arg {
 typedef struct command {
     char *label;
     arg *args[MAX_ARGS];  /* create an hash function, *args should be an hash map (O(1) read time complexity) */
-
 } command;
 
 arg * create_arg_from_token(char *token);
 void create_cmd_from_buff(command *cmd, buffer *buff);
+unsigned long djb2_hash(char *str);
+void add_arg(command *cmd, arg *arg);
+arg *get_arg(command *cmd, char *label);
+
 int is_command(command *cmd, const char *command);
 int execute_command(command *cmd, raw_array *packets);
 void reset_cmd(command *cmd);

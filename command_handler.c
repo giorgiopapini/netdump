@@ -41,6 +41,33 @@ arg * create_arg_from_token(char *token) {
     return new_arg;
 }
 
+unsigned long djb2_hash(char *str) {
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c;
+    return hash % MAX_ARGS;
+}
+
+void add_arg(command *cmd, arg *new_arg) {
+    unsigned long hash = djb2_hash(new_arg->label);
+
+    if (NULL == cmd->args[hash]) cmd->args[hash] = new_arg;
+    else {
+        char *old_label = cmd->args[hash]->label;
+        if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
+        else {
+            // linked list in case multiple labels share the same hash? (should I add next_ptr to arg struct?)
+        }
+    }
+    printf("(%u)label:%s|value:%s|\n",hash, cmd->args[hash]->label, cmd->args[hash]->val);
+}
+
+arg * get_arg(command *cmd, char *label) {
+    return cmd->args[djb2_hash(label)];
+}
+
 void create_cmd_from_buff(command *cmd, buffer *buff) {
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
@@ -53,8 +80,8 @@ void create_cmd_from_buff(command *cmd, buffer *buff) {
             token = strtok(NULL, "-");  /* skip command token once read */
         }
         else {
-            /* create arg (add key and value here before strtok again) */
             arg *new_arg = create_arg_from_token(token);
+            add_arg(cmd, new_arg);
             token = strtok(NULL, "-");
         }
     }
