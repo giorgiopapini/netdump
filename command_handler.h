@@ -17,6 +17,7 @@
 typedef struct arg {
     char *label;
     char *val;    /* Saved as string because the input is a string. Then should be correctly converted to the right type at runtime */
+    struct arg *next;
 } arg;
 
 typedef struct command {

@@ -23,6 +23,7 @@ arg * create_arg_from_token(char *token) {
     if (NULL == new_arg) raise(NULL_POINTER, 1, "arg *new_arg", __FILE__);
     new_arg->label = NULL;
     new_arg->val = NULL;
+    new_arg->next = NULL;
     
     memcpy(copy, token, token_len);
 
@@ -57,15 +58,17 @@ void add_arg(command *cmd, arg *new_arg) {
     else {
         char *old_label = cmd->args[hash]->label;
         if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
-        else {
-            // linked list in case multiple labels share the same hash? (should I add next_ptr to arg struct?)
-        }
+        else cmd->args[hash]->next = new_arg;  /* if alredy exist arg with hash=(x), than add new one to the linked list */
     }
-    printf("(%u)label:%s|value:%s|\n",hash, cmd->args[hash]->label, cmd->args[hash]->val);
 }
 
 arg * get_arg(command *cmd, char *label) {
-    return cmd->args[djb2_hash(label)];
+    arg *res = cmd->args[djb2_hash(label)];
+    while (NULL != res) {
+        if (0 == strcmp(res->label, label)) return res;
+        res = res->next;
+    }
+    return NULL;
 }
 
 void create_cmd_from_buff(command *cmd, buffer *buff) {

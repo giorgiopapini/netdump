@@ -12,7 +12,7 @@ char * get_error_format(err_code code) {
         case COMMAND_NOT_SUPPORTED_ERROR:   return "Your OS does not support the '%s' command"; break;
         case WRONG_OPTIONS_FORMAT_ERROR:    return "Invalid argument format. Usage: <command> -<option> <args>"; break;
         case NEGATIVE_N_PACKETS:            return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
-        case NULL_POINTER:                  return "NULL pointer return when allocating '%s' in file '%s'"; break;
+        case NULL_POINTER:                  return "NULL pointer returned when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Index out of range, tried to access index '%d' but array was '%d' long"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
