@@ -60,6 +60,9 @@ void add_arg(command *cmd, arg *new_arg) {
         if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
         else cmd->args[hash]->next = new_arg;  /* if alredy exist arg with hash=(x), than add new one to the linked list */
     }
+    cmd->hashes[cmd->n_args] = hash;
+    cmd->n_args ++;
+    printf("(%u) label:%s|value:%s|\n", hash, new_arg->label, new_arg->val);
 }
 
 arg * get_arg(command *cmd, char *label) {
@@ -137,10 +140,25 @@ int execute_command(command *cmd, raw_array *packets) {
 }
 
 void reset_cmd(command *cmd) {
+    arg *tmp;
+    arg *curr = NULL;
+
     if (NULL == cmd) raise(NULL_POINTER, 0, "cmd", __FILE__);
 
-    if (NULL != cmd->label) free(cmd->label);
-    cmd->label = NULL;
+    /* deallocate hashmap */
+    for (int i = 0; i < cmd->n_args; i ++) {
+        curr = cmd->args[cmd->hashes[i]];
+        while (NULL != curr) {
+            free(curr->label);
+            free(curr->val);
+            tmp = curr->next;
+            free(curr);
+            curr = tmp;
+        }
+    }
+    /* erasing the hashes array is not needed. he array is overwritten for each command inserted */
 
-    /* IMPORTANT! --> Deallocate the future args implementation */
+    if (NULL != cmd->label) free(cmd->label);    
+    cmd->label = NULL;
+    cmd->n_args = 0;
 }
