@@ -54,15 +54,17 @@ unsigned long djb2_hash(char *str) {
 void add_arg(command *cmd, arg *new_arg) {
     unsigned long hash = djb2_hash(new_arg->label);
 
-    if (NULL == cmd->args[hash]) cmd->args[hash] = new_arg;
+    if (NULL == cmd->args[hash]) {
+        cmd->args[hash] = new_arg;
+        cmd->hashes[cmd->n_hashes] = hash;  /* if hash is new, than add it to the hashes array (no duplicates) */
+        cmd->n_hashes ++;
+    }
     else {
         char *old_label = cmd->args[hash]->label;
         if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
         else cmd->args[hash]->next = new_arg;  /* if alredy exist arg with hash=(x), than add new one to the linked list */
     }
-    cmd->hashes[cmd->n_args] = hash;
-    cmd->n_args ++;
-    printf("(%u) label:%s|value:%s|\n", hash, new_arg->label, new_arg->val);
+    printf("\n(%u) label:%s|value:%s|\n", hash, new_arg->label, new_arg->val);
 }
 
 arg * get_arg(command *cmd, char *label) {
@@ -78,7 +80,6 @@ void create_cmd_from_buff(command *cmd, buffer *buff) {
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
     char *token = strtok(copy, " ");
-
     while (NULL != token) {
         if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
             cmd->label = (char *)malloc(strlen(token));
@@ -146,7 +147,7 @@ void reset_cmd(command *cmd) {
     if (NULL == cmd) raise(NULL_POINTER, 0, "cmd", __FILE__);
 
     /* deallocate hashmap */
-    for (int i = 0; i < cmd->n_args; i ++) {
+    for (int i = 0; i < cmd->n_hashes; i ++) {
         curr = cmd->args[cmd->hashes[i]];
         while (NULL != curr) {
             free(curr->label);
@@ -155,10 +156,11 @@ void reset_cmd(command *cmd) {
             free(curr);
             curr = tmp;
         }
+        cmd->args[cmd->hashes[i]] = NULL;
     }
     /* erasing the hashes array is not needed. he array is overwritten for each command inserted */
 
     if (NULL != cmd->label) free(cmd->label);    
     cmd->label = NULL;
-    cmd->n_args = 0;
+    cmd->n_hashes = 0;
 }

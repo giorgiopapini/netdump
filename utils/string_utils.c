@@ -9,7 +9,7 @@ int find_word_len(char *sentence, int word_pos) {
     int i;
 
     for (i = 0; i < strlen(sentence) + 1; i ++) {
-        if (' ' == sentence[i] || "\n" == sentence[i]) {
+        if (' ' == sentence[i] || '\n' == sentence[i]) {
             if (word_pos > 0) word_pos --;
             else return i;
         }

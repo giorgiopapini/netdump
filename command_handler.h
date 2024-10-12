@@ -21,7 +21,7 @@ typedef struct arg {
 } arg;
 
 typedef struct command {
-    size_t n_args;
+    size_t n_hashes;
     char *label;
     size_t hashes[MAX_ARGS];
     arg *args[MAX_ARGS];  /* create an hash function, *args should be an hash map (O(1) read time complexity) */

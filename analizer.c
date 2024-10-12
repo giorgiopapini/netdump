@@ -20,9 +20,9 @@ void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char
 	memcpy(dynamic_pkt, pkt, total_bytes);
 	insert(packets, dynamic_pkt);
 	
-	struct ether_header *eth_h;
-	struct ip_header *ip_h;
-	eth_h = (struct ether_header *) (pkt);
+	struct ether_hdr *eth_h;
+	struct ip_hdr *ip_h;
+	eth_h = (struct ether_hdr *) (pkt);
 
 	/*
 	printf("src:");
@@ -37,7 +37,7 @@ void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char
 	printf("\n");
 	*/
 	if (ntohs(eth_h->ethertype) == ETHERTYPE_IP) {
-		ip_h = (struct ip_header *)(pkt + sizeof(ether_header));
+		ip_h = (struct ip_hdr *)(pkt + sizeof(ether_hdr));
 		
 		printf("\nsrc: ");
 		printf("%u", ntohl(ip_h->src_addr));

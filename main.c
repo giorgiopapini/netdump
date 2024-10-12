@@ -15,7 +15,7 @@ int main(int argv, char *argc[]) {
 	if (0 != geteuid()) raise(USER_NOT_ROOT_ERROR, 1);	/* root access is needed in order to execute pcap packet scan */
 
 	buffer buff = { .content = NULL, .len = 0 };
-	command cmd = { .n_args = 0, .label = NULL, .hashes = 0, .args = NULL };
+	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 
 	// deallocate char string in buffer (where?)

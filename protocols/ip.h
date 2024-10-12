@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct ip_header {
+typedef struct ip_hdr {
     uint8_t vhlen;
     uint8_t tos;
     uint16_t totlen;
@@ -17,9 +17,9 @@ struct ip_header {
     uint16_t checksum;
     uint32_t src_addr;
     uint32_t dest_addr;
-} ip_header;
+} ip_hdr;
 
-#define IP_HLEN(ip_header)      (((ip_header)->vhlen) & 0x0f)
-#define IP_VERSION(ip_header)   (((ip_header)->vhlen) >> 4)
+#define IP_HLEN(ip_hdr)      (((ip_header)->vhlen) & 0x0f)
+#define IP_VERSION(ip_hdr)   (((ip_header)->vhlen) >> 4)
 
 #endif

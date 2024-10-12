@@ -1,6 +1,7 @@
 #ifndef ANALIZER_H
 #define ANALIZER_H
 
+#include <pcap.h>
 #include "utils/raw_array.h"
 
 void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char *packet);
