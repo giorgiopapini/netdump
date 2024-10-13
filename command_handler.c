@@ -66,7 +66,6 @@ void add_arg(command *cmd, arg *new_arg) {
         if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
         else cmd->args[hash]->next = new_arg;  /* if alredy exist arg with hash=(x), than add new one to the linked list */
     }
-    printf("\n(%u) label:%s|value:%s|\n", hash, new_arg->label, new_arg->val);
 }
 
 arg * get_arg(command *cmd, char *label) {
@@ -162,10 +161,7 @@ void reset_cmd(command *cmd) {
     }
     /* erasing the hashes array is not needed. he array is overwritten for each command inserted */
 
-    /* Why sometimes when the value is not inserted instead of blank the program renders random symbols?
-        (like print -f, print -ff, print -fff, ... and so on until 5 chars labels are inserted) */
-
-    if (NULL != cmd->label) free(cmd->label);    
+    if (NULL != cmd->label) free(cmd->label);
     cmd->label = NULL;
     cmd->n_hashes = 0;
 }
