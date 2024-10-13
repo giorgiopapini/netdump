@@ -33,11 +33,13 @@ arg * create_arg_from_token(char *token) {
     copy_str_n(&new_arg->label, token, label_len);
     
     value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
-    new_arg->val = (char *)malloc(value_len);
-    if (NULL == new_arg->val) raise(NULL_POINTER, 1, "new_arg->val", __FILE__);
-
-    memset(new_arg->val, '\0', value_len);
-    strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
+    if (0 < value_len) {
+        new_arg->val = (char *)malloc(value_len);
+        if (NULL == new_arg->val) raise(NULL_POINTER, 1, "new_arg->val", __FILE__);
+        memset(new_arg->val, '\0', value_len);
+        strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
+    }
+    else new_arg->val = NULL;
 
     return new_arg;
 }
@@ -159,6 +161,9 @@ void reset_cmd(command *cmd) {
         cmd->args[cmd->hashes[i]] = NULL;
     }
     /* erasing the hashes array is not needed. he array is overwritten for each command inserted */
+
+    /* Why sometimes when the value is not inserted instead of blank the program renders random symbols?
+        (like print -f, print -ff, print -fff, ... and so on until 5 chars labels are inserted) */
 
     if (NULL != cmd->label) free(cmd->label);    
     cmd->label = NULL;
