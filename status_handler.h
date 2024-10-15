@@ -1,7 +1,7 @@
 #ifndef ERROR_HANDLER_H
 #define ERROR_HANDLER_H
 
-/* Add the __FILE__ macro to every raise() call, by doing so the program knows where the error happened */
+#define UNSCANNED_NET_HINT      "You are probably trying to print a packet without first scanning the network, run 'analize' to scan the network"
 
 typedef enum {
     USER_NOT_ROOT_ERROR,
@@ -20,7 +20,7 @@ typedef enum {
 } success_code;
 
 char * get_error_format(err_code code);
-void raise(err_code code, int should_exit, ...);
+void raise(err_code code, int should_exit, char *hint, ...);
 
 char * get_success_msg(success_code code);
 void print_success_msg(success_code code);

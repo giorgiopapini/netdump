@@ -12,6 +12,8 @@
 #define EXIT_COMMAND        "exit"
 #define HELP_COMMAND        "help"
 
+#define QUANTITY_ARG        "n"
+
 #define MAX_ARGS 128
 
 typedef struct arg {
@@ -32,9 +34,12 @@ void create_cmd_from_buff(command *cmd, buffer *buff);
 unsigned long djb2_hash(char *str);
 void add_arg(command *cmd, arg *arg);
 arg *get_arg(command *cmd, char *label);
+char *get_raw_val(command *cmd, char *label);
 
 int is_command(command *cmd, const char *command);
 int execute_command(command *cmd, raw_array *packets);
 void reset_cmd(command *cmd);
+
+void execute_print(command *cmd, raw_array *packets);
 
 #endif

@@ -12,7 +12,7 @@ char * get_error_format(err_code code) {
         case COMMAND_NOT_SUPPORTED_ERROR:   return "Your OS does not support the '%s' command"; break;
         case WRONG_OPTIONS_FORMAT_ERROR:    return "Invalid argument format. Usage: <command> -<option> <args>"; break;
         case NEGATIVE_N_PACKETS:            return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
-        case NULL_POINTER:                  return "NULL pointer returned when allocating '%s' in file '%s'"; break;
+        case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Index out of range, tried to access index '%d' but array was '%d' long"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
@@ -27,7 +27,7 @@ char * get_success_msg(success_code code) {
     }
 }
 
-void raise(err_code code, int should_exit, ...) {
+void raise(err_code code, int should_exit, char *hint, ...) {
     const char *format = get_error_format(code);
 
     va_list args;
@@ -35,11 +35,17 @@ void raise(err_code code, int should_exit, ...) {
 
     printf(RED "[ERROR] (code: %d) -> ", code);
     vprintf(format, args);
+    if (NULL != hint) {
+        printf(".\n");
+        printf(RESET YELLOW "(%s)", hint);
+    }
     printf(".\n" RESET);
 
     va_end(args);
 
     if (should_exit) exit(EXIT_FAILURE);
+    /* instead of writing trivial goto mechanism simply let the OS deallocate the remaining memory (this happens only in case
+        of errors) */
 }
 
 void print_success_msg(success_code code) {

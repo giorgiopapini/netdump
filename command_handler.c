@@ -20,7 +20,7 @@ arg * create_arg_from_token(char *token) {
     int value_len;
     char copy[token_len];
     arg *new_arg = (arg *)malloc(sizeof(arg));
-    if (NULL == new_arg) raise(NULL_POINTER, 1, "arg *new_arg", __FILE__);
+    if (NULL == new_arg) raise(NULL_POINTER, 1, NULL, "arg *new_arg", __FILE__);
     new_arg->label = NULL;
     new_arg->val = NULL;
     new_arg->next = NULL;
@@ -28,14 +28,14 @@ arg * create_arg_from_token(char *token) {
     memcpy(copy, token, token_len);
 
     label_len = find_word_len(token, 0);
-    if (0 >= label_len) raise(WRONG_OPTIONS_FORMAT_ERROR, 0);
+    if (0 >= label_len) raise(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
 
     copy_str_n(&new_arg->label, token, label_len);
     
     value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
     if (0 < value_len) {
         new_arg->val = (char *)malloc(value_len);
-        if (NULL == new_arg->val) raise(NULL_POINTER, 1, "new_arg->val", __FILE__);
+        if (NULL == new_arg->val) raise(NULL_POINTER, 1, NULL, "new_arg->val", __FILE__);
         memset(new_arg->val, '\0', value_len);
         strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
     }
@@ -77,6 +77,13 @@ arg * get_arg(command *cmd, char *label) {
     return NULL;
 }
 
+char *get_raw_val(command *cmd, char *label) {
+    arg *obt = get_arg(cmd, label);
+    if (NULL == obt) return NULL;
+    else if (NULL == obt->val) return NULL;
+    return obt->val;
+}
+
 void create_cmd_from_buff(command *cmd, buffer *buff) {
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
@@ -100,6 +107,11 @@ int is_command(command *cmd, const char *command) {
     return 0;
 }
 
+void execute_print(command *cmd, raw_array *packets) {
+    int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
+    void *pkt = get_pkt(packets, pkt_num);
+}
+
 int execute_command(command *cmd, raw_array *packets) {
     if (is_command(cmd, EXIT_COMMAND)) {
         reset_cmd(cmd);
@@ -108,11 +120,11 @@ int execute_command(command *cmd, raw_array *packets) {
     }
     else if (is_command(cmd, ANALIZE_COMMAND)) {
         /* when to allocate memory space for values inside packets array? How to manage unlimited packets retrieve? */
-        sniff_packets(packets, 60);
+        sniff_packets(packets, 20);
         return 0;
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
-        void *pkt = get_pkt(packets, 80);
+        execute_print(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, RESET_COMMAND)) {
@@ -145,7 +157,7 @@ void reset_cmd(command *cmd) {
     arg *tmp;
     arg *curr = NULL;
 
-    if (NULL == cmd) raise(NULL_POINTER, 0, "cmd", __FILE__);
+    if (NULL == cmd) raise(NULL_POINTER, 0, NULL, "cmd", __FILE__);
 
     /* deallocate hashmap */
     for (int i = 0; i < cmd->n_hashes; i ++) {

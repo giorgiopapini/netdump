@@ -12,14 +12,11 @@
 void prompt() { printf("netdump > "); };
 
 int main(int argv, char *argc[]) {
-	if (0 != geteuid()) raise(USER_NOT_ROOT_ERROR, 1);	/* root access is needed in order to execute pcap packet scan */
+	if (0 != geteuid()) raise(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
 
 	buffer buff = { .content = NULL, .len = 0 };
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
-
-	// deallocate char string in buffer (where?)
-	// write the destroy_cmd() function
 	
 	// find a way to manage error message precedence. (e.g. if print - n (which is wrong), print WRONG_OPTION_FORMAT_ERROR)
 	// and go to the next netdump iteration (netdump > ). Skip errors like (INDEX_ERROR, ecc...). The WRONG_OPTION_FORMAT_ERROR
@@ -34,7 +31,7 @@ int main(int argv, char *argc[]) {
 		if (0 == buff.len) continue;
 
 		if (0 != execute_command(&cmd, &packets)) {
-			raise(UNKNOWN_COMMAND_ERROR, 0, cmd.label);
+			raise(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 			continue;
 		}
 	}
