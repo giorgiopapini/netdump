@@ -5,6 +5,7 @@
 #include "status_handler.h"
 #include "colors.h"
 
+
 char * get_error_format(err_code code) {
     switch(code) {
         case USER_NOT_ROOT_ERROR:           return "App needs root privileges to execute packet scanning"; break;

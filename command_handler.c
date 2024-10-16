@@ -109,7 +109,7 @@ int is_command(command *cmd, const char *command) {
 
 void execute_print(command *cmd, raw_array *packets) {
     int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
-    void *pkt = get_pkt(packets, pkt_num);
+    void *pkt = get(packets, pkt_num);
 }
 
 int execute_command(command *cmd, raw_array *packets) {
@@ -120,7 +120,7 @@ int execute_command(command *cmd, raw_array *packets) {
     }
     else if (is_command(cmd, ANALIZE_COMMAND)) {
         /* when to allocate memory space for values inside packets array? How to manage unlimited packets retrieve? */
-        sniff_packets(packets, 20);
+        sniff_packets(packets, 3);
         return 0;
     }
     else if (is_command(cmd, PRINT_COMMAND)) {

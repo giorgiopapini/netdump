@@ -39,10 +39,10 @@ void insert(raw_array *arr, void *ptr_bytes) {
     arr->len ++;
 }
 
-void * get_pkt(raw_array *arr, size_t index) {
+void * get(raw_array *arr, size_t index) {
     if (NULL == arr) raise(NULL_POINTER, 0, NULL, "arr", __FILE__);
-    if (NULL == arr->values) raise(NULL_POINTER, 0, UNSCANNED_NET_HINT, "arr->values", __FILE__);
-    if (index >= arr->len || index < 0) raise(INDEX_OUT_OF_BOUNDS, 0, NULL, index, arr->len);
+    else if (NULL == arr->values) raise(NULL_POINTER, 0, UNSCANNED_NET_HINT, "arr->values", __FILE__);
+    else if (index >= arr->len || index < 0) raise(INDEX_OUT_OF_BOUNDS, 0, NULL, index, arr->len);
     else return arr->values[index];
     
 }
