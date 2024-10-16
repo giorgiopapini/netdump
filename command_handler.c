@@ -107,20 +107,57 @@ int is_command(command *cmd, const char *command) {
     return 0;
 }
 
+
+/* commands execution definitions */
+
+void execute_exit(command *cmd, raw_array *packets) {
+    reset_cmd(cmd);
+    reset_arr(packets);
+    exit(EXIT_SUCCESS);
+}
+
+void execute_analize(command *cmd, raw_array *packets) {
+    int pkt_num = -1;
+    int tmp = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
+
+    /* if -n not provided (or -n value not set) returns 0. Analizing 0 packets doesn't make sense, so assume to scan to infinity */
+    if (0 != tmp) pkt_num = tmp;
+
+    /* when to allocate memory space for values inside packets array? How to manage unlimited packets retrieve? */
+    sniff_packets(packets, pkt_num);
+}
+
 void execute_print(command *cmd, raw_array *packets) {
     int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
     void *pkt = get(packets, pkt_num);
 }
 
-int execute_command(command *cmd, raw_array *packets) {
-    if (is_command(cmd, EXIT_COMMAND)) {
-        reset_cmd(cmd);
+void execute_reset(command *cmd, raw_array *packets) {
+    if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS);
+    else {
         reset_arr(packets);
-        exit(EXIT_SUCCESS);
+        print_success_msg(ARRAY_RESET_SUCCESS);
     }
+}
+
+void execute_clear(command *cmd) {
+    #if defined(_WIN32) || defined(_WIN64)
+        system("cls");
+    #elif defined(__linux__) || defined(__APPLE__)
+        system("clear");
+    #else
+        raise(COMMAND_NOT_SUPPORTED_ERROR, 0, CLEAN_COMMAND);
+    #endif
+}
+
+void execute_help() {
+    printf("HELP LIST\n");
+}
+
+int execute_command(command *cmd, raw_array *packets) {
+    if (is_command(cmd, EXIT_COMMAND)) execute_exit(cmd, packets);
     else if (is_command(cmd, ANALIZE_COMMAND)) {
-        /* when to allocate memory space for values inside packets array? How to manage unlimited packets retrieve? */
-        sniff_packets(packets, 3);
+        execute_analize(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
@@ -128,28 +165,18 @@ int execute_command(command *cmd, raw_array *packets) {
         return 0;
     }
     else if (is_command(cmd, RESET_COMMAND)) {
-        if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS);
-        else {
-            reset_arr(packets);
-            print_success_msg(ARRAY_RESET_SUCCESS);
-        }
+        execute_reset(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
-        #if defined(_WIN32) || defined(_WIN64)
-            system("cls");
-        #elif defined(__linux__) || defined(__APPLE__)
-            system("clear");
-        #else
-            raise(COMMAND_NOT_SUPPORTED_ERROR, 0, CLEAN_COMMAND);
-        #endif
+        execute_clear(cmd);
         return 0;
     }
     else if (is_command(cmd, HELP_COMMAND)) {
-        printf("HELP LIST\n");
+        execute_help();
         return 0;
     }
-    
+
     return 1;
 }
 

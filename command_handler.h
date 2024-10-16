@@ -40,6 +40,12 @@ int is_command(command *cmd, const char *command);
 int execute_command(command *cmd, raw_array *packets);
 void reset_cmd(command *cmd);
 
+/* command execution */
+void execute_exit(command *cmd, raw_array *packets);
 void execute_print(command *cmd, raw_array *packets);
+void execute_analize(command *cmd, raw_array *packets);
+void execute_clear(command *cmd);
+void execute_reset(command *cmd, raw_array *packets);
+void execute_help();
 
 #endif

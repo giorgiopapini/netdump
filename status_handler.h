@@ -1,7 +1,7 @@
 #ifndef ERROR_HANDLER_H
 #define ERROR_HANDLER_H
 
-#define UNSCANNED_NET_HINT      "You are probably trying to print a packet without first scanning the network, run 'analize' to scan the network"
+#define UNSCANNED_NET_HINT      "You are probably trying to print a packet without first scanning the network, run 'analize' command to scan the network"
 
 typedef enum {
     USER_NOT_ROOT_ERROR,
