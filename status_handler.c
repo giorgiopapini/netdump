@@ -32,7 +32,7 @@ void raise(err_code code, int should_exit, char *hint, ...) {
     const char *format = get_error_format(code);
 
     va_list args;
-    va_start(args, should_exit);
+    va_start(args, hint);
 
     printf(RED "[ERROR] (code: %d) -> ", code);
     vprintf(format, args);
