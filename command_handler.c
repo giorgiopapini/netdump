@@ -20,7 +20,7 @@ arg * create_arg_from_token(char *token) {
     int value_len;
     char copy[token_len];
     arg *new_arg = (arg *)malloc(sizeof(arg));
-    if (NULL == new_arg) raise(NULL_POINTER, 1, NULL, "arg *new_arg", __FILE__);
+    if (NULL == new_arg) raise_error(NULL_POINTER, 1, NULL, "arg *new_arg", __FILE__);
     new_arg->label = NULL;
     new_arg->val = NULL;
     new_arg->next = NULL;
@@ -28,14 +28,14 @@ arg * create_arg_from_token(char *token) {
     memcpy(copy, token, token_len);
 
     label_len = find_word_len(token, 0);
-    if (0 >= label_len) raise(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+    if (0 >= label_len) raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
 
     copy_str_n(&new_arg->label, token, label_len);
     
     value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
     if (0 < value_len) {
         new_arg->val = (char *)malloc(value_len);
-        if (NULL == new_arg->val) raise(NULL_POINTER, 1, NULL, "new_arg->val", __FILE__);
+        if (NULL == new_arg->val) raise_error(NULL_POINTER, 1, NULL, "new_arg->val", __FILE__);
         memset(new_arg->val, '\0', value_len);
         strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
     }
@@ -185,7 +185,7 @@ void reset_cmd(command *cmd) {
     arg *tmp;
     arg *curr = NULL;
 
-    if (NULL == cmd) raise(NULL_POINTER, 0, NULL, "cmd", __FILE__);
+    if (NULL == cmd) raise_error(NULL_POINTER, 0, NULL, "cmd", __FILE__);
 
     /* deallocate hashmap */
     for (int i = 0; i < cmd->n_hashes; i ++) {

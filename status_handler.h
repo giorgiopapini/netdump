@@ -27,7 +27,7 @@ typedef enum {
 } success_code;
 
 char * get_error_format(err_code code);
-void raise(err_code code, int should_exit, char *hint, ...);
+void raise_error(err_code code, int should_exit, char *hint, ...);
 
 char * get_success_msg(success_code code);
 void print_success_msg(success_code code);

@@ -16,7 +16,7 @@ void normalize_content(buffer *buff) {
 void populate(buffer *buff) {
     size_t bytes = getline(&buff->content, &buff->len, stdin);
 
-    if (bytes <= 0) raise(INPUT_ERROR, 1, NULL);
+    if (bytes <= 0) raise_error(INPUT_ERROR, 1, NULL);
 
     buff->content[bytes - 1] = 0;
     buff->len = bytes - 1;

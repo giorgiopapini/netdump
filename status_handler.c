@@ -35,7 +35,7 @@ char * get_success_msg(success_code code) {
     }
 }
 
-void raise(err_code code, int should_exit, char *hint, ...) {
+void raise_error(err_code code, int should_exit, char *hint, ...) {
     const char *format = get_error_format(code);
 
     va_list args;
