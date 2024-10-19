@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
+#include <signal.h>
 #include <pcap.h>
 
 #include "analizer.h"
@@ -12,6 +13,13 @@
 
 #define LOOP_TO_INFINITY -1
 
+
+static pcap_t *handle;
+
+void handle_sigint(int sig) {
+	pcap_breakloop(handle);
+	printf("\n\n");
+}
 
 void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char *pkt) {
 	raw_array *packets = (raw_array *)args;
@@ -61,7 +69,7 @@ void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char
 // https://github.com/the-tcpdump-group/tcpdump/blob/d44658b2e47ad1a3724a632f0d65a81140654c15/print-ether.c#L541
 
 void sniff_packets(raw_array *packets, int n, char *filter_exp) {
-	pcap_t *handle;
+	printf("\npackets:%d\npackets_all:%d\n", packets->len, packets->allocated);
 	char *dev;
 	char errbuff[PCAP_ERRBUF_SIZE];
 	int datalink_type;
@@ -84,6 +92,8 @@ void sniff_packets(raw_array *packets, int n, char *filter_exp) {
 	datalink_type = pcap_datalink(handle);
 	if (-1 == datalink_type) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
 	
+	signal(SIGINT, handle_sigint);
+
 	printf("\ndevice: %s\n", dev);
 
 	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) raise_error(INVALID_FILTER, 1, NULL, filter_exp);
