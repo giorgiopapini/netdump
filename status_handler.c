@@ -16,6 +16,13 @@ char * get_error_format(err_code code) {
         case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Index out of range, tried to access index '%d' but array was '%d' long"; break;
+        case NO_DEVICE_FOUND:               return "Couldn't find default device"; break;
+        case NETMASK_ERROR:                 return "Couldn't get netmask for device '%s'"; break;
+        case NO_ACCESS_DEVICE_ERROR:        return "Couldn't open device '%s'"; break;
+        case DATALINK_HEADER_ERROR:         return "Couldn't get datalink header type. (%s)"; break;
+        case INVALID_FILTER:                return "Couldn't parse filter '%s'"; break;
+        case NOT_INTALLABLE_FILTER:         return "Couldn't install filter '%s'"; break;
+        case PCAP_LOOP_ERROR:               return "pcap_loop() failed"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }

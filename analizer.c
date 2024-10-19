@@ -8,6 +8,7 @@
 #include "ethertypes.h"
 #include "protocols/ether.h"
 #include "protocols/ip.h"
+#include "status_handler.h"
 
 #define LOOP_TO_INFINITY -1
 
@@ -59,56 +60,35 @@ void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char
 // Around line 500 and after ==> Switch chase with every packet supported for decoding
 // https://github.com/the-tcpdump-group/tcpdump/blob/d44658b2e47ad1a3724a632f0d65a81140654c15/print-ether.c#L541
 
-void sniff_packets(raw_array *packets, int n) {
+void sniff_packets(raw_array *packets, int n, char *filter_exp) {
 	pcap_t *handle;
 	char *dev;
 	char errbuff[PCAP_ERRBUF_SIZE];
 	int datalink_type;
 	struct bpf_program fp;
-	char filter_exp[] = "";
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
 
 	dev = pcap_lookupdev(errbuff);
 	if (NULL == dev) {
-		fprintf(stderr, "Couldn't find default device: %s\n", errbuff);
+		raise(NO_DEVICE_FOUND, 1, NULL);
 		mask = 0;
 		net = 0;
 	}
 
-	if (-1 == pcap_lookupnet(dev, &net, &mask, errbuff)) {
-		fprintf(stderr, "Couldn't get netmask for device: %s\n", dev);
-		exit(2);
-	}
+	if (-1 == pcap_lookupnet(dev, &net, &mask, errbuff)) raise(NETMASK_ERROR, 1, NULL, dev);
 
 	handle = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuff);		// promiscuos mode (third argument) = 1
-	if (NULL == handle) {
-		fprintf(stderr, "Couldn't open device: %s\n", dev);
-		exit(2);
-	}
+	if (NULL == handle) raise(NO_ACCESS_DEVICE_ERROR, 1, NULL, dev);
 
 	datalink_type = pcap_datalink(handle);
-	if (-1 == datalink_type) {
-		fprintf(stderr, "Could't get datalink header type: %s\n", pcap_geterr(handle));
-		exit(2);
-	}
+	if (-1 == datalink_type) raise(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
+	
 	printf("\ndevice: %s\n", dev);
-	printf("data: %d\n", datalink_type);
 
-	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) {
-		fprintf(stderr, "Could't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
-		exit(2);
-	}
-
-	if (-1 == pcap_setfilter(handle, &fp)) {
-		fprintf(stderr, "Couldn't install filter: %s: %s\n", filter_exp, pcap_geterr(handle));
-		exit(2);
-	}
-
-	if (-1 == pcap_loop(handle, n, get_packet, (__u_char *)packets)) {
-		fprintf(stderr, "pcap_loop() failed\n");
-		exit(2);
-	}
+	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) raise(INVALID_FILTER, 1, NULL, filter_exp);
+	if (-1 == pcap_setfilter(handle, &fp)) raise(NOT_INTALLABLE_FILTER, 1, NULL, filter_exp);
+	if (-1 == pcap_loop(handle, n, get_packet, (__u_char *)packets)) raise(PCAP_LOOP_ERROR, 1, NULL);
 
 	pcap_close(handle);
 }

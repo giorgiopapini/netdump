@@ -13,6 +13,7 @@
 #define HELP_COMMAND        "help"
 
 #define QUANTITY_ARG        "n"
+#define FILTER_ARG          "filter"
 
 #define MAX_ARGS 128
 
