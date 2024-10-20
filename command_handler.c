@@ -50,7 +50,7 @@ unsigned long djb2_hash(char *str) {
 
     while (c = *str++)
         hash = ((hash << 5) + hash) + c;
-    return hash % MAX_ARGS;
+    return hash % MAX_HASHES;
 }
 
 void add_arg(command *cmd, arg *new_arg) {
@@ -124,7 +124,6 @@ void execute_analize(command *cmd, raw_array *packets) {
     /* if -n not provided (or -n value not set) returns 0. Analizing 0 packets doesn't make sense, so assume to scan to infinity */
     if (0 != tmp) pkt_num = tmp;
 
-    /* when to allocate memory space for values inside packets array? How to manage unlimited packets retrieve? */
     sniff_packets(packets, pkt_num, filter_exp);
 }
 

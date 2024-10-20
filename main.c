@@ -17,10 +17,6 @@ int main(int argv, char *argc[]) {
 	buffer buff = { .content = NULL, .len = 0 };
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
-	
-	// find a way to manage error message precedence. (e.g. if print - n (which is wrong), print WRONG_OPTION_FORMAT_ERROR)
-	// and go to the next netdump iteration (netdump > ). Skip errors like (INDEX_ERROR, ecc...). The WRONG_OPTION_FORMAT_ERROR
-	// should abort the command and instantaneously go to the next while iteration
 
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */

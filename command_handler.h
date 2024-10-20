@@ -15,7 +15,7 @@
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
 
-#define MAX_ARGS 128
+#define MAX_HASHES 128
 
 typedef struct arg {
     char *label;
@@ -26,8 +26,8 @@ typedef struct arg {
 typedef struct command {
     size_t n_hashes;
     char *label;
-    size_t hashes[MAX_ARGS];
-    arg *args[MAX_ARGS];  /* create an hash function, *args should be an hash map (O(1) read time complexity) */
+    size_t hashes[MAX_HASHES];
+    arg *args[MAX_HASHES];  /* create an hash function, *args should be an hash map (O(1) read time complexity) */
 } command;
 
 arg * create_arg_from_token(char *token);
