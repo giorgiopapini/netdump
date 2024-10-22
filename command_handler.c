@@ -93,7 +93,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
             cmd->label = (char *)malloc(strlen(token));
             strcpy(cmd->label, token);
-            token = strtok(NULL, "-");  /* skip command token once read */
+            token = strtok(NULL, ARG_PREFIX);  /* skip command token once read */
         }
         else {
             arg *new_arg = create_arg_from_token(token);
@@ -104,7 +104,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
                 return 0;
             }
             add_arg(cmd, new_arg);
-            token = strtok(NULL, "-");
+            token = strtok(NULL, ARG_PREFIX);
         }
     }
     return 1;
@@ -130,9 +130,9 @@ int is_valid(command *cmd, char **expected_args, size_t len) {
 
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
-        char *val = get_raw_val(cmd, expected_args[i]);
+        arg *obt_arg = get_arg(cmd, expected_args[i]);
 
-        if (NULL == val) {
+        if (NULL == obt_arg) {
             missing_args[j] = expected_args[i];
             expected_args[i] = "";
             j ++;
@@ -159,8 +159,8 @@ int is_valid(command *cmd, char **expected_args, size_t len) {
         }
     }
 
-    missing_args_message = str_concat(missing_args, "-", " ", j);
-    unrecognized_args_message = str_concat(unrecognized_args, "-", " ", m);
+    missing_args_message = str_concat(missing_args, ARG_PREFIX, " ", j);
+    unrecognized_args_message = str_concat(unrecognized_args, ARG_PREFIX, " ", m);
 
     if (0 != strlen(missing_args_message)) {
         raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);

@@ -12,6 +12,7 @@
 #define EXIT_COMMAND        "exit"
 #define HELP_COMMAND        "help"
 
+#define ARG_PREFIX          "-"
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
 

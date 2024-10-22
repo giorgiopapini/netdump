@@ -71,9 +71,9 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
 
     new_str[0] = '\0';
     for (i = 0; i < n_str; i ++) {
-        strcat(new_str, prefix);
+        if (NULL != prefix) strcat(new_str, prefix);
         strcat(new_str, str_arr[i]);
-        strcat(new_str, separator);
+        if (NULL != separator) strcat(new_str, separator);
     }
     new_str[strlen(new_str) - 1] = '\0';
 
