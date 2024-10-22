@@ -63,3 +63,19 @@ long str_to_num(char *str) {
     if (NULL != str) num = strtol(str, &end, 10);
     return num;
 }
+
+char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
+    int i;
+    char *new_str = (char *)malloc(sizeof(char)); /* +1 to include null terminator */
+    if (NULL == new_str) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
+
+    new_str[0] = '\0';
+    for (i = 0; i < n_str; i ++) {
+        strcat(new_str, prefix);
+        strcat(new_str, str_arr[i]);
+        strcat(new_str, separator);
+    }
+    new_str[strlen(new_str) - 1] = '\0';
+
+    return new_str;
+}

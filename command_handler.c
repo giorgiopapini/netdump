@@ -84,7 +84,8 @@ char *get_raw_val(command *cmd, char *label) {
     return obt->val;
 }
 
-void create_cmd_from_buff(command *cmd, buffer *buff) {
+int create_cmd_from_buff(command *cmd, buffer *buff) {
+    size_t args_num = 0;
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
     char *token = strtok(copy, " ");
@@ -96,10 +97,17 @@ void create_cmd_from_buff(command *cmd, buffer *buff) {
         }
         else {
             arg *new_arg = create_arg_from_token(token);
+            args_num ++;
+
+            if (MAX_ARGS < args_num) {
+                raise_error(TOO_MANY_ARGS, 0, NULL, MAX_ARGS);
+                return 0;
+            }
             add_arg(cmd, new_arg);
             token = strtok(NULL, "-");
         }
     }
+    return 1;
 }
 
 int is_command(command *cmd, const char *command) {
@@ -107,6 +115,66 @@ int is_command(command *cmd, const char *command) {
     return 0;
 }
 
+int is_valid(command *cmd, char **expected_args, size_t len) {
+    arg *tmp = NULL;
+    int valid = 1;
+    int i;
+    int j = 0;  /* will represent length of missing_args array */
+    int k;  
+    int m = 0;  /* will represent length of unrecognized_args array */
+
+    char *missing_args[MAX_ARGS]; /* size_t len might represents the 'worst case length'?. Every arg misses so missing_args has length = len */
+    char *missing_args_message = NULL;
+    char *unrecognized_args[MAX_ARGS];
+    char *unrecognized_args_message = NULL;
+
+    /* populate missing_args */
+    for (i = 0; i < len; i ++) {
+        char *val = get_raw_val(cmd, expected_args[i]);
+
+        if (NULL == val) {
+            missing_args[j] = expected_args[i];
+            expected_args[i] = "";
+            j ++;
+        }
+    }
+
+    /* populate unrecognized_args */
+    for (i = 0; i < cmd->n_hashes; i ++) {
+        tmp = cmd->args[cmd->hashes[i]];
+        
+        while (tmp != NULL) {
+            int not_in_arr = 1;
+            for (k = 0; k < len; k ++) {
+                if (0 == strcmp(tmp->label, expected_args[k])) {
+                    not_in_arr = 0;
+                    break;
+                }
+            }
+            if (not_in_arr) {
+                unrecognized_args[m] = tmp->label;
+                m ++;
+            }
+            tmp = tmp->next;
+        }
+    }
+
+    missing_args_message = str_concat(missing_args, "-", " ", j);
+    unrecognized_args_message = str_concat(unrecognized_args, "-", " ", m);
+
+    if (0 != strlen(missing_args_message)) {
+        raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
+        valid = 0;
+    }
+    else if (0 != strlen(unrecognized_args_message)) {
+        raise_error(UNRECOGNIZED_ARGS_ERROR, 0, NULL, unrecognized_args_message);
+        valid = 0;
+    }
+
+    free(missing_args_message);
+    free(unrecognized_args_message);
+    return valid;
+}
 
 /* commands execution definitions */
 
@@ -128,8 +196,12 @@ void execute_analize(command *cmd, raw_array *packets) {
 }
 
 void execute_print(command *cmd, raw_array *packets) {
-    int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
-    void *pkt = get(packets, pkt_num);
+    char *expected[] = { QUANTITY_ARG };
+
+    if(is_valid(cmd, expected, sizeof(expected) / sizeof(expected[0]))) {
+        int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
+        void *pkt = get(packets, pkt_num);
+    }
 }
 
 void execute_reset(command *cmd, raw_array *packets) {

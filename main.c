@@ -22,8 +22,8 @@ int main(int argv, char *argc[]) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();
 		populate(&buff);	/* populate() alredy overrides previously buffered data */
-		create_cmd_from_buff(&cmd, &buff);
-
+		
+		if (0 == create_cmd_from_buff(&cmd, &buff)) continue;
 		if (0 == buff.len) continue;
 
 		if (0 != execute_command(&cmd, &packets)) {

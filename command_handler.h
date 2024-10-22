@@ -16,6 +16,7 @@
 #define FILTER_ARG          "filter"
 
 #define MAX_HASHES 128
+#define MAX_ARGS 256
 
 typedef struct arg {
     char *label;
@@ -31,13 +32,14 @@ typedef struct command {
 } command;
 
 arg * create_arg_from_token(char *token);
-void create_cmd_from_buff(command *cmd, buffer *buff);
+int create_cmd_from_buff(command *cmd, buffer *buff);
 unsigned long djb2_hash(char *str);
 void add_arg(command *cmd, arg *arg);
 arg *get_arg(command *cmd, char *label);
 char *get_raw_val(command *cmd, char *label);
 
 int is_command(command *cmd, const char *command);
+int is_valid(command *cmd, char **expected_args, size_t len);
 int execute_command(command *cmd, raw_array *packets);
 void reset_cmd(command *cmd);
 

@@ -23,6 +23,9 @@ char * get_error_format(err_code code) {
         case INVALID_FILTER:                return "Couldn't parse filter '%s'"; break;
         case NOT_INTALLABLE_FILTER:         return "Couldn't install filter '%s'"; break;
         case PCAP_LOOP_ERROR:               return "pcap_loop() failed"; break;
+        case TOO_MANY_ARGS:                 return "Too many args (MAX_ARGS=%d)"; break;
+        case MISSING_ARGS_ERROR:            return "Missing arguments: %s"; break;
+        case UNRECOGNIZED_ARGS_ERROR:       return "Unrecognized arguments: %s"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }

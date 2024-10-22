@@ -19,6 +19,9 @@ typedef enum {
     INVALID_FILTER,
     NOT_INTALLABLE_FILTER,
     PCAP_LOOP_ERROR,
+    TOO_MANY_ARGS,
+    MISSING_ARGS_ERROR,
+    UNRECOGNIZED_ARGS_ERROR,
 } err_code;
 
 typedef enum {
