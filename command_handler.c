@@ -7,6 +7,8 @@
 #include "status_handler.h"
 #include "utils/string_utils.h"
 
+#define LEN_ARR(arr)        (sizeof(arr) / sizeof(arr[0]))
+#define VALID(cmd, expected_args)     (is_valid(cmd, (char*[])expected_args, LEN_ARR((char*[])expected_args)))
 
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
@@ -130,9 +132,9 @@ int is_valid(command *cmd, char **expected_args, size_t len) {
 
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
-        arg *obt_arg = get_arg(cmd, expected_args[i]);
+        tmp = get_arg(cmd, expected_args[i]);
 
-        if (NULL == obt_arg) {
+        if (NULL == tmp) {
             missing_args[j] = expected_args[i];
             expected_args[i] = "";
             j ++;
@@ -196,9 +198,7 @@ void execute_analize(command *cmd, raw_array *packets) {
 }
 
 void execute_print(command *cmd, raw_array *packets) {
-    char *expected[] = { QUANTITY_ARG };
-
-    if(is_valid(cmd, expected, sizeof(expected) / sizeof(expected[0]))) {
+    if(VALID(cmd, { QUANTITY_ARG })) {
         int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
         void *pkt = get(packets, pkt_num);
     }
