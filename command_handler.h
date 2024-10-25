@@ -16,6 +16,8 @@
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
 
+#define PRINT_ARGS          QUANTITY_ARG, FILTER_ARG
+
 #define MAX_HASHES 128
 #define MAX_ARGS 256
 
