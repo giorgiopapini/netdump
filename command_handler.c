@@ -3,12 +3,20 @@
 #include <stdlib.h>
 
 #include "analizer.h"
-#include "command_handler.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
 
-#define LEN_ARGS(...)       (sizeof((char*[]){__VA_ARGS__}) / sizeof(char*))
-#define VALID(cmd, ...)     (is_valid(cmd, (char*[]){__VA_ARGS__}, LEN_ARGS(__VA_ARGS__)))
+#include "command_handler.h"
+#include "commands/help.h"
+#include "commands/exit.h"
+#include "commands/analize.h"
+#include "commands/print.h"
+#include "commands/clear.h"
+#include "commands/reset.h"
+
+#define LEN_ARGS(...)                       (sizeof((char*[]){__VA_ARGS__}) / sizeof(char*))
+#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN_ARGS(__VA_ARGS__)))
+#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN_ARGS(__VA_ARGS__)))
 
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
@@ -117,7 +125,7 @@ int is_command(command *cmd, const char *command) {
     return 0;
 }
 
-int is_valid(command *cmd, char **expected_args, size_t len) {
+int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
     arg *tmp = NULL;
     int valid = 1;
     int i;
@@ -164,11 +172,11 @@ int is_valid(command *cmd, char **expected_args, size_t len) {
     missing_args_message = str_concat(missing_args, ARG_PREFIX, " ", j);
     unrecognized_args_message = str_concat(unrecognized_args, ARG_PREFIX, " ", m);
 
-    if (0 != strlen(missing_args_message)) {
+    if (0 == opt_args && 0 != strlen(missing_args_message)) {       // if opt_args is false --> expected args are not optional
         raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
         valid = 0;
     }
-    else if (0 != strlen(unrecognized_args_message)) {
+    else if (1 == opt_args && 0 != strlen(unrecognized_args_message)) {
         raise_error(UNRECOGNIZED_ARGS_ERROR, 0, NULL, unrecognized_args_message);
         valid = 0;
     }
@@ -178,74 +186,37 @@ int is_valid(command *cmd, char **expected_args, size_t len) {
     return valid;
 }
 
-/* commands execution definitions */
 
-void execute_exit(command *cmd, raw_array *packets) {
-    reset_cmd(cmd);
-    reset_arr(packets);
-    exit(EXIT_SUCCESS);
-}
-
-void execute_analize(command *cmd, raw_array *packets) {
-    int pkt_num = -1;
-    int tmp = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
-    char *filter_exp = get_raw_val(cmd, FILTER_ARG);
-
-    /* if -n not provided (or -n value not set) returns 0. Analizing 0 packets doesn't make sense, so assume to scan to infinity */
-    if (0 != tmp) pkt_num = tmp;
-
-    sniff_packets(packets, pkt_num, filter_exp);
-}
-
-void execute_print(command *cmd, raw_array *packets) {
-    if(VALID(cmd, PRINT_ARGS )) {
-        int pkt_num = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
-        void *pkt = get(packets, pkt_num);
-    }
-}
-
-void execute_reset(command *cmd, raw_array *packets) {
-    if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS);
-    else {
-        reset_arr(packets);
-        print_success_msg(ARRAY_RESET_SUCCESS);
-    }
-}
-
-void execute_clear(command *cmd) {
-    #if defined(_WIN32) || defined(_WIN64)
-        system("cls");
-    #elif defined(__linux__) || defined(__APPLE__)
-        system("clear");
-    #else
-        raise(COMMAND_NOT_SUPPORTED_ERROR, 0, CLEAN_COMMAND);
-    #endif
-}
-
-void execute_help() {
-    printf("HELP LIST\n");
-}
-
+/* CHECK_ARGS() checks for unkown args; CHECK_REQ_ARGS() checks for required args missing */
 int execute_command(command *cmd, raw_array *packets) {
-    if (is_command(cmd, EXIT_COMMAND)) execute_exit(cmd, packets);
+    if (is_command(cmd, EXIT_COMMAND)) {
+        if (CHECK_ARGS(cmd, EXIT_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets);
+        return 0;
+    }
     else if (is_command(cmd, ANALIZE_COMMAND)) {
-        execute_analize(cmd, packets);
+        if (CHECK_ARGS(cmd, ANALIZE_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
-        execute_print(cmd, packets);
+        if (CHECK_ARGS(cmd, PRINT_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, RESET_COMMAND)) {
-        execute_reset(cmd, packets);
+        if (CHECK_ARGS(cmd, RESET_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
         return 0;
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
-        execute_clear(cmd);
+        if (CHECK_ARGS(cmd, EXECUTE_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXECUTE_ARGS)) execute_clear(cmd);
         return 0;
     }
     else if (is_command(cmd, HELP_COMMAND)) {
-        execute_help();
+        if (CHECK_ARGS(cmd, HELP_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) execute_help(cmd);
         return 0;
     }
 

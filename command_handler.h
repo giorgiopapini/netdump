@@ -15,8 +15,26 @@
 #define ARG_PREFIX          "-"
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
+#define CMD_ARG             "cmd"
 
-#define PRINT_ARGS          QUANTITY_ARG, FILTER_ARG
+/* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
+/* 
+    (e.g.) EXIT_ARGS are ALL the args possible for the command EXIT. 
+    The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
+*/
+
+#define EXIT_ARGS          
+#define REQUIRED_EXIT_ARGS                   
+#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG
+#define REQUIRED_ANALIZE_ARGS                
+#define PRINT_ARGS                  QUANTITY_ARG
+#define REQUIRED_PRINT_ARGS         
+#define RESET_ARGS         
+#define REQUIRED_RESET_ARGS                  
+#define EXECUTE_ARGS       
+#define REQUIRED_EXECUTE_ARGS                
+#define HELP_ARGS                   CMD_ARG
+#define REQUIRED_HELP_ARGS          CMD_ARG
 
 #define MAX_HASHES 128
 #define MAX_ARGS 256
@@ -42,16 +60,9 @@ arg *get_arg(command *cmd, char *label);
 char *get_raw_val(command *cmd, char *label);
 
 int is_command(command *cmd, const char *command);
-int is_valid(command *cmd, char **expected_args, size_t len);
+int is_valid(command *cmd, int opt_args, char **expected_args, size_t len);
 int execute_command(command *cmd, raw_array *packets);
 void reset_cmd(command *cmd);
 
-/* command execution */
-void execute_exit(command *cmd, raw_array *packets);
-void execute_print(command *cmd, raw_array *packets);
-void execute_analize(command *cmd, raw_array *packets);
-void execute_clear(command *cmd);
-void execute_reset(command *cmd, raw_array *packets);
-void execute_help();
 
 #endif

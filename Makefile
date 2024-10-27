@@ -1,14 +1,35 @@
-netdump:
-	gcc -g -w -o netdump analizer.c main.c buffer.c command_handler.c status_handler.c utils/raw_array.c utils/string_utils.c -lpcap
+# Automatically include all .c files in the current directory and subdirectories
+SRC := $(wildcard *.c) $(wildcard **/*.c)
+
+# Compiler and flags
+CC := gcc
+CFLAGS := -g -w
+LDFLAGS := -lpcap
+
+# Output binary
+TARGET := netdump
+
+# Default target: compile the program
+all: $(TARGET)
+
+# Compile target
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
+
+# Clean target: remove the binary
 clean:
-	-rm netdump
-run:
-	sudo ./netdump
-debug:
-	-rm netdump
-	gcc -g -w -o netdump analizer.c main.c buffer.c command_handler.c status_handler.c utils/raw_array.c utils/string_utils.c -lpcap
+	-rm -f $(TARGET)
+
+# Run target: execute the program with sudo
+run: $(TARGET)
+	sudo ./$(TARGET)
+
+# Debug target: recompile, clear screen, and run the program
+debug: clean $(TARGET)
 	clear
-	sudo ./netdump
-install:
+	sudo ./$(TARGET)
+
+# Install target: install the binary to the system's bin directory
+install: $(TARGET)
 	mkdir -p $(DESTDIR)/usr/bin
-	install -m 0755 netdump $(DESTDIR)/usr/bin/netdump
+	install -m 0755 $(TARGET) $(DESTDIR)/usr/bin/$(TARGET)
