@@ -21,7 +21,7 @@ void handle_sigint(int sig) {
 	printf("\n");
 }
 
-void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char *pkt) {
+void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *pkt) {
 	raw_array *packets = (raw_array *)args;
 	size_t total_bytes = header->len;
 
@@ -33,18 +33,9 @@ void get_packet(__u_char *args, const struct pcap_pkthdr *header, const __u_char
 	struct ip_hdr *ip_h;
 	eth_h = (struct ether_hdr *) (pkt);
 
-	/*
-	printf("src:");
-	for (int i = 0; i < 6; i ++) {
-		printf("%02x ", eth_header->src_addr[i] & 0xff);
-	}
-	printf(" dest:");
-	for (int i = 0; i < 6; i ++) {
-		printf("%02x ", eth_header->dest_addr[i] & 0xff);
-	}
-	printf(" ethertype: %d", ntohs(eth_header->ethertype));
-	printf("\n");
-	*/
+	//print_ether_hdr(pkt);
+	
+	
 	if (ntohs(eth_h->ethertype) == ETHERTYPE_IP) {
 		ip_h = (struct ip_hdr *)(pkt + sizeof(ether_hdr));
 		
@@ -96,7 +87,7 @@ void sniff_packets(raw_array *packets, int n, char *filter_exp) {
 	printf("device: %s\n", dev);
 	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) raise_error(INVALID_FILTER, 0, NULL, filter_exp);
 	else if (-1 == pcap_setfilter(handle, &fp)) raise_error(NOT_INTALLABLE_FILTER, 0, NULL, filter_exp);
-	else if (-1 == pcap_loop(handle, n, get_packet, (__u_char *)packets)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
+	else if (-1 == pcap_loop(handle, n, get_packet, (uint8_t *)packets)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
 	else printf("\ntotal packets: %d\n", packets->len);
 
 	pcap_close(handle);	

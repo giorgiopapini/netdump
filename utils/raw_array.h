@@ -3,6 +3,9 @@
 
 #include <stddef.h>
 
+#define LEN(type, ...)                (sizeof((type*[]){__VA_ARGS__}) / sizeof(type*))
+
+
 typedef struct raw_array {
     size_t allocated;
     size_t len;

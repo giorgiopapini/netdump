@@ -9,4 +9,6 @@ typedef struct ether_hdr {
     uint16_t ethertype;
 } ether_hdr;
 
+void print_ether_hdr(const uint8_t *pkt);
+
 #endif

@@ -15,8 +15,8 @@
 #include "commands/reset.h"
 
 #define LEN_ARGS(...)                       (sizeof((char*[]){__VA_ARGS__}) / sizeof(char*))
-#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN_ARGS(__VA_ARGS__)))
-#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN_ARGS(__VA_ARGS__)))
+#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN(char, __VA_ARGS__)))
+#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN(char, __VA_ARGS__)))
 
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
@@ -38,7 +38,10 @@ arg * create_arg_from_token(char *token) {
     memcpy(copy, token, token_len);
 
     label_len = find_word_len(token, 0);
-    if (0 >= label_len) raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+    if (0 >= label_len) {
+        raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+        return NULL;
+    }
 
     copy_str_n(&new_arg->label, token, label_len);
     
@@ -107,6 +110,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         }
         else {
             arg *new_arg = create_arg_from_token(token);
+            if (NULL == new_arg) return 0;
             args_num ++;
 
             if (MAX_ARGS < args_num) {
@@ -172,11 +176,11 @@ int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
     missing_args_message = str_concat(missing_args, ARG_PREFIX, " ", j);
     unrecognized_args_message = str_concat(unrecognized_args, ARG_PREFIX, " ", m);
 
-    if (0 == opt_args && 0 != strlen(missing_args_message)) {       // if opt_args is false --> expected args are not optional
+    if (!opt_args && 0 != strlen(missing_args_message)) {       // if opt_args is false --> expected args are not optional
         raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
         valid = 0;
     }
-    else if (1 == opt_args && 0 != strlen(unrecognized_args_message)) {
+    else if (opt_args && 0 != strlen(unrecognized_args_message)) {
         raise_error(UNRECOGNIZED_ARGS_ERROR, 0, NULL, unrecognized_args_message);
         valid = 0;
     }
