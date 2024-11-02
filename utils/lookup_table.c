@@ -1,12 +1,12 @@
+#include <stdio.h>  /* maybe not needed in the future */
 #include "lookup_table.h"
 
-/*
-void get_value(lookup_table table, const char *target, size_t len) {
+
+const char * get_value(entry *table, uint16_t target_key, size_t len) {
     int i;
     
     for (i = 0; i < len; i ++) {
-        printf("[%s] => [%d]\n", table[i].key, table[i].value);
+        if (table[i].key == target_key) return table[i].value;
     }
-    printf("\n");
+    return NULL;
 }
-*/

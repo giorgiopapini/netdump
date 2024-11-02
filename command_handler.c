@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "analizer.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
 
@@ -14,9 +13,8 @@
 #include "commands/clear.h"
 #include "commands/reset.h"
 
-#define LEN_ARGS(...)                       (sizeof((char*[]){__VA_ARGS__}) / sizeof(char*))
-#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN(char, __VA_ARGS__)))
-#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN(char, __VA_ARGS__)))
+#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
+#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
 
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 

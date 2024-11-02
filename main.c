@@ -3,7 +3,6 @@
 #include <unistd.h>
 
 #include "buffer.h"
-#include "analizer.h"
 #include "command_handler.h"
 #include "status_handler.h"
 #include "utils/raw_array.h"

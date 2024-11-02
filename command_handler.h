@@ -15,6 +15,8 @@
 #define ARG_PREFIX          "-"
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
+#define ETHER_HEADER_ARG    "e"
+#define NO_PROM_ARG         "p"
 #define CMD_ARG             "cmd"
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
@@ -25,7 +27,7 @@
 
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
-#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG
+#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, ETHER_HEADER_ARG, NO_PROM_ARG
 #define REQUIRED_ANALIZE_ARGS                
 #define PRINT_ARGS                  QUANTITY_ARG
 #define REQUIRED_PRINT_ARGS         
@@ -34,7 +36,7 @@
 #define EXECUTE_ARGS       
 #define REQUIRED_EXECUTE_ARGS                
 #define HELP_ARGS                   CMD_ARG
-#define REQUIRED_HELP_ARGS          CMD_ARG
+#define REQUIRED_HELP_ARGS          
 
 #define MAX_HASHES 128
 #define MAX_ARGS 256
