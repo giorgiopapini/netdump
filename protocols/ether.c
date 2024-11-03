@@ -69,7 +69,7 @@ void print_ether_hdr(const uint8_t *pkt) {
 	uint16_t ethertype = ntohs(ether_header->ethertype);
 	const char *protocol_name = get_value(ethers, ethertype, (sizeof(ethers) / sizeof(ethers[0])));
     
-	/* printing src (MAC) > dest (MAC) */
+	/* ========================= printing src (MAC) > dest (MAC) ========================= */
 	for (int i = 0; i < 5; i ++) {      /* the last 8 bits are printed after without the trailing ':' */
 		printf("%02x:", ether_header->src_addr[i] & 0xff);
 	}
@@ -79,10 +79,12 @@ void print_ether_hdr(const uint8_t *pkt) {
 		printf("%02x:", ether_header->dest_addr[i] & 0xff);
 	}
     printf("%02x", ether_header->dest_addr[5] & 0xff);
+    /* =================================================================================== */
 
-	/* printing ethertype */
+	/* =============================== printing ethertype ================================ */
 	printf(", ethertype: 0x%04x", ethertype);
 	if (NULL != protocol_name) printf(" (%s)", protocol_name); 
+    /* =================================================================================== */
 
 	printf("\n");
 }

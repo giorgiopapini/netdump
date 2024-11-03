@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <string.h>
 #include <signal.h>
 #include <pcap.h>
@@ -26,39 +25,57 @@ void handle_sigint(int sig) {
 	printf("\n");
 }
 
+netdissect_info dissect_datalink(netdissect_info *datalink_info) {
+	netdissect_info net_info;
+	switch (datalink_info->protocol) {
+		case DLT_EN10MB: {
+			net_info.prev_layer_action = print_ether_hdr;
+			net_info.protocol = ntohs(((struct ether_hdr *)datalink_info->pkt)->ethertype);
+			net_info.pkt = datalink_info->pkt + sizeof(ether_hdr);
+			break;
+		}
+		default: break;
+	}
+	return net_info;
+}
+
+netdissect_info dissect_network(netdissect_info *network_info) {
+	netdissect_info transport_info;
+	switch (network_info->protocol) {
+		case ETHERTYPE_IP: {
+			transport_info.prev_layer_action = print_ip_header;
+			transport_info.protocol = ntohs(((struct ip_hdr *)network_info->pkt)->protocol);
+			transport_info.pkt = network_info->pkt + sizeof(ip_hdr);
+			break;
+		};
+		default: transport_info.prev_layer_action = NULL; break;
+	}
+	return transport_info;
+}
+
+/* IMPORTANT!!!!! --> Maybe using lookup table instead of switch cases? Eventually make a module for each dissection function */
+
+void dissect_packet(command *cmd, const uint8_t *pkt) {
+	int show_datalink = NULL == get_arg(cmd, DATALINK_HDR_ARG) ? 0 : 1;
+	int show_network = 1;
+	netdissect_info datalink_info = { .protocol = pcap_datalink(handle), .pkt = pkt };
+
+	netdissect_info network_info = dissect_datalink(&datalink_info);
+	if (show_datalink && NULL != network_info.prev_layer_action) network_info.prev_layer_action(datalink_info.pkt);
+
+	netdissect_info transport_info = dissect_network(&network_info);  // pkt + correct offset based on datalink protocol
+	if (show_network && NULL != transport_info.prev_layer_action) transport_info.prev_layer_action(network_info.pkt); 
+}
+
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *pkt) {
 	custom_data *data = (custom_data *)args;
-	raw_array *packets = data->packets;
-	command *cmd = data->cmd;
-
 	size_t total_bytes = header->len;
 
 	void *dynamic_pkt = (void *)malloc(total_bytes);
 	memcpy(dynamic_pkt, pkt, total_bytes);
-	insert(packets, dynamic_pkt);
-	
-	struct ether_hdr *eth_h;
-	struct ip_hdr *ip_h;
-	eth_h = (struct ether_hdr *) (pkt);
+	insert(data->packets, dynamic_pkt);
 
-    if (get_arg(cmd, ETHER_HEADER_ARG))	print_ether_hdr(pkt);
-	
-	
-	if (ntohs(eth_h->ethertype) == ETHERTYPE_IP) {
-		ip_h = (struct ip_hdr *)(pkt + sizeof(ether_hdr));
-		
-		printf("\nsrc: ");
-		printf("%u", ntohl(ip_h->src_addr));
-		printf("\n");
-
-		printf("dest: ");
-		printf("%u", ntohl(ip_h->dest_addr));	
-		printf("\n");
-
-		printf("size: ");
-		printf("%d", sizeof(pkt));
-		printf("\n");
-	}
+	dissect_packet(data->cmd, pkt);
 }
 
 void execute_analize(command *cmd, raw_array *packets) {
@@ -75,7 +92,6 @@ void execute_analize(command *cmd, raw_array *packets) {
     custom_data custom_args = { .cmd = cmd, .packets = packets };
 	char *dev;
 	char errbuff[PCAP_ERRBUF_SIZE];
-	int datalink_type;
 	struct bpf_program fp;
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
@@ -92,8 +108,7 @@ void execute_analize(command *cmd, raw_array *packets) {
 	handle = pcap_open_live(dev, BUFSIZ, prom_mode, 1000, errbuff);		// promiscuos mode (third argument) = 1
 	if (NULL == handle) raise_error(NO_ACCESS_DEVICE_ERROR, 1, NULL, dev);
 
-	datalink_type = pcap_datalink(handle);
-	if (-1 == datalink_type) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
+	if (-1 == pcap_datalink(handle)) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
 	
 	signal(SIGINT, handle_sigint);
 

@@ -15,7 +15,7 @@
 #define ARG_PREFIX          "-"
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
-#define ETHER_HEADER_ARG    "e"
+#define DATALINK_HDR_ARG    "e"
 #define NO_PROM_ARG         "p"
 #define CMD_ARG             "cmd"
 
@@ -27,7 +27,7 @@
 
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
-#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, ETHER_HEADER_ARG, NO_PROM_ARG
+#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, DATALINK_HDR_ARG, NO_PROM_ARG
 #define REQUIRED_ANALIZE_ARGS                
 #define PRINT_ARGS                  QUANTITY_ARG
 #define REQUIRED_PRINT_ARGS         
