@@ -7,13 +7,17 @@
 #include "analize.h"
 #include "../ethertypes.h"
 #include "../utils/string_utils.h"
-#include "../protocols/ether.h"
-#include "../protocols/ip.h"
+#include "../protocols/datalink/ether.h"
+#include "../protocols/network/ip.h"
 #include "../status_handler.h"
+
+#include "../protocols/protocol_handler.h"
+#include "../protocols/datalink_handler.h"
 
 #define LOOP_TO_INFINITY -1
 
 static pcap_t *handle;
+
 
 typedef struct custom_data {
 	command *cmd;
@@ -25,46 +29,13 @@ void handle_sigint(int sig) {
 	printf("\n");
 }
 
-netdissect_info dissect_datalink(netdissect_info *datalink_info) {
-	netdissect_info net_info;
-	switch (datalink_info->protocol) {
-		case DLT_EN10MB: {
-			net_info.prev_layer_action = print_ether_hdr;
-			net_info.protocol = ntohs(((struct ether_hdr *)datalink_info->pkt)->ethertype);
-			net_info.pkt = datalink_info->pkt + sizeof(ether_hdr);
-			break;
-		}
-		default: break;
-	}
-	return net_info;
-}
-
-netdissect_info dissect_network(netdissect_info *network_info) {
-	netdissect_info transport_info;
-	switch (network_info->protocol) {
-		case ETHERTYPE_IP: {
-			transport_info.prev_layer_action = print_ip_header;
-			transport_info.protocol = ntohs(((struct ip_hdr *)network_info->pkt)->protocol);
-			transport_info.pkt = network_info->pkt + sizeof(ip_hdr);
-			break;
-		};
-		default: transport_info.prev_layer_action = NULL; break;
-	}
-	return transport_info;
-}
-
-/* IMPORTANT!!!!! --> Maybe using lookup table instead of switch cases? Eventually make a module for each dissection function */
-
 void dissect_packet(command *cmd, const uint8_t *pkt) {
-	int show_datalink = NULL == get_arg(cmd, DATALINK_HDR_ARG) ? 0 : 1;
-	int show_network = 1;
-	netdissect_info datalink_info = { .protocol = pcap_datalink(handle), .pkt = pkt };
+	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
+	
+	protocol_info datalink_info = dissect_datalink(pcap_datalink(handle));
+	if (show_datalink) datalink_info.print_header(pkt);
 
-	netdissect_info network_info = dissect_datalink(&datalink_info);
-	if (show_datalink && NULL != network_info.prev_layer_action) network_info.prev_layer_action(datalink_info.pkt);
-
-	netdissect_info transport_info = dissect_network(&network_info);  // pkt + correct offset based on datalink protocol
-	if (show_network && NULL != transport_info.prev_layer_action) transport_info.prev_layer_action(network_info.pkt); 
+	
 }
 
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *pkt) {

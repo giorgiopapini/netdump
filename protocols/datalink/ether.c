@@ -2,9 +2,9 @@
 #include <arpa/inet.h>
 
 #include "ether.h"
-#include "../ethertypes.h"
-#include "../utils/raw_array.h"
-#include "../utils/lookup_table.h"
+#include "../../ethertypes.h"
+#include "../../utils/raw_array.h"
+#include "../../utils/lookup_table.h"
 
 
 lookup_table ethers = {
