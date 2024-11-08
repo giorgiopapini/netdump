@@ -85,6 +85,4 @@ void print_ether_hdr(const uint8_t *pkt) {
 	printf(", ethertype: 0x%04x", ethertype);
 	if (NULL != protocol_name) printf(" (%s)", protocol_name); 
     /* =================================================================================== */
-
-	printf("\n");
 }

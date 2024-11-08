@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct ip_hdr {
+typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not here inside of ip_hdr */ 
     uint8_t vhlen;
     uint8_t tos;
     uint16_t totlen;

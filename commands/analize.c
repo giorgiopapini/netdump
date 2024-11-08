@@ -3,6 +3,7 @@
 #include <string.h>
 #include <signal.h>
 #include <pcap.h>
+#include <time.h>
 
 #include "analize.h"
 #include "../utils/string_utils.h"
@@ -46,23 +47,37 @@ void dissect_packet(command *cmd, const uint8_t *pkt) {		/* be EXTREMELY careful
 	/* =========================== dissect network ============================ */
 	pkt += datalink_info.hdr_size;
 	protocol_info network_info = dissect_network(net_protocol_type);
-	if (show_network && network_info.print_header != NULL) network_info.print_header(pkt);
+	if (show_network && network_info.print_header != NULL) {
+		printf(" | ");
+		network_info.print_header(pkt);
+	}
 	trans_protocol_type = get_field(pkt, network_info.encap_type_range);
 	/* ======================================================================== */
 
 	/* ========================== dissect transport =========================== */
 	pkt += network_info.hdr_size;
 	/* ======================================================================== */
+	printf("\n");
 }
 
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *pkt) {
 	custom_data *data = (custom_data *)args;
+	struct timeval timestamp = header->ts;
+	time_t rawtime = timestamp.tv_sec;
+    struct tm *timeinfo = localtime(&rawtime);
 	size_t total_bytes = header->len;
 
 	void *dynamic_pkt = (void *)malloc(total_bytes);
 	memcpy(dynamic_pkt, pkt, total_bytes);
 	insert(data->packets, dynamic_pkt);
 
+	printf(
+		"[%02d:%02d:%02d.%06ld] ",
+        timeinfo->tm_hour,
+        timeinfo->tm_min,
+        timeinfo->tm_sec,
+        timestamp.tv_usec
+	);
 	dissect_packet(data->cmd, pkt);
 }
 

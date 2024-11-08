@@ -18,6 +18,6 @@ typedef struct protocol_info {
     void (*print_header)(const uint8_t *pkt);   /* Once the callback function is stored there is no need to "know" the packet_hdr directly. */
 } protocol_info;
 
-int get_field(const uint8_t *pkt, field encap_type_range);
+int get_field(const uint8_t *pkt, field byte_segment);
 
 #endif
