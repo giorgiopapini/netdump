@@ -109,18 +109,18 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         }
         else {
             arg *new_arg = create_arg_from_token(token);
-            if (NULL == new_arg) return 0;
+            if (NULL == new_arg) return 1;
             args_num ++;
 
             if (MAX_ARGS < args_num) {
                 raise_error(TOO_MANY_ARGS, 0, NULL, MAX_ARGS);
-                return 0;
+                return 1;
             }
             add_arg(cmd, new_arg);
             token = strtok(NULL, ARG_PREFIX);
         }
     }
-    return 1;
+    return 0;
 }
 
 int is_command(command *cmd, const char *command) {

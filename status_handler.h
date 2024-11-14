@@ -22,6 +22,7 @@ typedef enum {
     TOO_MANY_ARGS,
     MISSING_ARGS_ERROR,
     UNRECOGNIZED_ARGS_ERROR,
+    BUFFER_OVERFLOW_ERROR
 } err_code;
 
 typedef enum {

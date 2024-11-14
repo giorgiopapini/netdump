@@ -3,12 +3,15 @@
 
 #include <stddef.h>
 
+#define MAX_BUFFER_LEN 256
+
 typedef struct buffer {
-    char *content;
+    char content[MAX_BUFFER_LEN];
     size_t len;
+    int status;
 } buffer;
 
 void populate(buffer *);
-void destroy_buff(buffer *);
+int check_buffer_status(buffer *);
 
 #endif

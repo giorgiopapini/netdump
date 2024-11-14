@@ -26,6 +26,7 @@ char * get_error_format(err_code code) {
         case TOO_MANY_ARGS:                 return "Too many args (MAX_ARGS=%d)"; break;
         case MISSING_ARGS_ERROR:            return "Missing arguments: %s"; break;
         case UNRECOGNIZED_ARGS_ERROR:       return "Unrecognized arguments: %s"; break;
+        case BUFFER_OVERFLOW_ERROR:         return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }
