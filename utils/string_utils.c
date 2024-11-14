@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
+#include <unistd.h>
+#include <termios.h>
 
 #include "string_utils.h"
 #include "../status_handler.h"
@@ -78,4 +80,23 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     new_str[strlen(new_str) - 1] = '\0';
 
     return new_str;
+}
+
+char getch() {
+	struct termios oldt, newt;
+    char ch;
+    
+    // Get the current terminal settings
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    
+    // Disable buffered input and echoing
+    newt.c_lflag &= ~(ICANON | ECHO); 
+    newt.c_cc[VMIN] = 1;
+    newt.c_cc[VTIME] = 0;
+    
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
 }

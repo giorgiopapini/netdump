@@ -8,6 +8,17 @@
 #include "utils/raw_array.h"
 
 
+/*
+	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
+			I need to save (at least) also the timestamp, and size of packet
+	TODO:	(OPTIONAL) Think to add a circular buffer for saving command history. If so add arrow key functionalities support
+			Keys needed to navigate through the command history
+	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
+	TODO:	Understand how to manage byte order of fields given different protocols in 'analize.c' module
+			(not every protocol as to be read in NETWORK BYTE ORDER?). 
+*/
+
+
 void prompt() { printf("netdump > "); };
 
 int main(int argv, char *argc[]) {

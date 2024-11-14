@@ -100,6 +100,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
     char *token = strtok(copy, " ");
+
     while (NULL != token) {
         if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
             cmd->label = (char *)malloc(strlen(token));

@@ -48,7 +48,7 @@ void dissect_packet(command *cmd, const uint8_t *pkt) {		/* be EXTREMELY careful
 	pkt += datalink_info.hdr_size;
 	protocol_info network_info = dissect_network(net_protocol_type);
 	if (show_network && network_info.print_header != NULL) {
-		printf(" | ");
+		if (show_datalink) printf(" | "); /* if datalink not shown, than do not print separator */
 		network_info.print_header(pkt);
 	}
 	trans_protocol_type = get_field(pkt, network_info.encap_type_range);
