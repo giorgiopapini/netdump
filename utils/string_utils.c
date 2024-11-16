@@ -100,3 +100,16 @@ char getch() {
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return ch;
 }
+
+void delete_char(char *str, int pos) {  /* deleting by shifting every other char */
+    int i;
+    int len = strlen(str);
+
+    if (pos == len) return;
+    if (pos < 0) {
+        raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, pos);
+        return;
+    }
+
+    for (i = pos; i < len; i ++) str[i] = str[i + 1];
+}

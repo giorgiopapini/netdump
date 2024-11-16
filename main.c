@@ -37,10 +37,7 @@ int main(int argv, char *argc[]) {
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
 		if (0 == buff.len) continue;
 
-		if (0 != execute_command(&cmd, &packets)) {
-			raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
-			continue;
-		}
+		if (0 != execute_command(&cmd, &packets)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 	}
 
 	return 0;

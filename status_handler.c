@@ -27,6 +27,7 @@ char * get_error_format(err_code code) {
         case MISSING_ARGS_ERROR:            return "Missing arguments: %s"; break;
         case UNRECOGNIZED_ARGS_ERROR:       return "Unrecognized arguments: %s"; break;
         case BUFFER_OVERFLOW_ERROR:         return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
+        case NEGATIVE_BUFFER_INDEX:         return "Buffer index cannot be a negative number '(%d < 0)'"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }
