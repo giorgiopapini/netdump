@@ -113,3 +113,16 @@ void delete_char(char *str, int pos) {  /* deleting by shifting every other char
 
     for (i = pos; i < len; i ++) str[i] = str[i + 1];
 }
+
+void push_char(char *str, int buffer_size, int pos, char c) {
+    int i;
+    int len = strlen(str);
+
+    if ((len + 1) > buffer_size) {
+        raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, buffer_size);
+        return;
+    }
+
+    for (i = (len - 1); i >= pos; i --) str[i + 1] = str[i];
+    str[pos] = c;    
+}

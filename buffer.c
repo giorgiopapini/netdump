@@ -75,10 +75,17 @@ void backspace(buffer *buff, int *pos) {
     buff->len --;
 }
 
-void literal_key(buffer *buff, int *pos, char c) {   /* add character writing in mid string (not only at the end) */
-    buff->content[buff->len] = c;
-    buff->len ++;
-    *pos = *pos + 1;
+void literal_key(buffer *buff, int *pos, char c) {
+    if ((buff->len + 1) > MAX_BUFFER_LEN) {
+        raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, MAX_BUFFER_LEN);
+        return;
+    }
+    else {
+        push_char(buff->content, MAX_BUFFER_LEN, *pos, c);
+        buff->len ++;
+        refresh_output(buff, *pos);
+        *pos = *pos + 1;
+    }
 }
 
 void populate(buffer *buff) {
@@ -99,7 +106,7 @@ void populate(buffer *buff) {
         if (c == 127 || c == 8) {   /* if pressed key == backspace */
             if (buff->len > 0) backspace(buff, &pos);
         }
-        else if (c == '\033') {     /* catch special keys, add behaviour only to arrow keys (for now) */
+        else if (c == '\033') {  /* catch special keys, add behaviour only to arrow keys (for now) */
             getch();
             switch(getch()) {
                 case ARROW_UP_KEY:          arrow_up(); break;
@@ -110,11 +117,9 @@ void populate(buffer *buff) {
                 default:                    printf("\n"); break;    /* (e.g.) absorbing the esc char */
             }
         }
-        else {
-            if (c != '\n') literal_key(buff, &pos, c);
-            printf("%c", c);
-        }
+        else if (c != '\n') literal_key(buff, &pos, c);
     }
+    printf("\n");   /* outside the while loop, it means that the enter key has been pressed */
 
     buff->content[buff->len] = '\0';
     normalize_content(buff);

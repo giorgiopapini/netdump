@@ -8,5 +8,6 @@ long str_to_num(char *str);
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str);
 char getch();   /* simulates behaviour of getch() function in <conio.h> for Win systems. Get char without the enter */
 void delete_char(char *str, int pos);
+void push_char(char *str, int buffer_size, int pos, char c);
 
 #endif
