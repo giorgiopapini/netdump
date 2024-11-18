@@ -36,18 +36,12 @@ int main(int argv, char *argc[]) {
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 	circular_list history = { .head = NULL, .len = 0 };
-
+	
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();
 		populate(&buff);	/* populate() alredy overrides previously buffered data */
-
-		/*
-			1) dinamically allocate a copy of buffer
-			2) new_node = create_node(buff_addr)
-			4) pass free(buffer), or destroy_buff function to push_node, to let it deallocate content when deallocating node
-			3) push_node(history, new_node)
-		*/
+		push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN);	/* push curr buffer to history */
 
 		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;

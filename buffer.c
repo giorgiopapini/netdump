@@ -15,6 +15,33 @@
 #define CANC_KEY '3'
 
 
+buffer *create_buffer() {
+    buffer *new_buff = (buffer *)malloc(sizeof(buffer));
+    if (NULL == new_buff) raise_error(NULL_POINTER, 1, NULL, "new_buff", __FILE__);
+    
+    memset(new_buff->content, 0, sizeof(new_buff->content));
+    new_buff->len = 0;
+    new_buff->status = 0;
+    return new_buff;
+}
+
+void copy_buffer(buffer *src, buffer *dest) {
+    int i;
+    for (i = 0; i < src->len; i ++) dest->content[i] = src->content[i];
+    dest->len = src->len;
+    dest->status = src->status;
+}
+
+buffer *copy_to_heap(buffer *src) {
+    buffer *dest = create_buffer();
+    int i;
+    
+    for (i = 0; i < src->len; i ++) dest->content[i] = src->content[i];
+    dest->len = src->len;
+    dest->status = src->status;
+    return dest;
+}
+
 void normalize_content(buffer *buff) {
     char *normalized_str = get_trimmed_str(buff->content);
     strncpy(buff->content, normalized_str, MAX_BUFFER_LEN - 1);

@@ -11,6 +11,9 @@ typedef struct buffer {
     int status;
 } buffer;
 
+buffer *create_buffer();
+void copy_buffer(buffer *src, buffer *dest);
+buffer *copy_to_heap(buffer *src);
 void populate(buffer *);
 int check_buffer_status(buffer *);
 
