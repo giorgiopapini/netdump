@@ -59,12 +59,21 @@ void refresh_output(buffer *buff, int pos) {
     /* refresh_output() should not change any state of the buffer. The length is then decremented in the caller function */
 }
 
-void arrow_up() {
-    printf("|up|");
+void arrow_up(buffer *buff, int *pos, circular_list *list) {
+    if (NULL == list->head) return;
+
+    memcpy(buff, list->curr->content, sizeof(buffer));
+    refresh_output(buff, *pos);
+    list->curr = list->curr->prev;
 }
 
-void arrow_down() {
-    printf("|down|");
+void arrow_down(buffer *buff, int *pos, circular_list *list) {
+    if (NULL == list->head) return;
+    if (list->curr->next == list->head) return; /* if at the end of the history, do not return to head */
+
+    memcpy(buff, list->curr->content, sizeof(buffer));
+    refresh_output(buff, MAX_BUFFER_LEN - 1);
+    list->curr = list->curr->next;
 }
 
 void arrow_right(buffer *buff, int *pos) {
@@ -115,7 +124,7 @@ void literal_key(buffer *buff, int *pos, char c) {
     }
 }
 
-void populate(buffer *buff) {
+void populate(buffer *buff, circular_list *history) {
     char c = 0;
     int pos = 0;
 
@@ -136,8 +145,8 @@ void populate(buffer *buff) {
         else if (c == '\033') {  /* catch special keys, add behaviour only to arrow keys (for now) */
             getch();
             switch(getch()) {
-                case ARROW_UP_KEY:          arrow_up(); break;
-                case ARROW_DOWN_KEY:        arrow_down(); break;
+                case ARROW_UP_KEY:          arrow_up(buff, &pos, history); break;
+                case ARROW_DOWN_KEY:        arrow_down(buff, &pos, history); break;
                 case ARROW_RIGHT_KEY:       arrow_right(buff, &pos); break;
                 case ARROW_LEFT_KEY:        arrow_left(buff, &pos); break;
                 case CANC_KEY:              canc(buff, &pos); break;
@@ -158,4 +167,9 @@ int check_buffer_status(buffer *buff) {
         default: break;
     }
     return buff->status;
+}
+
+void destroy_buffer(void *buff) { /* it could be more complex in a future version */
+    if (NULL == buff) raise_error(NULL_POINTER, 1, NULL, "buff", __FILE__);
+    else free(buff);
 }

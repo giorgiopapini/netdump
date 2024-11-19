@@ -13,10 +13,9 @@
 	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
 			I need to save (at least) also the timestamp, and size of packet
 	
-	
-	TODO:	(OPTIONAL) Think to add a circular buffer for saving command history. If so add arrow key functionalities support
-			Keys needed to navigate through the command history
-	TODO:	Add UP and DOWN key functionalities
+
+	TODO:	Understand how to make the refresh_output() function work when UP ARROW and DOWN ARROW keys are pressed
+	TODO:	Add destroy_list(circular_list *list) function to deallocate every node when the program end the execution
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1)	
 	
@@ -40,8 +39,10 @@ int main(int argv, char *argc[]) {
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();
-		populate(&buff);	/* populate() alredy overrides previously buffered data */
-		push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN);	/* push curr buffer to history */
+		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
+		
+		/* if the max len is hit, the function deallocates the node and what is inside of it (e.g. buffer) */
+		push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);	/* push curr buffer to history */
 
 		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;

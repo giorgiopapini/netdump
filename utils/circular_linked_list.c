@@ -14,7 +14,7 @@ node *create_node(void *content) {
     return new_node;
 }
 
-void push_node(circular_list *list, node *new_node, int max_len) {
+void push_node(circular_list *list, node *new_node, int max_len, void (*deallocate_content_func)(void *)) {
     node *tmp = list->head;
 
     if (NULL == list->head) {
@@ -30,7 +30,7 @@ void push_node(circular_list *list, node *new_node, int max_len) {
 
         if ((list->len + 1) > max_len) { /* if out of bounds, deallocate head and set to head the immediately next node */
             tmp = list->head->next;
-            destroy_node(list->head, NULL);
+            destroy_node(list->head, deallocate_content_func);
             list->head = tmp;
         }
         else list->len ++;  /* otherwise do nothing, just increment the actual size of the list */
@@ -38,6 +38,8 @@ void push_node(circular_list *list, node *new_node, int max_len) {
         new_node->next = list->head;
         list->head->prev = new_node;
     }
+
+    list->curr = new_node;  /* when new new node inserted, curr pointer always points to the new node */
 }
 
 void destroy_node(node *curr, void (*deallocate_content)(void *)) {
