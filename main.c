@@ -42,11 +42,11 @@ int main(int argv, char *argc[]) {
 		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
 		
 		/* if the max len is hit, the function deallocates the node and what is inside of it (e.g. buffer) */
-		push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);	/* push curr buffer to history */
+		if(buff.len > 0) push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
 
 		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
-		if (0 == buff.len) continue;
+		if (buff.len == 0) continue;
 
 		if (0 != execute_command(&cmd, &packets)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 	}

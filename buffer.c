@@ -48,31 +48,35 @@ void normalize_content(buffer *buff) {
     buff->content[buff->len] = '\0';
 }
 
-void refresh_output(buffer *buff, int pos) {
+void raw_refresh(buffer *buff, int pos, int old_len) {   /* refresh string, the cursor is kept at the end of string */
     int i;
 
-    if (pos != buff->len) printf("\033[%dC", buff->len - pos);  /* move the cursor to end of string if not alredy there */
-    for (i = buff->len; i > 0; i --) printf("\b \b");  /* delete old string */   
-    for (i = 0; i < buff->len; i ++) printf("%c", buff->content[i]);  /* print updated string (prints also final '\0') */;  
+    if (pos != old_len) printf("\033[%dC", old_len - pos);  /* move the cursor to end of string if not alredy there */
+    for (i = old_len; i > 0; i --) printf("\b \b");  /* delete old string */   
+    for (i = 0; i < old_len; i ++) printf("%c", buff->content[i]);  /* print updated string (prints also final '\0') */; 
+}
 
-    if ((buff->len - 1) != pos) printf("\033[%dD", (buff->len - 1) - pos);  /* reset the pointer to previous position */
-    /* refresh_output() should not change any state of the buffer. The length is then decremented in the caller function */
+void refresh_output(buffer *buff, int pos, int old_len) {
+    raw_refresh(buff, pos, old_len);
+    if ((old_len- 1) != pos) printf("\033[%dD", (old_len - 1) - pos);  /* reset the pointer to previous position */
 }
 
 void arrow_up(buffer *buff, int *pos, circular_list *list) {
+    int old_len = buff->len;
     if (NULL == list->head) return;
 
-    memcpy(buff, list->curr->content, sizeof(buffer));
-    refresh_output(buff, *pos);
+    memcpy(buff, list->curr->content, sizeof(buffer));      /* buff len is updated, but i need old length to make refresh work */
+    raw_refresh(buff, 0, old_len);
     list->curr = list->curr->prev;
 }
 
 void arrow_down(buffer *buff, int *pos, circular_list *list) {
+    int old_len = buff->len;
     if (NULL == list->head) return;
     if (list->curr->next == list->head) return; /* if at the end of the history, do not return to head */
 
     memcpy(buff, list->curr->content, sizeof(buffer));
-    refresh_output(buff, MAX_BUFFER_LEN - 1);
+    raw_refresh(buff, 0, old_len);
     list->curr = list->curr->next;
 }
 
@@ -91,35 +95,38 @@ void arrow_left(buffer *buff, int *pos) {
 }
 
 void canc(buffer *buff, int *pos) {
+    int old_len = buff->len;
     int i;
     getch();
     if (buff->len == *pos) return;
 
     delete_char(buff->content, *pos);
-    refresh_output(buff, *pos);
     buff->len --;
+    refresh_output(buff, *pos, old_len);
 }
 
 void backspace(buffer *buff, int *pos) {
+    int old_len = buff->len;
     if (0 >= *pos) return;
 
     delete_char(buff->content, *pos - 1);
-    refresh_output(buff, *pos);
-
-    if (*pos < buff->len) arrow_left(buff, pos);
-    else *pos = *pos - 1;
     buff->len --;
+    refresh_output(buff, *pos, old_len);
+
+    if (*pos < old_len) arrow_left(buff, pos);
+    else *pos = *pos - 1;
 }
 
 void literal_key(buffer *buff, int *pos, char c) {
-    if ((buff->len + 1) > MAX_BUFFER_LEN) {
+    int old_len = buff->len;
+    if ((old_len + 1) > MAX_BUFFER_LEN) {
         raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, MAX_BUFFER_LEN);
         return;
     }
     else {
         push_char(buff->content, MAX_BUFFER_LEN, *pos, c);
         buff->len ++;
-        refresh_output(buff, *pos);
+        refresh_output(buff, *pos, buff->len);
         *pos = *pos + 1;
     }
 }
