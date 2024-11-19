@@ -13,9 +13,7 @@
 	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
 			I need to save (at least) also the timestamp, and size of packet
 	
-
-	TODO:	Understand how to make the refresh_output() function work when UP ARROW and DOWN ARROW keys are pressed
-	TODO:	Add destroy_list(circular_list *list) function to deallocate every node when the program end the execution
+	
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1)	
 	
