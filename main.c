@@ -13,7 +13,7 @@
 	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
 			I need to save (at least) also the timestamp, and size of packet
 	
-	
+	TODO:	Why down arrow always start from the head?. Verify if this is the correct behaviour or not
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1)	
 	
@@ -39,8 +39,13 @@ int main(int argv, char *argc[]) {
 		prompt();
 		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
 		
-		/* if the max len is hit, the function deallocates the node and what is inside of it (e.g. buffer) */
-		if(buff.len > 0) push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
+		/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
+		if (history.head != NULL) {
+			if (!compare_buffers(history.head->prev->content, &buff) && buff.len > 0) {
+				push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
+			}
+		}
+		else push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
 
 		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;

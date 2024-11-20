@@ -42,6 +42,18 @@ buffer *copy_to_heap(buffer *src) {
     return dest;
 }
 
+int compare_buffers(buffer *b1, buffer *b2) {
+    if (NULL == b1 || NULL == b2) raise_error(NULL_POINTER, 1, NULL, "b1 || b2", __FILE__);
+    
+    if (b1->len != b2->len) return 0;
+    if (b1->status != b2->status) return 0;
+    
+    if (NULL == b2->content && NULL == b1->content) return 1;
+    else if (0 != strcmp(b1->content, b2->content)) return 0;
+
+    return 1;
+}
+
 void normalize_content(buffer *buff) {
     char *normalized_str = get_trimmed_str(buff->content);
     strncpy(buff->content, normalized_str, MAX_BUFFER_LEN - 1);
@@ -63,7 +75,7 @@ void set_cursor_to_prev_pos(int len, int pos) {
 void arrow_up(buffer *buff, int *pos, circular_list *list) {
     int old_len = buff->len;
     if (NULL == list->head) return;
-    
+
     list->curr = list->curr->prev;
     memcpy(buff, list->curr->content, sizeof(buffer));
     refresh_output(buff, *pos, old_len);  /* buff len is updated, but i need old length to make refresh work */
@@ -72,8 +84,15 @@ void arrow_up(buffer *buff, int *pos, circular_list *list) {
 
 void arrow_down(buffer *buff, int *pos, circular_list *list) {
     int old_len = buff->len;
+    int i;
+
     if (NULL == list->head) return;
-    if (list->curr->next == list->head) return;  /* if at the end of the history, do not return to head */
+    if (list->curr->next == list->head) {
+        //if (buff->len != 0) for (i = 0; i < old_len; i ++) printf("\b \b");
+        //buff->len = 0;
+        //*pos = 0;
+        return;
+    }
 
     list->curr = list->curr->next;
     memcpy(buff, list->curr->content, sizeof(buffer));
@@ -167,6 +186,9 @@ void populate(buffer *buff, circular_list *history) {
         else if (c != '\n') literal_key(buff, &pos, c);
     }
     printf("\n");   /* outside the while loop, it means that the enter key has been pressed */
+
+    /* every time enter is pressed, the history starts from the history->curr = history->head */
+    if (NULL != history->curr) history->curr = history->head;
 
     buff->content[buff->len] = '\0';
     normalize_content(buff);

@@ -39,7 +39,7 @@ void push_node(circular_list *list, node *new_node, int max_len, void (*dealloca
         list->head->prev = new_node;
     }
 
-    list->curr = new_node->next;  /* when new new node inserted, curr pointer always points to the new node */
+    list->curr = new_node->next;  /* when new new node inserted, curr pointer always points to the new node->next */
 }
 
 void destroy_node(node *curr, void (*deallocate_content)(void *)) {
