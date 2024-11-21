@@ -14,6 +14,10 @@
 #define ARROW_LEFT_KEY 'D'
 #define CANC_KEY '3'
 
+#define MOVE_CURSOR(x, y)                   (printf("\033[%d;%dH", (y), (x)))
+#define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%dC", len - pos); } while (0)
+#define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos); } while (0)
+#define CLEAR_STRN(len)                     do { for (int i = len; i > 0; i --) printf("\b \b"); } while (0)
 
 buffer *create_buffer() {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
@@ -60,24 +64,11 @@ void normalize_content(buffer *buff) {
     buff->content[buff->len] = '\0';
 }
 
-void set_cursor_to_end(int pos, int len) {
-    if (pos != len) printf("\033[%dC", len - pos);  /* move the cursor to end of string if not alredy there */
-}
-
-void set_cursor_to_prev_pos(int pos, int len) {
-    if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos);
-}
-
-void clear_strn(int len) {
-    int i;
-    for (i = len; i > 0; i --) printf("\b \b");  /* delete old string */
-}
-
 void refresh_output(buffer *buff, int pos, int old_len) {   /* refresh string, the cursor is kept at the end of string */
     int i;
-
-    set_cursor_to_end(pos, old_len);
-    clear_strn(old_len);   
+    
+    MOVE_CURSOR_TO_END(pos, old_len);
+    CLEAR_STRN(old_len);   
     for (i = 0; i < buff->len; i ++) printf("%c", buff->content[i]);  /* print new string (prints also final '\0') */; 
 }
 
@@ -102,8 +93,8 @@ void arrow_down(buffer *buff, int *pos, circular_list *list, int *end) {
     }
     if (list->curr->next == list->head) {
         list->curr = list->curr->next;
-        set_cursor_to_end(*pos, old_len);
-        clear_strn(old_len);
+        MOVE_CURSOR_TO_END(*pos, old_len);
+        CLEAR_STRN(old_len);
         
         buff->len = 0;
         *pos = 0;
@@ -140,7 +131,7 @@ void canc(buffer *buff, int *pos) {
     delete_char(buff->content, *pos);
     buff->len --;
     refresh_output(buff, *pos, old_len);
-    set_cursor_to_prev_pos(*pos, old_len);
+    MOVE_CURSOR_TO_PREV_POS(*pos, old_len);
 }
 
 void backspace(buffer *buff, int *pos) {
@@ -150,7 +141,7 @@ void backspace(buffer *buff, int *pos) {
     delete_char(buff->content, *pos - 1);
     buff->len --;
     refresh_output(buff, *pos, old_len);
-    set_cursor_to_prev_pos(*pos, old_len);
+    MOVE_CURSOR_TO_PREV_POS(*pos, old_len);
 
     if (*pos < old_len) arrow_left(buff, pos);
     else *pos = *pos - 1;
@@ -166,7 +157,7 @@ void literal_key(buffer *buff, int *pos, char c) {
         push_char(buff->content, MAX_BUFFER_LEN, *pos, c);
         buff->len ++;
         refresh_output(buff, *pos, buff->len);
-        set_cursor_to_prev_pos(*pos, buff->len);
+        MOVE_CURSOR_TO_PREV_POS(*pos, buff->len);
         *pos = *pos + 1;
     }
 }
