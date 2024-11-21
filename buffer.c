@@ -72,25 +72,31 @@ void set_cursor_to_prev_pos(int len, int pos) {
     if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos);
 }
 
-void arrow_up(buffer *buff, int *pos, circular_list *list) {
+void arrow_up(buffer *buff, int *pos, circular_list *list, int *end) {
     int old_len = buff->len;
     if (NULL == list->head) return;
 
+    *end = 0;  /* not at the end of history */
     list->curr = list->curr->prev;
     memcpy(buff, list->curr->content, sizeof(buffer));
     refresh_output(buff, *pos, old_len);  /* buff len is updated, but i need old length to make refresh work */
     *pos = buff->len;
 }
 
-void arrow_down(buffer *buff, int *pos, circular_list *list) {
+void arrow_down(buffer *buff, int *pos, circular_list *list, int *end) {
     int old_len = buff->len;
     int i;
 
     if (NULL == list->head) return;
+    if (list->curr == list->head) {
+        if (*end) return;  /* if at the end of history than nop. Otherwise execute arrow down behaviour */
+    }
     if (list->curr->next == list->head) {
-        //if (buff->len != 0) for (i = 0; i < old_len; i ++) printf("\b \b");
-        //buff->len = 0;
-        //*pos = 0;
+        if (buff->len != 0) for (i = 0; i < old_len; i ++) printf("\b \b");
+        list->curr = list->curr->next;
+        buff->len = 0;
+        *pos = 0;
+        *end = 1;  /* currently at the end of history */
         return;
     }
 
@@ -157,10 +163,13 @@ void literal_key(buffer *buff, int *pos, char c) {
 void populate(buffer *buff, circular_list *history) {
     char c = 0;
     int pos = 0;
+    int end = 1;
 
     memset(buff->content, 0, buff->len);
     buff->len = 0;
     buff->status = 0;
+
+    if (NULL != history->curr) history->curr = history->head;
 
     while (c != '\n') {
         if (buff->len + 1 >= MAX_BUFFER_LEN) {
@@ -175,8 +184,8 @@ void populate(buffer *buff, circular_list *history) {
         else if (c == '\033') {  /* catch special keys, add behaviour only to arrow keys (for now) */
             getch();
             switch(getch()) {
-                case ARROW_UP_KEY:          arrow_up(buff, &pos, history); break;
-                case ARROW_DOWN_KEY:        arrow_down(buff, &pos, history); break;
+                case ARROW_UP_KEY:          arrow_up(buff, &pos, history, &end); break;
+                case ARROW_DOWN_KEY:        arrow_down(buff, &pos, history, &end); break;
                 case ARROW_RIGHT_KEY:       arrow_right(buff, &pos); break;
                 case ARROW_LEFT_KEY:        arrow_left(buff, &pos); break;
                 case CANC_KEY:              canc(buff, &pos); break;
@@ -188,7 +197,7 @@ void populate(buffer *buff, circular_list *history) {
     printf("\n");   /* outside the while loop, it means that the enter key has been pressed */
 
     /* every time enter is pressed, the history starts from the history->curr = history->head */
-    if (NULL != history->curr) history->curr = history->head;
+    //if (NULL != history->curr) history->curr = history->head;
 
     buff->content[buff->len] = '\0';
     normalize_content(buff);

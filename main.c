@@ -14,6 +14,9 @@
 			I need to save (at least) also the timestamp, and size of packet
 	
 	TODO:	Why down arrow always start from the head?. Verify if this is the correct behaviour or not
+			THINK ABOUT USING A FLAG TO CHECK IF USER IS AT THE END OF THE HISTORY, OTHERWISE DOWN ARROW ON
+			HISTORY->HEAD SHOULD BE ALLOWED
+
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1)	
 	
@@ -39,6 +42,8 @@ int main(int argv, char *argc[]) {
 		prompt();
 		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
 		
+		if (buff.len == 0) continue;
+
 		/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
 		if (history.head != NULL) {
 			if (!compare_buffers(history.head->prev->content, &buff) && buff.len > 0) {
@@ -49,8 +54,7 @@ int main(int argv, char *argc[]) {
 
 		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
-		if (buff.len == 0) continue;
-
+		
 		if (0 != execute_command(&cmd, &packets)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 	}
 
