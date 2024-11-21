@@ -12,14 +12,9 @@
 /*
 	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
 			I need to save (at least) also the timestamp, and size of packet
-	
-	TODO:	Why down arrow always start from the head?. Verify if this is the correct behaviour or not
-			THINK ABOUT USING A FLAG TO CHECK IF USER IS AT THE END OF THE HISTORY, OTHERWISE DOWN ARROW ON
-			HISTORY->HEAD SHOULD BE ALLOWED
 
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1)	
-	
 
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
 	TODO:	Understand how to manage byte order of fields given different protocols in 'analize.c' module
@@ -52,9 +47,8 @@ int main(int argv, char *argc[]) {
 		}
 		else push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
 
-		if (0 != check_buffer_status(&buff)) continue;	/* if an error occoured, than skip to next iteration */
+		if (0 != check_buffer_status(&buff)) continue;
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
-		
 		if (0 != execute_command(&cmd, &packets)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 	}
 

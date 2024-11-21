@@ -60,16 +60,25 @@ void normalize_content(buffer *buff) {
     buff->content[buff->len] = '\0';
 }
 
+void set_cursor_to_end(int pos, int len) {
+    if (pos != len) printf("\033[%dC", len - pos);  /* move the cursor to end of string if not alredy there */
+}
+
+void set_cursor_to_prev_pos(int pos, int len) {
+    if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos);
+}
+
+void clear_strn(int len) {
+    int i;
+    for (i = len; i > 0; i --) printf("\b \b");  /* delete old string */
+}
+
 void refresh_output(buffer *buff, int pos, int old_len) {   /* refresh string, the cursor is kept at the end of string */
     int i;
 
-    if (pos != old_len) printf("\033[%dC", old_len - pos);  /* move the cursor to end of string if not alredy there */
-    for (i = old_len; i > 0; i --) printf("\b \b");  /* delete old string */   
+    set_cursor_to_end(pos, old_len);
+    clear_strn(old_len);   
     for (i = 0; i < buff->len; i ++) printf("%c", buff->content[i]);  /* print new string (prints also final '\0') */; 
-}
-
-void set_cursor_to_prev_pos(int len, int pos) {
-    if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos);
 }
 
 void arrow_up(buffer *buff, int *pos, circular_list *list, int *end) {
@@ -92,8 +101,10 @@ void arrow_down(buffer *buff, int *pos, circular_list *list, int *end) {
         if (*end) return;  /* if at the end of history than nop. Otherwise execute arrow down behaviour */
     }
     if (list->curr->next == list->head) {
-        if (buff->len != 0) for (i = 0; i < old_len; i ++) printf("\b \b");
         list->curr = list->curr->next;
+        set_cursor_to_end(*pos, old_len);
+        clear_strn(old_len);
+        
         buff->len = 0;
         *pos = 0;
         *end = 1;  /* currently at the end of history */
@@ -129,7 +140,7 @@ void canc(buffer *buff, int *pos) {
     delete_char(buff->content, *pos);
     buff->len --;
     refresh_output(buff, *pos, old_len);
-    set_cursor_to_prev_pos(old_len, *pos);
+    set_cursor_to_prev_pos(*pos, old_len);
 }
 
 void backspace(buffer *buff, int *pos) {
@@ -139,7 +150,7 @@ void backspace(buffer *buff, int *pos) {
     delete_char(buff->content, *pos - 1);
     buff->len --;
     refresh_output(buff, *pos, old_len);
-    set_cursor_to_prev_pos(old_len, *pos);
+    set_cursor_to_prev_pos(*pos, old_len);
 
     if (*pos < old_len) arrow_left(buff, pos);
     else *pos = *pos - 1;
@@ -155,7 +166,7 @@ void literal_key(buffer *buff, int *pos, char c) {
         push_char(buff->content, MAX_BUFFER_LEN, *pos, c);
         buff->len ++;
         refresh_output(buff, *pos, buff->len);
-        set_cursor_to_prev_pos(buff->len, *pos);
+        set_cursor_to_prev_pos(*pos, buff->len);
         *pos = *pos + 1;
     }
 }
@@ -169,7 +180,7 @@ void populate(buffer *buff, circular_list *history) {
     buff->len = 0;
     buff->status = 0;
 
-    if (NULL != history->curr) history->curr = history->head;
+    if (NULL != history->curr) history->curr = history->head;  /* at each populate() call reset history->curr position */
 
     while (c != '\n') {
         if (buff->len + 1 >= MAX_BUFFER_LEN) {
@@ -195,9 +206,6 @@ void populate(buffer *buff, circular_list *history) {
         else if (c != '\n') literal_key(buff, &pos, c);
     }
     printf("\n");   /* outside the while loop, it means that the enter key has been pressed */
-
-    /* every time enter is pressed, the history starts from the history->curr = history->head */
-    //if (NULL != history->curr) history->curr = history->head;
 
     buff->content[buff->len] = '\0';
     normalize_content(buff);
