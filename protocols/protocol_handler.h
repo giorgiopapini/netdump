@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "../command_handler.h"
+#include "../utils/packet.h"
+
 /* { PROTOCOL, sizeof(proto_hdr), print_proto_header } */
 
 typedef struct field {
@@ -19,7 +22,7 @@ typedef struct protocol_info {
     void (*print_header)(const uint8_t *pkt);   /* Once the callback function is stored there is no need to "know" the packet_hdr directly. */
 } protocol_info;
 
-
+void dissect_packet(command *cmd, packet *pkt);
 int get_field(const uint8_t *pkt, field byte_segment);
 
 #endif

@@ -29,42 +29,14 @@ void handle_sigint(int sig) {
 	printf("\n");
 }
 
-void dissect_packet(command *cmd, const uint8_t *pkt) {		/* be EXTREMELY careful, use ntohs when needed */
-	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
-	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
-	int net_protocol_type = 0;
-	int trans_protocol_type = 0;
-
-	/* =========================== dissect datalink =========================== */
-	protocol_info datalink_info = dissect_datalink(pcap_datalink(handle));
-	if (show_datalink && datalink_info.print_header != NULL) datalink_info.print_header(pkt);
-	net_protocol_type = get_field(pkt, datalink_info.encap_type_range);
-	/* ======================================================================== */
-
-	/* =========================== dissect network ============================ */
-	pkt += datalink_info.hdr_size;
-	protocol_info network_info = dissect_network(net_protocol_type);
-	if (show_network && network_info.print_header != NULL) {
-		if (show_datalink) printf(" | "); /* if datalink not shown, than do not print separator */
-		network_info.print_header(pkt);
-	}
-	trans_protocol_type = get_field(pkt, network_info.encap_type_range);
-	/* ======================================================================== */
-
-	/* ========================== dissect transport =========================== */
-	pkt += network_info.hdr_size;
-	/* ======================================================================== */
-	printf("\n");
-}
-
-void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *pkt) {
+void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes) {
 	custom_data *data = (custom_data *)args;
 	struct timeval timestamp = header->ts;
 	time_t rawtime = timestamp.tv_sec;
     struct tm *timeinfo = localtime(&rawtime);
 
-	packet *new_pkt = create_packet(header, pkt);
-	insert(data->packets, new_pkt);
+	packet *pkt = create_packet(header, pcap_datalink(handle), bytes);
+	insert(data->packets, pkt);
 
 	printf(
 		"[%02d:%02d:%02d.%06ld] ",

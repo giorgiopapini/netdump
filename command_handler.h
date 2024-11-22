@@ -30,7 +30,7 @@
 #define REQUIRED_EXIT_ARGS                   
 #define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG
 #define REQUIRED_ANALIZE_ARGS                
-#define PRINT_ARGS                  QUANTITY_ARG
+#define PRINT_ARGS                  QUANTITY_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG
 #define REQUIRED_PRINT_ARGS         
 #define RESET_ARGS         
 #define REQUIRED_RESET_ARGS                  

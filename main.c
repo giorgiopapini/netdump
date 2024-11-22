@@ -16,10 +16,10 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
-	TODO:	Maybe store dissect_packet logic not inside analize.c, create a separate module (it would make sense to write it
-			into the 'protocol_handler.h/.c' module). Because also print command needs to dissect packets. 
-			I would need to store somewhere the pcap_datalink(handle) return value. By doing so i dont need to pass around the 
-			global variable 'handle'
+	
+	TODO:	Implement a better design for the timestamp implementation in 'analize.c'. Keep in mind that I will need to use
+			timestamp related code also in print command and (maybe) in visualize command. Maybe add a 'utils/time' module to
+			manage every operation related to timestamp management (formatting, searching, etc...)
 */
 
 
