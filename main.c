@@ -10,9 +10,6 @@
 
 
 /*
-	TODO:	Remake the raw_array struct. I need to save not simply void pointers to byte array (packet).
-			I need to save (at least) also the timestamp, and size of packet
-
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1). pos variable does not need to become a 2D variable (maybe). It is obvious that when the eos is
 			reached it has to go up or down by maximum 1 line. Find a way to get terminal cols and absolute position of cursor
