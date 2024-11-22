@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "analize.h"
+#include "../utils/packet.h"
 #include "../utils/string_utils.h"
 #include "../status_handler.h"
 
@@ -34,14 +35,10 @@ void dissect_packet(command *cmd, const uint8_t *pkt) {		/* be EXTREMELY careful
 	int net_protocol_type = 0;
 	int trans_protocol_type = 0;
 
-	/* IMPORTANT!!! Understand how to manage ntohs. Do every packet need it? If not, how to know which packets need it? 
-	   do it both for (net_protocol_type) and (trans_protocol_type)
-	*/
-	
 	/* =========================== dissect datalink =========================== */
 	protocol_info datalink_info = dissect_datalink(pcap_datalink(handle));
 	if (show_datalink && datalink_info.print_header != NULL) datalink_info.print_header(pkt);
-	net_protocol_type = ntohs(get_field(pkt, datalink_info.encap_type_range));
+	net_protocol_type = get_field(pkt, datalink_info.encap_type_range);
 	/* ======================================================================== */
 
 	/* =========================== dissect network ============================ */
@@ -65,11 +62,9 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	struct timeval timestamp = header->ts;
 	time_t rawtime = timestamp.tv_sec;
     struct tm *timeinfo = localtime(&rawtime);
-	size_t total_bytes = header->len;
 
-	void *dynamic_pkt = (void *)malloc(total_bytes);
-	memcpy(dynamic_pkt, pkt, total_bytes);
-	insert(data->packets, dynamic_pkt);
+	packet *new_pkt = create_packet(header, pkt);
+	insert(data->packets, new_pkt);
 
 	printf(
 		"[%02d:%02d:%02d.%06ld] ",

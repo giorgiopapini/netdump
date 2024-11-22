@@ -30,12 +30,12 @@ void allocate(raw_array *arr, int n) {
     }
 }
 
-void insert(raw_array *arr, void *ptr_bytes) {
+void insert(raw_array *arr, void *pkt) {
     if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
     if ((arr->len + 1) > arr->allocated) allocate(arr, 1);
     /* allocating only 1 slot each time is suboptimal, should only happen (for now) when scanning infinite amount of packets */
     
-    arr->values[arr->len] = ptr_bytes;
+    arr->values[arr->len] = pkt;
     arr->len ++;
 }
 
@@ -47,11 +47,11 @@ void * get(raw_array *arr, size_t index) {
     
 }
 
-void reset_arr(raw_array *arr) {
+void reset_arr(raw_array *arr, void (*deallocate_content)(void *)) {
     if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
 
     int i;
-    for (i = 0; i < arr->len; i ++) free(arr->values[i]);
+    for (i = 0; i < arr->len; i ++) deallocate_content(arr->values[i]);
     free(arr->values);
 
     arr->allocated = 0;
