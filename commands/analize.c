@@ -3,12 +3,10 @@
 #include <string.h>
 #include <signal.h>
 #include <pcap.h>
-#include <time.h>
 
 #include "analize.h"
 #include "../utils/packet.h"
 #include "../utils/string_utils.h"
-#include "../utils/timestamp.h"
 #include "../status_handler.h"
 
 #include "../protocols/protocol_handler.h"
@@ -33,10 +31,9 @@ void handle_sigint(int sig) {
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes) {
 	custom_data *data = (custom_data *)args;
 
-	packet *pkt = create_packet(header, pcap_datalink(handle), bytes);
+	/* data->packets->len + 1 because otherwise it would start from 0 */
+	packet *pkt = create_packet(header, pcap_datalink(handle), data->packets->len + 1, bytes);
 	insert(data->packets, pkt);
-
-	if (NULL == get_arg(data->cmd, NO_TIMESTAMP_ARG)) print_timestamp(header->ts);
 	
 	dissect_packet(data->cmd, pkt);
 }

@@ -2,6 +2,7 @@
 #include "../status_handler.h"
 #include "datalink_handler.h"
 #include "network_handler.h"
+#include "../utils/timestamp.h"
 
 #include <arpa/inet.h>
 
@@ -25,6 +26,9 @@ void dissect_packet(command *cmd, packet *pkt) {
 	int show_network;
 	int net_protocol_type = 0;
 	int trans_protocol_type = 0;
+
+	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
+	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf("(#%d) ", pkt->num);
 
 	/* =========================== dissect datalink =========================== */
 	protocol_info datalink_info = dissect_datalink(pkt->datalink_type);
