@@ -20,10 +20,6 @@
 	TODO:	Think about how to implement the visualize_{protoname}() function. Modify the protocol_info struct is probably the 
 			best option. Than think about how to call it inside of dissect_packet() function. (Keep it a single function
 			dissect_packet() and passing a flag that says which callback behaviour should trigger?)
-
-	TODO:	Unexcpected behaviours happen when navigating through command history and pressing space mid sentence. Maybe the
-			int *pos variable is not properly managed?		
-
 */
 
 
@@ -42,7 +38,7 @@ int main(int argv, char *argc[]) {
 		prompt();
 		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
 		
-		if (buff.len == 0) continue;
+		if (buff.len == 0 || '\0' == buff.content[0]) continue;
 
 		/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
 		if (history.head != NULL) {

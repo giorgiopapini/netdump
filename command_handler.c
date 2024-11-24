@@ -124,6 +124,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
 }
 
 int is_command(command *cmd, const char *command) {
+    if (NULL == cmd->label || NULL == command) return 0;
     if (0 == strcmp(cmd->label, command)) return 1;
     return 0;
 }
