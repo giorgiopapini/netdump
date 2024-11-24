@@ -68,7 +68,13 @@ long str_to_num(char *str) {
 
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     int i;
-    char *new_str = (char *)malloc(sizeof(char)); /* +1 to include null terminator */
+    int total_len = 0;
+
+    for (i = 0; i < n_str; i ++) total_len += strlen(str_arr[i]);
+    total_len += (n_str * strlen(prefix)) + ((n_str - 1) * strlen(separator)) + 1;
+    /* total_len = (string amount times prefix length) + (string amount - 1 times separator length) + 1 (null terminator) */
+
+    char *new_str = (char *)malloc(sizeof(char) * total_len); /* NULL terminator included */
     if (NULL == new_str) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
 
     new_str[0] = '\0';

@@ -8,6 +8,7 @@
 #include "analize.h"
 #include "../utils/packet.h"
 #include "../utils/string_utils.h"
+#include "../utils/timestamp.h"
 #include "../status_handler.h"
 
 #include "../protocols/protocol_handler.h"
@@ -31,20 +32,12 @@ void handle_sigint(int sig) {
 
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes) {
 	custom_data *data = (custom_data *)args;
-	struct timeval timestamp = header->ts;
-	time_t rawtime = timestamp.tv_sec;
-    struct tm *timeinfo = localtime(&rawtime);
 
 	packet *pkt = create_packet(header, pcap_datalink(handle), bytes);
 	insert(data->packets, pkt);
 
-	printf(
-		"[%02d:%02d:%02d.%06ld] ",
-        timeinfo->tm_hour,
-        timeinfo->tm_min,
-        timeinfo->tm_sec,
-        timestamp.tv_usec
-	);
+	if (NULL == get_arg(data->cmd, NO_TIMESTAMP_ARG)) print_timestamp(header->ts);
+	
 	dissect_packet(data->cmd, pkt);
 }
 

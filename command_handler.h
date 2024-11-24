@@ -15,9 +15,11 @@
 #define ARG_PREFIX          "-"
 #define QUANTITY_ARG        "n"
 #define FILTER_ARG          "filter"
-#define DATALINK_HDR_ARG    "e"
+#define DATALINK_HDR_ARG    "e"  /* show datalink header */
 #define NETWORK_HDR_ARG     "nnet" /* not net (set if the network layer should not be printed) */
-#define NO_PROM_ARG         "p"
+#define NO_PROM_ARG         "p"  /* turn off promiscuos mode */
+#define NO_TIMESTAMP_ARG    "t"  /* do not show formatted time next to packet */
+#define PACKET_NUM_ARG      "#"  /* show packet number next to packet */
 #define CMD_ARG             "cmd"
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
@@ -28,9 +30,9 @@
 
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
-#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG
+#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_ANALIZE_ARGS                
-#define PRINT_ARGS                  QUANTITY_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG
+#define PRINT_ARGS                  QUANTITY_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS         
 #define RESET_ARGS         
 #define REQUIRED_RESET_ARGS                  

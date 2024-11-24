@@ -20,6 +20,11 @@
 	TODO:	Implement a better design for the timestamp implementation in 'analize.c'. Keep in mind that I will need to use
 			timestamp related code also in print command and (maybe) in visualize command. Maybe add a 'utils/time' module to
 			manage every operation related to timestamp management (formatting, searching, etc...)
+
+	TODO:	Think about how to implement the visualize_{protoname}() function. Modify the protocol_info struct is probably the 
+			best option. Than think about how to call it inside of dissect_packet() function. (Keep it a single function
+			dissect_packet() and passing a flag that says which callback behaviour should trigger?)
+
 */
 
 
