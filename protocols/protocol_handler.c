@@ -8,15 +8,24 @@
 
 #define PRINT_SEPARATOR " | "
 
+
+void exec_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
+	if (is_command(cmd, ANALIZE_COMMAND) && NULL != info.print_header) info.print_header(bytes);
+	if (is_command(cmd, PRINT_COMMAND) && NULL != info.print_header) info.print_header(bytes);
+	if (is_command(cmd, VISUALIZE_COMMAND) && NULL != info.visualize_header) info.visualize_header(bytes);
+}
+
 int datalink_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
 	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
-	if (show_datalink && info.print_header != NULL) info.print_header(bytes);
+
+	if (show_datalink) exec_behaviour(cmd, info, bytes);
 	return show_datalink;
 }
 
 int network_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
 	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
-	if (show_network && info.print_header != NULL) info.print_header(bytes);
+
+	if (show_network) exec_behaviour(cmd, info, bytes);
 	return show_network;
 }
 

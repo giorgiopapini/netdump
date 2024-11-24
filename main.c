@@ -16,10 +16,6 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
-
-	TODO:	Think about how to implement the visualize_{protoname}() function. Modify the protocol_info struct is probably the 
-			best option. Than think about how to call it inside of dissect_packet() function. (Keep it a single function
-			dissect_packet() and passing a flag that says which callback behaviour should trigger?)
 */
 
 

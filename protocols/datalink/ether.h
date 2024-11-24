@@ -10,5 +10,6 @@ typedef struct ether_hdr {
 } ether_hdr;
 
 void print_ether_hdr(const uint8_t *pkt);
+void visualize_ether_hdr(const uint8_t *pkt);
 
 #endif

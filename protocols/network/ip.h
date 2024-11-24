@@ -22,6 +22,7 @@ typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not
 #define IP_HLEN(ip_hdr)      (((ip_header)->vhlen) & 0x0f)
 #define IP_VERSION(ip_hdr)   (((ip_header)->vhlen) >> 4)
 
-void print_ip_header(const uint8_t *pkt);
+void print_ip_hdr(const uint8_t *pkt);
+void visualize_ip_hdr(const uint8_t *pkt);
 
 #endif

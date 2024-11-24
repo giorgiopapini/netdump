@@ -13,7 +13,7 @@ void print_ipv4(uint32_t addr) {
     printf("%d.%d.%d.%d", bytes[3], bytes[2], bytes[1], bytes[0]);  
 }
 
-void print_ip_header(const uint8_t *pkt) {
+void print_ip_hdr(const uint8_t *pkt) {
     char flags[9] = "";  /* max: "DF, MF, \0" */
     ip_hdr *ip_h = (struct ip_hdr *)pkt;
 
@@ -40,4 +40,8 @@ void print_ip_header(const uint8_t *pkt) {
     /* ========================================================================== */
 
     printf(" proto: %s (%d)", "ENCAP_PROTO_NAME", ip_h->protocol);  /* SET ENCAP_PROTO_NAME, create lookup table somewhere */
+}
+
+void visualize_ip_hdr(const uint8_t *pkt) {
+    printf("visualize ip hdr\n");
 }

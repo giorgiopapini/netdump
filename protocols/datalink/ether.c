@@ -86,3 +86,7 @@ void print_ether_hdr(const uint8_t *pkt) {
 	if (NULL != protocol_name) printf(" (%s)", protocol_name); 
     /* =================================================================================== */
 }
+
+void visualize_ether_hdr(const uint8_t *pkt) {
+    printf("visualize ether hdr\n");
+}
