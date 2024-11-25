@@ -15,7 +15,14 @@
 			reached it has to go up or down by maximum 1 line. Find a way to get terminal cols and absolute position of cursor
 			(netdump > ) characters need to be counted in some way
 
+	TODO:	Add support for ctrl+shift+c and ctrl+shift+v for the terminal
+	TODO:	Add ctrl+c support, maybe use "signal.h" to interrupt the program?
+	TODO:	Find a way to filter non compatible keys, (e.g. prevent the shift + arrow_up to print ;2A in terminal)
+
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
+
+	DONE:	1) Now commands are not case sensitive 2) Now if a tilde is met, literal_key() returns without pushing tilde to buffer
+			and printing it 3) added IS_LITERAL() macro
 */
 
 

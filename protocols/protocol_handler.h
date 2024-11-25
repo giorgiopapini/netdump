@@ -20,7 +20,7 @@ typedef struct protocol_info {
 	size_t hdr_size;
 	field encap_type_range;
     void (*print_header)(const uint8_t *pkt);   /* Once the callback function is stored there is no need to "know" the packet_hdr directly. */
-	void (*visualize_header)(const uint8_t *pkt)
+	void (*visualize_header)(const uint8_t *pkt);
 } protocol_info;
 
 void dissect_packet(command *cmd, packet *pkt);

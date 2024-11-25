@@ -6,6 +6,7 @@
 #include "buffer.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
+#include "command_handler.h"
 
 
 #define ARROW_UP_KEY 'A'
@@ -13,6 +14,9 @@
 #define ARROW_RIGHT_KEY 'C'
 #define ARROW_LEFT_KEY 'D'
 #define CANC_KEY '3'
+#define TILDE_KEY '~'
+
+#define IS_LITERAL(c)                       (20 <= c && 126 >= c)
 
 #define MOVE_CURSOR(x, y)                   (printf("\033[%d;%dH", (y), (x)))
 #define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%dC", len - pos); } while (0)
@@ -62,6 +66,7 @@ void normalize_content(buffer *buff) {
     char *normalized_str = get_trimmed_str(buff->content);
     strncpy(buff->content, normalized_str, MAX_BUFFER_LEN - 1);
     buff->len = strlen(buff->content);
+    lower_str(buff->content);
     buff->content[buff->len] = '\0';
 }
 
@@ -150,6 +155,9 @@ void backspace(buffer *buff, int *pos) {
 
 void literal_key(buffer *buff, int *pos, char c) {
     int old_len = buff->len;
+
+    if (TILDE_KEY == c) return;
+
     if ((old_len + 1) > MAX_BUFFER_LEN) {
         raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, MAX_BUFFER_LEN);
         return;
@@ -184,18 +192,19 @@ void populate(buffer *buff, circular_list *history) {
         if (c == 127 || c == 8) {   /* if pressed key == backspace */
             if (buff->len > 0) backspace(buff, &pos);
         }
-        else if (c == '\033') {  /* catch special keys, add behaviour only to arrow keys (for now) */
-            getch();
-            switch(getch()) {
+        else if ('\033' == c) {  /* catch special keys, add behaviour only to arrow keys (for now) */
+            c = getch();
+            switch(c = getch()) {
                 case ARROW_UP_KEY:          arrow_up(buff, &pos, history, &end); break;
                 case ARROW_DOWN_KEY:        arrow_down(buff, &pos, history, &end); break;
                 case ARROW_RIGHT_KEY:       arrow_right(buff, &pos); break;
                 case ARROW_LEFT_KEY:        arrow_left(buff, &pos); break;
                 case CANC_KEY:              canc(buff, &pos); break;
-                default:                    printf("\n"); break;    /* (e.g.) absorbing the esc char */
+                default:                    break;
             }
         }
-        else if (c != '\n') literal_key(buff, &pos, c);
+        else if (IS_LITERAL(c)) literal_key(buff, &pos, c);
+        else continue;  /* if any unexpected key is met, skip to next iteration */
     }
     printf("\n");   /* outside the while loop, it means that the enter key has been pressed */
 

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
+#include <ctype.h>
 
 #include "string_utils.h"
 #include "../status_handler.h"
@@ -17,6 +18,13 @@ int find_word_len(char *sentence, int word_pos) {
         }
     }
     return strlen(sentence);
+}
+
+void lower_str(char *str) {
+    while ('\0' != *str) {
+        *str = tolower(*str);
+        str += 1;
+    }
 }
 
 void copy_str_n(char **dest, char *src, int n) {
