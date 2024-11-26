@@ -16,7 +16,7 @@ buffer *create_buffer();
 void copy_buffer(buffer *src, buffer *dest);
 buffer *copy_to_heap(buffer *src);
 int compare_buffers(buffer *b1, buffer *b2);
-void populate(buffer *buff, circular_list *history);
+int populate(buffer *buff, circular_list *history);
 int check_buffer_status(buffer *buff);
 void destroy_buffer(void *buff);
 

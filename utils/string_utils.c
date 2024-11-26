@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <termios.h>
+#include <fcntl.h>
 #include <ctype.h>
 
 #include "string_utils.h"
@@ -98,21 +99,29 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
 
 char getch() {
 	struct termios oldt, newt;
+    int oldf;
     char ch;
-    
+
     // Get the current terminal settings
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
-    
-    // Disable buffered input and echoing
-    newt.c_lflag &= ~(ICANON | ECHO); 
-    newt.c_cc[VMIN] = 1;
-    newt.c_cc[VTIME] = 0;
-    
+
+    // Disable canonical mode and echoing
+    newt.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    // Save old file descriptor flags and set non-blocking mode
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    // Try to read a character
     ch = getchar();
+
+    // Restore the old terminal settings and file descriptor flags
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return ch;
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    return ch; // Returns the character, or EOF if no input
 }
 
 void delete_char(char *str, int pos) {  /* deleting by shifting every other char */

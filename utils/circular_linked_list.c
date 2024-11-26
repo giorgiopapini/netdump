@@ -49,3 +49,19 @@ void destroy_node(node *curr, void (*deallocate_content)(void *)) {
         free(curr);
     }
 }
+
+void destroy_list(circular_list *list, void (*deallocate_content)(void *)) {
+    node *tmp = NULL;
+    int i;
+
+    if (NULL == list) raise_error(NULL_POINTER, 1, NULL, "list", __FILE__);
+    
+    for (i = 0; i < list->len; i ++) {
+        if (NULL != list->curr) {
+            tmp = list->curr->next;
+            if (NULL != list->curr->content) deallocate_content(list->curr->content);
+            free(list->curr);
+            list->curr = tmp;
+        }
+    }
+}

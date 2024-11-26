@@ -39,10 +39,11 @@ void insert(raw_array *arr, void *pkt) {
     arr->len ++;
 }
 
-void * get(raw_array *arr, size_t index) {
+void * get(raw_array *arr, size_t n) {
+    size_t index = (n - 1);
     if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
     else if (NULL == arr->values) raise_error(NULL_POINTER, 0, UNSCANNED_NET_HINT, "arr->values", __FILE__);
-    else if (index >= arr->len || index < 0) raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, index, arr->len);
+    else if (index >= arr->len || index < 0) raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, n, arr->len);
     else return arr->values[index];
     
     return NULL;  /* if a previous if condition is satisfied (an error occoured) than return NULL */

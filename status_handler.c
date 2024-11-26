@@ -15,7 +15,7 @@ char * get_error_format(err_code code) {
         case NEGATIVE_N_PACKETS:            return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
         case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
-        case INDEX_OUT_OF_BOUNDS:           return "Index out of range, tried to access index '%d' but array was '%d' long"; break;
+        case INDEX_OUT_OF_BOUNDS:           return "Tried to access packet number '%d' but array was '%d' packets long"; break;
         case NO_DEVICE_FOUND:               return "Couldn't find default device"; break;
         case NETMASK_ERROR:                 return "Couldn't get netmask for device '%s'"; break;
         case NO_ACCESS_DEVICE_ERROR:        return "Couldn't open device '%s'"; break;

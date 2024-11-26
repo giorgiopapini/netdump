@@ -7,6 +7,7 @@
 #include "status_handler.h"
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
+#include "utils/packet.h"
 
 
 /*
@@ -21,10 +22,15 @@
 
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
 
-	DONE:	1) Now commands are not case sensitive 2) Now if a tilde is met, literal_key() returns without pushing tilde to buffer
-			and printing it 3) added IS_LITERAL() macro
+	TODO:	How to deallocate memory when exiting program?.
+			2) When exit command is executed, find a way to free history
 */
 
+void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
+	destroy_list(history, destroy_buffer);  /* destroy_list calls destroy_node which calls destroy_buffer */
+	reset_cmd(cmd);
+	reset_arr(packets, destroy_packet);
+}
 
 void prompt() { printf("netdump > "); };
 
@@ -39,8 +45,13 @@ int main(int argv, char *argc[]) {
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();
-		populate(&buff, &history);	/* populate() alredy overrides previously buffered data */
-		
+
+		/* if CTRL+C is pressed, than deallocate previously allocated heap memory and exit program */
+		if (0 != populate(&buff, &history)) {
+			deallocate_heap(&cmd, &packets, &history);
+			exit(EXIT_SUCCESS);
+		}
+
 		if (buff.len == 0 || '\0' == buff.content[0]) continue;
 
 		/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */

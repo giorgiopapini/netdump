@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <ctype.h>
 
 #include "buffer.h"
@@ -22,6 +23,10 @@
 #define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%dC", len - pos); } while (0)
 #define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos); } while (0)
 #define CLEAR_STRN(len)                     do { for (int i = len; i > 0; i --) printf("\b \b"); } while (0)
+
+int exit_key_pressed = 0;  /* CTRL+C */
+
+void exit_key_handle(int sig) { exit_key_pressed = 1; }
 
 buffer *create_buffer() {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
@@ -171,7 +176,7 @@ void literal_key(buffer *buff, int *pos, char c) {
     }
 }
 
-void populate(buffer *buff, circular_list *history) {
+int populate(buffer *buff, circular_list *history) {
     char c = 0;
     int pos = 0;
     int end = 1;
@@ -182,12 +187,15 @@ void populate(buffer *buff, circular_list *history) {
 
     if (NULL != history->curr) history->curr = history->head;  /* at each populate() call reset history->curr position */
 
+    signal(SIGINT, exit_key_handle);  /* if CTRL+C pressed, than notify the caller */
     while (c != '\n') {
         if (buff->len + 1 >= MAX_BUFFER_LEN) {
             buff->status = BUFFER_OVERFLOW_ERROR;
             break;
         }
 
+        if (1 == exit_key_pressed) break;
+        
         c = getch();
         if (c == 127 || c == 8) {   /* if pressed key == backspace */
             if (buff->len > 0) backspace(buff, &pos);
@@ -210,6 +218,7 @@ void populate(buffer *buff, circular_list *history) {
 
     buff->content[buff->len] = '\0';
     normalize_content(buff);
+    return exit_key_pressed;
 }
 
 int check_buffer_status(buffer *buff) {
