@@ -1,8 +1,9 @@
 #ifndef COMMAND_HANDLER_H
 #define COMMAND_HANDLER_H
 
-#include "buffer.h"
+#include "utils/buffer.h"
 #include "utils/raw_array.h"
+#include "utils/circular_linked_list.h"
 
 #define ANALIZE_COMMAND     "analize"
 #define RESET_COMMAND       "reset"         /* erase currently stored packets (if command analize alredy run) */
@@ -66,7 +67,7 @@ char *get_raw_val(command *cmd, char *label);
 
 int is_command(command *cmd, const char *command);
 int is_valid(command *cmd, int opt_args, char **expected_args, size_t len);
-int execute_command(command *cmd, raw_array *packets);
+int execute_command(command *cmd, raw_array *packets, circular_list *history);
 void reset_cmd(command *cmd);
 
 

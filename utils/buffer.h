@@ -2,7 +2,7 @@
 #define BUFFER_H
 
 #include <stddef.h>
-#include "utils/circular_linked_list.h"
+#include "circular_linked_list.h"
 
 #define MAX_BUFFER_LEN 256
 

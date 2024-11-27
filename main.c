@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include <unistd.h>s
 
-#include "buffer.h"
+#include "utils/buffer.h"
 #include "command_handler.h"
 #include "status_handler.h"
 #include "utils/raw_array.h"
@@ -16,18 +16,13 @@
 			reached it has to go up or down by maximum 1 line. Find a way to get terminal cols and absolute position of cursor
 			(netdump > ) characters need to be counted in some way
 
-	TODO:	Add support for ctrl+shift+c and ctrl+shift+v for the terminal
-	TODO:	Add ctrl+c support, maybe use "signal.h" to interrupt the program?
-	TODO:	Find a way to filter non compatible keys, (e.g. prevent the shift + arrow_up to print ;2A in terminal)
+	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 
 	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
-
-	TODO:	How to deallocate memory when exiting program?.
-			2) When exit command is executed, find a way to free history
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
-	destroy_list(history, destroy_buffer);  /* destroy_list calls destroy_node which calls destroy_buffer */
+	destroy_list(history, destroy_buffer);
 	reset_cmd(cmd);
 	reset_arr(packets, destroy_packet);
 }
@@ -64,7 +59,7 @@ int main(int argv, char *argc[]) {
 
 		if (0 != check_buffer_status(&buff)) continue;
 		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
-		if (0 != execute_command(&cmd, &packets)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
+		if (0 != execute_command(&cmd, &packets, &history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
 	}
 
 	return 0;

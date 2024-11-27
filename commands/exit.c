@@ -2,9 +2,9 @@
 #include "../utils/packet.h"
 #include <stdlib.h>
 
-void execute_exit(command *cmd, raw_array *packets) {
+void execute_exit(command *cmd, raw_array *packets, circular_list *history) {
     reset_cmd(cmd);
     reset_arr(packets, destroy_packet);
-    /* The OS deallocates the remaining heap allocated memory that has not alredy been freed (such as circular_list history) */
+    destroy_list(history, destroy_buffer);
     exit(EXIT_SUCCESS);
 }

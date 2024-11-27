@@ -5,9 +5,9 @@
 #include <ctype.h>
 
 #include "buffer.h"
-#include "status_handler.h"
-#include "utils/string_utils.h"
-#include "command_handler.h"
+#include "../status_handler.h"
+#include "string_utils.h"
+#include "../command_handler.h"
 
 
 #define ARROW_UP_KEY 'A'

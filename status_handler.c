@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 #include "status_handler.h"
-#include "colors.h"
+#include "utils/colors.h"
 
 
 char * get_error_format(err_code code) {
