@@ -9,6 +9,7 @@
 #include "utils/circular_linked_list.h"
 #include "utils/packet.h"
 
+#define PROMPT_STRING "netdump > "
 
 /*
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
@@ -25,7 +26,7 @@ void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
 	reset_arr(packets, destroy_packet);
 }
 
-void prompt() { printf("netdump > "); };
+void prompt() { printf(PROMPT_STRING); };
 
 int main(int argv, char *argc[]) {
 	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
