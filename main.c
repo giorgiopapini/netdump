@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>s
+#include <unistd.h>
 
 #include "utils/buffer.h"
 #include "command_handler.h"
@@ -17,8 +17,6 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
-
-	TODO:	Solve the issue "command  arg" is valid and 'arg' is recognized as argument even if the '-' separator is not there
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

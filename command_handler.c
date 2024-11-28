@@ -95,11 +95,31 @@ char *get_raw_val(command *cmd, char *label) {
     return obt->val;
 }
 
+int check_compliance(buffer *buff) {
+    int i;
+
+    for (i = 1; i < buff->len; i ++) {
+        /* if char at (i - 1) is not empty and is not the leading char (which may happen, because of the buffer trim func) */
+        if (buff->content[i - 1] == ' ' && 0 != (i - 1)) {
+            if (buff->content[i] == ARG_PREFIX[0]) return 1;
+            else return 0;
+        }
+    }
+
+    return 1;
+}
+
 int create_cmd_from_buff(command *cmd, buffer *buff) {
     size_t args_num = 0;
     char copy[buff->len + 1];   /* including null terminator */
     memcpy(copy, buff->content, buff->len + 1);
     char *token = strtok(copy, " ");
+
+    /* if there is <command> <arg> without the '-' separator than raise a formatting error */
+    if (!check_compliance(buff)) {
+        raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+        return 1;
+    }
 
     while (NULL != token) {
         if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
