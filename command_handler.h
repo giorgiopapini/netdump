@@ -14,7 +14,7 @@
 #define HELP_COMMAND        "help"
 
 #define ARG_PREFIX          "-"
-#define QUANTITY_ARG        "n"
+#define NUMBER_ARG          "n"
 #define FILTER_ARG          "filter"
 #define DATALINK_HDR_ARG    "e"  /* show datalink header */
 #define NETWORK_HDR_ARG     "nnet" /* not net (set if the network layer should not be printed) */
@@ -31,10 +31,12 @@
 
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
-#define ANALIZE_ARGS                QUANTITY_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_ANALIZE_ARGS                
-#define PRINT_ARGS                  QUANTITY_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
-#define REQUIRED_PRINT_ARGS         
+#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define REQUIRED_PRINT_ARGS
+#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define REQUIRED_VISUALIZE_ARGS      
 #define RESET_ARGS         
 #define REQUIRED_RESET_ARGS                  
 #define EXECUTE_ARGS       

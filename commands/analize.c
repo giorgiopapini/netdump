@@ -41,7 +41,7 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 void execute_analize(command *cmd, raw_array *packets) {
 	/* ==============================  Getting args values from cmd  ================================ */
 	int pkt_num = -1;
-    int tmp = str_to_num(get_raw_val(cmd, QUANTITY_ARG));
+    int tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
     char *filter_exp = get_raw_val(cmd, FILTER_ARG);
     int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
 

@@ -45,8 +45,6 @@ void dissect_packet(command *cmd, packet *pkt) {
 	net_protocol_type = get_field(raw_pkt, datalink_info.encap_type_range);
 	/* ======================================================================== */
 	
-	if (show_datalink) printf(" | ");  /* if datalink not shown, than do not print separator */
-	
 	/* =========================== dissect network ============================ */
 	raw_pkt += datalink_info.hdr_size;
 	protocol_info network_info = dissect_network(net_protocol_type);

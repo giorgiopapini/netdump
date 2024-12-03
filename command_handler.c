@@ -10,6 +10,7 @@
 #include "commands/exit.h"
 #include "commands/analize.h"
 #include "commands/print.h"
+#include "commands/visualize.h"
 #include "commands/clear.h"
 #include "commands/reset.h"
 
@@ -216,35 +217,34 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
     if (is_command(cmd, EXIT_COMMAND)) {
         if (CHECK_ARGS(cmd, EXIT_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history);
-        return 0;
     }
     else if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets);
-        return 0;
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets);
-        return 0;
+    }
+    else if (is_command(cmd, VISUALIZE_COMMAND)) {
+        if (CHECK_ARGS(cmd, VISUALIZE_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_VISUALIZE_ARGS)) execute_visualize(cmd, packets);
     }
     else if (is_command(cmd, RESET_COMMAND)) {
         if (CHECK_ARGS(cmd, RESET_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
-        return 0;
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, EXECUTE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_EXECUTE_ARGS)) execute_clear(cmd);
-        return 0;
     }
     else if (is_command(cmd, HELP_COMMAND)) {
         if (CHECK_ARGS(cmd, HELP_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) execute_help(cmd);
-        return 0;
     }
+    else return 1;
 
-    return 1;
+    return 0;
 }
 
 void reset_cmd(command *cmd) {

@@ -11,6 +11,8 @@
 
 #define PROMPT_STRING "netdump > "
 
+#include "utils/visualizer.h"
+
 /*
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
 			of line (x - 1). pos variable does not need to become a 2D variable (maybe). It is obvious that when the eos is
@@ -18,6 +20,12 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
+
+	TODO:	Implement utils/visualize_utils (or something like that) as a suite of functions for helping printing ascii
+			art for a general packet. Than does functions would be called inside of each specific 'visualize_[proto]_hdr()'
+			function
+
+	DONE:	1) Added visualize command
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
@@ -35,7 +43,7 @@ int main(int argv, char *argc[]) {
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 	circular_list history = { .head = NULL, .len = 0 };
-	
+
 	while(1) {
 		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
 		prompt();
