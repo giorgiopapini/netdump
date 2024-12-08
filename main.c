@@ -20,12 +20,6 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
-
-	TODO:	Implement utils/visualize_utils (or something like that) as a suite of functions for helping printing ascii
-			art for a general packet. Than does functions would be called inside of each specific 'visualize_[proto]_hdr()'
-			function
-
-	DONE:	1) Added visualize command
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

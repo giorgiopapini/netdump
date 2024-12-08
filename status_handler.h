@@ -2,6 +2,7 @@
 #define ERROR_HANDLER_H
 
 #define UNSCANNED_NET_HINT      "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
+#define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 
 typedef enum {
     USER_NOT_ROOT_ERROR,
@@ -23,7 +24,9 @@ typedef enum {
     MISSING_ARGS_ERROR,
     UNRECOGNIZED_ARGS_ERROR,
     BUFFER_OVERFLOW_ERROR,
-    NEGATIVE_BUFFER_INDEX
+    NEGATIVE_BUFFER_INDEX,
+    CURSOR_POSITION_ERROR,
+    TERMINAL_SIZE_ERROR
 } err_code;
 
 typedef enum {

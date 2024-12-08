@@ -14,7 +14,7 @@ all: $(TARGET)
 
 # Compile target
 $(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS) -lm
 
 # Clean target: remove the binary
 clean:

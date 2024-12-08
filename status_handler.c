@@ -28,6 +28,8 @@ char * get_error_format(err_code code) {
         case UNRECOGNIZED_ARGS_ERROR:       return "Unrecognized arguments: %s"; break;
         case BUFFER_OVERFLOW_ERROR:         return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
         case NEGATIVE_BUFFER_INDEX:         return "Buffer index cannot be a negative number '(%d < 0)'"; break;
+        case CURSOR_POSITION_ERROR:         return "Couldn't retrieve the current cursor position"; break;
+        case TERMINAL_SIZE_ERROR:           return "Couldn't retrueve the current terminal size"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }

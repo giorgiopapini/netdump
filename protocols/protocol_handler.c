@@ -38,6 +38,7 @@ void dissect_packet(command *cmd, packet *pkt) {
 
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf("(#%d) ", pkt->num);
+	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than add a bit of spacing */
 
 	/* =========================== dissect datalink =========================== */
 	protocol_info datalink_info = dissect_datalink(pkt->datalink_type);

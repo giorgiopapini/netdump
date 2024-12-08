@@ -4,8 +4,14 @@
 #define MARGIN "    "
 #define HORIZONTAL_BORDER "-"
 #define VERTICAL_BORDER "|"
-#define JUNCTION "+"
+#define JUNCTION "*"
 
-void print_field(char *label, char *content, int *curr_x, int *curr_y);
+#define USED_ROWS(label, content)           (calc_rows(label) + calc_rows(content))
+
+int calc_rows(char *str);
+int get_cursor_position(int *row, int *col);
+void move_to_next_line(int *curr_x, int *curr_y, int used_rows);
+void reset_cursor_position();
+void print_field(char *label, char *content, int newline);
 
 #endif

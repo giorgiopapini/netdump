@@ -5,6 +5,8 @@
 #include "../../ethertypes.h"
 #include "../../utils/raw_array.h"
 #include "../../utils/lookup_table.h"
+#include "../../utils/visualizer.h"
+#include "../../utils/formats.h"
 
 
 lookup_table ethers = {
@@ -88,5 +90,17 @@ void print_ether_hdr(const uint8_t *pkt) {
 }
 
 void visualize_ether_hdr(const uint8_t *pkt) {
-    printf("visualize ether hdr\n");
+    ether_hdr *ether_header = (ether_hdr *)pkt;
+    char dest_addr[18];
+    char src_addr[18];
+    char ethertype[7];
+
+    snprintf(dest_addr, sizeof(dest_addr), MAC_FORMAT, MAC_TO_STR(ether_header->dest_addr));
+    snprintf(src_addr, sizeof(src_addr), MAC_FORMAT, MAC_TO_STR(ether_header->src_addr));
+    snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ether_header->ethertype));
+
+    print_field("Destination MAC Address", dest_addr, 0);
+    print_field("Source MAC Address", src_addr, 0);
+    print_field("EtherType", ethertype, 0);
+    move_to_next_line(NULL, NULL, USED_ROWS("EtherType", ethertype));
 }
