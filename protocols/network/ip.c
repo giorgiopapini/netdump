@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "ip.h"
+#include "../../utils/string_utils.h"
+#include "../../utils/visualizer.h"
 
 void print_ipv4(uint32_t addr) {
     uint8_t bytes[4];
@@ -43,5 +45,15 @@ void print_ip_hdr(const uint8_t *pkt) {
 }
 
 void visualize_ip_hdr(const uint8_t *pkt) {
-    printf("visualize ip hdr\n");
+    ip_hdr *ip_header = (ip_hdr *)pkt;
+    char vhlen[2];
+    char tos[2];
+
+    snprintf(vhlen, sizeof(vhlen), "%d", ip_header->vhlen);
+    snprintf(tos, sizeof(tos), "%d", ip_header->tos);
+
+    print_hdr_info(IP_HEADER_LABEL, NULL);
+    print_field(VHLEN_LABEL, vhlen, 0);
+    print_field(TOS_LABEL, tos, 0);
+    move_to_next_line(NULL, NULL, USED_ROWS(VHLEN_LABEL, vhlen));
 }

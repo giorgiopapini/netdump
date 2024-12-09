@@ -73,6 +73,7 @@ void move_to_next_line(int *curr_x, int *curr_y, int used_rows) {
         int x, y;
         get_cursor_position(&x, &y);
         MOVE_CURSOR(0, y + Y_DEVIATION(used_rows));
+        printf("\n");
     }
     else {
         *curr_x = STARTING_X_VAL;
@@ -161,4 +162,9 @@ void print_field(char *label, char *content, int newline) {
     curr_y = initial_y;
     curr_x += max_len - 1;  /* -1 because it has to rewrite the last vertical line of the previous printed field */
     MOVE_CURSOR(curr_x, curr_y);
+}
+
+void print_hdr_info(char *name, char *optional_infos) {
+    printf("[%s]\n", name);
+    if (NULL != optional_infos) printf("(%s)\n", optional_infos);
 }

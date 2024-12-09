@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#define IP_HEADER_LABEL "IP Header"
+#define VHLEN_LABEL "vhlen"
+#define TOS_LABEL "tos"
+
 typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not here inside of ip_hdr */ 
     uint8_t vhlen;
     uint8_t tos;

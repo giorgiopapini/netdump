@@ -20,6 +20,10 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
+
+	TODO:	'print_value()' function should print multi line strings if certain conditions are met (str len > max len or
+			str len > term cols)
+
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
