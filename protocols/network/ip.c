@@ -46,14 +46,30 @@ void print_ip_hdr(const uint8_t *pkt) {
 
 void visualize_ip_hdr(const uint8_t *pkt) {
     ip_hdr *ip_header = (ip_hdr *)pkt;
-    char vhlen[2];
-    char tos[2];
+    char version[2];
+    char ihl[3];
+    char tos[5];
+    char totlen[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
+    char id[6];
+    char mf[2];
+    char df[2];
 
-    snprintf(vhlen, sizeof(vhlen), "%d", ip_header->vhlen);
-    snprintf(tos, sizeof(tos), "%d", ip_header->tos);
+    snprintf(version, sizeof(version), "%d", IP_VERSION(ip_header->vhlen));
+    snprintf(ihl, sizeof(ihl), "%d", IP_HLEN(ip_header->vhlen));
+    snprintf(tos, sizeof(tos), "0x%04x", ip_header->tos);
+    snprintf(totlen, sizeof(totlen), "%d", ntohs(ip_header->totlen));
+    snprintf(id, sizeof(id), "%d", ntohs(ip_header->identification));
+    snprintf(mf, sizeof(mf), "%d", ntohs(ip_header->offset_field) & MF);
+    snprintf(df, sizeof(df), "%d", ntohs(ip_header->offset_field) & DF);
 
+    start_printing();
     print_hdr_info(IP_HEADER_LABEL, NULL);
-    print_field(VHLEN_LABEL, vhlen, 0);
+    print_field(VERSION_LABEL, version, 0);
+    print_field(IHL_LABEL, ihl, 0);
     print_field(TOS_LABEL, tos, 0);
-    move_to_next_line(NULL, NULL, USED_ROWS(VHLEN_LABEL, vhlen));
+    print_field(TOTLEN_LABEL, totlen, 0);
+    print_field(ID_LABEL, id, 0);
+    print_field(DF_LABEL, df, 0);
+    print_field(MF_LABEL, mf, 0);
+    end_printing();
 }

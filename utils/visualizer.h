@@ -11,7 +11,8 @@
 int calc_rows(char *str);
 int get_cursor_position(int *row, int *col);
 void move_to_next_line(int *curr_x, int *curr_y, int used_rows);
-void reset_cursor_position();
+void start_printing();
+void end_printing();
 void print_field(char *label, char *content, int newline);
 void print_hdr_info(char *name, char *optional_infos);
 

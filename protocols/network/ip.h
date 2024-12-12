@@ -4,8 +4,19 @@
 #include <stdint.h>
 
 #define IP_HEADER_LABEL "IP Header"
-#define VHLEN_LABEL "vhlen"
-#define TOS_LABEL "tos"
+#define VERSION_LABEL "Version"
+#define IHL_LABEL "IHL"
+#define TOS_LABEL "Type of Service"
+#define TOTLEN_LABEL "Total Length"
+#define ID_LABEL "Identification"
+#define MF_LABEL "MF"
+#define DF_LABEL "DF"
+#define OFFSET_LABEL "Fragment Offset"
+#define TTL_LABEL "Time to Live"
+#define PROTOCOL_LABEL "Protocol"
+#define CHECKSUM_LABEL "Checksum"
+#define SRC_ADDR_LABEL "Source Address"
+#define DEST_ADDR_LABEL "Destionation Address" 
 
 typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not here inside of ip_hdr */ 
     uint8_t vhlen;

@@ -99,9 +99,10 @@ void visualize_ether_hdr(const uint8_t *pkt) {
     snprintf(src_addr, sizeof(src_addr), MAC_FORMAT, MAC_TO_STR(ether_header->src_addr));
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ether_header->ethertype));
 
+    start_printing();
     print_hdr_info(ETHER_HEADER_LABEL, NULL);
     print_field(DEST_ADDR_LABEL, dest_addr, 0);
     print_field(SRC_ADDR_LABEL, src_addr, 0);
     print_field(ETHERTYPE_LABEL, ethertype, 0);
-    move_to_next_line(NULL, NULL, USED_ROWS(ETHERTYPE_LABEL, ethertype));
+    end_printing();
 }
