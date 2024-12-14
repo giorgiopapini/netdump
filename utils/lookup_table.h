@@ -11,6 +11,6 @@ typedef struct entry {
 
 typedef struct entry lookup_table[];
 
-const char * get_value(entry *table, uint16_t target_key, size_t len);
+const char * get_value(entry *table, uint16_t target_key);
 
 #endif

@@ -11,12 +11,15 @@
 #define ID_LABEL "Identification"
 #define MF_LABEL "MF"
 #define DF_LABEL "DF"
+#define RF_LABEL "RF"
 #define OFFSET_LABEL "Fragment Offset"
 #define TTL_LABEL "Time to Live"
 #define PROTOCOL_LABEL "Protocol"
 #define CHECKSUM_LABEL "Checksum"
 #define SRC_ADDR_LABEL "Source Address"
-#define DEST_ADDR_LABEL "Destionation Address" 
+#define DEST_ADDR_LABEL "Destionation Address"
+
+/* https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers */
 
 typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not here inside of ip_hdr */ 
     uint8_t vhlen;
@@ -26,6 +29,7 @@ typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not
     uint16_t offset_field;
     #define MF      0x2000  /* 14th bit */
     #define DF      0x4000  /* 15th bit */
+    #define RF      0x8000  /* 16th bit */
     #define OFFSET_MASK     0x1fff  /* last 13 bits reserved for the offset field */
     uint8_t ttl;
     uint8_t protocol;

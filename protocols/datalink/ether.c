@@ -8,7 +8,6 @@
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
 
-
 lookup_table ethers = {
 	{ ETHERTYPE_IP,				"IPv4" },
     { ETHERTYPE_MPLS,			"MPLS unicast" },
@@ -63,13 +62,15 @@ lookup_table ethers = {
     { ETHERTYPE_CALM_FAST,      "CALM FAST"},
     { ETHERTYPE_AOE,            "AoE" },
     { ETHERTYPE_PTP,            "PTP" },
-    { ETHERTYPE_ARISTA,         "Arista Vendor Specific Protocol" }
+    { ETHERTYPE_ARISTA,         "Arista Vendor Specific Protocol" },
+    { 0,                        NULL }
 };
+
 
 void print_ether_hdr(const uint8_t *pkt) {
     ether_hdr *ether_header = (ether_hdr *)pkt;
 	uint16_t ethertype = ntohs(ether_header->ethertype);
-	const char *protocol_name = get_value(ethers, ethertype, (sizeof(ethers) / sizeof(ethers[0])));
+	const char *protocol_name = get_value(ethers, ethertype);
     
 	/* ========================= printing src (MAC) > dest (MAC) ========================= */
 	for (int i = 0; i < 5; i ++) {      /* the last 8 bits are printed after without the trailing ':' */
@@ -95,8 +96,8 @@ void visualize_ether_hdr(const uint8_t *pkt) {
     char src_addr[18];
     char ethertype[7];
 
-    snprintf(dest_addr, sizeof(dest_addr), MAC_FORMAT, MAC_TO_STR(ether_header->dest_addr));
-    snprintf(src_addr, sizeof(src_addr), MAC_FORMAT, MAC_TO_STR(ether_header->src_addr));
+    snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->dest_addr));
+    snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->src_addr));
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ether_header->ethertype));
 
     start_printing();

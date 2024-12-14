@@ -1,7 +1,7 @@
 #ifndef VISUALIZER_H
 #define VISUALIZER_H
 
-#define MARGIN "    "
+#define MARGIN "  "
 #define HORIZONTAL_BORDER "-"
 #define VERTICAL_BORDER "|"
 #define JUNCTION "*"

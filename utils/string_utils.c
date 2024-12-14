@@ -75,6 +75,14 @@ long str_to_num(char *str) {
     return num;
 }
 
+void uint16_to_bin_str(char *str, uint16_t num, size_t size) {
+    for (int i = size - 2; i >= 0; i--) {
+        str[i] = (num & 1) + '0';
+        num >>= 1;
+    }
+    str[size - 1] = '\0';
+}
+
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     int i;
     int total_len = 0;

@@ -20,6 +20,9 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
+
+	TODO:	Add a way to read from a PCAP file. Maybe this might be useful also to test uncommon protocols (dissection and
+			printing)
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
