@@ -36,7 +36,7 @@ void print_separator(command *cmd, int show_separator) {
 
 void dissect_packet(command *cmd, packet *pkt) {
 	uint8_t *raw_pkt = pkt->bytes;
-    int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
+	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
 	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
 	int net_protocol_type = 0;
 	int trans_protocol_type = 0;

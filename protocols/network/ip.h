@@ -17,7 +17,7 @@
 #define PROTOCOL_LABEL "Protocol"
 #define CHECKSUM_LABEL "Checksum"
 #define SRC_ADDR_LABEL "Source Address"
-#define DEST_ADDR_LABEL "Destionation Address"
+#define DEST_ADDR_LABEL "Destination Address"
 
 /* https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers */
 

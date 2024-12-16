@@ -155,8 +155,8 @@ void print_value(char *label, char *content, int *curr_x, int *curr_y, int max_l
     else {
         used_rows = calc_rows(content);
         if (1 == used_rows) {
-            print_line(label, curr_x, curr_y, 0, 0);
-            print_line(content, curr_x, curr_y, OFFSET_LEFT(content_len, label_len), OFFSET_RIGHT(content_len, label_len));
+            print_line(label, curr_x, curr_y, OFFSET_LEFT(content_len, label_len), OFFSET_RIGHT(content_len, label_len));
+            print_line(content, curr_x, curr_y, 0, 0);
         }
         else {
             print_line(label, curr_x, curr_y, OFFSET_LEFT(partial_i, label_len), OFFSET_RIGHT(partial_i, label_len));

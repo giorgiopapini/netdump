@@ -86,12 +86,14 @@ void print_ip_hdr(const uint8_t *pkt) {
     printf("%s],", flags);
     /* ========================================================================== */
 
-    printf(" proto: %s (%d)", protocol_name, ip_h->protocol);
+    if (NULL != protocol_name) printf(" proto: %s (%d)", protocol_name, ip_h->protocol);
+    else printf(" proto: %d", ip_h->protocol);
 }
 
 void visualize_ip_hdr(const uint8_t *pkt) {
     ip_hdr *ip_header = (ip_hdr *)pkt;
     const char *encap_proto = get_value(ipprotos, ip_header->protocol);
+    encap_proto = NULL == encap_proto ? UNKNOWN : encap_proto;
 
     char version[4];
     char ihl[4];
@@ -118,7 +120,10 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     snprintf(mf, sizeof(mf), "%d", ntohs(ip_header->offset_field) & MF);
     uint16_to_bin_str(offset_frag, (ntohs(ip_header->offset_field) & OFFSET_MASK), 14);
     snprintf(ttl, sizeof(ttl), "%d", ip_header->ttl);
-    snprintf(protocol, sizeof(protocol), "%s (%d)", encap_proto, ip_header->protocol);
+
+    if (NULL != encap_proto) snprintf(protocol, sizeof(protocol), "%s (%d)", encap_proto, ip_header->protocol);
+    else snprintf(protocol, sizeof(protocol), "%d", ip_header->protocol);
+    
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(ip_header->checksum));
     ipv4_to_str(src_addr, ntohl(ip_header->src_addr));
     ipv4_to_str(dest_addr, ntohl(ip_header->dest_addr));

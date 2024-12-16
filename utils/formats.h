@@ -8,4 +8,6 @@
 #define IP_ADDR_FORMAT "%d.%d.%d.%d"
 #define IP_ADDR_STR_LEN 16  /* 255.255.255.255'\0' */
 
+#define UNKNOWN "unknown"  /* it should NEVER be NULL */
+
 #endif

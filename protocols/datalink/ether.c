@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 #include "ether.h"
 #include "../../ethertypes.h"
@@ -92,13 +93,15 @@ void print_ether_hdr(const uint8_t *pkt) {
 
 void visualize_ether_hdr(const uint8_t *pkt) {
     ether_hdr *ether_header = (ether_hdr *)pkt;
+    const char *protocol_name = get_value(ethers, ntohs(ether_header->ethertype));
+    protocol_name = NULL == protocol_name ? UNKNOWN : protocol_name;
     char dest_addr[18];
     char src_addr[18];
-    char ethertype[7];
+    char ethertype[strlen(protocol_name) + 10];  /* proto (0xXXXX)'\0' */
 
     snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->dest_addr));
     snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->src_addr));
-    snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ether_header->ethertype));
+    snprintf(ethertype, sizeof(ethertype), "%s (0x%04x)", protocol_name, ntohs(ether_header->ethertype));
 
     start_printing();
     print_hdr_info(ETHER_HEADER_LABEL, NULL);
