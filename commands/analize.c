@@ -28,6 +28,27 @@ void handle_sigint(int sig) {
 	printf("\n");
 }
 
+int device_exists(char *dev) {
+	pcap_if_t *alldevs;
+    pcap_if_t *device;
+    char errbuff[PCAP_ERRBUF_SIZE];
+
+    if (-1 == pcap_findalldevs(&alldevs, errbuff)) {
+        raise_error(DEVICES_SCAN_ERROR, 0, NULL);
+        return 0;
+    }
+
+    for (device = alldevs; NULL != device; device = device->next) {
+        if (0 == strcmp(device->name, dev)) {
+			pcap_freealldevs(alldevs);
+			return 1;
+		}
+    }
+    pcap_freealldevs(alldevs);
+
+	return 0;
+}
+
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes) {
 	custom_data *data = (custom_data *)args;
 
@@ -43,6 +64,7 @@ void execute_analize(command *cmd, raw_array *packets) {
 	int pkt_num = -1;
     int tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
     char *filter_exp = get_raw_val(cmd, FILTER_ARG);
+	char *dev = get_raw_val(cmd, DEVICE_ARG);
 	char *read_file = get_raw_val(cmd, READ_FILE_ARG);
     int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
 
@@ -51,7 +73,6 @@ void execute_analize(command *cmd, raw_array *packets) {
 	/* ============================================================================================== */
 
     custom_data custom_args = { .cmd = cmd, .packets = packets };
-	char *dev;
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
 	bpf_u_int32 mask;
@@ -65,12 +86,19 @@ void execute_analize(command *cmd, raw_array *packets) {
 		}
 		printf("Reading from pcap file: %s\n", read_file);
     } else {
-        dev = pcap_lookupdev(errbuff);
+		if (NULL == dev) dev = pcap_lookupdev(errbuff);
         if (NULL == dev) {
-            raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT);
+            raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT, dev);
             mask = 0;
             net = 0;
         }
+
+		if (!device_exists(dev)) {
+			raise_error(NO_DEVICE_FOUND, 0, NO_DEVICE_HINT, dev);
+
+			dev = pcap_lookupdev(errbuff);
+			if (NULL == dev) raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT, dev);
+		}
 
         if (-1 == pcap_lookupnet(dev, &net, &mask, errbuff)) raise_error(NETMASK_ERROR, 1, NULL, dev);
 

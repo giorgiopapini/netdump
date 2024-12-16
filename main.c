@@ -30,6 +30,10 @@
 
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
 			received in a specific amount of time, than erase timeout error
+
+	TODO:	When visualizing a packet. If network header is not provided the algorithm still prints newline char.
+			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it
+			does not exist in that particular packet, it can't be visualized), it only checks if the user wants to print it
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

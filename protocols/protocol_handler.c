@@ -3,6 +3,7 @@
 #include "datalink_handler.h"
 #include "network_handler.h"
 #include "../utils/timestamp.h"
+#include "../utils/colors.h"
 
 #include <arpa/inet.h>
 
@@ -42,7 +43,7 @@ void dissect_packet(command *cmd, packet *pkt) {
 	int trans_protocol_type = 0;
 
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
-	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf("(#%d) ", pkt->num);
+	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
 	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than add a bit of spacing */
 
 	/* =========================== dissect datalink =========================== */

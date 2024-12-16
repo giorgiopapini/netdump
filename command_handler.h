@@ -17,6 +17,7 @@
 #define ARG_PREFIX              "-"
 #define NUMBER_ARG              "n"
 #define FILTER_ARG              "filter"
+#define DEVICE_ARG              "dev"
 #define DATALINK_HDR_ARG        "e"  /* show datalink header */
 #define NETWORK_HDR_ARG         "nnet" /* not net (set if the network layer should not be printed) */
 #define NO_PROM_ARG             "p"  /* turn off promiscuos mode */
@@ -34,7 +35,7 @@
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
 
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           

@@ -4,10 +4,11 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <math.h>
+#include <string.h>
 
 #include "visualizer.h"
 #include "../status_handler.h"
-#include <string.h>
+#include "colors.h"
 
 #define STARTING_X_VAL 1
 #define FIELD_MIN_Y_LEN 3
@@ -219,6 +220,6 @@ void print_field(char *label, char *content, int newline) {
 }
 
 void print_hdr_info(char *name, char *optional_infos) {
-    printf("[%s]\n", name);
+    printf(GREEN "[%s]\n" RESET_COLOR, name);
     if (NULL != optional_infos) printf("(%s)\n", optional_infos);
 }

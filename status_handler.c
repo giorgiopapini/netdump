@@ -17,8 +17,8 @@ char * get_error_format(err_code code) {
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Tried to access packet number '%d' but array was '%d' packets long"; break;
         case PCAP_FILE_ERROR:               return "Couldn't open '%s' file"; break;
-        case NO_DEVICE_FOUND:               return "Couldn't find default device"; break;
-        case DEVICES_SCAN_ERROR:            return "Couldn't find devices (devlist error)"; break;
+        case NO_DEVICE_FOUND:               return "Couldn't find device '%s'"; break;
+        case DEVICES_SCAN_ERROR:            return "Couldn't find devices"; break;
         case NETMASK_ERROR:                 return "Couldn't get netmask for device '%s'"; break;
         case NO_ACCESS_DEVICE_ERROR:        return "Couldn't open device '%s'"; break;
         case DATALINK_HEADER_ERROR:         return "Couldn't get datalink header type. (%s)"; break;
