@@ -23,6 +23,9 @@
 
 	TODO:	Add a way to read from a PCAP file. Maybe this might be useful also to test uncommon protocols (dissection and
 			printing)
+
+	TODO:	Add a parameter to let the user chose the device for the packet sniffing
+	TODO:	Add a way to save the scanned packets into a pcap file (maybe a new command called 'save'?)
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

@@ -16,6 +16,7 @@ char * get_error_format(err_code code) {
         case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Tried to access packet number '%d' but array was '%d' packets long"; break;
+        case PCAP_FILE_ERROR:               return "Couldn't open '%s' file"; break;
         case NO_DEVICE_FOUND:               return "Couldn't find default device"; break;
         case NETMASK_ERROR:                 return "Couldn't get netmask for device '%s'"; break;
         case NO_ACCESS_DEVICE_ERROR:        return "Couldn't open device '%s'"; break;
@@ -29,7 +30,7 @@ char * get_error_format(err_code code) {
         case BUFFER_OVERFLOW_ERROR:         return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
         case NEGATIVE_BUFFER_INDEX:         return "Buffer index cannot be a negative number '(%d < 0)'"; break;
         case CURSOR_POSITION_ERROR:         return "Couldn't retrieve the current cursor position"; break;
-        case TERMINAL_SIZE_ERROR:           return "Couldn't retrueve the current terminal size"; break;
+        case TERMINAL_SIZE_ERROR:           return "Couldn't retrieve the current terminal size"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }

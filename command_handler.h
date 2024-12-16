@@ -21,6 +21,7 @@
 #define NO_PROM_ARG         "p"  /* turn off promiscuos mode */
 #define NO_TIMESTAMP_ARG    "t"  /* do not show formatted time next to packet */
 #define PACKET_NUM_ARG      "#"  /* show packet number next to packet */
+#define READ_FILE_ARG       "r"
 #define CMD_ARG             "cmd"
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
@@ -31,18 +32,18 @@
 
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
-#define REQUIRED_ANALIZE_ARGS                
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG
+#define REQUIRED_ANALIZE_ARGS
 #define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
 #define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
-#define REQUIRED_VISUALIZE_ARGS      
-#define RESET_ARGS         
-#define REQUIRED_RESET_ARGS                  
-#define EXECUTE_ARGS       
-#define REQUIRED_EXECUTE_ARGS                
+#define REQUIRED_VISUALIZE_ARGS
+#define RESET_ARGS
+#define REQUIRED_RESET_ARGS
+#define EXECUTE_ARGS
+#define REQUIRED_EXECUTE_ARGS
 #define HELP_ARGS                   CMD_ARG
-#define REQUIRED_HELP_ARGS          
+#define REQUIRED_HELP_ARGS
 
 #define MAX_HASHES 128
 #define MAX_ARGS 256
