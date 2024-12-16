@@ -21,11 +21,15 @@
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 
-	TODO:	Add a way to read from a PCAP file. Maybe this might be useful also to test uncommon protocols (dissection and
-			printing)
-
 	TODO:	Add a parameter to let the user chose the device for the packet sniffing
+	
 	TODO:	Add a way to save the scanned packets into a pcap file (maybe a new command called 'save'?)
+
+	TODO:	When printing a packet header that does not have a network or transport protocol, it should be printed even if
+			-e flag not given.
+
+	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
+			received in a specific amount of time, than erase timeout error
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

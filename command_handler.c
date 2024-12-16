@@ -9,6 +9,7 @@
 #include "commands/help.h"
 #include "commands/exit.h"
 #include "commands/analize.h"
+#include "commands/devlist.h"
 #include "commands/print.h"
 #include "commands/visualize.h"
 #include "commands/clear.h"
@@ -222,6 +223,10 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets);
     }
+    else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
+        if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist(cmd);
+    }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets);
@@ -235,8 +240,8 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
         if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
-        if (CHECK_ARGS(cmd, EXECUTE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXECUTE_ARGS)) execute_clear(cmd);
+        if (CHECK_ARGS(cmd, CLEAR_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear(cmd);
     }
     else if (is_command(cmd, HELP_COMMAND)) {
         if (CHECK_ARGS(cmd, HELP_ARGS))

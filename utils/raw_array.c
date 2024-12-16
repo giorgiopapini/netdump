@@ -46,7 +46,7 @@ void * get(raw_array *arr, size_t n) {
     else if (index >= arr->len || index < 0) raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, n, arr->len);
     else return arr->values[index];
     
-    return NULL;  /* if a previous if condition is satisfied (an error occoured) than return NULL */
+    return NULL;  /* if a previous condition is satisfied (an error occoured) than return NULL */
 }
 
 void reset_arr(raw_array *arr, void (*deallocate_content)(void *)) {

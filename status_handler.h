@@ -1,7 +1,8 @@
 #ifndef ERROR_HANDLER_H
 #define ERROR_HANDLER_H
 
-#define UNSCANNED_NET_HINT      "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
+#define NO_DEVICE_HINT "Check your internet connection"
+#define UNSCANNED_NET_HINT "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 
 typedef enum {
@@ -15,6 +16,7 @@ typedef enum {
     INDEX_OUT_OF_BOUNDS,
     PCAP_FILE_ERROR,
     NO_DEVICE_FOUND,
+    DEVICES_SCAN_ERROR,
     NETMASK_ERROR,
     NO_ACCESS_DEVICE_ERROR,
     DATALINK_HEADER_ERROR,

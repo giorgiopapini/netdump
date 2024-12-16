@@ -67,7 +67,7 @@ void execute_analize(command *cmd, raw_array *packets) {
     } else {
         dev = pcap_lookupdev(errbuff);
         if (NULL == dev) {
-            raise_error(NO_DEVICE_FOUND, 1, NULL);
+            raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT);
             mask = 0;
             net = 0;
         }
