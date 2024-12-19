@@ -10,4 +10,7 @@
 
 #define UNKNOWN "unknown"  /* it should NEVER be NULL */
 
+#define COMMAND_FORMAT "<command> -<arg> <value>"
+#define STRING_DELIMITER '"'
+
 #endif

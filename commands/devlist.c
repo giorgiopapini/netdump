@@ -6,6 +6,8 @@
 #include "../utils/colors.h"
 
 void execute_devlist(command *cmd) {
+    printf("\n");
+
     pcap_if_t *alldevs;
     pcap_if_t *device;
     char errbuff[PCAP_ERRBUF_SIZE];
@@ -26,4 +28,5 @@ void execute_devlist(command *cmd) {
     }
 
     pcap_freealldevs(alldevs);
+    printf("\n");
 }

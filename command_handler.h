@@ -14,6 +14,14 @@
 #define EXIT_COMMAND            "exit"
 #define HELP_COMMAND            "help"
 
+#define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
+#define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
+#define RESET_COMMAND_DESC          "Reset stored packets"
+#define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
+#define VISUALIZE_COMMAND_DESC      "Visualize packet formatted as ascii art"
+#define CLEAR_COMMAND_DESC          "Clear screen output"
+#define EXIT_COMMAND_DESC           "Exit program"
+
 #define ARG_PREFIX              "-"
 #define NUMBER_ARG              "n"
 #define FILTER_ARG              "filter"
@@ -24,7 +32,7 @@
 #define NO_TIMESTAMP_ARG        "t"  /* do not show formatted time next to packet */
 #define PACKET_NUM_ARG          "#"  /* show packet number next to packet */
 #define READ_FILE_ARG           "r"
-#define CMD_ARG                 "cmd"
+#define WRITE_FILE_ARG          "w"
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
 /* 
@@ -35,7 +43,7 @@
 #define EXIT_ARGS          
 #define REQUIRED_EXIT_ARGS                   
 
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
@@ -53,7 +61,7 @@
 #define CLEAR_ARGS
 #define REQUIRED_CLEAR_ARGS
 
-#define HELP_ARGS                   CMD_ARG
+#define HELP_ARGS                   
 #define REQUIRED_HELP_ARGS
 
 #define MAX_HASHES 128

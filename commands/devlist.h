@@ -3,7 +3,7 @@
 
 #include "../command_handler.h"
 
-#define PREFIX_STR "-"
+#define PREFIX_STR "*"
 
 void execute_devlist(command *cmd);
 

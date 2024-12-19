@@ -4,14 +4,14 @@
 
 #include "status_handler.h"
 #include "utils/colors.h"
-
+#include "utils/formats.h"
 
 char * get_error_format(err_code code) {
     switch(code) {
         case USER_NOT_ROOT_ERROR:           return "App needs root privileges to execute packet scanning"; break;
         case UNKNOWN_COMMAND_ERROR:         return "No such command '%s'"; break; 
         case COMMAND_NOT_SUPPORTED_ERROR:   return "Your OS does not support the '%s' command"; break;
-        case WRONG_OPTIONS_FORMAT_ERROR:    return "Invalid argument format. Usage: <command> -<option> <args>"; break;
+        case WRONG_OPTIONS_FORMAT_ERROR:    return "Invalid argument format. Usage: " COMMAND_FORMAT; break;
         case NEGATIVE_N_PACKETS:            return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
         case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;

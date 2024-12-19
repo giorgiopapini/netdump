@@ -84,23 +84,30 @@ void uint16_to_bin_str(char *str, uint16_t num, size_t size) {
 }
 
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
-    int i;
-    int total_len = 0;
+    if (n_str == 0 || str_arr == NULL) return NULL;
 
-    for (i = 0; i < n_str; i ++) total_len += strlen(str_arr[i]);
-    total_len += (n_str * strlen(prefix)) + ((n_str - 1) * strlen(separator)) + 1;
-    /* total_len = (string amount times prefix length) + (string amount - 1 times separator length) + 1 (null terminator) */
+    size_t total_len = 0;
+    size_t prefix_len = prefix ? strlen(prefix) : 0;
+    size_t separator_len = separator ? strlen(separator) : 0;
 
-    char *new_str = (char *)malloc(sizeof(char) * total_len); /* NULL terminator included */
-    if (NULL == new_str) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
+    for (size_t i = 0; i < n_str; i ++) {
+        if (str_arr[i] == NULL) return NULL;
+        total_len += strlen(str_arr[i]) + prefix_len;
+    }
+    if (n_str > 1) {
+        total_len += separator_len * (n_str - 1);
+    }
+    total_len ++; /* For null terminator */
+
+    char *new_str = (char *)malloc(total_len);
+    if (new_str == NULL) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
 
     new_str[0] = '\0';
-    for (i = 0; i < n_str; i ++) {
-        if (NULL != prefix) strcat(new_str, prefix);
+    for (size_t i = 0; i < n_str; i ++) {
+        if (prefix) strcat(new_str, prefix);
         strcat(new_str, str_arr[i]);
-        if (NULL != separator) strcat(new_str, separator);
+        if (separator && i < n_str - 1) strcat(new_str, separator);
     }
-    new_str[strlen(new_str) - 1] = '\0';
 
     return new_str;
 }

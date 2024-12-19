@@ -4,6 +4,7 @@
 
 #include "status_handler.h"
 #include "utils/string_utils.h"
+#include "utils/formats.h"
 
 #include "command_handler.h"
 #include "commands/help.h"
@@ -23,6 +24,8 @@ arg * create_arg_from_token(char *token) {
         be recognizable)    */
 
     int len = strlen(token);
+    if (0 == len) return NULL;
+
     if (' ' == token[len - 1]) token[len - 1] = '\0';
 
     int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
@@ -111,36 +114,73 @@ int check_compliance(buffer *buff) {
     return 1;
 }
 
+int add_arg_from_token(command *cmd, char *temp, size_t *args_num) {
+    arg *new_arg = create_arg_from_token(temp);
+    if (NULL == new_arg) return 1;
+    *args_num = *args_num + 1;
+
+    if (MAX_ARGS < *args_num) {
+        raise_error(TOO_MANY_ARGS, 0, NULL, MAX_ARGS);
+        return 1;
+    }
+    add_arg(cmd, new_arg);
+    return 0;
+}
+
 int create_cmd_from_buff(command *cmd, buffer *buff) {
     size_t args_num = 0;
-    char copy[buff->len + 1];   /* including null terminator */
-    memcpy(copy, buff->content, buff->len + 1);
-    char *token = strtok(copy, " ");
+    char temp[buff->len + 1];  /* including null terminator */
+    int i, j;
+    int str_arg_value = 0;  /* flag to check if " already showed up */
+    int writing_arg = 0;  /* flag to check if ARG_PREFIX alredy showed up */
+    int status = 0;
 
-    /* if there is <command> <arg> without the '-' separator than raise a formatting error */
+    /* if there is <command> <arg> without the PREFIX separator than raise a formatting error */
     if (!check_compliance(buff)) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
         return 1;
     }
+    if (NULL == ARG_PREFIX) raise_error(NULL_POINTER, 1, NULL, "ARG_PREFIX", __FILE__);
 
-    while (NULL != token) {
-        if (NULL == cmd->label) {   /* first token is the command label. Other ones are arguments */
-            cmd->label = (char *)malloc(strlen(token));
-            strcpy(cmd->label, token);
-            token = strtok(NULL, ARG_PREFIX);  /* skip command token once read */
+    cmd->label = NULL;
+    for (i = 0, j = 0; i < buff->len; i ++, j ++) {
+        temp[j] = buff->content[i];
+        if (NULL == cmd->label) {
+            if (j > 0 && ' ' == temp[j]) {
+                temp[j] = '\0';
+                cmd->label = (char *)malloc(j + 1);
+                if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
+                strcpy(cmd->label, temp);
+                j = -1;
+            }
         }
         else {
-            arg *new_arg = create_arg_from_token(token);
-            if (NULL == new_arg) return 1;
-            args_num ++;
-
-            if (MAX_ARGS < args_num) {
-                raise_error(TOO_MANY_ARGS, 0, NULL, MAX_ARGS);
-                return 1;
+            if (STRING_DELIMITER == temp[j]) {
+                temp[j] = ' ';
+                j --;
+                str_arg_value = !str_arg_value;
             }
-            add_arg(cmd, new_arg);
-            token = strtok(NULL, ARG_PREFIX);
+            else if (ARG_PREFIX[0] == temp[j] && 0 == str_arg_value) {
+                temp[j] = '\0';
+                if (strlen(temp) > 0) {
+                    status = add_arg_from_token(cmd, temp, &args_num);
+                    if (status) return 1;
+                    writing_arg = !writing_arg;
+                }
+                j = -1;  /* next iteration j=>0 */
+            }
         }
+    }
+
+    temp[j] = '\0';
+    if (NULL == cmd->label) {
+        cmd->label = (char *)malloc(j + 1);
+        if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
+        strcpy(cmd->label, temp);
+    }
+    else {
+        if (strlen(temp) > 0) status = add_arg_from_token(cmd, temp, &args_num);
+        if (status) return 1;
     }
     return 0;
 }
@@ -198,17 +238,17 @@ int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
     missing_args_message = str_concat(missing_args, ARG_PREFIX, " ", j);
     unrecognized_args_message = str_concat(unrecognized_args, ARG_PREFIX, " ", m);
 
-    if (!opt_args && 0 != strlen(missing_args_message)) {       // if opt_args is false --> expected args are not optional
+    if (!opt_args && NULL != missing_args_message) {       // if opt_args is false --> expected args are not optional
         raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
         valid = 0;
     }
-    else if (opt_args && 0 != strlen(unrecognized_args_message)) {
+    else if (opt_args && NULL != unrecognized_args_message) {
         raise_error(UNRECOGNIZED_ARGS_ERROR, 0, NULL, unrecognized_args_message);
         valid = 0;
     }
 
-    free(missing_args_message);
-    free(unrecognized_args_message);
+    if (NULL != missing_args_message) free(missing_args_message);
+    if (NULL != unrecognized_args_message) free(unrecognized_args_message);
     return valid;
 }
 

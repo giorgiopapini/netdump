@@ -23,7 +23,7 @@
 
 	TODO:	Add a parameter to let the user chose the device for the packet sniffing
 	
-	TODO:	Add a way to save the scanned packets into a pcap file (maybe a new command called 'save'?)
+	!!!TODO:	Add a way to save the scanned packets into a pcap file (maybe an argument 'w' for writing to a file after analize cmd?)
 
 	TODO:	When printing a packet header that does not have a network or transport protocol, it should be printed even if
 			-e flag not given.
@@ -34,6 +34,8 @@
 	TODO:	When visualizing a packet. If network header is not provided the algorithm still prints newline char.
 			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it
 			does not exist in that particular packet, it can't be visualized), it only checks if the user wants to print it
+
+	!!!!TODO:	Remove the leading whitespace if present after trimming buffer raw content (happens when ("       command")) is inserted
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
