@@ -58,11 +58,13 @@ char * get_trimmed_str(char *str) {
 
     if (new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
 
+    if (' ' == new_str[0]) new_index --;
     result = (char *)malloc(new_index  + 1);
     if (NULL == result) raise_error(NULL_POINTER, 1, NULL, "char *result", __FILE__);
 
     memset(result, '\0', new_index + 1);
-    strncpy(result, new_str, new_index);
+    if (' ' == new_str[0]) strncpy(result, new_str + 1, new_index);  /* does not copy the first char, which is an empty space */
+    else strncpy(result, new_str, new_index);
 
     return result;
 }

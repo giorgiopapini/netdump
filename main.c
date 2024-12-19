@@ -34,8 +34,6 @@
 	TODO:	When visualizing a packet. If network header is not provided the algorithm still prints newline char.
 			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it
 			does not exist in that particular packet, it can't be visualized), it only checks if the user wants to print it
-
-	!!!!TODO:	Remove the leading whitespace if present after trimming buffer raw content (happens when ("       command")) is inserted
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
