@@ -34,6 +34,24 @@
 #define READ_FILE_ARG           "r"
 #define WRITE_FILE_ARG          "w"
 
+#define NUMBER_ARG_DESC         "Choose a packet by its scanning order number"
+#define PACKET_AMOUNT_ARG_DESC  "Set a packet scanning limit"
+#define FILTER_ARG_DESC         "Filter packets (based upon libpcap's filter function)"
+#define DEVICE_ARG_DESC         "Select an avaliable device for scanning network traffic"
+#define DATALINK_HDR_ARG_DESC   "Show datalink layer protocol header"
+#define NETWORK_HDR_ARG_DESC    "Don't show network layer protocol header"
+#define NO_PROM_ARG_DESC        "Turn off libpcap promiscuos mode"
+#define NO_TIMESTAMP_ARG_DESC   "Hide timestamp"
+#define PACKET_NUM_ARG_DESC     "Show packet number"
+#define READ_FILE_ARG_DESC      "Read a .pcap file"
+#define WRITE_FILE_ARG_DESC     "Write currently saved packets to a .pcap file"
+
+#define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
+#define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
+#define DEVICE_ARG_EG           ARG_PREFIX DEVICE_ARG               " \"device-name\""
+#define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"tcp-80.pcap\""
+#define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"tcp-80.pcap\""
+
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
 /* 
     (e.g.) EXIT_ARGS are ALL the args possible for the command EXIT. 

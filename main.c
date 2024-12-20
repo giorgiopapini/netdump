@@ -20,8 +20,6 @@
 			(netdump > ) characters need to be counted in some way
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
-
-	TODO:	Add a parameter to let the user chose the device for the packet sniffing
 	
 	!!!TODO:	Add a way to save the scanned packets into a pcap file (maybe an argument 'w' for writing to a file after analize cmd?)
 
@@ -29,7 +27,7 @@
 			-e flag not given.
 
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
-			received in a specific amount of time, than erase timeout error
+			received in a specific amount of time, than raise timeout error
 
 	TODO:	When visualizing a packet. If network header is not provided the algorithm still prints newline char.
 			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it

@@ -13,27 +13,30 @@ void print_cmd(char *cmd, char *desc) {
     if (NULL != desc) printf(" (%s)", desc);
 }
 
-void print_arg(char *arg, char *desc, char *prefix_space, char *prefix_str) {
+void print_arg(char *arg, char *desc, char *prefix_space, char *prefix_str, char *example) {
     printf("\n");
     if (NULL != prefix_space) printf("%s", prefix_space);
     if (NULL != prefix_str) printf("%s", prefix_str);
-    if (NULL != arg) printf(" %s", arg);
+    if (NULL != arg) printf(BLUE " %s" RESET_COLOR, arg);
     if (NULL != desc) printf(" (%s)", desc);
+    if (NULL != example) printf(YELLOW " (e.g. '%s')" RESET_COLOR, example);
+    if (prefix_str == DEFAULT_CORNER) printf("\n");
+    /* this is a pointer comparison, not a string comparison, strcmp is not needed */
 }
 
 void analize_help() {
     print_cmd(ANALIZE_COMMAND, ANALIZE_COMMAND_DESC);
 
-    print_arg(NUMBER_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(FILTER_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(DEVICE_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(DATALINK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NETWORK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NO_PROM_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NO_TIMESTAMP_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(PACKET_NUM_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(READ_FILE_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(WRITE_FILE_ARG, NULL, DEFAULT_SPACE, DEFAULT_CORNER);
+    print_arg(NUMBER_ARG, PACKET_AMOUNT_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
+    print_arg(FILTER_ARG, FILTER_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, FILTER_ARG_EG);
+    print_arg(DEVICE_ARG, DEVICE_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, DEVICE_ARG_EG);
+    print_arg(DATALINK_HDR_ARG, DATALINK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NETWORK_HDR_ARG, NETWORK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NO_PROM_ARG, NO_PROM_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NO_TIMESTAMP_ARG, NO_TIMESTAMP_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(PACKET_NUM_ARG, PACKET_NUM_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(READ_FILE_ARG, READ_FILE_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, READ_FILE_ARG_EG);
+    print_arg(WRITE_FILE_ARG, WRITE_FILE_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, WRITE_FILE_ARG_EG);
 }
 
 void devlist_help() {
@@ -47,21 +50,21 @@ void reset_help() {
 void print_help() {
     print_cmd(PRINT_COMMAND, PRINT_COMMAND_DESC);
 
-    print_arg(NUMBER_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(DATALINK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NETWORK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NO_TIMESTAMP_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(PACKET_NUM_ARG, NULL, DEFAULT_SPACE, DEFAULT_CORNER);
+    print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
+    print_arg(DATALINK_HDR_ARG, DATALINK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NETWORK_HDR_ARG, NETWORK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NO_TIMESTAMP_ARG, NO_TIMESTAMP_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(PACKET_NUM_ARG, PACKET_NUM_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NULL);
 }
 
 void visualize_help() {
     print_cmd(VISUALIZE_COMMAND, VISUALIZE_COMMAND_DESC);
 
-    print_arg(NUMBER_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(DATALINK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NETWORK_HDR_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(NO_TIMESTAMP_ARG, NULL, DEFAULT_SPACE, DEFAULT_PIPE);
-    print_arg(PACKET_NUM_ARG, NULL, DEFAULT_SPACE, DEFAULT_CORNER);
+    print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
+    print_arg(DATALINK_HDR_ARG, DATALINK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NETWORK_HDR_ARG, NETWORK_HDR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(NO_TIMESTAMP_ARG, NO_TIMESTAMP_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(PACKET_NUM_ARG, PACKET_NUM_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NULL);
 }
 
 void clear_help() {
