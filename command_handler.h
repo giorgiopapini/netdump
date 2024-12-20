@@ -12,6 +12,7 @@
 #define VISUALIZE_COMMAND       "visualize"     /* nice formatting for specific packets */
 #define CLEAR_COMMAND           "clear"         /* clean screen */
 #define EXIT_COMMAND            "exit"
+#define SAVE_COMMAND            "save"
 #define HELP_COMMAND            "help"
 
 #define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
@@ -20,6 +21,7 @@
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
 #define VISUALIZE_COMMAND_DESC      "Visualize packet formatted as ascii art"
 #define CLEAR_COMMAND_DESC          "Clear screen output"
+#define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
 
 #define ARG_PREFIX              "-"
@@ -33,6 +35,7 @@
 #define PACKET_NUM_ARG          "#"  /* show packet number next to packet */
 #define READ_FILE_ARG           "r"
 #define WRITE_FILE_ARG          "w"
+#define DEST_FILE_ARG           "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
 
 #define NUMBER_ARG_DESC         "Choose a packet by its scanning order number"
 #define PACKET_AMOUNT_ARG_DESC  "Set a packet scanning limit"
@@ -44,28 +47,30 @@
 #define NO_TIMESTAMP_ARG_DESC   "Hide timestamp"
 #define PACKET_NUM_ARG_DESC     "Show packet number"
 #define READ_FILE_ARG_DESC      "Read a .pcap file"
-#define WRITE_FILE_ARG_DESC     "Write currently saved packets to a .pcap file"
+#define WRITE_FILE_ARG_DESC     "Write a .pcap file with all the scanned packets"
+#define DEST_FILE_ARG_DESC      "Specify the destination file for saving scanned data"
 
 #define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
 #define DEVICE_ARG_EG           ARG_PREFIX DEVICE_ARG               " \"device-name\""
-#define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"tcp-80.pcap\""
-#define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"tcp-80.pcap\""
+#define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
+#define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
+#define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
 /* 
     (e.g.) EXIT_ARGS are ALL the args possible for the command EXIT. 
     The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
 */
-
-#define EXIT_ARGS          
-#define REQUIRED_EXIT_ARGS                   
-
+                   
 #define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
 #define REQUIRED_DEVICES_LIST_ARGS  
+
+#define RESET_ARGS
+#define REQUIRED_RESET_ARGS
 
 #define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
@@ -73,11 +78,14 @@
 #define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_VISUALIZE_ARGS
 
-#define RESET_ARGS
-#define REQUIRED_RESET_ARGS
-
 #define CLEAR_ARGS
 #define REQUIRED_CLEAR_ARGS
+
+#define EXIT_ARGS          
+#define REQUIRED_EXIT_ARGS
+
+#define SAVE_ARGS                   NUMBER_ARG, DEST_FILE_ARG
+#define REQUIRED_SAVE_ARGS          DEST_FILE_ARG
 
 #define HELP_ARGS                   
 #define REQUIRED_HELP_ARGS

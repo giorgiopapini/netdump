@@ -14,8 +14,6 @@
 #define DEFAULT_PIPE            PIPE BAR BAR
 #define DEFAULT_CORNER          CORNER BAR BAR
 
-#define USAGE_EXAMPLE(argument, value)   (printf(YELLOW "(-%s %s)" RESET_COLOR, argument, value))
-
 void execute_help(command *cmd);
 
 #endif

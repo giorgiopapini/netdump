@@ -7,14 +7,15 @@
 #include "utils/formats.h"
 
 #include "command_handler.h"
-#include "commands/help.h"
-#include "commands/exit.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"
+#include "commands/reset.h"
 #include "commands/print.h"
 #include "commands/visualize.h"
 #include "commands/clear.h"
-#include "commands/reset.h"
+#include "commands/exit.h"
+#include "commands/save.h"
+#include "commands/help.h"
 
 #define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
 #define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
@@ -255,17 +256,17 @@ int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
 
 /* CHECK_ARGS() checks for unkown args; CHECK_REQ_ARGS() checks for required args missing */
 int execute_command(command *cmd, raw_array *packets, circular_list *history) {
-    if (is_command(cmd, EXIT_COMMAND)) {
-        if (CHECK_ARGS(cmd, EXIT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history);
-    }
-    else if (is_command(cmd, ANALIZE_COMMAND)) {
+    if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist(cmd);
+    }
+    else if (is_command(cmd, RESET_COMMAND)) {
+        if (CHECK_ARGS(cmd, RESET_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
@@ -275,13 +276,17 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
         if (CHECK_ARGS(cmd, VISUALIZE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_VISUALIZE_ARGS)) execute_visualize(cmd, packets);
     }
-    else if (is_command(cmd, RESET_COMMAND)) {
-        if (CHECK_ARGS(cmd, RESET_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
-    }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear(cmd);
+    }
+    else if (is_command(cmd, EXIT_COMMAND)) {
+        if (CHECK_ARGS(cmd, EXIT_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history);
+    }
+    else if (is_command(cmd, SAVE_COMMAND)) {
+        if (CHECK_ARGS(cmd, SAVE_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_SAVE_ARGS)) execute_save(cmd, packets);
     }
     else if (is_command(cmd, HELP_COMMAND)) {
         if (CHECK_ARGS(cmd, HELP_ARGS))

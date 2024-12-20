@@ -13,10 +13,13 @@ char * get_error_format(err_code code) {
         case COMMAND_NOT_SUPPORTED_ERROR:   return "Your OS does not support the '%s' command"; break;
         case WRONG_OPTIONS_FORMAT_ERROR:    return "Invalid argument format. Usage: " COMMAND_FORMAT; break;
         case NEGATIVE_N_PACKETS:            return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
+        case SAVING_EMPTY_PACKETS_ERROR:    return "Couldn't save packets because packet array is empty"; break;
         case NULL_POINTER:                  return "NULL pointer when allocating '%s' in file '%s'"; break;
         case INPUT_ERROR:                   return "An error occured while reading input bytes"; break;
         case INDEX_OUT_OF_BOUNDS:           return "Tried to access packet number '%d' but array was '%d' packets long"; break;
         case PCAP_FILE_ERROR:               return "Couldn't open '%s' file"; break;
+        case PCAP_HANDLE_ERROR:             return "Couldn't open pcap handle"; break;
+        case PCAP_DUMP_FILE_ERROR:          return "Couldn't open dump file"; break;
         case NO_DEVICE_FOUND:               return "Couldn't find device '%s'"; break;
         case DEVICES_SCAN_ERROR:            return "Couldn't find devices"; break;
         case NETMASK_ERROR:                 return "Couldn't get netmask for device '%s'"; break;
@@ -40,6 +43,7 @@ char * get_success_msg(success_code code) {
     switch(code) {
         case ARRAY_RESET_SUCCESS:           return "Array resetted correctly."; break;
         case ARRAY_EMPTY_SUCCESS:           return "Array alredy empty"; break;
+        case PACKETS_DUMP_SUCCESS:          return "Packets have successfully been written to '%s'"; break;
         default:                            return "Operation succeded"; break;
     }
 }

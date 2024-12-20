@@ -17,7 +17,7 @@ void print_arg(char *arg, char *desc, char *prefix_space, char *prefix_str, char
     printf("\n");
     if (NULL != prefix_space) printf("%s", prefix_space);
     if (NULL != prefix_str) printf("%s", prefix_str);
-    if (NULL != arg) printf(BLUE " %s" RESET_COLOR, arg);
+    if (NULL != arg) printf(CYAN " %s" RESET_COLOR, arg);
     if (NULL != desc) printf(" (%s)", desc);
     if (NULL != example) printf(YELLOW " (e.g. '%s')" RESET_COLOR, example);
     if (prefix_str == DEFAULT_CORNER) printf("\n");
@@ -75,12 +75,20 @@ void exit_help() {
     print_cmd(EXIT_COMMAND, EXIT_COMMAND_DESC);
 }
 
+void save_help() {
+    print_cmd(SAVE_COMMAND, SAVE_COMMAND_DESC);
+
+    print_arg(DEST_FILE_ARG, DEST_FILE_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, DEST_FILE_ARG_EG);
+    print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NUMBER_ARG_EG);
+}
+
 void execute_help(command *cmd) {
     printf("Default command format: " COMMAND_FORMAT "\n");
 
     analize_help();
     print_help();
     visualize_help();
+    save_help();
     reset_help();
     devlist_help();
     clear_help();

@@ -22,6 +22,7 @@
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 	
 	!!!TODO:	Add a way to save the scanned packets into a pcap file (maybe an argument 'w' for writing to a file after analize cmd?)
+				CREATE A SAVE COMMAND, THAN USE SAME LOGIC INSIDE analize COMMAND (import the save.c module inside analize.c)
 
 	TODO:	When printing a packet header that does not have a network or transport protocol, it should be printed even if
 			-e flag not given.
