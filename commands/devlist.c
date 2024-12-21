@@ -19,7 +19,7 @@ void execute_devlist(command *cmd) {
 
     for (device = alldevs; NULL != device; device = device->next) {
         printf(PREFIX_STR);
-        printf(GREEN " %s" RESET_COLOR, device->name);
+        printf(GREEN "%s" RESET_COLOR, device->name);
 
         if (device->description) printf(" (%s)", device->description);
         else printf(" (No description available)");

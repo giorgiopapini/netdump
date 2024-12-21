@@ -35,6 +35,7 @@ char * get_error_format(err_code code) {
         case NEGATIVE_BUFFER_INDEX:         return "Buffer index cannot be a negative number '(%d < 0)'"; break;
         case CURSOR_POSITION_ERROR:         return "Couldn't retrieve the current cursor position"; break;
         case TERMINAL_SIZE_ERROR:           return "Couldn't retrieve the current terminal size"; break;
+        case CURR_WORK_DIR_ERROR:           return "Couldn't resolve current working directory"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }
@@ -43,7 +44,7 @@ char * get_success_msg(success_code code) {
     switch(code) {
         case ARRAY_RESET_SUCCESS:           return "Array resetted correctly."; break;
         case ARRAY_EMPTY_SUCCESS:           return "Array alredy empty"; break;
-        case PACKETS_DUMP_SUCCESS:          return "Packets have successfully been written to '%s'"; break;
+        case PACKETS_DUMP_SUCCESS:          return "Packets have successfully been written to file"; break;
         default:                            return "Operation succeded"; break;
     }
 }

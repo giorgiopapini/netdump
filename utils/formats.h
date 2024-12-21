@@ -11,8 +11,6 @@
 #define IP_ADDR_STR_LEN 16  /* 255.255.255.255'\0' */
 
 #define UNKNOWN "unknown"  /* it should NEVER be NULL */
-
-#define COMMAND_FORMAT "<command> " ARG_PREFIX "<arg> <value>"
-#define STRING_DELIMITER '"'
+#define PREFIX_STR "* "
 
 #endif

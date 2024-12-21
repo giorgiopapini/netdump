@@ -57,6 +57,9 @@
 #define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
 #define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
 
+#define COMMAND_FORMAT "<command> " ARG_PREFIX "<arg> <value>"
+#define STRING_DELIMITER '"'
+
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
 /* 
     (e.g.) EXIT_ARGS are ALL the args possible for the command EXIT. 

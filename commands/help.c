@@ -4,7 +4,6 @@
 #include "help.h"
 #include "../utils/colors.h"
 #include "../command_handler.h"
-#include "../utils/formats.h"
 
 
 void print_cmd(char *cmd, char *desc) {

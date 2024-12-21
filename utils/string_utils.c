@@ -21,9 +21,11 @@ int find_word_len(char *sentence, int word_pos) {
     return strlen(sentence);
 }
 
-void lower_str(char *str) {
+void lower_str_except_interval(char *str, char interval_symbol) {
+    int locked = 0;
     while ('\0' != *str) {
-        *str = tolower(*str);
+        if (*str == interval_symbol) locked = !locked;
+        if (0 == locked) *str = tolower(*str);
         str += 1;
     }
 }

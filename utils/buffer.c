@@ -71,7 +71,7 @@ void normalize_content(buffer *buff) {
     char *normalized_str = get_trimmed_str(buff->content);
     strncpy(buff->content, normalized_str, MAX_BUFFER_LEN - 1);
     buff->len = strlen(buff->content);
-    lower_str(buff->content);
+    lower_str_except_interval(buff->content, STRING_DELIMITER);
     buff->content[buff->len] = '\0';
 }
 
