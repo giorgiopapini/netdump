@@ -1,6 +1,8 @@
 #ifndef FORMATS_H
 #define FORMATS_H
 
+#include <stdint.h>
+
 #include "../command_handler.h"
 
 #define MAC_TO_STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
@@ -12,5 +14,9 @@
 
 #define UNKNOWN "unknown"  /* it should NEVER be NULL */
 #define PREFIX_STR "* "
+
+void ipv4_to_str(char *dest, uint32_t addr);
+void print_ipv4(uint32_t addr);
+void print_mac(uint8_t mac_addr[6]);
 
 #endif

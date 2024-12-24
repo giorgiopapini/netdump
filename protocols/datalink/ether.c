@@ -69,20 +69,13 @@ lookup_table ethers = {
 
 
 void print_ether_hdr(const uint8_t *pkt) {
-    ether_hdr *ether_header = (ether_hdr *)pkt;
-	uint16_t ethertype = ntohs(ether_header->ethertype);
+	uint16_t ethertype = ntohs(ETHERTYPE(pkt));
 	const char *protocol_name = get_value(ethers, ethertype);
     
 	/* ========================= printing src (MAC) > dest (MAC) ========================= */
-	for (int i = 0; i < 5; i ++) {      /* the last 8 bits are printed after without the trailing ':' */
-		printf("%02x:", ether_header->src_addr[i] & 0xff);
-	}
-    printf("%02x", ether_header->src_addr[5]);
+    print_mac(SRC_ADDR(pkt));
     printf(" > ");
-	for (int i = 0; i < 5; i ++) {      /* the last 8 bits are printed after without the trailing ':' */
-		printf("%02x:", ether_header->dest_addr[i] & 0xff);
-	}
-    printf("%02x", ether_header->dest_addr[5] & 0xff);
+	print_mac(DEST_ADDR(pkt));
     /* =================================================================================== */
 
 	/* =============================== printing ethertype ================================ */
@@ -92,16 +85,15 @@ void print_ether_hdr(const uint8_t *pkt) {
 }
 
 void visualize_ether_hdr(const uint8_t *pkt) {
-    ether_hdr *ether_header = (ether_hdr *)pkt;
-    const char *protocol_name = get_value(ethers, ntohs(ether_header->ethertype));
+    const char *protocol_name = get_value(ethers, ntohs(ETHERTYPE(pkt)));
     protocol_name = NULL == protocol_name ? UNKNOWN : protocol_name;
     char dest_addr[18];
     char src_addr[18];
     char ethertype[strlen(protocol_name) + 10];  /* proto (0xXXXX)'\0' */
 
-    snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->dest_addr));
-    snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(ether_header->src_addr));
-    snprintf(ethertype, sizeof(ethertype), "%s (0x%04x)", protocol_name, ntohs(ether_header->ethertype));
+    snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(DEST_ADDR(pkt)));
+    snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(SRC_ADDR(pkt)));
+    snprintf(ethertype, sizeof(ethertype), "%s (0x%04x)", protocol_name, ntohs(ETHERTYPE(pkt)));
 
     start_printing();
     print_hdr_info(ETHER_HEADER_LABEL, NULL);

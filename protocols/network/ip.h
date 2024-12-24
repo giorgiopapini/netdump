@@ -19,27 +19,25 @@
 #define SRC_ADDR_LABEL "Source Address"
 #define DEST_ADDR_LABEL "Destination Address"
 
-/* https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers */
+              
+#define IP_HLEN(pkt)        (*((uint8_t *)(pkt)) & 0x0f)
+#define IP_VERSION(pkt)     (*((uint8_t *)(pkt)) >> 4)
+#define TOS(pkt)            *((uint8_t *)(pkt + 1))
+#define TOTLEN(pkt)         *((uint16_t *)(pkt + 2))      
+#define ID(pkt)             *((uint16_t *)(pkt + 4))
+#define OFFSET(pkt)         *((uint16_t *)(pkt + 6))
+#define MF                  0x2000  /* 14th bit */
+#define DF                  0x4000  /* 15th bit */
+#define RF                  0x8000  /* 16th bit */
+#define OFFSET_MASK         0x1fff  /* last 13 bits reserved for the offset field */
+#define TTL(pkt)            *((uint8_t *)(pkt + 8))
+#define PROTOCOL(pkt)       *((uint8_t *)(pkt + 9))
+#define CHECKSUM(pkt)       *((uint16_t *)(pkt + 10))
+#define SRC_ADDR(pkt)       *((uint32_t *)(pkt + 12))
+#define DEST_ADDR(pkt)      *((uint32_t *)(pkt + 16))
 
-typedef struct ip_hdr {     /* IMPORTANT!! --> Find a way to manage options, not here inside of ip_hdr */ 
-    uint8_t vhlen;
-    uint8_t tos;
-    uint16_t totlen;
-    uint16_t identification;
-    uint16_t offset_field;
-    #define MF      0x2000  /* 14th bit */
-    #define DF      0x4000  /* 15th bit */
-    #define RF      0x8000  /* 16th bit */
-    #define OFFSET_MASK     0x1fff  /* last 13 bits reserved for the offset field */
-    uint8_t ttl;
-    uint8_t protocol;
-    uint16_t checksum;
-    uint32_t src_addr;
-    uint32_t dest_addr;
-} ip_hdr;
+#define IP_LEN              20
 
-#define IP_HLEN(ip_hdr)      (((ip_header)->vhlen) & 0x0f)
-#define IP_VERSION(ip_hdr)   (((ip_header)->vhlen) >> 4)
 
 void print_ip_hdr(const uint8_t *pkt);
 void visualize_ip_hdr(const uint8_t *pkt);

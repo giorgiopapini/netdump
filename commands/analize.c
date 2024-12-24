@@ -21,15 +21,12 @@ static pcap_t *handle;
 typedef struct custom_data {
 	command *cmd;
 	raw_array *packets;
+	pcap_dumper_t *pcap_dump;
 } custom_data;
 
 void handle_sigint(int sig) {
 	pcap_breakloop(handle);
 	printf("\n");
-}
-
-void write_to_file(char *dest, raw_array *packets) {
-	/* ADD WRITE TO FILE BEHAVIOUR */
 }
 
 int device_exists(char *dev) {
@@ -60,6 +57,8 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	packet *pkt = create_packet(header, pcap_datalink(handle), data->packets->len + 1, bytes);
 	insert(data->packets, pkt);
 	
+	if (NULL != data->pcap_dump) pcap_dump((uint8_t *)data->pcap_dump, header, bytes);
+
 	dissect_packet(data->cmd, pkt);
 }
 
@@ -77,7 +76,7 @@ void execute_analize(command *cmd, raw_array *packets) {
     if (0 != tmp) pkt_num = tmp;
 	/* ============================================================================================== */
 
-    custom_data custom_args = { .cmd = cmd, .packets = packets };
+    custom_data custom_args = { .cmd = cmd, .packets = packets , .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
 	bpf_u_int32 mask;
@@ -86,10 +85,10 @@ void execute_analize(command *cmd, raw_array *packets) {
 	if (NULL != read_file) {
         handle = pcap_open_offline(read_file, errbuff);
         if (NULL == handle) {
-			raise_error(PCAP_FILE_ERROR, 0, NULL, read_file);
+			raise_error(PCAP_FILE_ERROR, 0, ABSOLUTE_PATH_HINT, read_file);
 			return;
 		}
-		printf("Reading from pcap file: %s\n", read_file);
+		printf(CAPTURE_FROM_FILE_MSG, read_file);
     } else {
 		if (NULL == dev) dev = pcap_lookupdev(errbuff);
         if (NULL == dev) {
@@ -111,19 +110,27 @@ void execute_analize(command *cmd, raw_array *packets) {
         handle = pcap_open_live(dev, BUFSIZ, prom_mode, 1000, errbuff);  // promiscuous mode (third argument) = 1
         if (NULL == handle) raise_error(NO_ACCESS_DEVICE_ERROR, 1, NULL, dev);
 
-        printf("Capturing from live device: %s\n", dev);
+        printf(CAPTURE_DEVICE_MSG, dev);
     }
 
 	if (-1 == pcap_datalink(handle)) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
 	
 	signal(SIGINT, handle_sigint);
 
+	if (NULL != write_file) {
+		custom_args.pcap_dump = pcap_dump_open(handle, write_file);
+		if (NULL == custom_args.pcap_dump) {
+			pcap_close(handle);
+			raise_error(PCAP_FILE_ERROR, 0, ABSOLUTE_PATH_HINT, write_file);
+			return;
+		}
+	}
+
 	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) raise_error(INVALID_FILTER, 0, NULL, filter_exp);
 	else if (-1 == pcap_setfilter(handle, &fp)) raise_error(NOT_INTALLABLE_FILTER, 0, NULL, filter_exp);
 	else if (-1 == pcap_loop(handle, pkt_num, get_packet, (uint8_t *)&custom_args)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
 	else printf("\ntotal packets: %d\n", packets->len);
 
-	if (NULL != write_file) write_to_file(write_file, packets);
-
+	if (NULL != custom_args.pcap_dump) pcap_dump_close(custom_args.pcap_dump);
 	pcap_close(handle);
 }
