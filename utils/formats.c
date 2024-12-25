@@ -2,19 +2,10 @@
 
 #include "formats.h"
 
-void ipv4_to_str(char *dest, uint32_t addr) {
-    uint8_t bytes[4];
-    bytes[3] = addr & 0xFF;
-    bytes[2] = (addr >> 8) & 0xFF;
-    bytes[1] = (addr >> 16) & 0xFF;
-    bytes[0] = (addr >> 24) & 0xFF;
-    snprintf(dest, 16, IP_ADDR_FORMAT, IP_TO_STR(bytes));
-    dest[IP_ADDR_STR_LEN - 1] = '\0';
-}
 
 void print_ipv4(uint32_t addr) {
     char buff[IP_ADDR_STR_LEN];
-    ipv4_to_str(buff, addr);
+    snprintf(buff, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(addr));
     printf("%s", buff);  
 }
 

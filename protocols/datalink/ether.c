@@ -87,8 +87,8 @@ void print_ether_hdr(const uint8_t *pkt) {
 void visualize_ether_hdr(const uint8_t *pkt) {
     const char *protocol_name = get_value(ethers, ntohs(ETHERTYPE(pkt)));
     protocol_name = NULL == protocol_name ? UNKNOWN : protocol_name;
-    char dest_addr[18];
-    char src_addr[18];
+    char dest_addr[MAC_ADDR_STR_LEN];
+    char src_addr[MAC_ADDR_STR_LEN];
     char ethertype[strlen(protocol_name) + 10];  /* proto (0xXXXX)'\0' */
 
     snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(DEST_ADDR(pkt)));

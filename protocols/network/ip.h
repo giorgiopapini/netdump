@@ -3,21 +3,21 @@
 
 #include <stdint.h>
 
-#define IP_HEADER_LABEL "IP Header"
-#define VERSION_LABEL "Version"
-#define IHL_LABEL "IHL"
-#define TOS_LABEL "Type of Service"
-#define TOTLEN_LABEL "Total Length"
-#define ID_LABEL "Identification"
-#define MF_LABEL "MF"
-#define DF_LABEL "DF"
-#define RF_LABEL "RF"
-#define OFFSET_LABEL "Fragment Offset"
-#define TTL_LABEL "Time to Live"
-#define PROTOCOL_LABEL "Protocol"
-#define CHECKSUM_LABEL "Checksum"
-#define SRC_ADDR_LABEL "Source Address"
-#define DEST_ADDR_LABEL "Destination Address"
+#define IP_HEADER_LABEL     "IP Header"
+#define VERSION_LABEL       "Version"
+#define IHL_LABEL           "IHL"
+#define TOS_LABEL           "Type of Service"
+#define TOTLEN_LABEL        "Total Length"
+#define ID_LABEL            "Identification"
+#define MF_LABEL            "MF"
+#define DF_LABEL            "DF"
+#define RF_LABEL            "RF"
+#define OFFSET_LABEL        "Fragment Offset"
+#define TTL_LABEL           "Time to Live"
+#define PROTOCOL_LABEL      "Protocol"
+#define CHECKSUM_LABEL      "Checksum"
+#define SRC_ADDR_LABEL      "Source Address"
+#define DEST_ADDR_LABEL     "Destination Address"
 
               
 #define IP_HLEN(pkt)        (*((uint8_t *)(pkt)) & 0x0f)

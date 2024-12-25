@@ -107,8 +107,8 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     else snprintf(protocol, sizeof(protocol), "%d", PROTOCOL(pkt));
     
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(CHECKSUM(pkt)));
-    ipv4_to_str(src_addr, ntohl(SRC_ADDR(pkt)));
-    ipv4_to_str(dest_addr, ntohl(DEST_ADDR(pkt)));
+    snprintf(src_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(SRC_ADDR(pkt))));
+    snprintf(dest_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DEST_ADDR(pkt))));
 
     start_printing();
     print_hdr_info(IP_HEADER_LABEL, NULL);

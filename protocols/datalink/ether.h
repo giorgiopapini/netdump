@@ -3,16 +3,16 @@
 
 #include <stdint.h>
 
-#define ETHER_HEADER_LABEL "Ether Header"
-#define DEST_ADDR_LABEL "Destination MAC Address"
-#define SRC_ADDR_LABEL "Source MAC Address"
-#define ETHERTYPE_LABEL "EtherType"
+#define ETHER_HEADER_LABEL      "Ether Header"
+#define DEST_ADDR_LABEL         "Destination MAC Address"
+#define SRC_ADDR_LABEL          "Source MAC Address"
+#define ETHERTYPE_LABEL         "EtherType"
 
 #define DEST_ADDR(pkt)          (pkt)
 #define SRC_ADDR(pkt)           (pkt + 6)
 #define ETHERTYPE(pkt)          *((uint16_t *)(pkt + 12))
 
-#define ETHER_LEN       14               
+#define ETHER_LEN               14               
 
 typedef struct ether_hdr {
     uint8_t dest_addr[6];           // MAC addresses are long 48 bits; An array of 6 uint8 is needed
