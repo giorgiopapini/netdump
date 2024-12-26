@@ -17,7 +17,7 @@ typedef struct field {
 
 typedef struct protocol_info {
 	int protocol;
-	size_t hdr_size;
+	size_t (*hdr_size)(const uint8_t *pkt);
 	field encap_type_range;
     void (*print_header)(const uint8_t *pkt);   /* Once the callback function is stored there is no need to "know" the packet_hdr directly. */
 	void (*visualize_header)(const uint8_t *pkt);

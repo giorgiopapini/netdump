@@ -22,7 +22,7 @@ lookup_table ethers = {
     { ETHERTYPE_VMAN,			"VMAN" },
     { ETHERTYPE_PUP,        	"PUP" },
     { ETHERTYPE_ARP,            "ARP"},
-    { ETHERTYPE_REVARP,         "Reverse ARP"},
+    { ETHERTYPE_RARP,           "Reverse ARP"},
     { ETHERTYPE_NS,             "NS" },
     { ETHERTYPE_SPRITE,         "Sprite" },
     { ETHERTYPE_TRAIL,          "Trail" },
@@ -67,6 +67,8 @@ lookup_table ethers = {
     { 0,                        NULL }
 };
 
+
+size_t ether_hdr_len(const uint8_t *pkt) { return ETHER_LEN; }
 
 void print_ether_hdr(const uint8_t *pkt) {
 	uint16_t ethertype = ntohs(ETHERTYPE(pkt));

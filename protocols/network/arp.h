@@ -8,11 +8,6 @@
 #define RARP_REQUEST            3
 #define RARP_RESPONSE           4
 
-#define ARP_REQUEST_STR         "who-has"
-#define ARP_RESPONSE_STR        "reply"
-#define RARP_REQUEST_STR        ""
-#define RARP_RESPONSE_STR       ""
-
 #define ARP_HEADER_LABEL        "ARP Header"
 #define HW_TYPE_LABEL           "HTYPE"
 #define P_TYPE_LABEL            "PTYPE"
@@ -34,10 +29,14 @@
 #define TARGET_HW_ADDR(pkt)     (pkt + 18)  /* 6 bytes */
 #define TARGET_P_ADDR(pkt)      *((uint32_t *)(pkt + 24))
 
-#define ARP_LEN                 28
 
-
+size_t arp_hdr_len(const uint8_t *pkt);
 void print_arp_hdr(const uint8_t *pkt);
 void visualize_arp_hdr(const uint8_t *pkt);
+
+/* 
+    Currently this arp description only supports ethernet technology and ip technology (no ATM or infiniband, which both have 
+    different address sizes) 
+*/
 
 #endif

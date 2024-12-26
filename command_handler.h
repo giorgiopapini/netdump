@@ -5,15 +5,15 @@
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
 
-#define ANALIZE_COMMAND         "analize"
-#define DEVICES_LIST_COMMAND    "devlist"
-#define RESET_COMMAND           "reset"         /* erase currently stored packets (if command analize alredy run) */
-#define PRINT_COMMAND           "print"         /* print the packets as done in analize (without re-analizing the net) */
-#define VISUALIZE_COMMAND       "visualize"     /* nice formatting for specific packets */
-#define CLEAR_COMMAND           "clear"         /* clean screen */
-#define EXIT_COMMAND            "exit"
-#define SAVE_COMMAND            "save"
-#define HELP_COMMAND            "help"
+#define ANALIZE_COMMAND             "analize"
+#define DEVICES_LIST_COMMAND        "devlist"
+#define RESET_COMMAND               "reset"         /* erase currently stored packets (if command analize alredy run) */
+#define PRINT_COMMAND               "print"         /* print the packets as done in analize (without re-analizing the net) */
+#define VISUALIZE_COMMAND           "visualize"     /* nice formatting for specific packets */
+#define CLEAR_COMMAND               "clear"         /* clean screen */
+#define EXIT_COMMAND                "exit"
+#define SAVE_COMMAND                "save"
+#define HELP_COMMAND                "help"
 
 #define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
@@ -24,31 +24,33 @@
 #define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
 
-#define ARG_PREFIX              "-"
-#define NUMBER_ARG              "n"
-#define FILTER_ARG              "filter"
-#define DEVICE_ARG              "dev"
-#define DATALINK_HDR_ARG        "e"  /* show datalink header */
-#define NETWORK_HDR_ARG         "nnet" /* not net (set if the network layer should not be printed) */
-#define NO_PROM_ARG             "p"  /* turn off promiscuos mode */
-#define NO_TIMESTAMP_ARG        "t"  /* do not show formatted time next to packet */
-#define PACKET_NUM_ARG          "#"  /* show packet number next to packet */
-#define READ_FILE_ARG           "r"
-#define WRITE_FILE_ARG          "w"
-#define DEST_FILE_ARG           "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
+#define ARG_PREFIX                  "-"
+#define NUMBER_ARG                  "n"
+#define FILTER_ARG                  "filter"
+#define DEVICE_ARG                  "dev"
+#define DATALINK_HDR_ARG            "e"  /* show datalink header */
+#define NETWORK_HDR_ARG             "nnet" /* not net (set if the network layer should not be printed) */
+#define TRANSPORT_HDR_ARG           "t"  /* shot transport header */
+#define NO_PROM_ARG                 "p"  /* turn off promiscuos mode */
+#define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
+#define PACKET_NUM_ARG              "#"  /* show packet number next to packet */
+#define READ_FILE_ARG               "r"
+#define WRITE_FILE_ARG              "w"
+#define DEST_FILE_ARG               "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
 
-#define NUMBER_ARG_DESC         "Choose a packet by its scanning order number"
-#define PACKET_AMOUNT_ARG_DESC  "Set a packet scanning limit"
-#define FILTER_ARG_DESC         "Filter packets (based upon libpcap's filter function)"
-#define DEVICE_ARG_DESC         "Select an avaliable device for scanning network traffic"
-#define DATALINK_HDR_ARG_DESC   "Show datalink layer protocol header"
-#define NETWORK_HDR_ARG_DESC    "Don't show network layer protocol header"
-#define NO_PROM_ARG_DESC        "Turn off libpcap promiscuos mode"
-#define NO_TIMESTAMP_ARG_DESC   "Hide timestamp"
-#define PACKET_NUM_ARG_DESC     "Show packet number"
-#define READ_FILE_ARG_DESC      "Read a .pcap file"
-#define WRITE_FILE_ARG_DESC     "Write a .pcap file with all the scanned packets"
-#define DEST_FILE_ARG_DESC      "Specify the destination file for saving scanned data"
+#define NUMBER_ARG_DESC             "Choose a packet by its scanning order number"
+#define PACKET_AMOUNT_ARG_DESC      "Set a packet scanning limit"
+#define FILTER_ARG_DESC             "Filter packets (based upon libpcap's filter function)"
+#define DEVICE_ARG_DESC             "Select an avaliable device for scanning network traffic"
+#define DATALINK_HDR_ARG_DESC       "Show datalink layer protocol header"
+#define NETWORK_HDR_ARG_DESC        "Don't show network layer protocol header"
+#define TRANSPORT_HDR_ARG_DESC      "Show transport layer protocol header"
+#define NO_PROM_ARG_DESC            "Turn off libpcap promiscuos mode"
+#define NO_TIMESTAMP_ARG_DESC       "Hide timestamp"
+#define PACKET_NUM_ARG_DESC         "Show packet number"
+#define READ_FILE_ARG_DESC          "Read a .pcap file"
+#define WRITE_FILE_ARG_DESC         "Write a .pcap file with all the scanned packets"
+#define DEST_FILE_ARG_DESC          "Specify the destination file for saving scanned data"
 
 #define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
@@ -66,7 +68,7 @@
     The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
 */
                    
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
@@ -75,10 +77,10 @@
 #define RESET_ARGS
 #define REQUIRED_RESET_ARGS
 
-#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
 
-#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_VISUALIZE_ARGS
 
 #define CLEAR_ARGS

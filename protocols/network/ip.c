@@ -1,17 +1,17 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 #include "ip.h"
 #include "../../utils/string_utils.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/lookup_table.h"
-#include "../../ipproto.h"
+#include "../../ipprotos.h"
 #include "../../utils/formats.h"
 
 lookup_table ipprotos = {
     { IPPROTO_HOPOPTS,      "HOPOP" },
-    { IPPROTO_COMP,         "ICMP" },
+    { IPPROTO_ICMP,         "ICMP" },
     { IPPROTO_IGMP,         "IGMP" },
     { IPPROTO_IPV4,         "IPV4" },
     { IPPROTO_TCP,          "TCP" },
@@ -42,6 +42,8 @@ lookup_table ipprotos = {
     { IPPROTO_MOBILITY,     "MOBILITY" },
     { 0,                    NULL }
 };
+
+size_t ip_hdr_len(const uint8_t *pkt) { return IP_HLEN(pkt) * 4; }
 
 void print_ip_hdr(const uint8_t *pkt) {
     char flags[9] = "";  /* max: "DF, MF, \0" */

@@ -6,21 +6,35 @@
 #include "../../utils/formats.h"
 #include "../../utils/visualizer.h"
 
+
+size_t arp_hdr_len(const uint8_t *pkt) { return 8 + (2 * HW_LEN(pkt) + (2 * P_LEN(pkt))); }
+
 void print_arp_hdr(const uint8_t *pkt) {
     uint16_t operation = ntohs(OPERATION(pkt));
 
-    printf("arp ");
     if (operation == ARP_REQUEST) {
-        printf(ARP_REQUEST_STR " ");
+        printf("arp who-has ");
         print_ipv4(ntohl(TARGET_P_ADDR(pkt)));
         printf(" tell ");
         print_ipv4(ntohl(SENDER_P_ADDR(pkt)));
     }
     else if (operation == ARP_RESPONSE) {
-        printf(ARP_RESPONSE_STR " ");
+        printf("arp reply ");
         print_ipv4(ntohl(SENDER_P_ADDR(pkt)));
         printf(" is-at ");
         print_mac(SENDER_HW_ADDR(pkt));
+    }
+    else if (operation == RARP_REQUEST) {
+        printf("rarp who-is ");
+        print_mac(TARGET_HW_ADDR(pkt));
+        printf(" tell ");
+        print_mac(SENDER_HW_ADDR(pkt));
+    }
+    else if (operation == RARP_RESPONSE) {
+        printf("rarp reply ");
+        print_mac(TARGET_HW_ADDR(pkt));
+        printf(" is-at ");
+        print_ipv4(ntohl(TARGET_P_ADDR(pkt)));
     }
 }
 

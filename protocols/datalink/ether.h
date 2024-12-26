@@ -12,15 +12,17 @@
 #define SRC_ADDR(pkt)           (pkt + 6)
 #define ETHERTYPE(pkt)          *((uint16_t *)(pkt + 12))
 
-#define ETHER_LEN               14               
+#define ETHER_LEN               14
 
-typedef struct ether_hdr {
-    uint8_t dest_addr[6];           // MAC addresses are long 48 bits; An array of 6 uint8 is needed
-    uint8_t src_addr[6];            // 48 / sizeof(uint8) = 48 / 8 = 6 (octects)
-    uint16_t ethertype;
-} ether_hdr;
 
+size_t ether_hdr_len(const uint8_t *pkt);
 void print_ether_hdr(const uint8_t *pkt);
 void visualize_ether_hdr(const uint8_t *pkt);
+
+/* 
+    const uint8_t *pkt is not used in ether_hdr_len() function. It needs to be described anyways because the function pointer
+    needs to be stored inside of a protocol_info table and that structure is described in such a way that it accepts only functions
+    defined in this way
+*/
 
 #endif

@@ -36,9 +36,8 @@
 #define SRC_ADDR(pkt)       *((uint32_t *)(pkt + 12))
 #define DEST_ADDR(pkt)      *((uint32_t *)(pkt + 16))
 
-#define IP_LEN              20
 
-
+size_t ip_hdr_len(const uint8_t *pkt);
 void print_ip_hdr(const uint8_t *pkt);
 void visualize_ip_hdr(const uint8_t *pkt);
 

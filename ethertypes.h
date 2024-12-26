@@ -15,8 +15,8 @@
 #ifndef ETHERTYPE_ARP
 #define ETHERTYPE_ARP		0x0806	/* Addr. resolution protocol */
 #endif
-#ifndef ETHERTYPE_REVARP
-#define ETHERTYPE_REVARP	0x8035	/* reverse Addr. resolution protocol */
+#ifndef ETHERTYPE_RARP
+#define ETHERTYPE_RARP  	0x8035	/* reverse Addr. resolution protocol */
 #endif
 #ifndef ETHERTYPE_NS
 #define ETHERTYPE_NS		0x0600

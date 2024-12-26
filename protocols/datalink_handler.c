@@ -5,7 +5,7 @@
 
 
 protocol_info datalink_protocols[] = {
-    { DLT_EN10MB, ETHER_LEN, { .start = 12, .len = 2, .ntoh = 1 }, print_ether_hdr, visualize_ether_hdr },
+    { DLT_EN10MB, ether_hdr_len, { .start = 12, .len = 2, .ntoh = 1 }, print_ether_hdr, visualize_ether_hdr },
 };
 
 
