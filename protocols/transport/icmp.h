@@ -3,6 +3,22 @@
 
 #include <stdint.h>
 
+#define ICMP_REPLY              0
+#define ICMP_REQUEST            8
+
+#define ICMP_HEADER_LABEL       "ICMP Header"
+#define TYPE_LABEL              "Type"
+#define CODE_LABEL              "Code"
+#define CHECKSUM_LABEL          "Checksum"
+#define ID_LABEL                "ID"
+#define SEQUENCE_LABEL          "Sequence"
+
+#define TYPE(pkt)               *((uint8_t *)pkt)
+#define CODE(pkt)               *((uint8_t *)(pkt + 1))
+#define CHECKSUM(pkt)           *((uint16_t *)(pkt + 2))
+#define ID(pkt)                 *((uint16_t *)(pkt + 4))
+#define SEQUENCE(pkt)           *((uint16_t *)(pkt + 6))
+
 #define ICMP_LEN                8
 
 

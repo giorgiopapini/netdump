@@ -68,7 +68,7 @@ void dissect_packet(command *cmd, packet *pkt) {
 	trans_protocol_type = get_field(raw_pkt, network_info.encap_type_range);
 	/* ======================================================================== */
 
-	print_separator(cmd, show_datalink && show_network && show_transport);
+	print_separator(cmd, (show_datalink || show_network) && show_transport);
 
 	/* ========================== dissect transport =========================== */
 	raw_pkt += NULL != network_info.hdr_size ? network_info.hdr_size(raw_pkt) : 0;

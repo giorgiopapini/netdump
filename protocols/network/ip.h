@@ -18,8 +18,7 @@
 #define CHECKSUM_LABEL      "Checksum"
 #define SRC_ADDR_LABEL      "Source Address"
 #define DEST_ADDR_LABEL     "Destination Address"
-
-              
+     
 #define IP_HLEN(pkt)        (*((uint8_t *)(pkt)) & 0x0f)
 #define IP_VERSION(pkt)     (*((uint8_t *)(pkt)) >> 4)
 #define TOS(pkt)            *((uint8_t *)(pkt + 1))

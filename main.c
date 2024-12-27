@@ -34,7 +34,7 @@
 	TODO:	THE HEADER LENGTH SHOULD NOT BE A CONSTANT, BECAUSE, FOR EXAMPLE, THE IP HEADER LENGTH DEPENDS ON THE PRESENCE OF OPTIONS
 			(NOTICIBLE BY THE HLEN FIELD) --> So: length = (hlen * 4) (4 bytes, cause hlen represent the amount of word 32 bit that
 			made up the header). Build a function foreach header that calculates dinamically the header length. Add the logic to handle
-			OPTIONS field (with every subfield) (exaplined in ChatGPT)
+			OPTIONS field (with every subfield)
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

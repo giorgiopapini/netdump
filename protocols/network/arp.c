@@ -13,25 +13,25 @@ void print_arp_hdr(const uint8_t *pkt) {
     uint16_t operation = ntohs(OPERATION(pkt));
 
     if (operation == ARP_REQUEST) {
-        printf("arp who-has ");
+        printf("ARP who-has ");
         print_ipv4(ntohl(TARGET_P_ADDR(pkt)));
         printf(" tell ");
         print_ipv4(ntohl(SENDER_P_ADDR(pkt)));
     }
     else if (operation == ARP_RESPONSE) {
-        printf("arp reply ");
+        printf("ARP reply ");
         print_ipv4(ntohl(SENDER_P_ADDR(pkt)));
         printf(" is-at ");
         print_mac(SENDER_HW_ADDR(pkt));
     }
     else if (operation == RARP_REQUEST) {
-        printf("rarp who-is ");
+        printf("RARP who-is ");
         print_mac(TARGET_HW_ADDR(pkt));
         printf(" tell ");
         print_mac(SENDER_HW_ADDR(pkt));
     }
     else if (operation == RARP_RESPONSE) {
-        printf("rarp reply ");
+        printf("RARP reply ");
         print_mac(TARGET_HW_ADDR(pkt));
         printf(" is-at ");
         print_ipv4(ntohl(TARGET_P_ADDR(pkt)));
