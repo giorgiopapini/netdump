@@ -35,6 +35,9 @@
 			(NOTICIBLE BY THE HLEN FIELD) --> So: length = (hlen * 4) (4 bytes, cause hlen represent the amount of word 32 bit that
 			made up the header). Build a function foreach header that calculates dinamically the header length. Add the logic to handle
 			OPTIONS field (with every subfield)
+	
+	TODO:	Add a message to notify the user when a protocol header is not supported and can't be dissected and printed (or visualized).
+			The save command still works btw, even if the packet can't be parsed
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

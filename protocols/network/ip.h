@@ -21,19 +21,19 @@
      
 #define IP_HLEN(pkt)        (*((uint8_t *)(pkt)) & 0x0f)
 #define IP_VERSION(pkt)     (*((uint8_t *)(pkt)) >> 4)
-#define TOS(pkt)            *((uint8_t *)(pkt + 1))
-#define TOTLEN(pkt)         *((uint16_t *)(pkt + 2))      
-#define ID(pkt)             *((uint16_t *)(pkt + 4))
-#define OFFSET(pkt)         *((uint16_t *)(pkt + 6))
+#define TOS(pkt)            (*((uint8_t *)(pkt + 1)))
+#define TOTLEN(pkt)         (*((uint16_t *)(pkt + 2)))     
+#define ID(pkt)             (*((uint16_t *)(pkt + 4)))
+#define OFFSET(pkt)         (*((uint16_t *)(pkt + 6)))
 #define MF                  0x2000  /* 14th bit */
 #define DF                  0x4000  /* 15th bit */
 #define RF                  0x8000  /* 16th bit */
 #define OFFSET_MASK         0x1fff  /* last 13 bits reserved for the offset field */
-#define TTL(pkt)            *((uint8_t *)(pkt + 8))
-#define PROTOCOL(pkt)       *((uint8_t *)(pkt + 9))
-#define CHECKSUM(pkt)       *((uint16_t *)(pkt + 10))
-#define SRC_ADDR(pkt)       *((uint32_t *)(pkt + 12))
-#define DEST_ADDR(pkt)      *((uint32_t *)(pkt + 16))
+#define TTL(pkt)            (*((uint8_t *)(pkt + 8)))
+#define PROTOCOL(pkt)       (*((uint8_t *)(pkt + 9)))
+#define CHECKSUM(pkt)       (*((uint16_t *)(pkt + 10)))
+#define SRC_ADDR(pkt)       (*((uint32_t *)(pkt + 12)))
+#define DEST_ADDR(pkt)      (*((uint32_t *)(pkt + 16)))
 
 
 size_t ip_hdr_len(const uint8_t *pkt);

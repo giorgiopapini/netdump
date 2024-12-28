@@ -79,12 +79,17 @@ long str_to_num(char *str) {
     return num;
 }
 
-void uint16_to_bin_str(char *str, uint16_t num, size_t size) {
-    for (int i = size - 2; i >= 0; i--) {
+void uint_to_bin_str(char *str, uint64_t num, size_t dest_str_size) {
+    if (dest_str_size > (sizeof(num) * 8 + 1)) {
+        raise_error(BUFFER_OVERFLOW_ERROR, 1, NULL, __FILE__, dest_str_size);
+        return;
+    }
+
+    for (int i = dest_str_size - 2; i >= 0; i--) {
         str[i] = (num & 1) + '0';
         num >>= 1;
     }
-    str[size - 1] = '\0';
+    str[dest_str_size - 1] = '\0';
 }
 
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {

@@ -10,7 +10,7 @@
 
 #define DEST_ADDR(pkt)          (pkt)
 #define SRC_ADDR(pkt)           (pkt + 6)
-#define ETHERTYPE(pkt)          *((uint16_t *)(pkt + 12))
+#define ETHERTYPE(pkt)          (*((uint16_t *)(pkt + 12)))
 
 #define ETHER_LEN               14
 

@@ -99,10 +99,10 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     snprintf(tos, sizeof(tos), "0x%02x", TOS(pkt));
     snprintf(totlen, sizeof(totlen), "%d", ntohs(TOTLEN(pkt)));
     snprintf(id, sizeof(id), "%d", ntohs(ID(pkt)));
-    snprintf(rf, sizeof(rf), "%d", ntohs(OFFSET(pkt)) & RF);
-    snprintf(df, sizeof(df), "%d", ntohs(OFFSET(pkt)) & DF);
-    snprintf(mf, sizeof(mf), "%d", ntohs(OFFSET(pkt)) & MF);
-    uint16_to_bin_str(offset_frag, (ntohs(OFFSET(pkt)) & OFFSET_MASK), 14);
+    snprintf(rf, sizeof(rf), "%d", (ntohs(OFFSET(pkt)) & RF) ? 1 : 0);
+    snprintf(df, sizeof(df), "%d", (ntohs(OFFSET(pkt)) & DF) ? 1 : 0);
+    snprintf(mf, sizeof(mf), "%d", (ntohs(OFFSET(pkt)) & MF) ? 1 : 0);
+    uint_to_bin_str(offset_frag, (ntohs(OFFSET(pkt)) & OFFSET_MASK), sizeof(offset_frag));
     snprintf(ttl, sizeof(ttl), "%d", TTL(pkt));
 
     if (NULL != encap_proto) snprintf(protocol, sizeof(protocol), "%s (%d)", encap_proto, PROTOCOL(pkt));
