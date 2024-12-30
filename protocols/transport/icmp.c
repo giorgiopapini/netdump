@@ -24,11 +24,11 @@ void visualize_icmp_hdr(const uint8_t *pkt) {
     char id[7];  /* 0x0000'\0' are 7 chars */
     char seq[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
 
-    snprintf(type, sizeof(type), "%d", TYPE(pkt));
-    snprintf(code, sizeof(code), "%d", CODE(pkt));
+    snprintf(type, sizeof(type), "%u", TYPE(pkt));
+    snprintf(code, sizeof(code), "%u", CODE(pkt));
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(CHECKSUM(pkt)));
     snprintf(id, sizeof(id), "0x%04x", ntohs(ID(pkt)));
-    snprintf(seq, sizeof(seq), "%d", ntohs(SEQUENCE(pkt)));
+    snprintf(seq, sizeof(seq), "%u", ntohs(SEQUENCE(pkt)));
 
     start_printing();
     print_hdr_info(ICMP_HEADER_LABEL, NULL);

@@ -15,7 +15,7 @@ void print_tcp_hdr(const uint8_t *pkt) {
 void visualize_tcp_hdr(const uint8_t *pkt) {
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
-    char seq[11];  /* 0x12345678'\0' ==> len = 11 */
+    char seq[11];  /* 32 bit can represent a max of 4294967295'\0' ==> len = 11 */
     char ack_num[11];
     char data_offset[4];  /* 255'\0' ==> len = 4 */
     char reserved[5];  /* 0000'\0' (4 bits) ==> len = 5 */
@@ -32,11 +32,11 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
     char urgent_pointer[7];
     /* char options[];  */
 
-    snprintf(src_port, sizeof(src_port), "%d", ntohs(SRC_PORT(pkt)));
-    snprintf(dest_port, sizeof(dest_port), "%d", ntohs(DEST_PORT(pkt)));
-    snprintf(seq, sizeof(seq), "0x%08x", ntohl(SEQUENCE(pkt)));
-    snprintf(ack_num, sizeof(ack_num), "0x%08x", ntohl(ACK_NUM(pkt)));
-    snprintf(data_offset, sizeof(data_offset), "%d", DATA_OFFSET(pkt));
+    snprintf(src_port, sizeof(src_port), "%u", ntohs(SRC_PORT(pkt)));
+    snprintf(dest_port, sizeof(dest_port), "%u", ntohs(DEST_PORT(pkt)));
+    snprintf(seq, sizeof(seq), "%u", ntohl(SEQUENCE(pkt)));
+    snprintf(ack_num, sizeof(ack_num), "%u", ntohl(ACK_NUM(pkt)));
+    snprintf(data_offset, sizeof(data_offset), "%u", DATA_OFFSET(pkt));
     uint_to_bin_str(reserved, RESERVED(pkt), sizeof(reserved));
     snprintf(cwr, sizeof(cwr), "%d", (FLAGS(pkt) & CWR) ? 1 : 0);
     snprintf(ece, sizeof(ece), "%d", (FLAGS(pkt) & ECE) ? 1 : 0);
@@ -46,7 +46,7 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
     snprintf(rst, sizeof(rst), "%d", (FLAGS(pkt) & RST) ? 1 : 0);
     snprintf(syn, sizeof(syn), "%d", (FLAGS(pkt) & SYN) ? 1 : 0);
     snprintf(fin, sizeof(fin), "%d", (FLAGS(pkt) & FIN) ? 1 : 0);
-    snprintf(window_size, sizeof(window_size), "%d", ntohs(WINDOW_SIZE(pkt)));
+    snprintf(window_size, sizeof(window_size), "%u", ntohs(WINDOW_SIZE(pkt)));
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(CHECKSUM(pkt)));
     snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", ntohs(URGENT_POINTER(pkt)));
 

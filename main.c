@@ -38,6 +38,8 @@
 	
 	TODO:	Add a message to notify the user when a protocol header is not supported and can't be dissected and printed (or visualized).
 			The save command still works btw, even if the packet can't be parsed
+
+	TODO:	Why ACK NUM and SEQUENCE NUM are not correctly represented?
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

@@ -94,19 +94,19 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     char src_addr[IP_ADDR_STR_LEN];
     char dest_addr[IP_ADDR_STR_LEN];
 
-    snprintf(version, sizeof(version), "%d", IP_VERSION(pkt));
-    snprintf(ihl, sizeof(ihl), "%d", IP_HLEN(pkt));
+    snprintf(version, sizeof(version), "%u", IP_VERSION(pkt));
+    snprintf(ihl, sizeof(ihl), "%u", IP_HLEN(pkt));
     snprintf(tos, sizeof(tos), "0x%02x", TOS(pkt));
-    snprintf(totlen, sizeof(totlen), "%d", ntohs(TOTLEN(pkt)));
-    snprintf(id, sizeof(id), "%d", ntohs(ID(pkt)));
-    snprintf(rf, sizeof(rf), "%d", (ntohs(OFFSET(pkt)) & RF) ? 1 : 0);
-    snprintf(df, sizeof(df), "%d", (ntohs(OFFSET(pkt)) & DF) ? 1 : 0);
-    snprintf(mf, sizeof(mf), "%d", (ntohs(OFFSET(pkt)) & MF) ? 1 : 0);
+    snprintf(totlen, sizeof(totlen), "%u", ntohs(TOTLEN(pkt)));
+    snprintf(id, sizeof(id), "%u", ntohs(ID(pkt)));
+    snprintf(rf, sizeof(rf), "%u", (ntohs(OFFSET(pkt)) & RF) ? 1 : 0);
+    snprintf(df, sizeof(df), "%u", (ntohs(OFFSET(pkt)) & DF) ? 1 : 0);
+    snprintf(mf, sizeof(mf), "%u", (ntohs(OFFSET(pkt)) & MF) ? 1 : 0);
     uint_to_bin_str(offset_frag, (ntohs(OFFSET(pkt)) & OFFSET_MASK), sizeof(offset_frag));
-    snprintf(ttl, sizeof(ttl), "%d", TTL(pkt));
+    snprintf(ttl, sizeof(ttl), "%u", TTL(pkt));
 
-    if (NULL != encap_proto) snprintf(protocol, sizeof(protocol), "%s (%d)", encap_proto, PROTOCOL(pkt));
-    else snprintf(protocol, sizeof(protocol), "%d", PROTOCOL(pkt));
+    if (NULL != encap_proto) snprintf(protocol, sizeof(protocol), "%s (%u)", encap_proto, PROTOCOL(pkt));
+    else snprintf(protocol, sizeof(protocol), "%u", PROTOCOL(pkt));
     
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(CHECKSUM(pkt)));
     snprintf(src_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(SRC_ADDR(pkt))));
