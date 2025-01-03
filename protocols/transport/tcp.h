@@ -41,7 +41,7 @@
 #define WINDOW_SIZE(pkt)        (*((uint16_t *)(pkt + 14)))
 #define CHECKSUM(pkt)           (*((uint16_t *)(pkt + 16)))
 #define URGENT_POINTER(pkt)     (*((uint16_t *)(pkt + 18)))
-#define OPTIONS(pkt)            (pkt + 20)  // Pointer to options
+#define OPTIONS(pkt)            (pkt + 20)  /* pointer to options, 20 is the fixed amount of bytes of the tcp header */
 
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <arpa/inet.h>
 
 #include "tcp.h"
@@ -7,9 +8,114 @@
 
 
 size_t tcp_hdr_len(const uint8_t *pkt) { return DATA_OFFSET(pkt) * 4; }
+size_t options_len(const uint8_t *pkt) { return (DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
+
+void print_options(const uint8_t *pkt) {
+    size_t opts_len = options_len(pkt);
+    uint8_t *options = OPTIONS(pkt);
+    uint8_t kind;
+    uint8_t length;
+    int i = 0;
+    int j = 0;
+
+    printf(", options: [");
+
+    while (i < opts_len) {
+        kind = options[i];
+        if (0 == kind) {
+            printf("eol");
+            break;
+        }
+        else if (1 == kind) {
+            printf("nop");
+            i ++;
+        }
+        else {
+            if (i + 1 >= opts_len) {
+                printf("(malformed_option: kind %d)", kind);
+                break;
+            }
+            length = options[i + 1];
+            if (length < 2 || i + length > opts_len) {
+                printf("(malformed_option: kind %d, length %d)", kind, length);
+                break;
+            }
+
+            switch (kind) {
+            case 2: {
+                if (length == 4) {
+                    uint16_t mss = ntohs(*(uint16_t *)(options + i + 2));
+                    printf("mss: %d", mss);
+                }
+                break;
+            }
+            case 3: {
+                if (length == 3) {
+                    uint8_t scale = options[i + 2];
+                    printf("ws: %d", scale);
+                }
+                break;
+            }
+            case 4: {
+                printf("sackOK");
+                break;
+            }
+            case 5: {
+                printf("sack");
+                for (j = 2; j < length; j += 8) {
+                    if (j + 7 < length) {
+                        uint32_t left_edge = ntohl(*(uint32_t *)(options + i + j));
+                        uint32_t right_edge = ntohl(*(uint32_t *)(options + i + j + 4));
+                        printf(" (left_edge: %u, right_edge: %u)", left_edge, right_edge);
+                    }
+                }
+                break;
+            }
+            case 8: {
+                if (length == 10) {
+                    uint32_t ts_val = ntohl(*(uint32_t *)(options + i + 2));
+                    uint32_t ts_echo = ntohl(*(uint32_t *)(options + i + 6));
+                    printf("TSval: %u, TSecr: %u", ts_val, ts_echo);
+                }
+                break;
+            }
+            case 34: printf("tcp_fast_open"); break;
+            default:
+                printf("data:");
+                for (j = 2; j < length; j++) {
+                    printf(" %02x", options[i + j]);
+                }
+                break;
+            }
+            i += length;
+        }
+        if ((i + 1) < opts_len) printf(", ");
+    }
+    printf("]");
+}
 
 void print_tcp_hdr(const uint8_t *pkt) {
-    printf("\nDUMMY TCP\n");
+    char flags[41];
+    printf("src port: %u, dest port: %u", ntohs(SRC_PORT(pkt)), ntohs(DEST_PORT(pkt)));
+    
+    printf(", flags: [");
+    if (FLAGS(pkt) & CWR) strcat(flags, "CWR, ");
+    if (FLAGS(pkt) & ECE) strcat(flags, "ECE, ");
+    if (FLAGS(pkt) & URG) strcat(flags, "URG, ");
+    if (FLAGS(pkt) & ACK) strcat(flags, "ACK, ");
+    if (FLAGS(pkt) & PSH) strcat(flags, "PSH, ");
+    if (FLAGS(pkt) & RST) strcat(flags, "RST, ");
+    if (FLAGS(pkt) & SYN) strcat(flags, "SYN, ");
+    if (FLAGS(pkt) & FIN) strcat(flags, "FIN, ");
+    flags[strlen(flags) - 2] = '\0';    /* remove last ", " chars */
+    printf("%s]", flags);
+
+    printf(", seq: %u", ntohl(SEQUENCE(pkt)));
+    printf(", ack: %u", ntohl(ACK_NUM(pkt)));
+    printf(", win: %u", ntohs(WINDOW_SIZE(pkt)));
+    printf(", cksum: 0x%04x", ntohs(CHECKSUM(pkt)));
+    if (FLAGS(pkt) & URG) printf(", urgent_pointer: 0x%04x", ntohs(URGENT_POINTER(pkt)));
+    if (0 < options_len(pkt)) print_options(pkt);
 }
 
 void visualize_tcp_hdr(const uint8_t *pkt) {
