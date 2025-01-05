@@ -31,15 +31,13 @@
 			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it
 			does not exist in that particular packet, it can't be visualized), it only checks if the user wants to print it
 
-	TODO:	THE HEADER LENGTH SHOULD NOT BE A CONSTANT, BECAUSE, FOR EXAMPLE, THE IP HEADER LENGTH DEPENDS ON THE PRESENCE OF OPTIONS
-			(NOTICIBLE BY THE HLEN FIELD) --> So: length = (hlen * 4) (4 bytes, cause hlen represent the amount of word 32 bit that
-			made up the header). Build a function foreach header that calculates dinamically the header length. Add the logic to handle
-			OPTIONS field (with every subfield)
+	TODO:	Implement the 'print_ip_options(const uint8_t *pkt)' function inside of ip.c module
 	
 	TODO:	Add a message to notify the user when a protocol header is not supported and can't be dissected and printed (or visualized).
 			The save command still works btw, even if the packet can't be parsed
 
-	TODO:	Add the tcp options printing logic to the visualize_tcp_hdr() function
+	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
+			by the time I reach print_udp_hdr(). How can I solve the problem?
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

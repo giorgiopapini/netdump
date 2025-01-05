@@ -8,10 +8,10 @@
 
 
 size_t tcp_hdr_len(const uint8_t *pkt) { return DATA_OFFSET(pkt) * 4; }
-size_t options_len(const uint8_t *pkt) { return (DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
+size_t tcp_options_len(const uint8_t *pkt) { return (DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
 
-void print_options(const uint8_t *pkt) {
-    size_t opts_len = options_len(pkt);
+void print_tcp_options(const uint8_t *pkt) {
+    size_t opts_len = tcp_options_len(pkt);
     uint8_t *options = OPTIONS(pkt);
     uint8_t kind;
     uint8_t length;
@@ -115,7 +115,7 @@ void print_tcp_hdr(const uint8_t *pkt) {
     printf(", win: %u", ntohs(WINDOW_SIZE(pkt)));
     printf(", cksum: 0x%04x", ntohs(CHECKSUM(pkt)));
     if (FLAGS(pkt) & URG) printf(", urgent_pointer: 0x%04x", ntohs(URGENT_POINTER(pkt)));
-    if (0 < options_len(pkt)) print_options(pkt);
+    if (0 < tcp_options_len(pkt)) print_tcp_options(pkt);
 }
 
 void visualize_tcp_hdr(const uint8_t *pkt) {
@@ -157,7 +157,7 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
     snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", ntohs(URGENT_POINTER(pkt)));
 
     start_printing();
-    print_hdr_info(TCP_HEADER_LABEL, NULL);
+    print_hdr_info(TCP_HEADER_LABEL, "Options fields not represented in ascii art");
     print_field(SRC_PORT_LABEL, src_port, 0);
     print_field(DEST_PORT_LABEL, dest_port, 0);
     print_field(SEQUENCE_LABEL, seq, 0);

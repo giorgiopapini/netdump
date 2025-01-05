@@ -221,5 +221,5 @@ void print_field(char *label, char *content, int newline) {
 
 void print_hdr_info(char *name, char *optional_infos) {
     printf(GREEN "[%s]\n" RESET_COLOR, name);
-    if (NULL != optional_infos) printf("(%s)\n", optional_infos);
+    if (NULL != optional_infos) printf(YELLOW "(%s)\n" RESET_COLOR, optional_infos);
 }

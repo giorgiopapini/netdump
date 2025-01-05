@@ -45,6 +45,12 @@ lookup_table ipprotos = {
 
 size_t ip_hdr_len(const uint8_t *pkt) { return IP_HLEN(pkt) * 4; }
 
+/*
+void print_ip_options(const uint8_t *pkt) {
+
+}
+*/
+
 void print_ip_hdr(const uint8_t *pkt) {
     char flags[9] = "";  /* max: "DF, MF, \0" */
     const char *protocol_name = get_value(ipprotos, PROTOCOL(pkt));
@@ -73,6 +79,8 @@ void print_ip_hdr(const uint8_t *pkt) {
 
     if (NULL != protocol_name) printf(" proto: %s (%d)", protocol_name, PROTOCOL(pkt));
     else printf(" proto: %d", PROTOCOL(pkt));
+    
+    /*if (IP_HLEN(pkt) > 5) print_ip_options(pkt);*/
 }
 
 void visualize_ip_hdr(const uint8_t *pkt) {
@@ -113,7 +121,7 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     snprintf(dest_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DEST_ADDR(pkt))));
 
     start_printing();
-    print_hdr_info(IP_HEADER_LABEL, NULL);
+    print_hdr_info(IP_HEADER_LABEL, "Options fields not represented in ascii art");
     print_field(VERSION_LABEL, version, 0);
     print_field(IHL_LABEL, ihl, 0);
     print_field(TOS_LABEL, tos, 0);
