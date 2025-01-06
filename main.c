@@ -38,6 +38,9 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
+
+	TODO: 	I need to change the way of dissecting packets. A problem occours because PPP uses a different value to represent IP
+			protocol than ETHER (Ethertype vs PPP protos) (need to recreate protocol_handler.c?s)
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

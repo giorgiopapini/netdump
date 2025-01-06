@@ -4,7 +4,6 @@
 
 #include "ether.h"
 #include "../../ethertypes.h"
-#include "../../utils/raw_array.h"
 #include "../../utils/lookup_table.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
