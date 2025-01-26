@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <termios.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/select.h>
 
 #include "utils/buffer.h"
 #include "command_handler.h"
@@ -8,10 +12,9 @@
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
 #include "utils/packet.h"
-
-#define PROMPT_STRING "netdump > "
-
+#include "utils/string_utils.h"
 #include "utils/visualizer.h"
+#include "utils/formats.h"
 
 /*
 	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
@@ -49,40 +52,76 @@ void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
 	reset_arr(packets, destroy_packet);
 }
 
-void prompt() { printf(PROMPT_STRING); };
+void prompt() { 
+	printf(PROMPT_STRING); 
+	fflush(stdout);
+};
 
-int main(int argv, char *argc[]) {
+void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history) {
+	char pressed_key = populate(buff, history);
+
+	if (-1 == pressed_key) return;  /* if an error occoured, exit function */
+	if (ENTER_KEY != pressed_key) return;  /* if enter is not pressed, than do not start executing partial cmd */
+
+	reset_cmd(cmd);  /* ensure that cmd structure is empty when new command entered */
+
+	if (buff->len == 0 || '\0' == buff->content[0]) {
+		prompt();
+		return;
+	}
+
+	/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
+	if (history->head != NULL) {
+		if (!compare_buffers(history->head->prev->content, buff) && buff->len > 0) {
+			push_node(history, create_node(copy_to_heap(buff)), MAX_BUFFER_LEN, destroy_buffer);
+		}
+	}
+	else push_node(history, create_node(copy_to_heap(buff)), MAX_BUFFER_LEN, destroy_buffer);
+
+	if (0 == check_buffer_status(buff)) {
+		if (0 == create_cmd_from_buff(cmd, buff)) {
+			if (0 != execute_command(cmd, packets, history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd->label);
+		}
+	}
+
+	clear_buffer(buff);
+	prompt();
+}
+
+int main(int argc, char *argv[]) {
 	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
 
-	buffer buff = { .len = 0 };
+	fd_set readfds;
+    int ret;
+	struct termios original, term;
+
+	buffer buff = { .len = 0, .status = 0, .cursor_pos = 0 };
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 	circular_list history = { .head = NULL, .len = 0 };
 
-	while(1) {
-		reset_cmd(&cmd);	/* ensure that cmd structure is empty at each iteration */
-		prompt();
+    tcgetattr(STDIN_FILENO, &original);
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~(ICANON | ECHO);
+    term.c_cc[VMIN] = 1;
+	term.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
 
-		/* if CTRL+C is pressed, than deallocate previously allocated heap memory and exit program */
-		if (0 != populate(&buff, &history)) {
-			deallocate_heap(&cmd, &packets, &history);
-			exit(EXIT_SUCCESS);
+	prompt();
+    while (1) {
+        FD_ZERO(&readfds);
+        FD_SET(STDIN_FILENO, &readfds);
+
+        ret = select(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL);
+
+        if (-1 == ret) {
+			if (EINTR == errno) break;
+			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
 		}
+		else run(&buff, &cmd, &packets, &history);
+    }
+	tcsetattr(STDIN_FILENO, TCSANOW, &original);
 
-		if (buff.len == 0 || '\0' == buff.content[0]) continue;
-
-		/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
-		if (history.head != NULL) {
-			if (!compare_buffers(history.head->prev->content, &buff) && buff.len > 0) {
-				push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
-			}
-		}
-		else push_node(&history, create_node(copy_to_heap(&buff)), MAX_BUFFER_LEN, destroy_buffer);
-
-		if (0 != check_buffer_status(&buff)) continue;
-		if (0 != create_cmd_from_buff(&cmd, &buff)) continue;
-		if (0 != execute_command(&cmd, &packets, &history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd.label);
-	}
-
+	deallocate_heap(&cmd, &packets, &history);
 	return 0;
 }

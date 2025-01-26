@@ -5,6 +5,8 @@
 
 #include "../command_handler.h"
 
+#define PROMPT_STRING "netdump > "
+
 #define MAC_TO_STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
 #define MAC_ADDR_FORMAT "%02x:%02x:%02x:%02x:%02x:%02x"
 #define MAC_ADDR_STR_LEN 18
