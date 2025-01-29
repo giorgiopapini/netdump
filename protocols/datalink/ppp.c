@@ -3,65 +3,17 @@
 
 #include "ppp.h"
 #include "../../ppp_protos.h"
-#include "../../utils/lookup_table.h"
 #include "../../utils/visualizer.h"
-
-lookup_table ppp_protos = {
-    { PPP_IP,           "IPv4" },
-    { PPP_OSI,          "OSI Network Layer" },
-    { PPP_NS,           "Xerox NS IDP" },
-    { PPP_DECNET,       "DECnet Phase IV" },
-    { PPP_APPLE,        "Appletalk" },
-    { PPP_IPX,          "Novell IPX" },
-    { PPP_VJC,          "Van Jacobson Compressed TCP/IP" },
-    { PPP_VJNC,         "Van Jacobson Uncompressed TCP/IP" },
-    { PPP_BRPDU,        "Bridging PDU" },
-    { PPP_STII,         "Stream Protocol (ST-II)" },
-    { PPP_VINES,        "Banyan Vines" },
-    { PPP_ML,           "Multi-Link PPP" },
-    { PPP_IPV6,         "IPv6" },
-    { PPP_COMP,         "Compressed Datagram" },
-    { PPP_HELLO,        "802.1d Hello Packets" },
-    { PPP_LUXCOM,       "Luxcom" },
-    { PPP_SNS,          "Sigma Network Systems" },
-    { PPP_MPLS_UCAST,   "MPLS Unicast (RFC 3032)" },
-    { PPP_MPLS_MCAST,   "MPLS Multicast (RFC 3022)" },
-    { PPP_IPCP,         "IP Control Protocol" },
-    { PPP_OSICP,        "OSI Control Protocol" },
-    { PPP_NSCP,         "Xerox NS IDP Control Protocol" },
-    { PPP_DECNETCP,     "DECnet Control Protocol" },
-    { PPP_APPLECP,      "Appletalk Control Protocol" },
-    { PPP_IPXCP,        "Novell IPX Control Protocol" },
-    { PPP_STIICP,       "Stream Protocol Control Protocol" },
-    { PPP_VINESCP,      "Banyan Vines Control Protocol" },
-    { PPP_IPV6CP,       "IPv6 Control Protocol" },
-    { PPP_CCP,          "Compress Control Protocol" },
-    { PPP_MPLSCP,       "MPLS Control Protocol (RFC 3022)" },
-    { PPP_LCP,          "Link Control Protocol" },
-    { PPP_PAP,          "Password Authentication Protocol" },
-    { PPP_LQM,          "Link Quality Monitoring" },
-    { PPP_SPAP,         "Simple Password Authentication Protocol" },
-    { PPP_CHAP,         "Challenge Handshake Authentication Protocol" },
-    { PPP_BACP,         "Bandwidth Allocation Control Protocol" },
-    { PPP_BAP,          "Bandwidth Allocation Protocol" },
-    { PPP_MPCP,         "Multi-Link Control Protocol" },
-    { PPP_SPAP_OLD,     "Old Simple Password Authentication Protocol" },
-    { PPP_EAP,          "Extensible Authentication Protocol" },
-    { 0,                NULL }
-};
 
 
 size_t ppp_hdr_len(const uint8_t *pkt) { return PPP_LEN; }
 
-
 void print_ppp_hdr(const uint8_t *pkt) {
-    const char *protocol_name = get_value(ppp_protos, ntohs(PROTOCOL(pkt)));
     printf(
-        "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x (%s)",
+        "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x",
         ADDRESS(pkt),
         CONTROL(pkt),
-        ntohs(PROTOCOL(pkt)),
-        protocol_name
+        ntohs(PROTOCOL(pkt))
     );
 }
 
@@ -80,4 +32,9 @@ void visualize_ppp_hdr(const uint8_t *pkt) {
     print_field(CONTROL_LABEL, control, 0);
     print_field(PROTOCOL_LABEL, protocol, 0);
     end_printing();
+}
+
+protocol_info dissect_ppp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_ppp_hdr, visualize_ppp_hdr);
+    return (protocol_info){ .protocol = ntohs(PROTOCOL(pkt)), .offset = PPP_LEN, .hashmap = ppp_protos };
 }

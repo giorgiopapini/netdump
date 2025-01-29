@@ -36,3 +36,8 @@ void visualize_udp_hdr(const uint8_t *pkt) {
     print_field(CHECKSUM_LABEL, checksum, 0);
     end_printing();
 }
+
+protocol_info dissect_udp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_udp_hdr, visualize_udp_hdr);
+    return NO_ENCAP_PROTO;
+}

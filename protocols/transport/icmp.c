@@ -39,3 +39,8 @@ void visualize_icmp_hdr(const uint8_t *pkt) {
     print_field(SEQUENCE_LABEL, seq, 0);
     end_printing();
 }
+
+protocol_info dissect_icmp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_icmp_hdr, visualize_icmp_hdr);
+    return NO_ENCAP_PROTO;
+}

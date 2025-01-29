@@ -1,98 +1,72 @@
 #include "protocol_handler.h"
-#include "datalink_handler.h"
-#include "network_handler.h"
-#include "transport_handler.h"
 #include "../status_handler.h"
 #include "../utils/timestamp.h"
 #include "../utils/colors.h"
-
-#include <arpa/inet.h>
+#include "../dlt_protos.h"
 
 #define PRINT_SEPARATOR " | "
 #define VISUALIZE_SEPARATOR "\n"
 
 
-void exec_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
-	if (is_command(cmd, ANALIZE_COMMAND) && NULL != info.print_header) info.print_header(bytes);
-	else if (is_command(cmd, PRINT_COMMAND) && NULL != info.print_header) info.print_header(bytes);
-	else if (is_command(cmd, VISUALIZE_COMMAND) && NULL != info.visualize_header) info.visualize_header(bytes);
+output_format get_output_format(command *cmd) {
+	if (is_command(cmd, ANALIZE_COMMAND)) return OUTPUT_FORMAT_BASIC;
+	else if (is_command(cmd, PRINT_COMMAND)) return OUTPUT_FORMAT_BASIC;
+	else if (is_command(cmd, VISUALIZE_COMMAND)) return OUTPUT_FORMAT_ACII_ART;
 }
 
-void datalink_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
-	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
-	if (show_datalink) exec_behaviour(cmd, info, bytes);
-}
-
-void network_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
-	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
-	if (show_network) exec_behaviour(cmd, info, bytes);
-}
-
-void transport_behaviour(command *cmd, protocol_info info, uint8_t *bytes) {
-	int show_transport = NULL != get_arg(cmd, TRANSPORT_HDR_ARG);
-	if (show_transport) exec_behaviour(cmd, info, bytes);
-}
-
-void print_separator(command *cmd, int show_separator) {
-	if (!show_separator) return;
-	
+void print_separator(command *cmd) {
 	if (is_command(cmd, ANALIZE_COMMAND)) printf(PRINT_SEPARATOR);
 	else if (is_command(cmd, PRINT_COMMAND)) printf(PRINT_SEPARATOR);
 	else if (is_command(cmd, VISUALIZE_COMMAND)) printf(VISUALIZE_SEPARATOR);
 }
 
-void dissect_packet(command *cmd, packet *pkt) {
-	uint8_t *raw_pkt = pkt->bytes;
+protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
+	int i;
+	for (i = 0; proto_table[i].protocol_name != NULL; i ++) {
+		if (target_proto == proto_table[i].protocol) return proto_table[i];
+	}
+	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
+}
+
+int should_print_pkt(command *cmd, protocol_layer layer) {
 	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
 	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
 	int show_transport = NULL != get_arg(cmd, TRANSPORT_HDR_ARG);
-	int net_protocol_type = 0;
-	int trans_protocol_type = 0;
 
-	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
-	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
-	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than add a bit of spacing */
-
-	/* =========================== dissect datalink =========================== */
-	protocol_info datalink_info = dissect_datalink(pkt->datalink_type);
-	datalink_behaviour(cmd, datalink_info, raw_pkt);
-	net_protocol_type = get_field(raw_pkt, datalink_info.encap_type_range);
-	/* ======================================================================== */
-	
-	print_separator(cmd, show_datalink && show_network);
-	
-	/* =========================== dissect network ============================ */
-	raw_pkt += NULL != datalink_info.hdr_size ? datalink_info.hdr_size(raw_pkt) : 0;
-	protocol_info network_info = dissect_network(net_protocol_type);
-	network_behaviour(cmd, network_info, raw_pkt);
-	trans_protocol_type = get_field(raw_pkt, network_info.encap_type_range);
-	/* ======================================================================== */
-
-	print_separator(cmd, (show_datalink || show_network) && show_transport);
-
-	/* ========================== dissect transport =========================== */
-	raw_pkt += NULL != network_info.hdr_size ? network_info.hdr_size(raw_pkt) : 0;
-	protocol_info transport_info = dissect_transport(trans_protocol_type);
-	transport_behaviour(cmd, transport_info, raw_pkt);
-	/* application_protocol_type = get_field(raw_pkt, transport_info.encap_type_range); */
-	/* ======================================================================== */
-	printf("\n");
+	switch (layer) {
+		case PROTOCOL_LAYER_DATALINK:	return show_datalink; break;
+		case PROTOCOL_LAYER_NETWORK:	return show_network; break;
+		case PROTOCOL_LAYER_TRANSPORT:	return show_transport; break;
+		default: break;
+	}
+	return 1;
 }
 
-int get_field(const uint8_t *pkt, field byte_segment) {
-    int i;
-    int val = 0;
+void dissect(command *cmd, uint8_t *pkt, int proto_id, protocol_handler *proto_hasmap, int proto_shown) {
+	protocol_handler handler;
+	protocol_info encap_proto_info;
+	output_format out_format = OUTPUT_FORMAT_NONE;
 
-    if (NULL == pkt) raise_error(NULL_POINTER, 1, NULL, "pkt", __FILE__);
+	handler = get_protocol_handler(proto_id, proto_hasmap);
+	if (NULL == handler.dissect_proto) return;
 
-    if (1 == byte_segment.len) return pkt[byte_segment.start];
-    for (i = 0; i < byte_segment.len; i ++) {
-        val |= pkt[byte_segment.start + i] << (8 * i);
-    }
+	if (should_print_pkt(cmd, handler.layer)) {  /* else -> default output format is OUTPUT_NONE */
+		out_format = get_output_format(cmd);
+		if (proto_shown > 0) print_separator(cmd);
+		proto_shown ++;
+	}
 
-    if (0 != byte_segment.ntoh) {
-        if (2 == byte_segment.len) return ntohs(val);
-        if (4 == byte_segment.len) return ntohl(val);
-    }
-    return val;
+	encap_proto_info = handler.dissect_proto(pkt, handler.protocol_name, out_format);
+	if (encap_proto_info.hashmap != NULL) {
+		dissect(cmd, (pkt + encap_proto_info.offset), encap_proto_info.protocol, encap_proto_info.hashmap, proto_shown);
+	}
+}
+
+void dissect_packet(command *cmd, packet *pkt) {
+	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
+	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
+	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than it adds a bit of spacing */
+
+	dissect(cmd, pkt->bytes, pkt->datalink_type, dlt_protos, 0);
+	printf("\n");
 }

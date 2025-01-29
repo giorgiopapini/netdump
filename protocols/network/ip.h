@@ -2,6 +2,7 @@
 #define IP_h
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define IP_HEADER_LABEL     "IP Header"
 #define VERSION_LABEL       "Version"
@@ -37,7 +38,6 @@
 
 
 size_t ip_hdr_len(const uint8_t *pkt);
-void print_ip_hdr(const uint8_t *pkt);
-void visualize_ip_hdr(const uint8_t *pkt);
+protocol_info dissect_ip(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

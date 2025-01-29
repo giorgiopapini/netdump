@@ -1,7 +1,7 @@
 #ifndef ETHERTYPES_H
 #define ETHERTYPES_H
 
-#include "utils/lookup_table.h"
+#include "protocols/protocol_handler.h"
 
 #ifndef ETHERTYPE_GRE_ISO
 #define ETHERTYPE_GRE_ISO       0x00FE  /* not really an ethertype only used in GRE */
@@ -178,6 +178,6 @@
 #endif
 
 
-extern lookup_table ethers;
+extern protocol_handler ethertypes[];
 
 #endif

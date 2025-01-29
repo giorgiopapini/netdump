@@ -2,6 +2,7 @@
 #define TCP_H
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define TCP_HEADER_LABEL        "TCP Header"
 #define SRC_PORT_LABEL          "Source Port"
@@ -47,7 +48,6 @@
 
 
 size_t tcp_hdr_len(const uint8_t *pkt);
-void print_tcp_hdr(const uint8_t *pkt);
-void visualize_tcp_hdr(const uint8_t *pkt);
+protocol_info dissect_tcp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

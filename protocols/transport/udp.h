@@ -2,6 +2,7 @@
 #define UDP_H
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define UDP_HEADER_LABEL        "UDP Header"
 #define SRC_PORT_LABEL          "Source Port"
@@ -18,7 +19,6 @@
 
 
 size_t udp_hdr_len(const uint8_t *pkt);
-void print_udp_hdr(const uint8_t *pkt);
-void visualize_udp_hdr(const uint8_t *pkt);
+protocol_info dissect_udp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

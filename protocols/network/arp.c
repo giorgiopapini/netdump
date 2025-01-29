@@ -72,3 +72,8 @@ void visualize_arp_hdr(const uint8_t *pkt) {
     print_field(TARGET_P_ADDR_LABEL, target_p_addr, 0);
     end_printing();
 }
+
+protocol_info dissect_arp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_arp_hdr, visualize_arp_hdr);
+    return NO_ENCAP_PROTO;
+}

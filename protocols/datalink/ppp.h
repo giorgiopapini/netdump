@@ -2,6 +2,7 @@
 #define PPP_H
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define PPP_HEADER_LABEL        "PPP Header"
 #define ADDRESS_LABEL           "Address"
@@ -17,7 +18,6 @@
 
 
 size_t ppp_hdr_len(const uint8_t *pkt);
-void print_ppp_hdr(const uint8_t *pkt);
-void visualize_ppp_hdr(const uint8_t *pkt);
+protocol_info dissect_ppp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

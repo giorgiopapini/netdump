@@ -95,7 +95,7 @@ void print_tcp_options(const uint8_t *pkt) {
 }
 
 void print_tcp_hdr(const uint8_t *pkt) {
-    char flags[41];
+    char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     printf("src port: %u, dest port: %u", ntohs(SRC_PORT(pkt)), ntohs(DEST_PORT(pkt)));
     
     printf(", flags: [");
@@ -177,4 +177,9 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
     print_field(URGENT_POINTER_LABEL, urgent_pointer, 0);
     /* print_field(OPTIONS_LABEL, options, 0); */
     end_printing();
+}
+
+protocol_info dissect_tcp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_tcp_hdr, visualize_tcp_hdr);
+    return NO_ENCAP_PROTO;
 }

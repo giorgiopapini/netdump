@@ -1,7 +1,7 @@
 #ifndef PPP_PROTOS_H
 #define PPP_PROTOS_H
 
-#include "utils/lookup_table.h"
+#include "protocols/protocol_handler.h"
 
 #ifndef PPP_IP
 #define PPP_IP		    0x0021	/* Raw IP */
@@ -128,6 +128,6 @@
 #endif
 
 
-extern lookup_table ppp_protos;
+extern protocol_handler ppp_protos[];
 
 #endif

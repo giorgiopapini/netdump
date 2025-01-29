@@ -2,6 +2,7 @@
 #define ETHER_H
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define ETHER_HEADER_LABEL      "Ether Header"
 #define DEST_ADDR_LABEL         "Destination MAC Address"
@@ -16,8 +17,7 @@
 
 
 size_t ether_hdr_len(const uint8_t *pkt);
-void print_ether_hdr(const uint8_t *pkt);
-void visualize_ether_hdr(const uint8_t *pkt);
+protocol_info dissect_ether(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 /* 
     const uint8_t *pkt is not used in ether_hdr_len() function. It needs to be described anyways because the function pointer

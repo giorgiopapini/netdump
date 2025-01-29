@@ -2,6 +2,7 @@
 #define ARP_H
 
 #include <stdint.h>
+#include "../protocol_handler.h"
 
 #define ARP_REQUEST             1
 #define ARP_RESPONSE            2
@@ -31,8 +32,7 @@
 
 
 size_t arp_hdr_len(const uint8_t *pkt);
-void print_arp_hdr(const uint8_t *pkt);
-void visualize_arp_hdr(const uint8_t *pkt);
+protocol_info dissect_arp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 /* 
     Currently this arp description only supports ethernet technology and ip technology (no ATM or infiniband, which both have 

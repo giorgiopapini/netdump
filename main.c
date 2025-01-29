@@ -6,9 +6,9 @@
 #include <errno.h>
 #include <sys/select.h>
 
-#include "utils/buffer.h"
 #include "command_handler.h"
 #include "status_handler.h"
+#include "utils/buffer.h"
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
 #include "utils/packet.h"
@@ -24,15 +24,8 @@
 
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 
-	TODO:	When printing a packet header that does not have a network or transport protocol, it should be printed even if
-			-e flag not given.
-
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
 			received in a specific amount of time, than raise timeout error
-
-	TODO:	When visualizing a packet. If network header is not provided the algorithm still prints newline char.
-			Probably this bug resides in the 'print_separator()' function. It does not care if the header is printed or not (if it
-			does not exist in that particular packet, it can't be visualized), it only checks if the user wants to print it
 
 	TODO:	Implement the 'print_ip_options(const uint8_t *pkt)' function inside of ip.c module
 	
@@ -41,9 +34,6 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
-
-	TODO: 	I need to change the way of dissecting packets. A problem occours because PPP uses a different value to represent IP
-			protocol than ETHER (Ethertype vs PPP protos) (need to recreate protocol_handler.c?s)
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

@@ -1,7 +1,7 @@
 #ifndef IPPROTO_H
 #define IPPROTO_H
 
-#include "utils/lookup_table.h"
+#include "protocols/protocol_handler.h"
 
 #ifndef IPPROTO_HOPOPTS
 #define IPPROTO_HOPOPTS		0		/* IPv6 hop-by-hop options */
@@ -97,6 +97,6 @@
 #define IPPROTO_MOBILITY	135
 #endif
 
-extern lookup_table ipprotos;
+extern protocol_handler ipprotos[];
 
 #endif

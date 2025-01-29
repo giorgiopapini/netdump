@@ -1,47 +1,13 @@
 #include <stdio.h>
-#include <string.h>
 #include <arpa/inet.h>
+#include <string.h>
 
 #include "ip.h"
+#include "../../ipprotos.h"
 #include "../../utils/string_utils.h"
 #include "../../utils/visualizer.h"
-#include "../../utils/lookup_table.h"
-#include "../../ipprotos.h"
 #include "../../utils/formats.h"
 
-lookup_table ipprotos = {
-    { IPPROTO_HOPOPTS,      "HOPOP" },
-    { IPPROTO_ICMP,         "ICMP" },
-    { IPPROTO_IGMP,         "IGMP" },
-    { IPPROTO_IPV4,         "IPV4" },
-    { IPPROTO_TCP,          "TCP" },
-    { IPPROTO_EGP,          "EGP" },
-    { IPPROTO_PIGP,         "PIGP" },
-    { IPPROTO_UDP,          "UDP" },
-    { IPPROTO_DCCP,         "DCCP" },
-    { IPPROTO_IPV6,         "IGMP" },
-    { IPPROTO_ROUTING,      "IPv6 routing" },
-    { IPPROTO_FRAGMENT,     "IPv6 fragmentation" },
-    { IPPROTO_RSVP,         "RSPV" },
-    { IPPROTO_GRE,          "GRE" },
-    { IPPROTO_ESP,          "ESP" },
-    { IPPROTO_AH,           "AH" },
-    { IPPROTO_NHRP,         "NHRP" },
-    { IPPROTO_MOBILE,       "MOBILE" },
-    { IPPROTO_ICMPV6,       "ICMPV6" },
-    { IPPROTO_NONE,         "IPv6 no next header" },
-    { IPPROTO_DSTOPTS,      "IPv6 destination options" },
-    { IPPROTO_ND,           "ND" },
-    { IPPROTO_EIGRP,        "EIGRP" },
-    { IPPROTO_OSPF,         "OSPF" },
-    { IPPROTO_PIM,          "PIM" },
-    { IPPROTO_IPCOMP,       "IPCOMP" },
-    { IPPROTO_VRRP,         "VRRP" },
-    { IPPROTO_PGM,          "PGM" },
-    { IPPROTO_SCTP,         "SCTP" },
-    { IPPROTO_MOBILITY,     "MOBILITY" },
-    { 0,                    NULL }
-};
 
 size_t ip_hdr_len(const uint8_t *pkt) { return IP_HLEN(pkt) * 4; }
 
@@ -53,7 +19,6 @@ void print_ip_options(const uint8_t *pkt) {
 
 void print_ip_hdr(const uint8_t *pkt) {
     char flags[9] = "";  /* max: "DF, MF, \0" */
-    const char *protocol_name = get_value(ipprotos, PROTOCOL(pkt));
 
     /* ===================== printing src (IP) > dest (IP) ====================== */
     print_ipv4(ntohl(SRC_ADDR(pkt)));
@@ -77,16 +42,12 @@ void print_ip_hdr(const uint8_t *pkt) {
     printf("%s],", flags);
     /* ========================================================================== */
 
-    if (NULL != protocol_name) printf(" proto: %s (%d)", protocol_name, PROTOCOL(pkt));
-    else printf(" proto: %d", PROTOCOL(pkt));
+    printf(" proto: %d", PROTOCOL(pkt));
     
     /*if (IP_HLEN(pkt) > 5) print_ip_options(pkt);*/
 }
 
 void visualize_ip_hdr(const uint8_t *pkt) {
-    const char *encap_proto = get_value(ipprotos, PROTOCOL(pkt));
-    encap_proto = NULL == encap_proto ? UNKNOWN : encap_proto;
-
     char version[4];
     char ihl[4];
     char tos[5];  /* 0x00'\0' are 5 chars */
@@ -97,7 +58,7 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     char mf[2];
     char offset_frag[14];
     char ttl[4];
-    char protocol[strlen(encap_proto) + 7];  /* proto (xxx)'\0' */
+    char protocol[4];  /* xxx'\0' */
     char checksum[7];  /* 0x0000'\0' are 7 chars */
     char src_addr[IP_ADDR_STR_LEN];
     char dest_addr[IP_ADDR_STR_LEN];
@@ -112,9 +73,7 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     snprintf(mf, sizeof(mf), "%u", (ntohs(OFFSET(pkt)) & MF) ? 1 : 0);
     uint_to_bin_str(offset_frag, (ntohs(OFFSET(pkt)) & OFFSET_MASK), sizeof(offset_frag));
     snprintf(ttl, sizeof(ttl), "%u", TTL(pkt));
-
-    if (NULL != encap_proto) snprintf(protocol, sizeof(protocol), "%s (%u)", encap_proto, PROTOCOL(pkt));
-    else snprintf(protocol, sizeof(protocol), "%u", PROTOCOL(pkt));
+    snprintf(protocol, sizeof(protocol), "%u", PROTOCOL(pkt));
     
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(CHECKSUM(pkt)));
     snprintf(src_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(SRC_ADDR(pkt))));
@@ -137,4 +96,9 @@ void visualize_ip_hdr(const uint8_t *pkt) {
     print_field(SRC_ADDR_LABEL, src_addr, 0);
     print_field(DEST_ADDR_LABEL, dest_addr, 0);
     end_printing();
+}
+
+protocol_info dissect_ip(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+    SHOW_OUTPUT(pkt, fmt, proto_name, print_ip_hdr, visualize_ip_hdr);
+    return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .hashmap = ipprotos };
 }

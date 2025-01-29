@@ -10,8 +10,6 @@
 #include "../status_handler.h"
 
 #include "../protocols/protocol_handler.h"
-#include "../protocols/datalink_handler.h"
-#include "../protocols/network_handler.h"
 
 #define LOOP_TO_INFINITY -1
 
