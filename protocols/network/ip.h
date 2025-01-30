@@ -37,7 +37,6 @@
 #define DEST_ADDR(pkt)      (*((uint32_t *)(pkt + 16)))
 
 
-size_t ip_hdr_len(const uint8_t *pkt);
 protocol_info dissect_ip(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

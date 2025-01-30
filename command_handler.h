@@ -33,6 +33,7 @@
 #define TRANSPORT_HDR_ARG           "t"  /* shot transport header */
 #define NO_PROM_ARG                 "p"  /* turn off promiscuos mode */
 #define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
+#define NO_PROTOCOL_NAME_ARG        "npname"  /* do not show the protocol name during the printing */
 #define PACKET_NUM_ARG              "#"  /* show packet number next to packet */
 #define READ_FILE_ARG               "r"
 #define WRITE_FILE_ARG              "w"
@@ -47,6 +48,7 @@
 #define TRANSPORT_HDR_ARG_DESC      "Show transport layer protocol header"
 #define NO_PROM_ARG_DESC            "Turn off libpcap promiscuos mode"
 #define NO_TIMESTAMP_ARG_DESC       "Hide timestamp"
+#define NO_PROTOCOL_NAME_ARG_DESC   "Hide protocol name in the output"
 #define PACKET_NUM_ARG_DESC         "Show packet number"
 #define READ_FILE_ARG_DESC          "Read a .pcap file"
 #define WRITE_FILE_ARG_DESC         "Write a .pcap file with all the scanned packets"
@@ -68,7 +70,7 @@
     The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
 */
                    
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
@@ -77,7 +79,7 @@
 #define RESET_ARGS
 #define REQUIRED_RESET_ARGS
 
-#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
 
 #define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG

@@ -8,8 +8,6 @@
 #include "../../utils/formats.h"
 
 
-size_t ether_hdr_len(const uint8_t *pkt) { return ETHER_LEN; }
-
 void print_ether_hdr(const uint8_t *pkt) {
 	uint16_t ethertype = ntohs(ETHERTYPE(pkt));
     

@@ -31,7 +31,6 @@
 #define TARGET_P_ADDR(pkt)      (*((uint32_t *)(pkt + 24)))
 
 
-size_t arp_hdr_len(const uint8_t *pkt);
 protocol_info dissect_arp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 /* 

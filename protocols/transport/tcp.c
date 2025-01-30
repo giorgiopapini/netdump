@@ -7,7 +7,6 @@
 #include "../../utils/string_utils.h"
 
 
-size_t tcp_hdr_len(const uint8_t *pkt) { return DATA_OFFSET(pkt) * 4; }
 size_t tcp_options_len(const uint8_t *pkt) { return (DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
 
 void print_tcp_options(const uint8_t *pkt) {

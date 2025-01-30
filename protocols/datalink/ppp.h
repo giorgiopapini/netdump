@@ -17,7 +17,6 @@
 #define PPP_LEN                 4
 
 
-size_t ppp_hdr_len(const uint8_t *pkt);
 protocol_info dissect_ppp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

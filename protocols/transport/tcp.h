@@ -47,7 +47,6 @@
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */
 
 
-size_t tcp_hdr_len(const uint8_t *pkt);
 protocol_info dissect_tcp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

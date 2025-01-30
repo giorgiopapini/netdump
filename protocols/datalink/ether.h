@@ -16,7 +16,6 @@
 #define ETHER_LEN               14
 
 
-size_t ether_hdr_len(const uint8_t *pkt);
 protocol_info dissect_ether(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 /* 

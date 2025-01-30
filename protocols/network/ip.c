@@ -9,8 +9,6 @@
 #include "../../utils/formats.h"
 
 
-size_t ip_hdr_len(const uint8_t *pkt) { return IP_HLEN(pkt) * 4; }
-
 /*
 void print_ip_options(const uint8_t *pkt) {
 

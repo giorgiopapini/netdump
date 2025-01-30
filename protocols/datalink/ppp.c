@@ -6,8 +6,6 @@
 #include "../../utils/visualizer.h"
 
 
-size_t ppp_hdr_len(const uint8_t *pkt) { return PPP_LEN; }
-
 void print_ppp_hdr(const uint8_t *pkt) {
     printf(
         "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x",

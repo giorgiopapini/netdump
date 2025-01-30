@@ -7,8 +7,6 @@
 #include "../../utils/visualizer.h"
 
 
-size_t arp_hdr_len(const uint8_t *pkt) { return 8 + (2 * HW_LEN(pkt) + (2 * P_LEN(pkt))); }
-
 void print_arp_hdr(const uint8_t *pkt) {
     uint16_t operation = ntohs(OPERATION(pkt));
 

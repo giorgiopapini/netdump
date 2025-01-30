@@ -46,6 +46,7 @@ void dissect(command *cmd, uint8_t *pkt, int proto_id, protocol_handler *proto_h
 	protocol_handler handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
+	const char *proto_name = NULL;
 
 	handler = get_protocol_handler(proto_id, proto_hasmap);
 	if (NULL == handler.dissect_proto) return;
@@ -56,7 +57,9 @@ void dissect(command *cmd, uint8_t *pkt, int proto_id, protocol_handler *proto_h
 		proto_shown ++;
 	}
 
-	encap_proto_info = handler.dissect_proto(pkt, handler.protocol_name, out_format);
+	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
+	if (NULL == get_arg(cmd, NO_PROTOCOL_NAME_ARG)) proto_name = handler.protocol_name;
+	encap_proto_info = handler.dissect_proto(pkt, proto_name, out_format);
 	if (encap_proto_info.hashmap != NULL) {
 		dissect(cmd, (pkt + encap_proto_info.offset), encap_proto_info.protocol, encap_proto_info.hashmap, proto_shown);
 	}

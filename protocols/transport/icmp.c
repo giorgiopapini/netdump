@@ -5,8 +5,6 @@
 #include "../../utils/visualizer.h"
 
 
-size_t icmp_hdr_len(const uint8_t *pkt) { return ICMP_LEN; }
-
 void print_icmp_hdr(const uint8_t *pkt) {
     printf("ICMP echo ");
     uint8_t type = TYPE(pkt);

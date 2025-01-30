@@ -18,7 +18,6 @@
 #define UDP_LEN                 8
 
 
-size_t udp_hdr_len(const uint8_t *pkt);
 protocol_info dissect_udp(const uint8_t *pkt, const char *proto_name, output_format fmt);
 
 #endif

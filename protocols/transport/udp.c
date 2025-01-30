@@ -5,8 +5,6 @@
 #include "../../utils/visualizer.h"
 
 
-size_t udp_hdr_len(const uint8_t *pkt) { return UDP_LEN; }
-
 void print_udp_hdr(const uint8_t *pkt) {
     printf(
         "src port: %u, dest port: %u, length: %u, cksum: 0x%04x", 
