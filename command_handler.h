@@ -31,7 +31,7 @@
 #define DATALINK_HDR_ARG            "e"  /* show datalink header */
 #define NETWORK_HDR_ARG             "nnet" /* not net (set if the network layer should not be printed) */
 #define TRANSPORT_HDR_ARG           "t"  /* shot transport header */
-#define NO_PROM_ARG                 "p"  /* turn off promiscuos mode */
+#define NO_PROM_ARG                 "nprom"  /* turn off promiscuos mode */
 #define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
 #define NO_PROTOCOL_NAME_ARG        "npname"  /* do not show the protocol name during the printing */
 #define PACKET_NUM_ARG              "#"  /* show packet number next to packet */

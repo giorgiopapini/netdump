@@ -2,7 +2,7 @@
 #define ETHER_H
 
 #include <stdint.h>
-#include "../protocol_handler.h"
+#include "../../protocol_handler.h"
 
 #define ETHER_HEADER_LABEL      "Ether Header"
 #define DEST_ADDR_LABEL         "Destination MAC Address"

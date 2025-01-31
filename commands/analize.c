@@ -9,7 +9,7 @@
 #include "../utils/string_utils.h"
 #include "../status_handler.h"
 
-#include "../protocols/protocol_handler.h"
+#include "../protocol_handler.h"
 
 #define LOOP_TO_INFINITY -1
 

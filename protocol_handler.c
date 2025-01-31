@@ -1,8 +1,8 @@
 #include "protocol_handler.h"
-#include "../status_handler.h"
-#include "../utils/timestamp.h"
-#include "../utils/colors.h"
-#include "../dlt_protos.h"
+#include "status_handler.h"
+#include "utils/timestamp.h"
+#include "utils/colors.h"
+#include "protocols/dlt_protos.h"
 
 #define PRINT_SEPARATOR " | "
 #define VISUALIZE_SEPARATOR "\n"

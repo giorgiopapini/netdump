@@ -2,7 +2,7 @@
 #include <arpa/inet.h>
 
 #include "arp.h"
-#include "../../ethertypes.h"
+#include "../ethertypes.h"
 #include "../../utils/formats.h"
 #include "../../utils/visualizer.h"
 

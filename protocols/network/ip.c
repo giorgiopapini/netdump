@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "ip.h"
-#include "../../ipprotos.h"
+#include "../ip_protos.h"
 #include "../../utils/string_utils.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"

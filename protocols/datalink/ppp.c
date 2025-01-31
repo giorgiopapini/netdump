@@ -2,7 +2,7 @@
 #include <arpa/inet.h>
 
 #include "ppp.h"
-#include "../../ppp_protos.h"
+#include "../ppp_protos.h"
 #include "../../utils/visualizer.h"
 
 

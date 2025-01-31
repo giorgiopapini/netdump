@@ -2,7 +2,7 @@
 #define IP_h
 
 #include <stdint.h>
-#include "../protocol_handler.h"
+#include "../../protocol_handler.h"
 
 #define IP_HEADER_LABEL     "IP Header"
 #define VERSION_LABEL       "Version"

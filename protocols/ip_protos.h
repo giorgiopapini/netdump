@@ -1,7 +1,7 @@
 #ifndef IPPROTO_H
 #define IPPROTO_H
 
-#include "protocols/protocol_handler.h"
+#include "../protocol_handler.h"
 
 #ifndef IPPROTO_HOPOPTS
 #define IPPROTO_HOPOPTS		0		/* IPv6 hop-by-hop options */

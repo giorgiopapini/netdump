@@ -34,6 +34,9 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
+
+	TODO:	Perchè se esamino "vlan.pcap" gli indirizzi IP sono al contrario? Sembra che non dovessero subire nessun tipo di ntohs?
+			COnsultare il medesimo file ma output di TCPDUMP, approfondire il motivo per cui non sono correttamente visualizzati
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
@@ -60,8 +63,10 @@ void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history)
 		return;
 	}
 
+	if (NULL != history->curr) history->curr = history->head;  /* at each cmd execution reset history->curr position */
+
 	/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
-	if (history->head != NULL) {
+	if (NULL != history->head) {
 		if (!compare_buffers(history->head->prev->content, buff) && buff->len > 0) {
 			push_node(history, create_node(copy_to_heap(buff)), MAX_BUFFER_LEN, destroy_buffer);
 		}

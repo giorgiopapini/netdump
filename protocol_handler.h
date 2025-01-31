@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "../command_handler.h"
-#include "../utils/packet.h"
-#include "../utils/colors.h"
+#include "command_handler.h"
+#include "utils/packet.h"
+#include "utils/colors.h"
 
 /* { PROTOCOL, sizeof(proto_hdr), print_proto_header } */
 

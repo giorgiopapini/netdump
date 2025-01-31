@@ -3,22 +3,20 @@
 #include <string.h>
 
 #include "ether.h"
-#include "../../ethertypes.h"
+#include "../ethertypes.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
 
 
 void print_ether_hdr(const uint8_t *pkt) {
-	uint16_t ethertype = ntohs(ETHERTYPE(pkt));
-    
-	/* ========================= printing src (MAC) > dest (MAC) ========================= */
+    	/* ========================= printing src (MAC) > dest (MAC) ========================= */
     print_mac(SRC_ADDR(pkt));
     printf(" > ");
 	print_mac(DEST_ADDR(pkt));
     /* =================================================================================== */
 
 	/* =============================== printing ethertype ================================ */
-	printf(", ethertype: 0x%04x", ethertype); 
+	printf(", ethertype: 0x%04x", ntohs(ETHERTYPE(pkt))); 
     /* =================================================================================== */
 }
 

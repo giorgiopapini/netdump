@@ -1,9 +1,9 @@
-#include "ipprotos.h"
+#include "ip_protos.h"
 
-#include "protocols/network/ip.h"
-#include "protocols/transport/tcp.h"
-#include "protocols/transport/udp.h"
-#include "protocols/transport/icmp.h"
+#include "network/ip.h"
+#include "transport/tcp.h"
+#include "transport/udp.h"
+#include "transport/icmp.h"
 
 protocol_handler ipprotos[] = {
     { IPPROTO_HOPOPTS,      PROTOCOL_LAYER_NONE, NULL, "HOPOP" },

@@ -1,6 +1,6 @@
 #include "ppp_protos.h"
 
-#include "protocols/network/ip.h"
+#include "network/ip.h"
 
 protocol_handler ppp_protos[] = {
     { PPP_IP,           PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
