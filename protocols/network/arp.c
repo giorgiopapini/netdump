@@ -34,6 +34,7 @@ void print_arp_hdr(const uint8_t *pkt) {
         printf(" is-at ");
         print_ipv4(ntohl(TARGET_P_ADDR(pkt)));
     }
+    else printf("(unrecognized operation = %u)", operation);
 }
 
 void visualize_arp_hdr(const uint8_t *pkt) {

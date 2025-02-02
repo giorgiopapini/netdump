@@ -5,7 +5,7 @@
 #include "transport/udp.h"
 #include "transport/icmp.h"
 
-protocol_handler ipprotos[] = {
+protocol_handler ip_protos[] = {
     { IPPROTO_HOPOPTS,      PROTOCOL_LAYER_NONE, NULL, "HOPOP" },
     { IPPROTO_ICMP,         PROTOCOL_LAYER_TRANSPORT, dissect_icmp, "ICMP" },
     { IPPROTO_IGMP,         PROTOCOL_LAYER_NONE, NULL, "IGMP" },

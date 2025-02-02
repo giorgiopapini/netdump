@@ -36,5 +36,5 @@ void visualize_vlan_hdr(const uint8_t *pkt) {
 
 protocol_info dissect_vlan(const uint8_t *pkt, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_vlan_hdr, visualize_vlan_hdr);
-    return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .hashmap = ethertypes };
+    return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .table = ethertypes };
 }

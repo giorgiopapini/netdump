@@ -12,7 +12,7 @@ void print_icmp_hdr(const uint8_t *pkt) {
     if (ICMP_REQUEST == type) printf("request");
     else if (ICMP_REPLY == type) printf("reply");
 
-    printf(", id %d, seq %d", ID(pkt), SEQUENCE(pkt));
+    printf(", id %u, seq %u", ntohs(ID(pkt)), ntohs(SEQUENCE(pkt)));
 }
 
 void visualize_icmp_hdr(const uint8_t *pkt) {

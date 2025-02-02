@@ -1,5 +1,5 @@
-#ifndef DLT_PROTOS
-#define DLT_PROTOS
+#ifndef DLT_PROTOS_H
+#define DLT_PROTOS_H
 
 #include "../protocol_handler.h"
 

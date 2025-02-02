@@ -28,7 +28,7 @@ typedef struct protocol_handler protocol_handler;
 typedef struct protocol_info {
     int protocol;
     size_t offset;
-    protocol_handler *hashmap;
+    protocol_handler *table;
 } protocol_info;
 
 typedef struct protocol_handler {
@@ -38,7 +38,7 @@ typedef struct protocol_handler {
     const char *protocol_name;
 } protocol_handler;
 
-#define NO_ENCAP_PROTO		(protocol_info){ .protocol = -1, .offset = 0, .hashmap = NULL };
+#define NO_ENCAP_PROTO		(protocol_info){ .protocol = -1, .offset = 0, .table = NULL };
 #define SHOW_OUTPUT(pkt, fmt, proto_name, print_func, visualize_func) \
 		do { \
 			switch(fmt) { \

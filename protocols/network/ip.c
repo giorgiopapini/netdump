@@ -98,5 +98,5 @@ void visualize_ip_hdr(const uint8_t *pkt) {
 
 protocol_info dissect_ip(const uint8_t *pkt, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_ip_hdr, visualize_ip_hdr);
-    return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .hashmap = ipprotos };
+    return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .table = ip_protos };
 }

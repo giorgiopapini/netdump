@@ -39,5 +39,5 @@ void visualize_ether_hdr(const uint8_t *pkt) {
 
 protocol_info dissect_ether(const uint8_t *pkt, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_ether_hdr, visualize_ether_hdr);
-    return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .hashmap = ethertypes };
+    return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .table = ethertypes };
 }

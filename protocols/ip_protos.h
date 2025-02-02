@@ -1,5 +1,5 @@
-#ifndef IPPROTO_H
-#define IPPROTO_H
+#ifndef IP_PROTOS_H
+#define IP_PROTOS_H
 
 #include "../protocol_handler.h"
 
@@ -97,6 +97,6 @@
 #define IPPROTO_MOBILITY	135
 #endif
 
-extern protocol_handler ipprotos[];
+extern protocol_handler ip_protos[];
 
 #endif
