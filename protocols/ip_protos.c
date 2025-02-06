@@ -1,13 +1,15 @@
 #include "ip_protos.h"
 
 #include "network/ip.h"
+#include "network/icmp.h"
+#include "network/ipv6.h"
+#include "network/icmpv6.h"
 #include "transport/tcp.h"
 #include "transport/udp.h"
-#include "transport/icmp.h"
 
 protocol_handler ip_protos[] = {
     { IPPROTO_HOPOPTS,      PROTOCOL_LAYER_NONE, NULL, "HOPOP" },
-    { IPPROTO_ICMP,         PROTOCOL_LAYER_TRANSPORT, dissect_icmp, "ICMP" },
+    { IPPROTO_ICMP,         PROTOCOL_LAYER_NETWORK, dissect_icmp, "ICMP" },
     { IPPROTO_IGMP,         PROTOCOL_LAYER_NONE, NULL, "IGMP" },
     { IPPROTO_IPV4,         PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
     { IPPROTO_TCP,          PROTOCOL_LAYER_TRANSPORT, dissect_tcp, "TCP" },
@@ -15,7 +17,7 @@ protocol_handler ip_protos[] = {
     { IPPROTO_PIGP,         PROTOCOL_LAYER_NONE, NULL, "PIGP" },
     { IPPROTO_UDP,          PROTOCOL_LAYER_TRANSPORT, dissect_udp, "UDP" },
     { IPPROTO_DCCP,         PROTOCOL_LAYER_NONE, NULL, "DCCP" },
-    { IPPROTO_IPV6,         PROTOCOL_LAYER_NONE, NULL, "IGMP" },
+    { IPPROTO_IPV6,         PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6" },
     { IPPROTO_ROUTING,      PROTOCOL_LAYER_NONE, NULL, "IPv6 routing" },
     { IPPROTO_FRAGMENT,     PROTOCOL_LAYER_NONE, NULL, "IPv6 fragmentation" },
     { IPPROTO_RSVP,         PROTOCOL_LAYER_NONE, NULL, "RSPV" },
@@ -24,7 +26,7 @@ protocol_handler ip_protos[] = {
     { IPPROTO_AH,           PROTOCOL_LAYER_NONE, NULL, "AH" },
     { IPPROTO_NHRP,         PROTOCOL_LAYER_NONE, NULL, "NHRP" },
     { IPPROTO_MOBILE,       PROTOCOL_LAYER_NONE, NULL, "MOBILE" },
-    { IPPROTO_ICMPV6,       PROTOCOL_LAYER_NONE, NULL, "ICMPv6" },
+    { IPPROTO_ICMPV6,       PROTOCOL_LAYER_NETWORK, dissect_icmpv6, "ICMPv6" },
     { IPPROTO_NONE,         PROTOCOL_LAYER_NONE, NULL, "IPv6 no next header" },
     { IPPROTO_DSTOPTS,      PROTOCOL_LAYER_NONE, NULL, "IPv6 destination options" },
     { IPPROTO_ND,           PROTOCOL_LAYER_NONE, NULL, "ND" },

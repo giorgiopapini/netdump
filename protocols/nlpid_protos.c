@@ -3,6 +3,7 @@
 #include "datalink/ppp.h"
 #include "datalink/snap.h"
 #include "network/ip.h"
+#include "network/ipv6.h"
 
 protocol_handler nlpid_protos[] = {
     { NLPID_Q933,           PROTOCOL_LAYER_NONE, NULL, "ANSI T1.617 Annex D or ITU-T Q.933 Annex A" },
@@ -18,6 +19,6 @@ protocol_handler nlpid_protos[] = {
     { NLPID_IP,             PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
     { NLPID_PPP,            PROTOCOL_LAYER_DATALINK, dissect_ppp, "PPP" },
     { NLPID_X25_ESIS,       PROTOCOL_LAYER_NONE, NULL, "X25_ESIS" },
-    { NLPID_IP6,            PROTOCOL_LAYER_NETWORK, NULL, "IPv6" },
+    { NLPID_IP6,            PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6" },
     { 0,                    PROTOCOL_LAYER_NONE, NULL, NULL }
 };

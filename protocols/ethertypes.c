@@ -3,6 +3,7 @@
 #include "datalink/ppp.h"
 #include "datalink/vlan.h"
 #include "network/ip.h"
+#include "network/ipv6.h"
 #include "network/arp.h"
 
 
@@ -10,7 +11,7 @@ protocol_handler ethertypes[] = {
 	{ ETHERTYPE_IP,				PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
     { ETHERTYPE_MPLS,			PROTOCOL_LAYER_NONE, NULL, "MPLS unicast" },
     { ETHERTYPE_MPLS_MULTI,		PROTOCOL_LAYER_NONE, NULL,"MPLS multicast" },
-    { ETHERTYPE_IPV6,			PROTOCOL_LAYER_NONE, NULL, "IPv6" },
+    { ETHERTYPE_IPV6,			PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6" },
     { ETHERTYPE_8021Q,			PROTOCOL_LAYER_DATALINK, dissect_vlan, "802.1Q \"VLAN\"" },
     { ETHERTYPE_8021Q9100,		PROTOCOL_LAYER_NONE, NULL, "802.1Q-9100" },
     { ETHERTYPE_8021QinQ,		PROTOCOL_LAYER_NONE, NULL, "802.1Q-QinQ" },

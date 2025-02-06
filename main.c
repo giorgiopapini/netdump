@@ -35,9 +35,7 @@
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
 
-	TODO:	FIXARE FRAME RELAY, CHE NON FUNZIONA PER NULLA, COME SE STESSE DEFERENZIANDO PUNTATORI IN POSIZIONI SBAGLIATE. PROBLEMA
-			E' CHE C'E DEL PADDING 0X00 CHE CAGA IL CAZZO TRA IL CONTROL BYTE E NLPID
-			https://www.cloudshark.org/captures/87be3b4b6625. Consultare il valore raw esadecimale, si nota proprio quel 0x00 di padding
+	TODO:	Add ICMPv6 protocol support
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
