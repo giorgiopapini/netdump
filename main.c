@@ -34,8 +34,6 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
-
-	TODO:	Add ICMPv6 protocol support
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
