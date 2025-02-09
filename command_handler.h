@@ -31,8 +31,6 @@
 #define DATALINK_HDR_ARG            "e"  /* show datalink header */
 #define TRANSPORT_HDR_ARG           "t"  /* shot transport header */
 #define NETWORK_HDR_ARG             "nnet" /* not net (set if the network layer should not be printed) */
-#define SESSION_HDR_ARG             "s"
-#define PRESENTATION_HDR_ARG        "p"
 #define APPLICATION_HDR_ARG         "a"
 #define NO_PROM_ARG                 "nprom"  /* turn off promiscuos mode */
 #define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
@@ -49,8 +47,6 @@
 #define DATALINK_HDR_ARG_DESC       "Show datalink layer protocol header"
 #define NETWORK_HDR_ARG_DESC        "Don't show network layer protocol header"
 #define TRANSPORT_HDR_ARG_DESC      "Show transport layer protocol header"
-#define SESSION_HDR_ARG_DESC        "Show session layer protocol header"
-#define PRESENTATION_HDR_ARG_DESC   "Show presentation layer protocol header"
 #define APPLICATION_HDR_ARG_DESC    "Show application layer protocol header"
 #define NO_PROM_ARG_DESC            "Turn off libpcap promiscuos mode"
 #define NO_TIMESTAMP_ARG_DESC       "Hide timestamp"
@@ -76,7 +72,7 @@
     The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
 */
                    
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, SESSION_HDR_ARG, PRESENTATION_HDR_ARG, APPLICATION_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
+#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
@@ -85,10 +81,10 @@
 #define RESET_ARGS
 #define REQUIRED_RESET_ARGS
 
-#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, SESSION_HDR_ARG, PRESENTATION_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG
+#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
 
-#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, SESSION_HDR_ARG, PRESENTATION_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
+#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
 #define REQUIRED_VISUALIZE_ARGS
 
 #define CLEAR_ARGS
