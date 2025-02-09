@@ -21,6 +21,7 @@ typedef enum protocol_layer {
 	PROTOCOL_LAYER_DATALINK,
 	PROTOCOL_LAYER_NETWORK,
 	PROTOCOL_LAYER_TRANSPORT,
+	PROTOCOL_LAYER_APPLICATION
 } protocol_layer;
 
 typedef struct protocol_handler protocol_handler;
@@ -34,7 +35,7 @@ typedef struct protocol_info {
 typedef struct protocol_handler {
     int protocol;
 	protocol_layer layer;
-    protocol_info (*dissect_proto)(const uint8_t *pkt, const char *proto_name, output_format fmt);
+    protocol_info (*dissect_proto)(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
     const char *protocol_name;
 } protocol_handler;
 

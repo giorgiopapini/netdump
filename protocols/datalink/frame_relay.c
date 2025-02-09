@@ -80,7 +80,7 @@ void visualize_frelay_hdr(const uint8_t *pkt) {
     end_printing();
 }
 
-protocol_info dissect_frelay(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
     protocol_handler *table;

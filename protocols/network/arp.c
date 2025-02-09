@@ -72,7 +72,7 @@ void visualize_arp_hdr(const uint8_t *pkt) {
     end_printing();
 }
 
-protocol_info dissect_arp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+protocol_info dissect_arp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_arp_hdr, visualize_arp_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -32,17 +32,19 @@ int should_print_pkt(command *cmd, protocol_layer layer) {
 	int show_datalink = NULL != get_arg(cmd, DATALINK_HDR_ARG);
 	int show_network = NULL == get_arg(cmd, NETWORK_HDR_ARG);
 	int show_transport = NULL != get_arg(cmd, TRANSPORT_HDR_ARG);
+	int show_application = NULL != get_arg(cmd, APPLICATION_HDR_ARG);
 
 	switch (layer) {
-		case PROTOCOL_LAYER_DATALINK:	return show_datalink; break;
-		case PROTOCOL_LAYER_NETWORK:	return show_network; break;
-		case PROTOCOL_LAYER_TRANSPORT:	return show_transport; break;
+		case PROTOCOL_LAYER_DATALINK:		return show_datalink; break;
+		case PROTOCOL_LAYER_TRANSPORT:		return show_transport; break;
+		case PROTOCOL_LAYER_NETWORK:		return show_network; break;
+		case PROTOCOL_LAYER_APPLICATION:	return show_application; break;
 		default: break;
 	}
 	return 1;
 }
 
-void dissect(command *cmd, uint8_t *pkt, int proto_id, protocol_handler *proto_hasmap, int proto_shown) {
+void dissect(command *cmd, uint8_t *pkt, bpf_u_int32 pkt_len, int proto_id, protocol_handler *proto_hasmap, int proto_shown) {
 	protocol_handler handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
@@ -59,9 +61,16 @@ void dissect(command *cmd, uint8_t *pkt, int proto_id, protocol_handler *proto_h
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
 	if (NULL == get_arg(cmd, NO_PROTOCOL_NAME_ARG)) proto_name = handler.protocol_name;
-	encap_proto_info = handler.dissect_proto(pkt, proto_name, out_format);
-	if (encap_proto_info.table != NULL) {
-		dissect(cmd, (pkt + encap_proto_info.offset), encap_proto_info.protocol, encap_proto_info.table, proto_shown);
+	encap_proto_info = handler.dissect_proto(pkt, pkt_len, proto_name, out_format);
+	if (NULL != encap_proto_info.table && (pkt_len - encap_proto_info.offset) > 0) {
+		dissect(
+			cmd,
+			(pkt + encap_proto_info.offset),
+			(pkt_len - encap_proto_info.offset),
+			encap_proto_info.protocol,
+			encap_proto_info.table,
+			proto_shown
+		);
 	}
 }
 
@@ -70,6 +79,6 @@ void dissect_packet(command *cmd, packet *pkt) {
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
 	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than it adds a bit of spacing */
 
-	dissect(cmd, pkt->bytes, pkt->datalink_type, dlt_protos, 0);
+	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, 0);
 	printf("\n");
 }

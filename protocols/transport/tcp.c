@@ -3,6 +3,7 @@
 #include <arpa/inet.h>
 
 #include "tcp.h"
+#include "../net_ports.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/string_utils.h"
 
@@ -178,7 +179,20 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
     end_printing();
 }
 
-protocol_info dissect_tcp(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
+    protocol_info proto_info;
     SHOW_OUTPUT(pkt, fmt, proto_name, print_tcp_hdr, visualize_tcp_hdr);
-    return NO_ENCAP_PROTO;
+
+    /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
+    proto_info.offset = (DATA_OFFSET(pkt) * 4);
+    proto_info.table = net_ports;
+
+    if (((FLAGS(pkt) & (ACK | PSH)) == (ACK | PSH)) || ((FLAGS(pkt) & ACK) == ACK)) {
+        if (IS_WELL_DEFINED_PORT(ntohs(DEST_PORT(pkt)))) proto_info.protocol = ntohs(DEST_PORT(pkt));
+        else if (IS_WELL_DEFINED_PORT(ntohs(SRC_PORT(pkt)))) proto_info.protocol = ntohs(SRC_PORT(pkt));
+        else proto_info = NO_ENCAP_PROTO;
+    }
+    else proto_info = NO_ENCAP_PROTO;
+
+    return proto_info;
 }

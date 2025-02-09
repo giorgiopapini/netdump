@@ -17,11 +17,6 @@
 #include "utils/formats.h"
 
 /*
-	TODO:	Manage multiline terminal string. When left arrow is pressed at start of line x, it doesnt 'teleport' to the end
-			of line (x - 1). pos variable does not need to become a 2D variable (maybe). It is obvious that when the eos is
-			reached it has to go up or down by maximum 1 line. Find a way to get terminal cols and absolute position of cursor
-			(netdump > ) characters need to be counted in some way
-
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
@@ -72,7 +67,7 @@ void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history)
 
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
-			if (0 != execute_command(cmd, packets, history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, NULL, cmd->label);
+			if (0 != execute_command(cmd, packets, history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
 		}
 	}
 

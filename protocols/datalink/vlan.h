@@ -26,6 +26,6 @@
 #define VLAN_LEN                    4  /* should be 6, but the 2 bytes TPID field is not considered, so 6 - 2 = 4 bytes */
 
 
-protocol_info dissect_vlan(const uint8_t *pkt, const char *proto_name, output_format fmt);
+protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
 
 #endif

@@ -58,7 +58,7 @@ void visualize_ipv6_hdr(const uint8_t *pkt) {
     end_printing();
 }
 
-protocol_info dissect_ipv6(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+protocol_info dissect_ipv6(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_ipv6_hdr, visualize_ipv6_hdr);
     return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HEADER_LEN, .table = ip_protos };
 }

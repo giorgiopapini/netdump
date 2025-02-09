@@ -177,6 +177,8 @@ void print_value(char *label, char *content, int *curr_x, int *curr_y, int max_l
 }
 
 void print_field(char *label, char *content, int newline) {
+    if (NULL == label || NULL == content) return;
+    
     int label_len = strlen(label);
     int content_len = strlen(content);
     int total_rows;

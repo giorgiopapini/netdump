@@ -27,6 +27,6 @@
 #define IPV6_HEADER_LEN                 40
 
 
-protocol_info dissect_ipv6(const uint8_t *pkt, const char *proto_name, output_format fmt);
+protocol_info dissect_ipv6(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
 
 #endif

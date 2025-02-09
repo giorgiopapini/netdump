@@ -27,7 +27,7 @@ void visualize_snap_hdr(const uint8_t *pkt) {
     end_printing();
 }
 
-protocol_info dissect_snap(const uint8_t *pkt, const char *proto_name, output_format fmt) {
+protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
     SHOW_OUTPUT(pkt, fmt, proto_name, print_snap_hdr, visualize_snap_hdr);
     return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .table = ethertypes };
 }

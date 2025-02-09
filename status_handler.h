@@ -1,6 +1,7 @@
 #ifndef ERROR_HANDLER_H
 #define ERROR_HANDLER_H
 
+#define UNKNOWN_COMMAND_HINT "Run 'help' command for assistance"
 #define NO_DEVICE_HINT "The selected device may not exist, or there could be an issue with your internet connection."
 #define UNSCANNED_NET_HINT "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"

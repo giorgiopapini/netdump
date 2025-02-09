@@ -31,7 +31,7 @@
 #define TARGET_P_ADDR(pkt)      (*((uint32_t *)(pkt + 24)))
 
 
-protocol_info dissect_arp(const uint8_t *pkt, const char *proto_name, output_format fmt);
+protocol_info dissect_arp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
 
 /* 
     Currently this arp description only supports ethernet technology and ip technology (no ATM or infiniband, which both have 

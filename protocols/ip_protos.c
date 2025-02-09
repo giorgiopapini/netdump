@@ -10,7 +10,7 @@
 protocol_handler ip_protos[] = {
     { IPPROTO_HOPOPTS,      PROTOCOL_LAYER_NONE, NULL, "HOPOP" },
     { IPPROTO_ICMP,         PROTOCOL_LAYER_NETWORK, dissect_icmp, "ICMP" },
-    { IPPROTO_IGMP,         PROTOCOL_LAYER_NONE, NULL, "IGMP" },
+    { IPPROTO_IGMP,         PROTOCOL_LAYER_NETWORK, NULL, "IGMP" },
     { IPPROTO_IPV4,         PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
     { IPPROTO_TCP,          PROTOCOL_LAYER_TRANSPORT, dissect_tcp, "TCP" },
     { IPPROTO_EGP,          PROTOCOL_LAYER_NONE, NULL, "EGP" },
