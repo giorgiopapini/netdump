@@ -1,11 +1,12 @@
 #include "net_ports.h"
 
 #include "application/http.h"
+#include "application/ftp.h"
 
 protocol_handler net_ports[] = {
     { PORT_HTTP,            PROTOCOL_LAYER_APPLICATION, dissect_http, "HTTP" },
     { PORT_HTTPS,           PROTOCOL_LAYER_APPLICATION, NULL, "HTTPS" },
-    { PORT_FTP,             PROTOCOL_LAYER_APPLICATION, NULL },
+    { PORT_FTP,             PROTOCOL_LAYER_APPLICATION, dissect_ftp, "FTP" },
     { PORT_SSH,             PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_TELNET,          PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_SMTP,            PROTOCOL_LAYER_NONE, NULL, NULL },

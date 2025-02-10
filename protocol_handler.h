@@ -8,7 +8,6 @@
 #include "utils/packet.h"
 #include "utils/colors.h"
 
-/* { PROTOCOL, sizeof(proto_hdr), print_proto_header } */
 
 typedef enum output_format {
 	OUTPUT_FORMAT_NONE = -1,
