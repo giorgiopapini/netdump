@@ -62,5 +62,5 @@ protocol_handler ethertypes[] = {
     { ETHERTYPE_AOE,            PROTOCOL_LAYER_NONE, NULL, "AoE" },
     { ETHERTYPE_PTP,            PROTOCOL_LAYER_NONE, NULL, "PTP" },
     { ETHERTYPE_ARISTA,         PROTOCOL_LAYER_NONE, NULL, "Arista Vendor Specific Protocol" },
-    { 0,                        PROTOCOL_LAYER_NONE, NULL, NULL }
+    NULL_PROTO_HANDLER
 };

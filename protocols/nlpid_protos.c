@@ -20,5 +20,5 @@ protocol_handler nlpid_protos[] = {
     { NLPID_PPP,            PROTOCOL_LAYER_DATALINK, dissect_ppp, "PPP" },
     { NLPID_X25_ESIS,       PROTOCOL_LAYER_NONE, NULL, "X25_ESIS" },
     { NLPID_IP6,            PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6" },
-    { 0,                    PROTOCOL_LAYER_NONE, NULL, NULL }
+    NULL_PROTO_HANDLER
 };

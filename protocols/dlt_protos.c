@@ -10,5 +10,5 @@ protocol_handler dlt_protos[] = {
     { DLT_PPP,          PROTOCOL_LAYER_DATALINK, dissect_ppp, "PPP" },
     { DLT_IPV4,         PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
     { DLT_FRELAY,       PROTOCOL_LAYER_DATALINK, dissect_frelay, "Frame Relay" },
-    { 0,                PROTOCOL_LAYER_NONE, NULL, NULL },
+    NULL_PROTO_HANDLER
 };

@@ -43,5 +43,5 @@ protocol_handler ppp_protos[] = {
     { PPP_MPCP,         PROTOCOL_LAYER_NONE, NULL, "Multi-Link Control Protocol" },
     { PPP_SPAP_OLD,     PROTOCOL_LAYER_NONE, NULL, "Old Simple Password Authentication Protocol" },
     { PPP_EAP,          PROTOCOL_LAYER_NONE, NULL, "Extensible Authentication Protocol" },
-    { 0,                PROTOCOL_LAYER_NONE, NULL, NULL }
+    NULL_PROTO_HANDLER
 };

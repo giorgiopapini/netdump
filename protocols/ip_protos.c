@@ -38,5 +38,5 @@ protocol_handler ip_protos[] = {
     { IPPROTO_PGM,          PROTOCOL_LAYER_NONE, NULL, "PGM" },
     { IPPROTO_SCTP,         PROTOCOL_LAYER_NONE, NULL, "SCTP" },
     { IPPROTO_MOBILITY,     PROTOCOL_LAYER_NONE, NULL, "MOBILITY" },
-    { 0,                    PROTOCOL_LAYER_NONE, NULL, NULL }
+    NULL_PROTO_HANDLER
 };

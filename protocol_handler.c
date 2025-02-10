@@ -22,7 +22,8 @@ void print_separator(command *cmd) {
 
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
 	int i;
-	for (i = 0; proto_table[i].protocol_name != NULL; i ++) {
+	for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
+		protocol_handler aaa = proto_table[i];
 		if (target_proto == proto_table[i].protocol) return proto_table[i];
 	}
 	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
