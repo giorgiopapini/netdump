@@ -83,6 +83,7 @@ void print_dns_hdr(const uint8_t *pkt) {
         ntohs(DNS_ADDITIONAL_RRS(pkt))
     );
 
+    /* print queries */
     offset = DNS_HDR_LEN;
     for (i = 0; i < ntohs(DNS_QUESTIONS(pkt)); i ++) {
         offset += extract_domain_name(pkt, offset, domain);
@@ -96,6 +97,7 @@ void print_dns_hdr(const uint8_t *pkt) {
         offset += 4;
     }
 
+    /* print answers */
     for (i = 0; i < ntohs(DNS_ANSWER_RRS(pkt)); i++) {
         uint16_t type, class, data_len;
         uint32_t ttl;
@@ -122,6 +124,32 @@ void print_dns_hdr(const uint8_t *pkt) {
         printf("}");
 
         offset += data_len;
+    }
+
+    /* print additional records */
+    for (i = 0; i < ntohs(DNS_ADDITIONAL_RRS(pkt)); i ++) {
+        uint8_t rdlength = ntohs(*(uint8_t *)(pkt + offset + 8));
+
+        printf(
+            ", additional_record %d: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
+            i + 1,
+            ntohs(*(uint16_t *)(pkt + offset + 1)),
+            ntohs(*(uint16_t *)(pkt + offset + 3)),
+            *(pkt + offset + 5),
+            *(pkt + offset + 6),
+            ntohs(*(uint16_t *)(pkt + offset + 7)),
+            rdlength
+        );
+        offset += 10;
+
+        if (rdlength > 0) {
+            printf(", rdata: (");
+            for (int j = 0; j < rdlength; j++) printf("%02x ", pkt[offset + j]);
+            printf(")");
+        }
+        printf("}");
+
+        offset += rdlength;
     }
 }
 
@@ -157,7 +185,7 @@ void visualize_dns_hdr(const uint8_t *pkt) {
     snprintf(additional_rrs, sizeof(additional_rrs), "%u", ntohs(DNS_ADDITIONAL_RRS(pkt)));
 
     start_printing();
-    print_hdr_info(DNS_HEADER_LABEL, "Queries and Answers not represented in ascii art");
+    print_hdr_info(DNS_HEADER_LABEL, "Queries, Answers and Additional Records not represented in ascii art");
     print_field(DNS_TRANSACTION_ID_LABEL, transaction_id, 0);
     print_field(DNS_QR_LABEL, qr, 0);
     print_field(DNS_OPCODE_LABEL, opcode, 0);
