@@ -5,10 +5,52 @@
 #include "../../utils/visualizer.h"
 
 
+int extract_domain_name(const uint8_t *payload, int offset, char *domain) {
+    int i = 0, len, start_offset = offset;
+    uint16_t pointer_offset;
+
+    while ((len = payload[offset]) > 0) {
+        if (len & 0xC0) {
+            pointer_offset = ((payload[offset] & 0x3F) << 8) | payload[offset + 1];
+            offset += 2;
+
+            i += extract_domain_name(payload, pointer_offset, domain + i);
+            return offset - start_offset;
+        } 
+        else {
+            if (i > 0) domain[i++] = '.';
+            offset ++;
+            memcpy(&domain[i], &payload[offset], len);
+            i += len;
+            offset += len;
+        }
+    }
+    domain[i] = '\0';
+    return (offset - start_offset) + 1;
+}
+
+void extract_srv_record(const uint8_t *payload, int offset, int data_len) {
+    char target[256];
+    int target_offset;
+
+    if (data_len < 6) return;
+    
+    target_offset = offset + 6;
+    extract_domain_name(payload, target_offset, target);
+
+    printf(", priority: %u", ntohs(*(unsigned short *)(payload + offset)));
+    printf(", weight: %u", ntohs(*(unsigned short *)(payload + offset + 2)));
+    printf(", port: %u", ntohs(*(unsigned short *)(payload + offset + 4)));
+    printf(", target: %s", target);
+}
+
 void print_dns_hdr(const uint8_t *pkt) {
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     char opcode_str[16];
     char rcode_str[16];
+    char domain[256];
+    int offset;
+    int i;
 
     printf("transaction_id: 0x%04x", ntohs(DNS_TRANSACTION_ID(pkt)));
 
@@ -40,6 +82,47 @@ void print_dns_hdr(const uint8_t *pkt) {
         ntohs(DNS_AUTH_RRS(pkt)),
         ntohs(DNS_ADDITIONAL_RRS(pkt))
     );
+
+    offset = DNS_HDR_LEN;
+    for (i = 0; i < ntohs(DNS_QUESTIONS(pkt)); i ++) {
+        offset += extract_domain_name(pkt, offset, domain);
+        printf(
+            ", query %d: {name: %s, type: %u, class: %u}",
+            i + 1,
+            domain,
+            ntohs(*(uint16_t *)(pkt + offset)),
+            ntohs(*(uint16_t *)(pkt + offset + 2))
+        );
+        offset += 4;
+    }
+
+    for (i = 0; i < ntohs(DNS_ANSWER_RRS(pkt)); i++) {
+        uint16_t type, class, data_len;
+        uint32_t ttl;
+        
+        offset += extract_domain_name(pkt, offset, domain);
+
+        type = ntohs(*(uint16_t *)(pkt + offset));
+        class = ntohs(*(uint16_t *)(pkt + offset + 2));
+        ttl = ntohl(*(uint32_t *)(pkt + offset + 4));
+        data_len = ntohs(*(uint16_t *)(pkt + offset + 8));
+
+        printf(
+            ", answer %d: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
+            i + 1,
+            domain,
+            type,
+            class,
+            ttl,
+            data_len
+        );
+        
+        offset += 10;
+        if (33 == type) extract_srv_record(pkt, offset, data_len);
+        printf("}");
+
+        offset += data_len;
+    }
 }
 
 void visualize_dns_hdr(const uint8_t *pkt) {
@@ -74,7 +157,7 @@ void visualize_dns_hdr(const uint8_t *pkt) {
     snprintf(additional_rrs, sizeof(additional_rrs), "%u", ntohs(DNS_ADDITIONAL_RRS(pkt)));
 
     start_printing();
-    print_hdr_info(DNS_HEADER_LABEL, NULL);
+    print_hdr_info(DNS_HEADER_LABEL, "Queries and Answers not represented in ascii art");
     print_field(DNS_TRANSACTION_ID_LABEL, transaction_id, 0);
     print_field(DNS_QR_LABEL, qr, 0);
     print_field(DNS_OPCODE_LABEL, opcode, 0);
