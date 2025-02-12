@@ -3,13 +3,14 @@
 #include "application/http.h"
 #include "application/ftp.h"
 #include "application/dns.h"
+#include "application/telnet.h"
 
 protocol_handler net_ports[] = {
     { PORT_HTTP,            PROTOCOL_LAYER_APPLICATION, dissect_http, "HTTP" },
     { PORT_HTTPS,           PROTOCOL_LAYER_APPLICATION, NULL, "HTTPS" },
     { PORT_FTP,             PROTOCOL_LAYER_APPLICATION, dissect_ftp, "FTP" },
     { PORT_SSH,             PROTOCOL_LAYER_NONE, NULL, NULL },
-    { PORT_TELNET,          PROTOCOL_LAYER_NONE, NULL, NULL },
+    { PORT_TELNET,          PROTOCOL_LAYER_APPLICATION, dissect_telnet, "Telnet" },
     { PORT_SMTP,            PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_DNS,             PROTOCOL_LAYER_APPLICATION, dissect_dns, "DNS" },
     { PORT_DHCP_CLIENT,     PROTOCOL_LAYER_NONE, NULL, NULL },

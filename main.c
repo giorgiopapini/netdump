@@ -30,7 +30,7 @@
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
 
-	TODO: 	Add support for DNS "Additional Records" and "Authority RRS" (if needed, i do not know what is it)
+	TODO:	Maybe remove the global variables for packet length and add a parameter len to print_{pkt} and visualize_{pkt}?
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

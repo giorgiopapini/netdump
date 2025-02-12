@@ -1,0 +1,21 @@
+#ifndef TELNET_H
+#define TELNET_H
+
+#include <stdint.h>
+#include "../../protocol_handler.h"
+
+#define TELNET_HEADER_LABEL         "Telnet Header"
+#define TELNET_COMMAND_LABEL        "Command"
+#define TELNET_DATA_LABEL           "Data (', ' separator)"
+
+#define TELNET_IAC                  0xff
+#define TELNET_COMMAND_OFFSET       240  /* (command - TELNET_COMMAND_OFFSET) = correct array index */
+#define TELNET_END_I_OPTIONS        49
+#define TELNET_START_II_OPTIONS     138
+#define TELNET_END_II_OPTIONS       140
+#define TELNET_EXTENDED_OPT_LIST    255
+
+
+protocol_info dissect_telnet(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+
+#endif
