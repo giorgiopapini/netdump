@@ -8,7 +8,7 @@
 #include "../../utils/formats.h"
 
 
-void print_ether_hdr(const uint8_t *pkt) {
+void print_ether_hdr(const uint8_t *pkt, uint32_t len) {
     	/* ========================= printing src (MAC) > dest (MAC) ========================= */
     print_mac(SRC_ADDR(pkt));
     printf(" > ");
@@ -20,7 +20,7 @@ void print_ether_hdr(const uint8_t *pkt) {
     /* =================================================================================== */
 }
 
-void visualize_ether_hdr(const uint8_t *pkt) {
+void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
     char dest_addr[MAC_ADDR_STR_LEN];
     char src_addr[MAC_ADDR_STR_LEN];
     char ethertype[7];  /* 0xXXXX'\0' */
@@ -38,6 +38,6 @@ void visualize_ether_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_ether_hdr, visualize_ether_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ether_hdr, visualize_ether_hdr);
     return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .table = ethertypes };
 }

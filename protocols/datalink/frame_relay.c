@@ -32,7 +32,7 @@ uint16_t extract_dlci(const uint8_t *pkt, int hdr_len) {
     return dlci;
 }
 
-void print_frelay_hdr(const uint8_t *pkt) {
+void print_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
     uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
@@ -49,7 +49,7 @@ void print_frelay_hdr(const uint8_t *pkt) {
     else printf(", ethertype: 0x%04x", protocol);
 }
 
-void visualize_frelay_hdr(const uint8_t *pkt) {
+void visualize_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     char dlci[7];  /* 2 bytes, max = 65535'\0' 7 chars */
     char fecn[2];
     char becn[2];
@@ -86,7 +86,7 @@ protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, const char *p
     protocol_handler *table;
     uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
     
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_frelay_hdr, visualize_frelay_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_frelay_hdr, visualize_frelay_hdr);
 
     if (protocol <= NLPID_THRESHOLD) table = nlpid_protos;
     else table = ethertypes;

@@ -41,17 +41,19 @@ typedef struct protocol_handler {
 #define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .table = NULL };
 #define NULL_PROTO_HANDLER		{ .protocol = 0, .layer = PROTOCOL_LAYER_NONE, .dissect_proto = NULL, .protocol_name = NULL }
 #define IS_NULL_HANDLER(hdl)	(0 == hdl.protocol && PROTOCOL_LAYER_NONE == hdl.layer && NULL == hdl.dissect_proto && NULL == hdl.protocol_name)
-#define SHOW_OUTPUT(pkt, fmt, proto_name, print_func, visualize_func) \
+#define SHOW_OUTPUT(pkt, len, fmt, proto_name, print_func, visualize_func) \
 		do { \
-			switch(fmt) { \
-				case OUTPUT_FORMAT_NONE:		break; \
-				case OUTPUT_FORMAT_BASIC: { \
-					if (NULL != proto_name) printf(CYAN "(%s) " RESET_COLOR, proto_name); \
-					print_func(pkt); \
-					break; \
-				} case OUTPUT_FORMAT_ACII_ART:	visualize_func(pkt); break; \
-				default: break; \
-			} \
+			if (len > 0) { \
+				switch(fmt) { \
+					case OUTPUT_FORMAT_NONE:		break; \
+					case OUTPUT_FORMAT_BASIC: { \
+						if (NULL != proto_name) printf(CYAN "(%s) " RESET_COLOR, proto_name); \
+						print_func(pkt, len); \
+						break; \
+					} case OUTPUT_FORMAT_ACII_ART:	visualize_func(pkt, len); break; \
+					default: break; \
+				} \
+			}\
 		} while(0)
 
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table);

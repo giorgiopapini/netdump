@@ -5,7 +5,7 @@
 #include "../../utils/visualizer.h"
 
 
-void print_snap_hdr(const uint8_t *pkt) {
+void print_snap_hdr(const uint8_t *pkt, uint32_t len) {
     printf(
         "oui: %02x:%02x:%02x, ethertype: 0x%04x", 
         SNAP_OUI(pkt, 0), SNAP_OUI(pkt, 1), SNAP_OUI(pkt, 2),
@@ -13,7 +13,7 @@ void print_snap_hdr(const uint8_t *pkt) {
     );
 }
 
-void visualize_snap_hdr(const uint8_t *pkt) {
+void visualize_snap_hdr(const uint8_t *pkt, uint32_t len) {
     char oui[9];  /* 00:00:00'\0' 9 chars */
     char ethertype[7];
 
@@ -28,6 +28,6 @@ void visualize_snap_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_snap_hdr, visualize_snap_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_snap_hdr, visualize_snap_hdr);
     return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .table = ethertypes };
 }

@@ -37,7 +37,7 @@ void parse_ftp_request(const char *request, char *command, char *argument) {
     else argument[0] = '\0';
 }
 
-void print_ftp_hdr(const uint8_t *pkt) {
+void print_ftp_hdr(const uint8_t *pkt, uint32_t len) {
     int i = 0;
     if (!pkt || pkt[0] == '\0') return;
     
@@ -50,7 +50,7 @@ void print_ftp_hdr(const uint8_t *pkt) {
     }
 }
 
-void visualize_ftp_hdr(const uint8_t *pkt) {
+void visualize_ftp_hdr(const uint8_t *pkt, uint32_t len) {
     char str1[FTP_HEADER_MAX_LEN];
     char str2[FTP_HEADER_MAX_LEN];
     if (!pkt || pkt[0] == '\0') return;
@@ -74,6 +74,6 @@ void visualize_ftp_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_ftp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_ftp_hdr, visualize_ftp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ftp_hdr, visualize_ftp_hdr);
     return NO_ENCAP_PROTO;
 }

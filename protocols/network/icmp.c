@@ -5,7 +5,7 @@
 #include "../../utils/visualizer.h"
 
 
-void print_icmp_hdr(const uint8_t *pkt) {
+void print_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     printf("ICMP echo ");
     uint8_t type = ICMP_TYPE(pkt);
 
@@ -15,7 +15,7 @@ void print_icmp_hdr(const uint8_t *pkt) {
     printf(", id %u, seq %u", ntohs(ICMP_ID(pkt)), ntohs(ICMP_SEQUENCE(pkt)));
 }
 
-void visualize_icmp_hdr(const uint8_t *pkt) {
+void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     char type[3];
     char code[3];
     char checksum[7];  /* 0x0000'\0' are 7 chars */
@@ -39,6 +39,6 @@ void visualize_icmp_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_icmp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_icmp_hdr, visualize_icmp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_icmp_hdr, visualize_icmp_hdr);
     return NO_ENCAP_PROTO;
 }

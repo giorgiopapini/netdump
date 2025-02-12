@@ -94,9 +94,9 @@ void print_tcp_options(const uint8_t *pkt) {
     printf("]");
 }
 
-void print_tcp_hdr(const uint8_t *pkt) {
+void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
-    printf("src port: %u, dest port: %u", ntohs(TCP_SRC_PORT(pkt)), ntohs(TCP_DEST_PORT(pkt)));
+    printf("src_port: %u, dest_port: %u", ntohs(TCP_SRC_PORT(pkt)), ntohs(TCP_DEST_PORT(pkt)));
     
     printf(", flags: [");
     if (TCP_FLAGS(pkt) & TCP_CWR) strcat(flags, "CWR, ");
@@ -118,7 +118,7 @@ void print_tcp_hdr(const uint8_t *pkt) {
     if (0 < tcp_options_len(pkt)) print_tcp_options(pkt);
 }
 
-void visualize_tcp_hdr(const uint8_t *pkt) {
+void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char seq[11];  /* 32 bit can represent a max of 4294967295'\0' ==> len = 11 */
@@ -181,7 +181,7 @@ void visualize_tcp_hdr(const uint8_t *pkt) {
 
 protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
     protocol_info proto_info;
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_tcp_hdr, visualize_tcp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_tcp_hdr, visualize_tcp_hdr);
 
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
     proto_info.offset = (TCP_DATA_OFFSET(pkt) * 4);

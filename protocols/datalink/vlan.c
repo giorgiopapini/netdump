@@ -6,7 +6,7 @@
 #include "../../utils/visualizer.h"
 
 
-void print_vlan_hdr(const uint8_t *pkt) {
+void print_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     printf(
         "TCI: 0x%04x, ethertype: 0x%04x",
         ntohs(VLAN_TCI(pkt)),
@@ -14,7 +14,7 @@ void print_vlan_hdr(const uint8_t *pkt) {
     );
 }
 
-void visualize_vlan_hdr(const uint8_t *pkt) {
+void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     char priority[2];  /* 3 bits, max int value = 7; */
     char dei[2];  /* 1 bit */
     char vlan_id[5];  /* 12 bits, max int value = 4095; so "4095'\0'" = 5 chars */
@@ -35,6 +35,6 @@ void visualize_vlan_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_vlan_hdr, visualize_vlan_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_vlan_hdr, visualize_vlan_hdr);
     return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .table = ethertypes };
 }

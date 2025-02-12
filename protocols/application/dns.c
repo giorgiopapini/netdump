@@ -44,7 +44,7 @@ void extract_srv_record(const uint8_t *payload, int offset, int data_len) {
     printf(", target: %s", target);
 }
 
-void print_dns_hdr(const uint8_t *pkt) {
+void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     char opcode_str[16];
     char rcode_str[16];
@@ -153,7 +153,7 @@ void print_dns_hdr(const uint8_t *pkt) {
     }
 }
 
-void visualize_dns_hdr(const uint8_t *pkt) {
+void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     char transaction_id[7];  /* 0x0000'\0' 7 chars */
     char qr[2];
     char opcode[3];
@@ -204,6 +204,6 @@ void visualize_dns_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_dns(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_dns_hdr, visualize_dns_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_dns_hdr, visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

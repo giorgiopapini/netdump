@@ -5,8 +5,6 @@
 #include "../../utils/visualizer.h"
 
 
-uint32_t http_len;
-
 void extract_http_request_line(const char *request_line, char *method, char *path, char *version) {
     sscanf(request_line, "%s", method);
 
@@ -43,12 +41,12 @@ void split_header_line(const char *header_line, char *key, char *value) {
     }
 }
 
-void print_http_hdr(const uint8_t *pkt) {
+void print_http_hdr(const uint8_t *pkt, uint32_t len) {
     int i;
-    for (i = 0; i < http_len; i ++) printf("%c", pkt[i]);
+    for (i = 0; i < len; i ++) printf("%c", pkt[i]);
 }
 
-void visualize_http_hdr(const uint8_t *pkt) {
+void visualize_http_hdr(const uint8_t *pkt, uint32_t len) {
     char line[HTTP_MAX_HEADER_LEN];
     char key[HTTP_MAX_HEADER_LEN];
     char value[HTTP_MAX_HEADER_LEN];
@@ -79,9 +77,6 @@ void visualize_http_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    if (pkt_len > 0) {
-        http_len = pkt_len;
-        SHOW_OUTPUT(pkt, fmt, proto_name, print_http_hdr, visualize_http_hdr);
-    }
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_http_hdr, visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

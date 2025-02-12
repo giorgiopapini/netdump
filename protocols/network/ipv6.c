@@ -7,7 +7,7 @@
 #include "../../utils/formats.h"
 
 
-void print_ipv6_hdr(const uint8_t *pkt) {
+void print_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
     uint32_t vtc_flow = ntohl(IPV6_VTC_FLOW(pkt)); 
 
     print_ipv6(IPV6_SRC_ADDR(pkt), NULL);
@@ -25,7 +25,7 @@ void print_ipv6_hdr(const uint8_t *pkt) {
     );
 }
 
-void visualize_ipv6_hdr(const uint8_t *pkt) {
+void visualize_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
     char version[3];  /* 4 bits --> max = 15 --> 16'\0' 3 chars */
     char traffic_class[4];  /* 8 bits --> max = 255 --> 255'\0' 4 chars */
     char flow_label[8];  /* 20 bits --> max = 1048575 --> 1048575'\0' 8 chars */
@@ -59,6 +59,6 @@ void visualize_ipv6_hdr(const uint8_t *pkt) {
 }
 
 protocol_info dissect_ipv6(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_ipv6_hdr, visualize_ipv6_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ipv6_hdr, visualize_ipv6_hdr);
     return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HEADER_LEN, .table = ip_protos };
 }

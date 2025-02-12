@@ -6,9 +6,9 @@
 #include "../../utils/visualizer.h"
 
 
-void print_udp_hdr(const uint8_t *pkt) {
+void print_udp_hdr(const uint8_t *pkt, uint32_t len) {
     printf(
-        "src port: %u, dest port: %u, length: %u, cksum: 0x%04x", 
+        "src_port: %u, dest_port: %u, length: %u, cksum: 0x%04x", 
         ntohs(UDP_SRC_PORT(pkt)),
         ntohs(UDP_DEST_PORT(pkt)),
         ntohs(UDP_LENGTH(pkt)),
@@ -16,7 +16,7 @@ void print_udp_hdr(const uint8_t *pkt) {
     );
 }
 
-void visualize_udp_hdr(const uint8_t *pkt) {
+void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char length[6];
@@ -41,7 +41,7 @@ protocol_info dissect_udp(const uint8_t *pkt, uint32_t pkt_len, const char *prot
     proto_info.offset = UDP_LEN;
     proto_info.table = net_ports;
 
-    SHOW_OUTPUT(pkt, fmt, proto_name, print_udp_hdr, visualize_udp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_udp_hdr, visualize_udp_hdr);
 
     if (IS_WELL_DEFINED_PORT(ntohs(UDP_DEST_PORT(pkt)))) proto_info.protocol = ntohs(UDP_DEST_PORT(pkt));
     else if (IS_WELL_DEFINED_PORT(ntohs(UDP_SRC_PORT(pkt)))) proto_info.protocol = ntohs(UDP_SRC_PORT(pkt));
