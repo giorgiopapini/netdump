@@ -1,6 +1,8 @@
 #include "ppp_protos.h"
 
 #include "network/ip.h"
+#include "network/ipv6.h"
+#include "network/icmpv6.h"
 
 protocol_handler ppp_protos[] = {
     { PPP_IP,           PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4" },
@@ -15,7 +17,7 @@ protocol_handler ppp_protos[] = {
     { PPP_STII,         PROTOCOL_LAYER_NONE, NULL, "Stream Protocol (ST-II)" },
     { PPP_VINES,        PROTOCOL_LAYER_NONE, NULL, "Banyan Vines" },
     { PPP_ML,           PROTOCOL_LAYER_NONE, NULL, "Multi-Link PPP" },
-    { PPP_IPV6,         PROTOCOL_LAYER_NONE, NULL, "IPv6" },
+    { PPP_IPV6,         PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6" },
     { PPP_COMP,         PROTOCOL_LAYER_NONE, NULL, "Compressed Datagram" },
     { PPP_HELLO,        PROTOCOL_LAYER_NONE, NULL, "802.1d Hello Packets" },
     { PPP_LUXCOM,       PROTOCOL_LAYER_NONE, NULL, "Luxcom" },
@@ -30,7 +32,7 @@ protocol_handler ppp_protos[] = {
     { PPP_IPXCP,        PROTOCOL_LAYER_NONE, NULL, "Novell IPX Control Protocol" },
     { PPP_STIICP,       PROTOCOL_LAYER_NONE, NULL, "Stream Protocol Control Protocol" },
     { PPP_VINESCP,      PROTOCOL_LAYER_NONE, NULL, "Banyan Vines Control Protocol" },
-    { PPP_IPV6CP,       PROTOCOL_LAYER_NONE, NULL, "IPv6 Control Protocol" },
+    { PPP_IPV6CP,       PROTOCOL_LAYER_NETWORK, dissect_icmpv6, "IPv6 Control Protocol" },
     { PPP_CCP,          PROTOCOL_LAYER_NONE, NULL, "Compress Control Protocol" },
     { PPP_MPLSCP,       PROTOCOL_LAYER_NONE, NULL, "MPLS Control Protocol (RFC 3022)" },
     { PPP_LCP,          PROTOCOL_LAYER_NONE, NULL, "Link Control Protocol" },

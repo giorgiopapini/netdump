@@ -8,7 +8,7 @@
 
 char * get_error_format(err_code code) {
     switch(code) {
-        case USER_NOT_ROOT_ERROR:           return "App needs root privileges to execute packet scanning"; break;
+        case USER_NOT_ROOT_ERROR:           return "root privileges are required to perform packet scanning"; break;
         case SELECT_FAILED_ERROR:           return "'select()' failed in file '%s'. Reason: '%s'"; break;
         case UNKNOWN_COMMAND_ERROR:         return "No such command '%s'"; break; 
         case COMMAND_NOT_SUPPORTED_ERROR:   return "Your OS does not support the '%s' command"; break;

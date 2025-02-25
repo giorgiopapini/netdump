@@ -1,5 +1,6 @@
 #include "net_ports.h"
 
+#include "application/dhcp.h"
 #include "application/http.h"
 #include "application/ftp.h"
 #include "application/dns.h"
@@ -13,8 +14,8 @@ protocol_handler net_ports[] = {
     { PORT_TELNET,          PROTOCOL_LAYER_APPLICATION, dissect_telnet, "Telnet" },
     { PORT_SMTP,            PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_DNS,             PROTOCOL_LAYER_APPLICATION, dissect_dns, "DNS" },
-    { PORT_DHCP_CLIENT,     PROTOCOL_LAYER_NONE, NULL, NULL },
-    { PORT_DHCP_SERVER,     PROTOCOL_LAYER_NONE, NULL, NULL },
+    { PORT_DHCP_CLIENT,     PROTOCOL_LAYER_APPLICATION, dissect_dhcp, "DHCP Client" },
+    { PORT_DHCP_SERVER,     PROTOCOL_LAYER_APPLICATION, dissect_dhcp, "DHCP Server" },
     { PORT_POP3,            PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_IMAP,            PROTOCOL_LAYER_NONE, NULL, NULL },
     { PORT_SNMP,            PROTOCOL_LAYER_NONE, NULL, NULL },
