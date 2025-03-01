@@ -25,14 +25,13 @@ void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(protocol, sizeof(protocol), "0x%04x", ntohs(PROTOCOL(pkt)));
 
     start_printing();
-    print_hdr_info(PPP_HEADER_LABEL, NULL);
     print_field(ADDRESS_LABEL, address, 0);
     print_field(CONTROL_LABEL, control, 0);
     print_field(PROTOCOL_LABEL, protocol, 0);
     end_printing();
 }
 
-protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ppp_hdr, visualize_ppp_hdr);
+protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ppp_hdr, visualize_ppp_hdr);
     return (protocol_info){ .protocol = ntohs(PROTOCOL(pkt)), .offset = PPP_LEN, .table = ppp_protos };
 }

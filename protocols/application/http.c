@@ -60,8 +60,8 @@ void visualize_http_hdr(const uint8_t *pkt, uint32_t len) {
     ptr += strlen(line) + 2;  /* Skip over the first line's "\r\n" */
 
     start_printing();
-    print_hdr_info(HTTP_HEADER_LABEL, "Payload not represented in ascii art");
-
+    print_additional_info("Payload not represented in ascii art");
+    
     extract_http_request_line(line, method, path, version);
     print_field(HTTP_METHOD_LABEL, method, 0);
     print_field(HTTP_PATH_LABEL, path, 0);
@@ -76,7 +76,7 @@ void visualize_http_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_http_hdr, visualize_http_hdr);
+protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_http_hdr, visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

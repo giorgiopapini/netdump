@@ -47,6 +47,6 @@
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */
 
 
-protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
 
 #endif

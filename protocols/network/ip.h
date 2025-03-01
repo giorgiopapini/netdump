@@ -37,6 +37,6 @@
 #define IP_DEST_ADDR(pkt)       (*((uint32_t *)(pkt + 16)))
 
 
-protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
 
 #endif

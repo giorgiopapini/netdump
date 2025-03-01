@@ -56,8 +56,6 @@ void visualize_ftp_hdr(const uint8_t *pkt, uint32_t len) {
     if (!pkt || pkt[0] == '\0') return;
     
     start_printing();
-    print_hdr_info(FTP_HEADER_LABEL, NULL);
-
     if (isdigit(pkt[0])) {
         parse_ftp_response(pkt, str1, str2);
         print_field(FTP_TYPE_LABEL, "Response", 0);
@@ -73,7 +71,7 @@ void visualize_ftp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_ftp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ftp_hdr, visualize_ftp_hdr);
+protocol_info dissect_ftp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ftp_hdr, visualize_ftp_hdr);
     return NO_ENCAP_PROTO;
 }

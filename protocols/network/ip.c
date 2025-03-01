@@ -78,7 +78,7 @@ void visualize_ip_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(dest_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(IP_DEST_ADDR(pkt))));
 
     start_printing();
-    print_hdr_info(IP_HEADER_LABEL, "Options fields not represented in ascii art");
+    print_additional_info("Options fields not represented in ascii art");
     print_field(IP_VERSION_LABEL, version, 0);
     print_field(IP_IHL_LABEL, ihl, 0);
     print_field(IP_TOS_LABEL, tos, 0);
@@ -96,7 +96,7 @@ void visualize_ip_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ip_hdr, visualize_ip_hdr);
+protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ip_hdr, visualize_ip_hdr);
     return (protocol_info){ .protocol = IP_PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .table = ip_protos };
 }

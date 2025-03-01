@@ -17,6 +17,6 @@
 #define PPP_LEN                 4
 
 
-protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
 
 #endif

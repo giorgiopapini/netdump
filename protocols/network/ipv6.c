@@ -46,7 +46,6 @@ void visualize_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
     print_ipv6(IPV6_DEST_ADDR(pkt), dest_addr);
 
     start_printing();
-    print_hdr_info(IPV6_HEADER_LABEL, NULL);
     print_field(IPV6_VERSION_LABEL, version, 0);
     print_field(IPV6_TRAFFIC_CLASS_LABEL, traffic_class, 0);
     print_field(IPV6_FLOW_LABEL, flow_label, 0);
@@ -58,7 +57,7 @@ void visualize_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_ipv6(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ipv6_hdr, visualize_ipv6_hdr);
+protocol_info dissect_ipv6(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ipv6_hdr, visualize_ipv6_hdr);
     return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HEADER_LEN, .table = ip_protos };
 }

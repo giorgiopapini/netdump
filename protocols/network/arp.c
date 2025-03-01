@@ -59,7 +59,6 @@ void visualize_arp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(target_p_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(TARGET_P_ADDR(pkt))));
 
     start_printing();
-    print_hdr_info(ARP_HEADER_LABEL, NULL);
     print_field(HW_TYPE_LABEL, hw_type, 0);
     print_field(P_TYPE_LABEL, p_type, 0);
     print_field(HW_LEN_LABEL, hw_len, 0);
@@ -72,7 +71,7 @@ void visualize_arp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_arp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_arp_hdr, visualize_arp_hdr);
+protocol_info dissect_arp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_arp_hdr, visualize_arp_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -30,14 +30,13 @@ void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ETHERTYPE(pkt)));
 
     start_printing();
-    print_hdr_info(ETHER_HEADER_LABEL, NULL);
     print_field(DEST_ADDR_LABEL, dest_addr, 0);
     print_field(SRC_ADDR_LABEL, src_addr, 0);
     print_field(ETHERTYPE_LABEL, ethertype, 0);
     end_printing();
 }
 
-protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_ether_hdr, visualize_ether_hdr);
+protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ether_hdr, visualize_ether_hdr);
     return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .table = ethertypes };
 }

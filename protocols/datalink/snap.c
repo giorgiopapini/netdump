@@ -21,13 +21,12 @@ void visualize_snap_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(SNAP_TYPE(pkt)));
 
     start_printing();
-    print_hdr_info(SNAP_HEADER_LABEL, NULL);
     print_field(SNAP_OUI_LABEL, oui, 0);
     print_field(SNAP_ETHERTYPE_LABEL, ethertype, 0);
     end_printing();
 }
 
-protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_snap_hdr, visualize_snap_hdr);
+protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_snap_hdr, visualize_snap_hdr);
     return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .table = ethertypes };
 }

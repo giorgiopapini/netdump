@@ -53,7 +53,6 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(ICMPV6_CHECKSUM(pkt)));
 
     start_printing();
-    print_hdr_info(ICMPV6_HEADER_LABEL, NULL);
     print_field(ICMPV6_TYPE_LABEL, type, 0);
     print_field(ICMPV6_CODE_LABEL, code, 0);
     print_field(ICMPV6_CHECKSUM_LABEL, checksum, 0);
@@ -71,7 +70,7 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_icmpv6(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_icmpv6_hdr, visualize_icmpv6_hdr);
+protocol_info dissect_icmpv6(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmpv6_hdr, visualize_icmpv6_hdr);
     return NO_ENCAP_PROTO;
 }

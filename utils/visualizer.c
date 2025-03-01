@@ -221,7 +221,4 @@ void print_field(char *label, char *content, int newline) {
     prev_used_rows = total_rows;
 }
 
-void print_hdr_info(char *name, char *optional_infos) {
-    printf(GREEN "[%s]\n" RESET_COLOR, name);
-    if (NULL != optional_infos) printf(YELLOW "(%s)\n" RESET_COLOR, optional_infos);
-}
+void print_additional_info(char *info) { if (NULL != info) printf(YELLOW "(%s)\n" RESET_COLOR, info); }

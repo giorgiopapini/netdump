@@ -16,7 +16,7 @@
 #define ETHER_LEN               14
 
 
-protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
 
 /* 
     const uint8_t *pkt is not used in ether_hdr_len() function. It needs to be described anyways because the function pointer

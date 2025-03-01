@@ -157,7 +157,7 @@ void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", ntohs(TCP_URGENT_POINTER(pkt)));
 
     start_printing();
-    print_hdr_info(TCP_HEADER_LABEL, "Options fields not represented in ascii art");
+    print_additional_info("Options fields not represented in ascii art");
     print_field(TCP_SRC_PORT_LABEL, src_port, 0);
     print_field(TCP_DEST_PORT_LABEL, dest_port, 0);
     print_field(TCP_SEQUENCE_LABEL, seq, 0);
@@ -179,9 +179,9 @@ void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
+protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     protocol_info proto_info;
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_tcp_hdr, visualize_tcp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_tcp_hdr, visualize_tcp_hdr);
 
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
     proto_info.offset = (TCP_DATA_OFFSET(pkt) * 4);

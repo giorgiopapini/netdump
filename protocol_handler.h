@@ -34,29 +34,25 @@ typedef struct protocol_info {
 typedef struct protocol_handler {
     int protocol;
 	protocol_layer layer;
-    protocol_info (*dissect_proto)(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+    protocol_info (*dissect_proto)(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
     const char *protocol_name;
 } protocol_handler;
 
 #define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .table = NULL };
 #define NULL_PROTO_HANDLER		{ .protocol = 0, .layer = PROTOCOL_LAYER_NONE, .dissect_proto = NULL, .protocol_name = NULL }
 #define IS_NULL_HANDLER(hdl)	(0 == hdl.protocol && PROTOCOL_LAYER_NONE == hdl.layer && NULL == hdl.dissect_proto && NULL == hdl.protocol_name)
-#define SHOW_OUTPUT(pkt, len, fmt, proto_name, print_func, visualize_func) \
+#define SHOW_OUTPUT(pkt, len, fmt, print_func, visualize_func) \
 		do { \
-			if (len > 0) { \
-				switch(fmt) { \
-					case OUTPUT_FORMAT_NONE:		break; \
-					case OUTPUT_FORMAT_BASIC: { \
-						if (NULL != proto_name) printf(CYAN "(%s) " RESET_COLOR, proto_name); \
-						print_func(pkt, len); \
-						break; \
-					} case OUTPUT_FORMAT_ACII_ART:	visualize_func(pkt, len); break; \
-					default: break; \
-				} \
-			}\
+			void (*output_func)(const uint8_t *, uint32_t) = select_output_func(fmt, print_func, visualize_func); \
+    		if (NULL != output_func && len > 0) output_func(pkt, len); \
 		} while(0)
 
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table);
+void *select_output_func(
+	output_format fmt, 
+	void (*print_func)(const uint8_t *, uint32_t), 
+	void (*visualize_func)(const uint8_t *, uint32_t)
+);
 void dissect_packet(command *cmd, packet *pkt);
 
 #endif

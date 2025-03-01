@@ -29,7 +29,6 @@ void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(seq, sizeof(seq), "%u", ntohs(ICMP_SEQUENCE(pkt)));
 
     start_printing();
-    print_hdr_info(ICMP_HEADER_LABEL, NULL);
     print_field(ICMP_TYPE_LABEL, type, 0);
     print_field(ICMP_CODE_LABEL, code, 0);
     print_field(ICMP_CHECKSUM_LABEL, checksum, 0);
@@ -38,7 +37,7 @@ void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_icmp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_icmp_hdr, visualize_icmp_hdr);
+protocol_info dissect_icmp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmp_hdr, visualize_icmp_hdr);
     return NO_ENCAP_PROTO;
 }

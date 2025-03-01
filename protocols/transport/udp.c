@@ -28,7 +28,6 @@ void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(UDP_CHECKSUM(pkt)));
     
     start_printing();
-    print_hdr_info(UDP_HEADER_LABEL, NULL);
     print_field(UDP_SRC_PORT_LABEL, src_port, 0);
     print_field(UDP_DEST_PORT_LABEL, dest_port, 0);
     print_field(UDP_LENGTH_LABEL, length, 0);
@@ -36,12 +35,12 @@ void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_udp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
+protocol_info dissect_udp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     protocol_info proto_info;
     proto_info.offset = UDP_LEN;
     proto_info.table = net_ports;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_udp_hdr, visualize_udp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_udp_hdr, visualize_udp_hdr);
 
     if (IS_WELL_DEFINED_PORT(ntohs(UDP_DEST_PORT(pkt)))) proto_info.protocol = ntohs(UDP_DEST_PORT(pkt));
     else if (IS_WELL_DEFINED_PORT(ntohs(UDP_SRC_PORT(pkt)))) proto_info.protocol = ntohs(UDP_SRC_PORT(pkt));

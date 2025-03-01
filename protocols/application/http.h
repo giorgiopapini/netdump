@@ -12,6 +12,6 @@
 #define HTTP_MAX_HEADER_LEN     1024
 
 
-protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt);
+protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
 
 #endif

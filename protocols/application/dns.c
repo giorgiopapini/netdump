@@ -185,7 +185,7 @@ void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(additional_rrs, sizeof(additional_rrs), "%u", ntohs(DNS_ADDITIONAL_RRS(pkt)));
 
     start_printing();
-    print_hdr_info(DNS_HEADER_LABEL, "Queries, Answers and Additional Records not represented in ascii art");
+    print_additional_info("Queries, Answers and Additional Records not represented in ascii art");
     print_field(DNS_TRANSACTION_ID_LABEL, transaction_id, 0);
     print_field(DNS_QR_LABEL, qr, 0);
     print_field(DNS_OPCODE_LABEL, opcode, 0);
@@ -203,7 +203,7 @@ void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_dns(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_dns_hdr, visualize_dns_hdr);
+protocol_info dissect_dns(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_dns_hdr, visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -183,8 +183,6 @@ void visualize_telnet_hdr(const uint8_t *pkt, uint32_t len) {
     int i;
 
     start_printing();
-    print_hdr_info(TELNET_HEADER_LABEL, NULL);
-
     for (i = 0; i < len;) {
         if (TELNET_IAC == pkt[i]) {
             visualize_telnet_cmd(pkt[i + 1], pkt[i + 2]);
@@ -192,11 +190,10 @@ void visualize_telnet_hdr(const uint8_t *pkt, uint32_t len) {
         }
         else i += visualize_telnet_data(pkt, len);
     }
-
     end_printing();
 }
 
-protocol_info dissect_telnet(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_telnet_hdr, visualize_telnet_hdr);
+protocol_info dissect_telnet(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_telnet_hdr, visualize_telnet_hdr);
     return NO_ENCAP_PROTO;
 }

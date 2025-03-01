@@ -14,6 +14,19 @@ output_format get_output_format(command *cmd) {
 	else if (is_command(cmd, VISUALIZE_COMMAND)) return OUTPUT_FORMAT_ACII_ART;
 }
 
+void *select_output_func(
+	output_format fmt, 
+	void (*print_func)(const uint8_t *, uint32_t), 
+	void (*visualize_func)(const uint8_t *, uint32_t)
+) {
+	switch (fmt) {
+		case OUTPUT_FORMAT_NONE: 		return NULL;
+		case OUTPUT_FORMAT_BASIC: 		return print_func;
+		case OUTPUT_FORMAT_ACII_ART:	return visualize_func;
+		default:						return NULL;
+	}
+}
+
 void print_separator(command *cmd) {
 	if (is_command(cmd, ANALIZE_COMMAND)) printf(PRINT_SEPARATOR);
 	else if (is_command(cmd, PRINT_COMMAND)) printf(PRINT_SEPARATOR);
@@ -23,7 +36,6 @@ void print_separator(command *cmd) {
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
 	int i;
 	for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
-		protocol_handler aaa = proto_table[i];
 		if (target_proto == proto_table[i].protocol) return proto_table[i];
 	}
 	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
@@ -58,11 +70,15 @@ void dissect(command *cmd, uint8_t *pkt, bpf_u_int32 pkt_len, int proto_id, prot
 		out_format = get_output_format(cmd);
 		if (proto_shown > 0) print_separator(cmd);
 		proto_shown ++;
+		
+		if (NULL == get_arg(cmd, NO_PROTOCOL_NAME_ARG)) {
+			printf(CYAN "(%s) " RESET_COLOR, handler.protocol_name);
+			if (OUTPUT_FORMAT_ACII_ART == out_format) printf("\n");  /* (PROTO_NAME) \n "Actual ASCII art" */
+		}
 	}
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
-	if (NULL == get_arg(cmd, NO_PROTOCOL_NAME_ARG)) proto_name = handler.protocol_name;
-	encap_proto_info = handler.dissect_proto(pkt, pkt_len, proto_name, out_format);
+	encap_proto_info = handler.dissect_proto(pkt, pkt_len, out_format);
 	if (NULL != encap_proto_info.table && (pkt_len - encap_proto_info.offset) > 0) {
 		dissect(
 			cmd,

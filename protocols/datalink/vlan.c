@@ -26,7 +26,6 @@ void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(VLAN_ETHERTYPE(pkt)));
 
     start_printing();
-    print_hdr_info(VLAN_HEADER_LABEL, NULL);
     print_field(VLAN_PCP_LABEL, priority, 0);
     print_field(VLAN_DEI_LABEL, dei, 0);
     print_field(VLAN_VID_LABEL, vlan_id, 0);
@@ -34,7 +33,7 @@ void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_vlan_hdr, visualize_vlan_hdr);
+protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_vlan_hdr, visualize_vlan_hdr);
     return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .table = ethertypes };
 }

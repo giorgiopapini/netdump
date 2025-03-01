@@ -87,7 +87,7 @@ void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(magic_cookie, sizeof(magic_cookie), "0x%08x", ntohl(DHCP_MAGIC_COOKIE(pkt)));
 
     start_printing();
-    print_hdr_info(DHCP_HEADER_LABEL, "Options fields not represented in ascii art");
+    print_additional_info("Options fields not represented in ascii art");
     print_field(DHCP_OP_LABEL, operation, 0);
     print_field(DHCP_HTYPE_LABEL, htype, 0);
     print_field(DHCP_HLEN_LABEL, hlen, 0);
@@ -109,7 +109,7 @@ void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_dhcp(const uint8_t *pkt, uint32_t pkt_len, const char *proto_name, output_format fmt) {
-    SHOW_OUTPUT(pkt, pkt_len, fmt, proto_name, print_dhcp_hdr, visualize_dhcp_hdr);
+protocol_info dissect_dhcp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_dhcp_hdr, visualize_dhcp_hdr);
     return NO_ENCAP_PROTO;
 }
