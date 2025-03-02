@@ -1,17 +1,33 @@
+#include <string.h>
+
 #include "protocol_handler.h"
 #include "status_handler.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/dlt_protos.h"
 
-#define PRINT_SEPARATOR " | "
-#define VISUALIZE_SEPARATOR "\n"
+#define INLINE_SEPARATOR " | "
+#define SPACE_SEPARATOR "\n"
 
 
 output_format get_output_format(command *cmd) {
+	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
+	if (NULL == out_format) return OUTPUT_FORMAT_BASIC;
+
 	if (is_command(cmd, ANALIZE_COMMAND)) return OUTPUT_FORMAT_BASIC;
-	else if (is_command(cmd, PRINT_COMMAND)) return OUTPUT_FORMAT_BASIC;
-	else if (is_command(cmd, VISUALIZE_COMMAND)) return OUTPUT_FORMAT_ACII_ART;
+	else {
+		if (0 == strcmp(out_format, OUTPUT_ARG_VAL_STD)) return OUTPUT_FORMAT_BASIC;
+		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) return OUTPUT_FORMAT_RAW;
+		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_ART)) return OUTPUT_FORMAT_ACII_ART;
+	}
+	return OUTPUT_FORMAT_BASIC;
+}
+
+void print_raw_hdr(const uint8_t *pkt, uint32_t len) {
+	int i;
+	if (len > 0) printf("[%02x", *pkt);
+	for (i = 1; i < len; i ++) printf(" %02x", pkt[i]);
+	printf("]");
 }
 
 void *select_output_func(
@@ -22,15 +38,25 @@ void *select_output_func(
 	switch (fmt) {
 		case OUTPUT_FORMAT_NONE: 		return NULL;
 		case OUTPUT_FORMAT_BASIC: 		return print_func;
+		case OUTPUT_FORMAT_RAW:			return print_raw_hdr;
 		case OUTPUT_FORMAT_ACII_ART:	return visualize_func;
 		default:						return NULL;
 	}
 }
 
 void print_separator(command *cmd) {
-	if (is_command(cmd, ANALIZE_COMMAND)) printf(PRINT_SEPARATOR);
-	else if (is_command(cmd, PRINT_COMMAND)) printf(PRINT_SEPARATOR);
-	else if (is_command(cmd, VISUALIZE_COMMAND)) printf(VISUALIZE_SEPARATOR);
+	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
+	if (NULL == out_format) {
+		printf(INLINE_SEPARATOR);
+		return;
+	}
+
+	if (is_command(cmd, ANALIZE_COMMAND)) printf(INLINE_SEPARATOR);
+	else {
+		if (0 == strcmp(out_format, OUTPUT_ARG_VAL_STD)) printf(INLINE_SEPARATOR);
+		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) printf(INLINE_SEPARATOR);
+		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_ART)) printf(SPACE_SEPARATOR);
+	}
 }
 
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
@@ -94,7 +120,7 @@ void dissect(command *cmd, uint8_t *pkt, bpf_u_int32 pkt_len, int proto_id, prot
 void dissect_packet(command *cmd, packet *pkt) {
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
-	if (is_command(cmd, VISUALIZE_COMMAND)) printf("\n\n");  /* if "visualize" than it adds a bit of spacing */
+	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
 
 	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, 0);
 	printf("\n");

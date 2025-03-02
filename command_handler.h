@@ -9,7 +9,6 @@
 #define DEVICES_LIST_COMMAND        "devlist"
 #define RESET_COMMAND               "reset"         /* erase currently stored packets (if command analize alredy run) */
 #define PRINT_COMMAND               "print"         /* print the packets as done in analize (without re-analizing the net) */
-#define VISUALIZE_COMMAND           "visualize"     /* nice formatting for specific packets */
 #define CLEAR_COMMAND               "clear"         /* clean screen */
 #define EXIT_COMMAND                "exit"
 #define SAVE_COMMAND                "save"
@@ -19,7 +18,6 @@
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
 #define RESET_COMMAND_DESC          "Reset stored packets"
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
-#define VISUALIZE_COMMAND_DESC      "Visualize packet formatted as ascii art"
 #define CLEAR_COMMAND_DESC          "Clear screen output"
 #define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
@@ -35,6 +33,7 @@
 #define NO_PROM_ARG                 "nprom"  /* turn off promiscuos mode */
 #define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
 #define NO_PROTOCOL_NAME_ARG        "npname"  /* do not show the protocol name during the printing */
+#define OUTPUT_FORMAT_ARG           "output"  /* choose the output format (std / raw / art) */
 #define PACKET_NUM_ARG              "#"  /* show packet number next to packet */
 #define READ_FILE_ARG               "r"
 #define WRITE_FILE_ARG              "w"
@@ -51,6 +50,7 @@
 #define NO_PROM_ARG_DESC            "Turn off libpcap promiscuos mode"
 #define NO_TIMESTAMP_ARG_DESC       "Hide timestamp"
 #define NO_PROTOCOL_NAME_ARG_DESC   "Hide protocol name in the output"
+#define OUTPUT_FORMAT_ARG_DESC      "Select output format (" OUTPUT_ARG_VAL_STD " / " OUTPUT_ARG_VAL_RAW " / " OUTPUT_ARG_VAL_ART ")"
 #define PACKET_NUM_ARG_DESC         "Show packet number"
 #define READ_FILE_ARG_DESC          "Read a .pcap file"
 #define WRITE_FILE_ARG_DESC         "Write a .pcap file with all the scanned packets"
@@ -59,9 +59,14 @@
 #define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
 #define DEVICE_ARG_EG           ARG_PREFIX DEVICE_ARG               " \"device-name\""
+#define OUTPUT_FORMAT_ARG_EG    ARG_PREFIX OUTPUT_FORMAT_ARG        " \"art\""
 #define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
 #define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
 #define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
+
+#define OUTPUT_ARG_VAL_STD          "std"
+#define OUTPUT_ARG_VAL_RAW          "raw"
+#define OUTPUT_ARG_VAL_ART          "art"
 
 #define COMMAND_FORMAT "<command> " ARG_PREFIX "<arg> <value>"
 #define STRING_DELIMITER '"'
@@ -81,11 +86,8 @@
 #define RESET_ARGS
 #define REQUIRED_RESET_ARGS
 
-#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG
+#define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, OUTPUT_FORMAT_ARG, PACKET_NUM_ARG
 #define REQUIRED_PRINT_ARGS
-
-#define VISUALIZE_ARGS              NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, PACKET_NUM_ARG
-#define REQUIRED_VISUALIZE_ARGS
 
 #define CLEAR_ARGS
 #define REQUIRED_CLEAR_ARGS

@@ -12,6 +12,7 @@
 typedef enum output_format {
 	OUTPUT_FORMAT_NONE = -1,
 	OUTPUT_FORMAT_BASIC,
+	OUTPUT_FORMAT_RAW,
 	OUTPUT_FORMAT_ACII_ART,
 } output_format;
 

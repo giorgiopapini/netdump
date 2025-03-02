@@ -29,12 +29,6 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
-	
-	TODO:	Think about merging print and visualize commands, adding an (-output="art" / -output="raw" / -output="std")
-			argument to know which kind of OUTPUT_FORMAT to choose. Than think about adding OUTPUT_FORMAT_RAW
-
-	TODO:	Add OUTPUT_FORMAT_RAW and function to print raw bytes (it does not have to be protocol specific, it can (has to be)
-			a general function, maybe write it inside 'protocol_handler.c')
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {

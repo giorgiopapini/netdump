@@ -11,7 +11,6 @@
 #include "commands/devlist.h"
 #include "commands/reset.h"
 #include "commands/print.h"
-#include "commands/visualize.h"
 #include "commands/clear.h"
 #include "commands/exit.h"
 #include "commands/save.h"
@@ -271,10 +270,6 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets);
-    }
-    else if (is_command(cmd, VISUALIZE_COMMAND)) {
-        if (CHECK_ARGS(cmd, VISUALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_VISUALIZE_ARGS)) execute_visualize(cmd, packets);
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
