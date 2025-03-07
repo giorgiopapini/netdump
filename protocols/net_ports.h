@@ -1,7 +1,7 @@
 #ifndef NET_PORTS_H
 #define NET_PORTS_H
 
-#include "../protocol_handler.h"
+#include "../utils/protocol.h"
 
 #ifndef PORT_HTTP
 #define PORT_HTTP       80      /* HTTP */

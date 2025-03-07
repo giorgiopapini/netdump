@@ -95,7 +95,7 @@ void print_tcp_options(const uint8_t *pkt) {
 }
 
 void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
-    char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
+    char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
     printf("src_port: %u, dest_port: %u", ntohs(TCP_SRC_PORT(pkt)), ntohs(TCP_DEST_PORT(pkt)));
     
     printf(", flags: [");

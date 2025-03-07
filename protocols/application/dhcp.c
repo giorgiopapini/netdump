@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <arpa/inet.h>
 
 #include "dhcp.h"
 #include "../../utils/visualizer.h"

@@ -2,7 +2,7 @@
 #define DHCP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define DHCP_HEADER_LABEL       "DHCP Header"
 #define DHCP_OP_LABEL           "Operation"

@@ -2,7 +2,7 @@
 #define HTTP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define HTTP_HEADER_LABEL       "HTTP Header"
 #define HTTP_METHOD_LABEL       "Method"

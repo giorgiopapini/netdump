@@ -1,7 +1,7 @@
 #ifndef PPP_PROTOS_H
 #define PPP_PROTOS_H
 
-#include "../protocol_handler.h"
+#include "../utils/protocol.h"
 
 #ifndef PPP_IP
 #define PPP_IP		    0x0021	/* Raw IP */

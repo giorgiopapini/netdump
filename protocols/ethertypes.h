@@ -1,7 +1,7 @@
 #ifndef ETHERTYPES_H
 #define ETHERTYPES_H
 
-#include "../protocol_handler.h"
+#include "../utils/protocol.h"
 
 #ifndef ETHERTYPE_GRE_ISO
 #define ETHERTYPE_GRE_ISO       0x00FE  /* not really an ethertype only used in GRE */

@@ -2,7 +2,7 @@
 #define ARP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define ARP_REQUEST             1
 #define ARP_RESPONSE            2

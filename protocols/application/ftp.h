@@ -2,7 +2,7 @@
 #define FTP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define FTP_HEADER_LABEL        "FTP Header"
 #define FTP_TYPE_LABEL          "Type"

@@ -2,7 +2,7 @@
 #define DNS_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define DNS_HEADER_LABEL                "DNS Header"
 #define DNS_TRANSACTION_ID_LABEL        "Transaction ID"

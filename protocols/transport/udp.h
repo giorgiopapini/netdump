@@ -2,7 +2,7 @@
 #define UDP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define UDP_HEADER_LABEL        "UDP Header"
 #define UDP_SRC_PORT_LABEL      "Source Port"

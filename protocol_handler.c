@@ -1,7 +1,9 @@
 #include <string.h>
 
 #include "protocol_handler.h"
+#include "command_handler.h"
 #include "status_handler.h"
+#include "utils/protocol.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/dlt_protos.h"
@@ -23,27 +25,6 @@ output_format get_output_format(command *cmd) {
 	return OUTPUT_FORMAT_BASIC;
 }
 
-void print_raw_hdr(const uint8_t *pkt, uint32_t len) {
-	int i;
-	if (len > 0) printf("[%02x", *pkt);
-	for (i = 1; i < len; i ++) printf(" %02x", pkt[i]);
-	printf("]");
-}
-
-void *select_output_func(
-	output_format fmt, 
-	void (*print_func)(const uint8_t *, uint32_t), 
-	void (*visualize_func)(const uint8_t *, uint32_t)
-) {
-	switch (fmt) {
-		case OUTPUT_FORMAT_NONE: 		return NULL;
-		case OUTPUT_FORMAT_BASIC: 		return print_func;
-		case OUTPUT_FORMAT_RAW:			return print_raw_hdr;
-		case OUTPUT_FORMAT_ACII_ART:	return visualize_func;
-		default:						return NULL;
-	}
-}
-
 void print_separator(command *cmd) {
 	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	if (NULL == out_format) {
@@ -57,14 +38,6 @@ void print_separator(command *cmd) {
 		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) printf(INLINE_SEPARATOR);
 		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_ART)) printf(SPACE_SEPARATOR);
 	}
-}
-
-protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
-	int i;
-	for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
-		if (target_proto == proto_table[i].protocol) return proto_table[i];
-	}
-	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
 }
 
 int should_print_pkt(command *cmd, protocol_layer layer) {
@@ -83,7 +56,14 @@ int should_print_pkt(command *cmd, protocol_layer layer) {
 	return 1;
 }
 
-void dissect(command *cmd, uint8_t *pkt, bpf_u_int32 pkt_len, int proto_id, protocol_handler *proto_hasmap, int proto_shown) {
+void dissect(
+	command *cmd, 
+	uint8_t *pkt, 
+	bpf_u_int32 pkt_len, 
+	int proto_id, 
+	protocol_handler *proto_hasmap,
+	int proto_shown
+) {
 	protocol_handler handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;

@@ -2,7 +2,7 @@
 #define IPV6_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define IPV6_HEADER_LABEL               "IPv6 Header"
 #define IPV6_VERSION_LABEL              "Version"

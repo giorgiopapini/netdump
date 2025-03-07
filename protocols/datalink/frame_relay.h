@@ -2,7 +2,7 @@
 #define FRAME_RELAY_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define FRELAY_HEADER_LABEL     "Frame Relay Header"
 #define FRELAY_DE_LABEL         "DE"

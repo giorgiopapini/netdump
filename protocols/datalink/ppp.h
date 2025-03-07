@@ -2,7 +2,7 @@
 #define PPP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define PPP_HEADER_LABEL        "PPP Header"
 #define ADDRESS_LABEL           "Address"

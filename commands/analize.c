@@ -74,7 +74,7 @@ void execute_analize(command *cmd, raw_array *packets) {
     if (0 != tmp) pkt_num = tmp;
 	/* ============================================================================================== */
 
-    custom_data custom_args = { .cmd = cmd, .packets = packets , .pcap_dump = NULL };
+    custom_data custom_args = { .cmd = cmd, .packets = packets, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
 	bpf_u_int32 mask;

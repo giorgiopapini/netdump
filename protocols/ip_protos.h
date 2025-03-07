@@ -1,7 +1,7 @@
 #ifndef IP_PROTOS_H
 #define IP_PROTOS_H
 
-#include "../protocol_handler.h"
+#include "../utils/protocol.h"
 
 #ifndef IPPROTO_HOPOPTS
 #define IPPROTO_HOPOPTS		0		/* IPv6 hop-by-hop options */
@@ -96,6 +96,7 @@
 #ifndef IPPROTO_MOBILITY
 #define IPPROTO_MOBILITY	135
 #endif
+
 
 extern protocol_handler ip_protos[];
 

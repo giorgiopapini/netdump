@@ -2,7 +2,7 @@
 #define TELNET_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define TELNET_HEADER_LABEL         "Telnet Header"
 #define TELNET_COMMAND_LABEL        "Command"

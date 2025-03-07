@@ -2,7 +2,7 @@
 #define SNAP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define SNAP_HEADER_LABEL       "SNAP Header"
 #define SNAP_OUI_LABEL          "OUI"

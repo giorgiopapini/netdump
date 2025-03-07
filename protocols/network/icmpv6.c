@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <arpa/inet.h>
 
 #include "icmpv6.h"
 #include "../../utils/visualizer.h"

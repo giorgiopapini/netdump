@@ -29,6 +29,18 @@
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
+
+	TODO: 	If it is an unkown protocol, than netdump should be able to still print the raw bytes (if output="raw")
+			(The protocol name would be "unkown" in this case)
+
+	TODO:	Add a function to delete dynamically allocated memory for the custom_dissectors_handler
+
+	TODO:	IL PROBLEMA E' CHE protocol_handler E custom_dissectors_handler SI INCLUDONO A VICENDA, SI CREA UN DEPENCENCY
+			LOOP. FORSE IL PROBLEMA SI POTREBBE RISOLVERE METTENDO QUALCHE DEFINIZIONE DENTRO LA CARTELLA "utils"?
+			SPEZZETTANDO ANCORA DI PIU', LASCIANDO DI FATTO SOLO DEGLI HEADER FILES CON LE DEFINIZIONI, POI LE FUNZIONI DEFINITE
+			ALTROVE? VALUTARE QUESTA COSA, IL PROBLEMA E' CHE INTRINSICAMENTE custom_dissectors_handler DEVE CONTENERE DELLE
+			STRUCTURES CONTENUTE IN protocol_handler, IL PROBLEMA E' POI IMPORTARE custom_dissectors_handler IN OGNI FILE IN CUI
+			LA VARIABILE custom_dissectors *custom_dissectors DEVE TRANSITARE, SI CREANO DEPENDENCY LOOP CHE SMERDANO TUTTO
 */
 
 void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
@@ -67,7 +79,9 @@ void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history)
 
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
-			if (0 != execute_command(cmd, packets, history)) raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
+			if (0 != execute_command(cmd, packets, history)) {
+				raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
+			}
 		}
 	}
 
@@ -86,6 +100,7 @@ int main(int argc, char *argv[]) {
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 	circular_list history = { .head = NULL, .len = 0 };
+	//custom_dissectors *diss = load_custom_dissectors();
 
     tcgetattr(STDIN_FILENO, &original);
 	tcgetattr(STDIN_FILENO, &term);

@@ -2,7 +2,7 @@
 #define ICMP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define ICMP_REPLY              0
 #define ICMP_REQUEST            8

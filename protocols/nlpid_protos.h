@@ -1,7 +1,7 @@
 #ifndef NLPID_PROTOS_H
 #define NLPID_PROTOS_H
 
-#include "../protocol_handler.h"
+#include "../utils/protocol.h"
 
 #ifndef NLPID_NULLNS
 #define	NLPID_NULLNS        0x00

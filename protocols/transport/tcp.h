@@ -2,7 +2,7 @@
 #define TCP_H
 
 #include <stdint.h>
-#include "../../protocol_handler.h"
+#include "../../utils/protocol.h"
 
 #define TCP_HEADER_LABEL            "TCP Header"
 #define TCP_SRC_PORT_LABEL          "Source Port"
