@@ -38,6 +38,8 @@ char * get_error_format(err_code code) {
         case TERMINAL_SIZE_ERROR:           return "Couldn't retrieve the current terminal size"; break;
         case CURR_WORK_DIR_ERROR:           return "Couldn't resolve current working directory"; break;
         case CSTM_DISSECTORS_FOLDER_ERROR:  return "Couldn't open \"custom_dissectors\" folder"; break;
+        case LOADING_SHARED_LIB_ERROR:      return "Error loading '%s' lib (%s)"; break;
+        case FUNCTION_NOT_FOUND_ERROR:      return "Error finding function (%s)"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }

@@ -155,10 +155,16 @@ int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
 
 
 /* CHECK_ARGS() checks for unkown args; CHECK_REQ_ARGS() checks for required args missing */
-int execute_command(command *cmd, raw_array *packets, circular_list *history) {
+int execute_command(
+    command *cmd, 
+    raw_array *packets, 
+    circular_list *history, 
+    shared_libs *libs, 
+    custom_dissectors *custom_dissectors
+) {
     if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, custom_dissectors);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
@@ -170,7 +176,7 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, custom_dissectors);
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
@@ -178,7 +184,7 @@ int execute_command(command *cmd, raw_array *packets, circular_list *history) {
     }
     else if (is_command(cmd, EXIT_COMMAND)) {
         if (CHECK_ARGS(cmd, EXIT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history, libs, custom_dissectors);
     }
     else if (is_command(cmd, SAVE_COMMAND)) {
         if (CHECK_ARGS(cmd, SAVE_ARGS))

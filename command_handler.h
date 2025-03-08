@@ -2,6 +2,8 @@
 #define COMMAND_HANDLER_H
 
 #include "utils/command.h"
+#include "utils/shared_lib.h"
+#include "utils/custom_dissectors.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
@@ -105,6 +107,6 @@
 
 int create_cmd_from_buff(command *cmd, buffer *buff);
 int is_valid(command *cmd, int opt_args, char **expected_args, size_t len);
-int execute_command(command *cmd, raw_array *packets, circular_list *history);
+int execute_command(command *cmd, raw_array *packets, circular_list *history, shared_libs *libs, custom_dissectors *custom_dissectors);
 
 #endif

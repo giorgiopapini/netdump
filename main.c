@@ -7,11 +7,13 @@
 #include <sys/select.h>
 
 #include "command_handler.h"
+#include "custom_dissectors_handler.h"
 #include "status_handler.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
 #include "utils/packet.h"
+#include "utils/shared_lib.h"
 #include "utils/string_utils.h"
 #include "utils/visualizer.h"
 #include "utils/formats.h"
@@ -33,20 +35,22 @@
 	TODO: 	If it is an unkown protocol, than netdump should be able to still print the raw bytes (if output="raw")
 			(The protocol name would be "unkown" in this case)
 
-	TODO:	Add a function to delete dynamically allocated memory for the custom_dissectors_handler
-
-	TODO:	IL PROBLEMA E' CHE protocol_handler E custom_dissectors_handler SI INCLUDONO A VICENDA, SI CREA UN DEPENCENCY
-			LOOP. FORSE IL PROBLEMA SI POTREBBE RISOLVERE METTENDO QUALCHE DEFINIZIONE DENTRO LA CARTELLA "utils"?
-			SPEZZETTANDO ANCORA DI PIU', LASCIANDO DI FATTO SOLO DEGLI HEADER FILES CON LE DEFINIZIONI, POI LE FUNZIONI DEFINITE
-			ALTROVE? VALUTARE QUESTA COSA, IL PROBLEMA E' CHE INTRINSICAMENTE custom_dissectors_handler DEVE CONTENERE DELLE
-			STRUCTURES CONTENUTE IN protocol_handler, IL PROBLEMA E' POI IMPORTARE custom_dissectors_handler IN OGNI FILE IN CUI
-			LA VARIABILE custom_dissectors *custom_dissectors DEVE TRANSITARE, SI CREANO DEPENDENCY LOOP CHE SMERDANO TUTTO
+	TODO:	
+			gcc -shared -fPIC -o custom_dissectors/proto1.so custom_dissectors/custom_proto_example.c  utils/protocol.c  utils/visualizer.c utils/string_utils.c
 */
 
-void deallocate_heap(command *cmd, raw_array *packets, circular_list *history) {
+void deallocate_heap(
+	command *cmd, 
+	raw_array *packets, 
+	circular_list *history, 
+	shared_libs *libs,
+	custom_dissectors *custom_dissectors
+) {
 	destroy_list(history, destroy_buffer);
 	reset_cmd(cmd);
 	reset_arr(packets, destroy_packet);
+	destroy_shared_libs(libs);
+	destroy_custom_dissectors(custom_dissectors);
 }
 
 void prompt() { 
@@ -54,7 +58,14 @@ void prompt() {
 	fflush(stdout);
 };
 
-void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history) {
+void run(
+	buffer *buff, 
+	command *cmd, 
+	raw_array *packets, 
+	circular_list *history,
+	shared_libs *libs,
+	custom_dissectors *custom_dissectors
+) {
 	char pressed_key = populate(buff, history);
 
 	if (-1 == pressed_key) return;  /* if an error occoured, exit function */
@@ -79,7 +90,7 @@ void run(buffer *buff, command *cmd, raw_array *packets, circular_list *history)
 
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
-			if (0 != execute_command(cmd, packets, history)) {
+			if (0 != execute_command(cmd, packets, history, libs, custom_dissectors)) {
 				raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
 			}
 		}
@@ -100,7 +111,8 @@ int main(int argc, char *argv[]) {
 	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
 	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
 	circular_list history = { .head = NULL, .len = 0 };
-	//custom_dissectors *diss = load_custom_dissectors();
+	shared_libs *libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
+	custom_dissectors *custom_dissectors = load_custom_dissectors(libs);
 
     tcgetattr(STDIN_FILENO, &original);
 	tcgetattr(STDIN_FILENO, &term);
@@ -120,10 +132,10 @@ int main(int argc, char *argv[]) {
 			if (EINTR == errno) break;
 			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
 		}
-		else run(&buff, &cmd, &packets, &history);
+		else run(&buff, &cmd, &packets, &history, libs, custom_dissectors);
     }
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
 
-	deallocate_heap(&cmd, &packets, &history);
+	deallocate_heap(&cmd, &packets, &history, libs, custom_dissectors);
 	return 0;
 }

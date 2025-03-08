@@ -19,6 +19,7 @@ static pcap_t *handle;
 typedef struct custom_data {
 	command *cmd;
 	raw_array *packets;
+	custom_dissectors *custom_dissectors;
 	pcap_dumper_t *pcap_dump;
 } custom_data;
 
@@ -57,10 +58,10 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	
 	if (NULL != data->pcap_dump) pcap_dump((uint8_t *)data->pcap_dump, header, bytes);
 
-	dissect_packet(data->cmd, pkt);
+	dissect_packet(data->cmd, pkt, data->custom_dissectors);
 }
 
-void execute_analize(command *cmd, raw_array *packets) {
+void execute_analize(command *cmd, raw_array *packets, custom_dissectors *custom_dissectors) {
 	/* ==============================  Getting args values from cmd  ================================ */
 	int pkt_num = -1;
     int tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
@@ -74,7 +75,7 @@ void execute_analize(command *cmd, raw_array *packets) {
     if (0 != tmp) pkt_num = tmp;
 	/* ============================================================================================== */
 
-    custom_data custom_args = { .cmd = cmd, .packets = packets, .pcap_dump = NULL };
+    custom_data custom_args = { .cmd = cmd, .packets = packets, .custom_dissectors = custom_dissectors, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct bpf_program fp;
 	bpf_u_int32 mask;

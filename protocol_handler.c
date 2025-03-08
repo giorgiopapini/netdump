@@ -62,14 +62,20 @@ void dissect(
 	bpf_u_int32 pkt_len, 
 	int proto_id, 
 	protocol_handler *proto_hasmap,
+	custom_dissectors *custom_dissectors,
 	int proto_shown
 ) {
 	protocol_handler handler;
+	protocol_handler *custom_handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
 	const char *proto_name = NULL;
 
-	handler = get_protocol_handler(proto_id, proto_hasmap);
+	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hasmap);
+	
+	if (NULL != custom_handler) handler = *custom_handler;
+	else handler = get_protocol_handler(proto_id, proto_hasmap);
+
 	if (NULL == handler.dissect_proto) return;
 
 	if (should_print_pkt(cmd, handler.layer)) {  /* else -> default output format is OUTPUT_NONE */
@@ -92,16 +98,17 @@ void dissect(
 			(pkt_len - encap_proto_info.offset),
 			encap_proto_info.protocol,
 			encap_proto_info.table,
+			custom_dissectors,
 			proto_shown
 		);
 	}
 }
 
-void dissect_packet(command *cmd, packet *pkt) {
+void dissect_packet(command *cmd, packet *pkt, custom_dissectors *custom_dissectors) {
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
 	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
 
-	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, 0);
+	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, custom_dissectors, 0);
 	printf("\n");
 }
