@@ -10,6 +10,7 @@
 
 #define ANALIZE_COMMAND             "analize"
 #define DEVICES_LIST_COMMAND        "devlist"
+#define DISSECTORS_COMMAND          "dissectors"
 #define RESET_COMMAND               "reset"         /* erase currently stored packets (if command analize alredy run) */
 #define PRINT_COMMAND               "print"         /* print the packets as done in analize (without re-analizing the net) */
 #define CLEAR_COMMAND               "clear"         /* clean screen */
@@ -19,6 +20,7 @@
 
 #define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
+#define DISSECTORS_COMMAND_DESC     "Manage custom dissectors"
 #define RESET_COMMAND_DESC          "Reset stored packets"
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
 #define CLEAR_COMMAND_DESC          "Clear screen output"
@@ -41,6 +43,10 @@
 #define READ_FILE_ARG               "r"
 #define WRITE_FILE_ARG              "w"
 #define DEST_FILE_ARG               "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
+#define DISSECTOR_LIST_ARG          "list"
+#define ACTIVATE_LIB_ARG            "on"
+#define DEACTIVATE_LIB_ARG          "off"
+#define DELETE_LIB_ARG              "delete"
 
 #define NUMBER_ARG_DESC             "Choose a packet by its scanning order number"
 #define PACKET_AMOUNT_ARG_DESC      "Set a packet scanning limit"
@@ -58,6 +64,10 @@
 #define READ_FILE_ARG_DESC          "Read a .pcap file"
 #define WRITE_FILE_ARG_DESC         "Write a .pcap file with all the scanned packets"
 #define DEST_FILE_ARG_DESC          "Specify the destination file for saving scanned data"
+#define DISSECTOR_LIST_ARG_DESC     "Show custom dissectors list"
+#define ACTIVATE_LIB_ARG_DESC       "Activate a custom dissector (.so)"
+#define DEACTIVATE_LIB_ARG_DESC     "Deactivate a custom dissector (.so)"
+#define DELETE_LIB_ARG_DESC         "Delete a custom dissector (.so) (delete file)"
 
 #define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
@@ -66,13 +76,13 @@
 #define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
 #define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
 #define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
+#define ACTIVATE_LIB_ARG_EG     ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define DEACTIVATE_LIB_ARG_EG   ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define DELETE_LIB_ARG_EG       ARG_PREFIX DELETE_LIB_ARG           " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 
 #define OUTPUT_ARG_VAL_STD          "std"
 #define OUTPUT_ARG_VAL_RAW          "raw"
 #define OUTPUT_ARG_VAL_ART          "art"
-
-#define COMMAND_FORMAT "<command> " ARG_PREFIX "<arg> <value>"
-#define STRING_DELIMITER '"'
 
 /* #define {COMMAND_NAME}_ARGS   ARG1, ARG2, ..., ARGN */
 /* 
@@ -84,7 +94,10 @@
 #define REQUIRED_ANALIZE_ARGS
 
 #define DEVICES_LIST_ARGS           
-#define REQUIRED_DEVICES_LIST_ARGS  
+#define REQUIRED_DEVICES_LIST_ARGS
+
+#define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG, DELETE_LIB_ARG
+#define REQUIRED_DISSECTORS_ARGS
 
 #define RESET_ARGS
 #define REQUIRED_RESET_ARGS

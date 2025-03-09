@@ -3,8 +3,9 @@
 
 #include "../command_handler.h"
 #include "../utils/custom_dissectors.h"
+#include "../utils/shared_lib.h"
 
 
-void execute_print(command *cmd, raw_array *packets, custom_dissectors *custom_dissectors);
+void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);
 
 #endif

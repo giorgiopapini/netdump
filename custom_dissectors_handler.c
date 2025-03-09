@@ -8,14 +8,15 @@
 #include "status_handler.h"
 
 
-void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings) {
+void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
     int i;
 
     for (i = 0; mappings[i] != NULL; i ++) {
         dissector_add(
             mappings[i]->handler, 
             mappings[i]->proto_table_num, 
-            dissectors
+            dissectors,
+            filename
         );
     }
 }
@@ -40,7 +41,7 @@ custom_dissectors *load_custom_dissectors(shared_libs *libs) {
         }
 
         mappings = get_custom_protocols_mapping();
-        populate_custom_dissectors(dissectors, mappings);
+        populate_custom_dissectors(dissectors, mappings, libs->filenames[i]);
         
         destroy_mappings(mappings);
     }

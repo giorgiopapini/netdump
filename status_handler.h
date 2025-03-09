@@ -40,16 +40,28 @@ typedef enum {
     CSTM_DISSECTORS_FOLDER_ERROR,
     LOADING_SHARED_LIB_ERROR,
     FUNCTION_NOT_FOUND_ERROR,
+    LIB_NOT_FOUND_ERROR,
+    DELETE_FILE_ERROR
 } err_code;
+
+typedef enum {
+    DISSECTORS_EMPTY_WARNING
+} warinng_code;
 
 typedef enum {
     ARRAY_RESET_SUCCESS,
     ARRAY_EMPTY_SUCCESS,
-    PACKETS_DUMP_SUCCESS
+    PACKETS_DUMP_SUCCESS,
+    DISSECTOR_ACTIVATED_SUCCESS,
+    DISSECTOR_DEACTIVATED_SUCCESS,
+    DISSECTOR_DELETED_SUCCESS
 } success_code;
 
 char * get_error_format(err_code code);
 void raise_error(err_code code, int should_exit, char *hint, ...);
+
+char * get_warning_msg(warinng_code code);
+void print_warning_msg(warinng_code code);
 
 char * get_success_msg(success_code code);
 void print_success_msg(success_code code);

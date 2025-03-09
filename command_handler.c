@@ -9,6 +9,7 @@
 #include "command_handler.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"
+#include "commands/dissectors.h"
 #include "commands/reset.h"
 #include "commands/print.h"
 #include "commands/clear.h"
@@ -164,11 +165,15 @@ int execute_command(
 ) {
     if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, libs, custom_dissectors);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist(cmd);
+    }
+    else if (is_command(cmd, DISSECTORS_COMMAND)) {
+        if (CHECK_ARGS(cmd, DISSECTORS_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DISSECTORS_ARGS)) execute_dissectors(cmd, libs, custom_dissectors);
     }
     else if (is_command(cmd, RESET_COMMAND)) {
         if (CHECK_ARGS(cmd, RESET_ARGS))
@@ -176,7 +181,7 @@ int execute_command(
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, libs, custom_dissectors);
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))

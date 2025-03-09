@@ -45,6 +45,14 @@ void devlist_help() {
     print_cmd(DEVICES_LIST_COMMAND, DEVICES_LIST_COMMAND_DESC);
 }
 
+void dissectors_help() {
+    print_cmd(DISSECTORS_COMMAND, DISSECTORS_COMMAND_DESC);
+    print_arg(DISSECTOR_LIST_ARG, DISSECTOR_LIST_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
+    print_arg(ACTIVATE_LIB_ARG, ACTIVATE_LIB_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, ACTIVATE_LIB_ARG_EG);
+    print_arg(DEACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, DEACTIVATE_LIB_ARG_EG);
+    print_arg(DELETE_LIB_ARG, DELETE_LIB_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, DELETE_LIB_ARG_EG);
+}
+
 void reset_help() {
     print_cmd(RESET_COMMAND, RESET_COMMAND_DESC);
 }
@@ -83,6 +91,7 @@ void execute_help(command *cmd) {
 
     analize_help();
     print_help();
+    dissectors_help();
     save_help();
     reset_help();
     devlist_help();

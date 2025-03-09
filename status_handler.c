@@ -40,7 +40,16 @@ char * get_error_format(err_code code) {
         case CSTM_DISSECTORS_FOLDER_ERROR:  return "Couldn't open \"custom_dissectors\" folder"; break;
         case LOADING_SHARED_LIB_ERROR:      return "Error loading '%s' lib (%s)"; break;
         case FUNCTION_NOT_FOUND_ERROR:      return "Error finding function (%s)"; break;
+        case LIB_NOT_FOUND_ERROR:           return "Library '%s' not found"; break;
+        case DELETE_FILE_ERROR:             return "Couldn't delete '%s'"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
+    }
+}
+
+char * get_warning_msg(warinng_code code) {
+    switch(code) {
+        case DISSECTORS_EMPTY_WARNING:      return "No custom dissectors found (.so)"; break;
+        default:                            return NULL; break;
     }
 }
 
@@ -49,6 +58,9 @@ char * get_success_msg(success_code code) {
         case ARRAY_RESET_SUCCESS:           return "Array resetted correctly."; break;
         case ARRAY_EMPTY_SUCCESS:           return "Array alredy empty"; break;
         case PACKETS_DUMP_SUCCESS:          return "Packets have successfully been written to file"; break;
+        case DISSECTOR_ACTIVATED_SUCCESS:   return "Custom dissector successfully activated"; break;
+        case DISSECTOR_DEACTIVATED_SUCCESS: return "Custom dissector successfully deactivated"; break;
+        case DISSECTOR_DELETED_SUCCESS:     return "Custom dissector successfully deleted"; break;
         default:                            return "Operation succeded"; break;
     }
 }
@@ -72,6 +84,11 @@ void raise_error(err_code code, int should_exit, char *hint, ...) {
     if (should_exit) exit(EXIT_FAILURE);
     /* instead of writing trivial goto mechanism simply let the OS deallocate the remaining memory (this happens only in case
         of errors) */
+}
+
+void print_warning_msg(warinng_code code) {
+    const char *msg = get_warning_msg(code);
+    printf(YELLOW "[WARNING] -> %s\n" RESET_COLOR, msg);
 }
 
 void print_success_msg(success_code code) {

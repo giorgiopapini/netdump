@@ -55,7 +55,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
     }
 }
 
-dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto) {
+dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto, char *filename) {
     dissectors_entry *new_entry = (dissectors_entry *)malloc(sizeof(dissectors_entry));
     if (NULL == new_entry) raise_error(NULL_POINTER, 1, NULL, "new_entry", __FILE__);
     if (NULL == proto_table) raise_error(NULL_POINTER, 1, NULL, "proto_table", __FILE__);
@@ -63,6 +63,7 @@ dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protoco
     
     new_entry->proto_table = proto_table;
     new_entry->custom_protos = NULL;
+    new_entry->lib_filename = filename;
     new_entry->len = 0;
 
     add_custom_proto(new_entry, new_custom_proto);
@@ -84,13 +85,13 @@ void add_dissector_entry(custom_dissectors *custom_dissectors, dissectors_entry 
     }
 }
 
-void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_dissectors) {
+void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_dissectors, char *filename) {
     if (NULL == custom_dissectors) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
 
     protocol_handler *dest_table = get_proto_table(dest_table_val);
     int i;
 
-    if (NULL == custom_dissectors->table) add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler));
+    if (NULL == custom_dissectors->table) add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
         for (i = 0; i < custom_dissectors->len; i ++) {
             if (custom_dissectors->table[i]->proto_table == dest_table) {
@@ -98,11 +99,16 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
                 return;
             }
         }
-        add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler));
+        add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
     }
 }
 
-protocol_handler *get_custom_protocol_handler(custom_dissectors *custom_dissectors, int target_proto, protocol_handler *proto_table) {
+protocol_handler *get_custom_protocol_handler(
+    custom_dissectors *custom_dissectors, 
+    int target_proto, 
+    protocol_handler *proto_table,
+    shared_libs *libs
+) {
     dissectors_entry *curr_entry = NULL;
     protocol_handler *curr_handler = NULL;
     int i, j;
@@ -112,7 +118,7 @@ protocol_handler *get_custom_protocol_handler(custom_dissectors *custom_dissecto
 
     for (i = 0; i < custom_dissectors->len; i ++) {
         curr_entry = custom_dissectors->table[i];
-        if (curr_entry->proto_table == proto_table) {
+        if (is_active(libs, curr_entry->lib_filename) && curr_entry->proto_table == proto_table) {
             for (j = 0; j < curr_entry->len; j ++) {
                 curr_handler = curr_entry->custom_protos[j];
                 if (curr_handler->protocol == target_proto) return curr_handler;
@@ -141,6 +147,7 @@ void destroy_custom_dissectors(custom_dissectors *custom_dissectors) {
             free(curr_entry->custom_protos);
             curr_entry->custom_protos = NULL;
         }
+        /* free(curr_entry->lib_filename); it is alredy deallocated in shared_libs destroy function? */
         free(curr_entry);
     }
 

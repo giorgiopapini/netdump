@@ -62,6 +62,7 @@ void dissect(
 	bpf_u_int32 pkt_len, 
 	int proto_id, 
 	protocol_handler *proto_hasmap,
+	shared_libs *libs,
 	custom_dissectors *custom_dissectors,
 	int proto_shown
 ) {
@@ -71,7 +72,7 @@ void dissect(
 	output_format out_format = OUTPUT_FORMAT_NONE;
 	const char *proto_name = NULL;
 
-	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hasmap);
+	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hasmap, libs);
 	
 	if (NULL != custom_handler) handler = *custom_handler;
 	else handler = get_protocol_handler(proto_id, proto_hasmap);
@@ -98,17 +99,18 @@ void dissect(
 			(pkt_len - encap_proto_info.offset),
 			encap_proto_info.protocol,
 			encap_proto_info.table,
+			libs,
 			custom_dissectors,
 			proto_shown
 		);
 	}
 }
 
-void dissect_packet(command *cmd, packet *pkt, custom_dissectors *custom_dissectors) {
+void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_dissectors) {
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
 	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
 
-	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, custom_dissectors, 0);
+	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, libs, custom_dissectors, 0);
 	printf("\n");
 }

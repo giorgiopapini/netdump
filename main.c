@@ -37,6 +37,16 @@
 
 	TODO:	
 			gcc -shared -fPIC -o custom_dissectors/proto1.so custom_dissectors/custom_proto_example.c  utils/protocol.c  utils/visualizer.c utils/string_utils.c
+
+	TODO: 	Find a way to implement an argument for 'dissectors' command that let the user add to the './custom_dissectors' folder
+			some compiled files (given the path to those files), and a function that loads them without needing to 
+			restart the netdump CLI tool.  ('add' and 'load' functions)
+
+	TODO: 	Find a way to create a "netdump-devel"
+			library for users that want to create custom dissectors
+			(The compilation of the shared library itself should still be done by the user)
+	
+	TODO: 	Modify the CUSTOM_DISSECTORS_FOLDER (because when i install the program with dnf than it is in usr/bin probably)
 */
 
 void deallocate_heap(
