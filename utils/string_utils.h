@@ -4,6 +4,8 @@
 #include <stdint.h>
 
 int find_word_len(char *sentence, int word_pos);    /* first word len? -> word_pos should be 0 (first index) */
+char *get_filename(char *path);
+int copy_file(char *source, char *destination);
 void copy_str_n(char **dest, char *src, int end_index);
 char * get_trimmed_str(char *str);
 void lower_str_except_interval(char *str, char interval_symbol);  /* interval_symbol is the opening and closing char that delimitates the interval */

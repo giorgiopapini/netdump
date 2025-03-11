@@ -44,6 +44,7 @@
 #define WRITE_FILE_ARG              "w"
 #define DEST_FILE_ARG               "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
 #define DISSECTOR_LIST_ARG          "list"
+#define ADD_DISSECTOR_ARG           "add"
 #define ACTIVATE_LIB_ARG            "on"
 #define DEACTIVATE_LIB_ARG          "off"
 #define DELETE_LIB_ARG              "delete"
@@ -65,9 +66,10 @@
 #define WRITE_FILE_ARG_DESC         "Write a .pcap file with all the scanned packets"
 #define DEST_FILE_ARG_DESC          "Specify the destination file for saving scanned data"
 #define DISSECTOR_LIST_ARG_DESC     "Show custom dissectors list"
-#define ACTIVATE_LIB_ARG_DESC       "Activate a custom dissector (.so)"
-#define DEACTIVATE_LIB_ARG_DESC     "Deactivate a custom dissector (.so)"
-#define DELETE_LIB_ARG_DESC         "Delete a custom dissector (.so) (delete file)"
+#define ADD_DISSECTOR_ARG_DESC      "Add custom dissector"
+#define ACTIVATE_LIB_ARG_DESC       "Activate custom dissector (empty = all)"
+#define DEACTIVATE_LIB_ARG_DESC     "Deactivate custom dissector (empty = all)"
+#define DELETE_LIB_ARG_DESC         "Delete a custom dissector (delete file)"
 
 #define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
@@ -76,6 +78,7 @@
 #define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
 #define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
 #define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
+#define ADD_DISSECTOR_ARG_EG    ARG_PREFIX ADD_DISSECTOR_ARG        " \"/dir/file-7.so" STRINGS_SEPARATOR " /dir/file-8.so\""
 #define ACTIVATE_LIB_ARG_EG     ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 #define DEACTIVATE_LIB_ARG_EG   ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 #define DELETE_LIB_ARG_EG       ARG_PREFIX DELETE_LIB_ARG           " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
@@ -96,7 +99,7 @@
 #define DEVICES_LIST_ARGS           
 #define REQUIRED_DEVICES_LIST_ARGS
 
-#define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG, DELETE_LIB_ARG
+#define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG, DELETE_LIB_ARG
 #define REQUIRED_DISSECTORS_ARGS
 
 #define RESET_ARGS

@@ -7,6 +7,17 @@
 #include "../status_handler.h"
 
 
+shared_libs *create_shared_libs_obj() {
+    shared_libs *libs = (shared_libs *)malloc(sizeof(shared_libs));
+    if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
+
+    libs->handles = NULL;
+    libs->filenames = NULL;
+    libs->statuses = NULL;
+    libs->count = 0;
+    return libs;
+}
+
 int is_active(shared_libs *libs, char *filename) {
     int i;
 
@@ -19,27 +30,25 @@ int is_active(shared_libs *libs, char *filename) {
     return 0;
 }
 
-void add_handle_to_libs(shared_libs *libs, void *new_handle) {
+void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int new_status) {
     libs->handles = (void **)realloc(libs->handles, (libs->count + 1) * sizeof(void *));
     if (NULL == libs->handles) raise_error(NULL_POINTER, 1, NULL, "libs->handles", __FILE__);
+    
+    libs->filenames = (char **)realloc(libs->filenames, (libs->count + 1) * sizeof(char *));
+    if (NULL == libs->filenames) raise_error(NULL_POINTER, 1, NULL, "libs->filenames", __FILE__);
+
+    libs->statuses = (int *)realloc(libs->statuses, (libs->count + 1) * sizeof(int));
+    if (NULL == libs->statuses) raise_error(NULL_POINTER, 1, NULL, "libs->statuses", __FILE__);
 
     libs->handles[libs->count] = new_handle;
+    libs->filenames[libs->count] = new_filename;
+    libs->statuses[libs->count] = new_status;
+    libs->count ++;
 }
 
 shared_libs *load_shared_libs(const char *directory) {
-    shared_libs *libs = (shared_libs *)malloc(sizeof(shared_libs));
+    shared_libs *libs = create_shared_libs_obj();
     if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
-    
-    libs->handles = (void **)malloc(sizeof(void *));
-    if (NULL == libs->handles) raise_error(NULL_POINTER, 1, NULL, "libs->handle", __FILE__);
-
-    libs->filenames = (char **)malloc(sizeof(char *));
-    if (NULL == libs->filenames) raise_error(NULL_POINTER, 1, NULL, "libs->filenames", __FILE__);
-    
-    libs->statuses = (int *)malloc(sizeof(int));
-    if (NULL == libs->statuses) raise_error(NULL_POINTER, 1, NULL, "libs->statuses", __FILE__);
-
-    libs->count = 0;
 
     struct dirent *entry;
     void *handle;
@@ -58,18 +67,7 @@ shared_libs *load_shared_libs(const char *directory) {
                 continue;
             }
 
-            libs->filenames = realloc(libs->filenames, (libs->count + 1) * sizeof(char *));
-            if (!libs->filenames) {
-                closedir(dir);
-                raise_error(NULL_POINTER, 1, NULL, "libs->filenames", __FILE__);
-                continue;
-            }
-
-            libs->filenames[libs->count] = strdup(entry->d_name);
-            add_handle_to_libs(libs, handle);
-            libs->statuses[libs->count] = 1;  /* lib is considered activated by default */
-
-            libs->count ++;
+            add_shared_lib(libs, handle, strdup(entry->d_name), 1);
         }
     }
     closedir(dir);
@@ -85,7 +83,7 @@ void destroy_shared_libs(shared_libs *libs) {
             if (NULL != libs->handles[i]) dlclose(libs->handles[i]);
             if (NULL != libs->filenames[i]) free(libs->filenames[i]);
         }
-        free(libs->filenames);
+        if (NULL != libs->filenames) free(libs->filenames);
     }
 
     if (NULL != libs->handles) free(libs->handles);    

@@ -21,6 +21,37 @@ int find_word_len(char *sentence, int word_pos) {
     return strlen(sentence);
 }
 
+char *get_filename(char *path) {
+    if (NULL == path) return NULL;
+    char *filename = strrchr(path, '/');
+    char *filename_win = strrchr(path, '\\');
+
+    if (filename_win && (!filename || filename_win > filename))
+        filename = filename_win;
+
+    return (filename) ? filename + 1 : path;
+}
+
+int copy_file(char *source, char *destination) {
+    char buffer[4096];
+    size_t bytes_read;
+
+    FILE *src_file = fopen(source, "rb");
+    if (NULL == src_file) return 0;
+
+    FILE *dest_file = fopen(destination, "wb");
+    if (NULL == dest_file) {
+        fclose(src_file);
+        return 0;
+    }
+
+    while ((bytes_read = fread(buffer, 1, sizeof(buffer), src_file)) > 0) fwrite(buffer, 1, bytes_read, dest_file);
+
+    fclose(src_file);
+    fclose(dest_file);
+    return 1;
+}
+
 void lower_str_except_interval(char *str, char interval_symbol) {
     int locked = 0;
     while ('\0' != *str) {

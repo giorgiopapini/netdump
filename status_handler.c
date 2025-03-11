@@ -42,6 +42,8 @@ char * get_error_format(err_code code) {
         case FUNCTION_NOT_FOUND_ERROR:      return "Error finding function (%s)"; break;
         case LIB_NOT_FOUND_ERROR:           return "Library '%s' not found"; break;
         case DELETE_FILE_ERROR:             return "Couldn't delete '%s'"; break;
+        case FILE_COPY_ERROR:               return "Couldn't copy '%s' to '%s'"; break;
+        case FILE_OVERWRITE_ERROR:          return "'%s' already exists in '%s' directory"; break;
         default:                            return "Unkown error, please report this issue to mantainers"; break;
     }
 }
@@ -60,6 +62,7 @@ char * get_success_msg(success_code code) {
         case PACKETS_DUMP_SUCCESS:          return "Packets have successfully been written to file"; break;
         case DISSECTOR_ACTIVATED_SUCCESS:   return "Custom dissector successfully activated"; break;
         case DISSECTOR_DEACTIVATED_SUCCESS: return "Custom dissector successfully deactivated"; break;
+        case DISSECTOR_LOADED_SUCCESS:      return "Custom dissector successfully loaded"; break;
         case DISSECTOR_DELETED_SUCCESS:     return "Custom dissector successfully deleted"; break;
         default:                            return "Operation succeded"; break;
     }

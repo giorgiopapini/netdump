@@ -6,6 +6,7 @@
 #define UNSCANNED_NET_HINT "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 #define ABSOLUTE_PATH_HINT "Make sure to start with the '/' character if you intend to insert an absolute path"
+#define FILE_OVERWRITE_HINT "Rename the file before attempting to copy it again"
 
 typedef enum {
     USER_NOT_ROOT_ERROR,
@@ -41,7 +42,9 @@ typedef enum {
     LOADING_SHARED_LIB_ERROR,
     FUNCTION_NOT_FOUND_ERROR,
     LIB_NOT_FOUND_ERROR,
-    DELETE_FILE_ERROR
+    DELETE_FILE_ERROR,
+    FILE_COPY_ERROR,
+    FILE_OVERWRITE_ERROR
 } err_code;
 
 typedef enum {
@@ -54,6 +57,7 @@ typedef enum {
     PACKETS_DUMP_SUCCESS,
     DISSECTOR_ACTIVATED_SUCCESS,
     DISSECTOR_DEACTIVATED_SUCCESS,
+    DISSECTOR_LOADED_SUCCESS,
     DISSECTOR_DELETED_SUCCESS
 } success_code;
 
