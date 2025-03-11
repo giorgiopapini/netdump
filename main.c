@@ -32,9 +32,6 @@
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
 			by the time I reach print_udp_hdr(). How can I solve the problem?
 
-	TODO: 	If it is an unkown protocol, than netdump should be able to still print the raw bytes (if output="raw")
-			(The protocol name would be "unkown" in this case)
-
 	TODO:	Command to compile shared library
 			gcc -shared -fPIC -o custom_dissectors/proto1.so custom_dissectors/custom_proto_example.c  utils/protocol.c  utils/visualizer.c utils/string_utils.c
 

@@ -8,8 +8,9 @@
 #include "utils/colors.h"
 #include "protocols/dlt_protos.h"
 
-#define INLINE_SEPARATOR " | "
-#define SPACE_SEPARATOR "\n"
+#define INLINE_SEPARATOR 		" | "
+#define SPACE_SEPARATOR 		"\n"
+#define UNKNOWN_PROTO_LABEL 	"Unknown"
 
 
 output_format get_output_format(command *cmd) {
@@ -77,8 +78,17 @@ void dissect(
 	if (NULL != custom_handler) handler = *custom_handler;
 	else handler = get_protocol_handler(proto_id, proto_hasmap);
 
-	if (NULL == handler.dissect_proto) return;
-
+	if (NULL == handler.dissect_proto) {
+		if (OUTPUT_FORMAT_RAW != get_output_format(cmd)) return;
+		if (pkt_len > 0) {
+			if (proto_shown > 0) print_separator(cmd);
+			printf(CYAN "(%s) " RESET_COLOR, UNKNOWN_PROTO_LABEL);
+			SHOW_OUTPUT(pkt, pkt_len, get_output_format(cmd), NULL, NULL);
+			proto_shown ++;
+		}
+		return;
+	}
+	
 	if (should_print_pkt(cmd, handler.layer)) {  /* else -> default output format is OUTPUT_NONE */
 		out_format = get_output_format(cmd);
 		if (proto_shown > 0) print_separator(cmd);
