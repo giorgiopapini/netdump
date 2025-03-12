@@ -43,9 +43,9 @@
 */
 
 void deallocate_heap(
-	command *cmd, 
-	raw_array *packets, 
-	circular_list *history, 
+	command *cmd,
+	raw_array *packets,
+	circular_list *history,
 	shared_libs *libs,
 	custom_dissectors *custom_dissectors
 ) {

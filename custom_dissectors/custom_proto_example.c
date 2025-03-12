@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 /* start of modules inside of the supposed "netdump-devel" */
 #include "../utils/protocol.h"
@@ -19,11 +18,16 @@ void print_proto(const uint8_t *pkt, uint32_t len) {
 }
 
 void visualize_proto(const uint8_t *pkt, uint32_t len) {
-
+    start_printing();
+    print_field("PROVA", "prova1 diocan", 0);
+    print_field("PROVA2", "prova2 diocan", 0);
+    print_field("PROVA3", "prova3 diocan", 0);
+    print_field("PROVA4", "prova4 diocan", 0);
+    end_printing();
 }
 
 protocol_info dissect_proto(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
-    print_proto(NULL, 0);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, print_proto, visualize_proto);
     return NO_ENCAP_PROTO;
 }
 

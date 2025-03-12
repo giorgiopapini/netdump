@@ -49,7 +49,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     }
 }
 
-void add_and_load_dissectors(shared_libs *libs, char *paths) {
+void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, char *paths) {
     char *token;
     char *trimmed;
     char *filename;
@@ -87,6 +87,7 @@ void add_and_load_dissectors(shared_libs *libs, char *paths) {
                 }
 
                 add_shared_lib(libs, handle, strdup(filename), 1);
+                load_dissector(dissectors, handle, strdup(filename));
                 print_success_msg(DISSECTOR_LOADED_SUCCESS);
             }
             else raise_error(FILE_COPY_ERROR, 0, NULL, trimmed, path);
@@ -135,25 +136,23 @@ void delete_dissector(shared_libs *libs, char *filenames) {
             }
         }
 
-        target_index = -1;
-        for (i = 0; i < libs->count; i ++) {
-            if (NULL != libs->filenames[i]) target_index = i;
-        }
-
-        if (-1 == target_index) {
-            free(libs->filenames);
-            libs->filenames = NULL;
-        }
-
         token = strtok(NULL, STRINGS_SEPARATOR);
         free(trimmed);
     }
 }
 
 void print_dissectors_list(shared_libs *libs) {
+    int empty = 1;
     int i;
 
-    if (NULL == libs->filenames) {
+    for (i = 0; i < libs->count; i ++) {
+        if (NULL != libs->filenames[i]) {
+            empty = 0;
+            break;
+        }
+    }
+
+    if (empty) {
         print_warning_msg(DISSECTORS_EMPTY_WARNING);
         return;
     }
@@ -182,7 +181,7 @@ void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *cust
     /* first deactivate, than eventually activate. Deactivation has priority over activation */
     if (NULL != deactivate_arg) change_dissector_status(0, deactivate_arg->val, libs);
     if (NULL != activate_arg) change_dissector_status(1, activate_arg->val, libs);
-    if (NULL != add_paths) add_and_load_dissectors(libs, add_paths);
+    if (NULL != add_paths) add_and_load_dissectors(libs, custom_dissectors, add_paths);
     if (NULL != delete_filenames) delete_dissector(libs, delete_filenames);
     if (show_list) print_dissectors_list(libs);
     /* show_list should be the final command execution, because it shows the eventual previous changes */
