@@ -7,7 +7,7 @@
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 #define ABSOLUTE_PATH_HINT "Make sure to start with the '/' character if you intend to insert an absolute path"
 #define FILE_OVERWRITE_HINT "Rename the file before attempting to copy it again"
-
+#define CSTM_DISSECTORS_CONFLICT_HINT "Resolve the conflicts to ensure the program operates correctly (deterministically)"
 typedef enum {
     USER_NOT_ROOT_ERROR,
     SELECT_FAILED_ERROR,
@@ -39,6 +39,7 @@ typedef enum {
     TERMINAL_SIZE_ERROR,
     CURR_WORK_DIR_ERROR,
     CSTM_DISSECTORS_FOLDER_ERROR,
+    CSTM_DISSECTORS_CONFLICT_ERROR,
     LOADING_SHARED_LIB_ERROR,
     FUNCTION_NOT_FOUND_ERROR,
     LIB_NOT_FOUND_ERROR,

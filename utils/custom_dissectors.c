@@ -22,18 +22,6 @@ custom_dissectors *create_custom_dissectors() {
     return dissectors;
 }
 
-protocol_handler *get_proto_table(int dest_proto_table) {
-    switch (dest_proto_table) {
-        case DLT_PROTOS:        return dlt_protos;
-        case ETHERTYPES:        return ethertypes;
-        case IP_PROTOS:         return ip_protos;
-        case NET_PORTS:         return net_ports;
-        case NLPID_PROTOS:      return nlpid_protos;
-        case PPP_PROTOS:        return ppp_protos;
-        default:                return NULL;
-    }
-}
-
 void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto) {
     int i;
 
@@ -45,7 +33,15 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
     else {
         for (i = 0; i < arr->len; i ++) {
             if (arr->custom_protos[i]->protocol == new_custom_proto->protocol) {
-                arr->custom_protos[i] = new_custom_proto;
+                raise_error(
+                    CSTM_DISSECTORS_CONFLICT_ERROR, 
+                    0, 
+                    CSTM_DISSECTORS_CONFLICT_HINT, 
+                    arr->custom_protos[i]->protocol_name,
+                    new_custom_proto->protocol_name,
+                    arr->custom_protos[i]->protocol,
+                    get_table_name(arr->proto_table)
+                );
                 return;
             }
         }

@@ -1,6 +1,5 @@
 # Automatically include all .c files in the current directory and subdirectories
-SRC := $(wildcard *.c) $(wildcard **/*.c) $(wildcard ***/**/*.c)
-
+SRC := $(filter-out custom_dissectors/%, $(wildcard *.c **/*.c ***/**/*.c))
 # Compiler and flags
 CC := gcc
 CFLAGS := -g -w

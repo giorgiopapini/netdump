@@ -14,15 +14,15 @@
 /* end of modules inside of the supposed "netdump-devel" */
 
 void print_proto(const uint8_t *pkt, uint32_t len) {
-    printf("EXECUTED print_proto\n");
+    printf("EXECUTED PROTO1\n");
 }
 
 void visualize_proto(const uint8_t *pkt, uint32_t len) {
     start_printing();
-    print_field("PROVA", "prova1 diocan", 0);
-    print_field("PROVA2", "prova2 diocan", 0);
-    print_field("PROVA3", "prova3 diocan", 0);
-    print_field("PROVA4", "prova4 diocan", 0);
+    print_field("BBBB", "prova1 diocan", 0);
+    print_field("BBBB", "prova2 diocan", 0);
+    print_field("BBBB", "prova3 diocan", 0);
+    print_field("BBBB", "prova4 diocan", 0);
     end_printing();
 }
 
@@ -37,7 +37,7 @@ protocol_handler_mapping **get_custom_protocols_mapping() {
     add_mapping(
         &arr,
         create_protocol_handler_mapping(
-            create_protocol_handler(6, PROTOCOL_LAYER_TRANSPORT, dissect_proto, "PROVA_TCP"),
+            create_protocol_handler(6, PROTOCOL_LAYER_TRANSPORT, dissect_proto, "PROTO1"),
             IP_PROTOS
         )
     );
