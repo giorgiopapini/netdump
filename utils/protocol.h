@@ -25,7 +25,7 @@ typedef struct protocol_handler protocol_handler;
 typedef struct protocol_info {
     int protocol;
     size_t offset;
-    protocol_handler *table;
+    int proto_table_num;
 } protocol_info;
 
 typedef struct protocol_handler {
@@ -40,7 +40,7 @@ typedef struct protocol_handler_mapping {
 	int proto_table_num;
 } protocol_handler_mapping;
 
-#define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .table = NULL };
+#define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .proto_table_num = -1 };
 #define NULL_PROTO_HANDLER		{ .protocol = 0, .layer = PROTOCOL_LAYER_NONE, .dissect_proto = NULL, .protocol_name = NULL }
 #define IS_NULL_HANDLER(hdl)	(0 == hdl.protocol && PROTOCOL_LAYER_NONE == hdl.layer && NULL == hdl.dissect_proto && NULL == hdl.protocol_name)
 #define SHOW_OUTPUT(pkt, len, fmt, print_func, visualize_func) \

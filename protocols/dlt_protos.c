@@ -1,3 +1,4 @@
+#include <pcap.h>
 #include "dlt_protos.h"
 
 #include "datalink/ether.h"

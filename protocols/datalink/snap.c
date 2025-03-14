@@ -2,8 +2,8 @@
 #include <arpa/inet.h>
 
 #include "snap.h"
-#include "../ethertypes.h"
 #include "../../utils/visualizer.h"
+#include "../proto_tables_nums.h"
 
 
 void print_snap_hdr(const uint8_t *pkt, uint32_t len) {
@@ -29,5 +29,5 @@ void visualize_snap_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_snap_hdr, visualize_snap_hdr);
-    return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .table = ethertypes };
+    return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .proto_table_num = ETHERTYPES };
 }

@@ -2,8 +2,8 @@
 #include <arpa/inet.h>
 
 #include "vlan.h"
-#include "../ethertypes.h"
 #include "../../utils/visualizer.h"
+#include "../proto_tables_nums.h"
 
 
 void print_vlan_hdr(const uint8_t *pkt, uint32_t len) {
@@ -35,5 +35,5 @@ void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_vlan_hdr, visualize_vlan_hdr);
-    return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .table = ethertypes };
+    return (protocol_info){ .protocol = ntohs(VLAN_ETHERTYPE(pkt)), .offset = VLAN_LEN, .proto_table_num = ETHERTYPES };
 }

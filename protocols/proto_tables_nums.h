@@ -2,6 +2,12 @@
 #define PROTO_TABLES_NUMS_H
 
 #include "../utils/protocol.h"
+#include "../protocols/dlt_protos.h"
+#include "../protocols/ethertypes.h"
+#include "../protocols/ip_protos.h"
+#include "../protocols/net_ports.h"
+#include "../protocols/nlpid_protos.h"
+#include "../protocols/ppp_protos.h"
 
 #define DLT_PROTOS          1
 #define ETHERTYPES          2
@@ -18,7 +24,7 @@
 #define PPP_PROTOS_LABEL    "PPP_PROTOS"
 
 
-protocol_handler *get_proto_table(int dest_proto_table);
+protocol_handler *get_proto_table(int proto_table_num);
 const char *get_table_name(protocol_handler *proto_table);
 
 #endif

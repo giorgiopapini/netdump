@@ -6,6 +6,7 @@
 #include "../ethertypes.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
+#include "../proto_tables_nums.h"
 
 
 void print_ether_hdr(const uint8_t *pkt, uint32_t len) {
@@ -38,5 +39,5 @@ void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ether_hdr, visualize_ether_hdr);
-    return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .table = ethertypes };
+    return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .proto_table_num = ETHERTYPES };
 }

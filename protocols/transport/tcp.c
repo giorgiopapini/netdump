@@ -3,9 +3,9 @@
 #include <arpa/inet.h>
 
 #include "tcp.h"
-#include "../net_ports.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/string_utils.h"
+#include "../proto_tables_nums.h"
 
 
 size_t tcp_options_len(const uint8_t *pkt) { return (TCP_DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
@@ -185,7 +185,7 @@ protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, output_format fm
 
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
     proto_info.offset = (TCP_DATA_OFFSET(pkt) * 4);
-    proto_info.table = net_ports;
+    proto_info.proto_table_num = NET_PORTS;
 
     if (((TCP_FLAGS(pkt) & (TCP_ACK | TCP_PSH)) == (TCP_ACK | TCP_PSH)) || ((TCP_FLAGS(pkt) & TCP_ACK) == TCP_ACK)) {
         if (IS_WELL_DEFINED_PORT(ntohs(TCP_DEST_PORT(pkt)))) proto_info.protocol = ntohs(TCP_DEST_PORT(pkt));

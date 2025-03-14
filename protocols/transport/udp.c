@@ -4,6 +4,7 @@
 #include "udp.h"
 #include "../net_ports.h"
 #include "../../utils/visualizer.h"
+#include "../proto_tables_nums.h"
 
 
 void print_udp_hdr(const uint8_t *pkt, uint32_t len) {
@@ -38,7 +39,7 @@ void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
 protocol_info dissect_udp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     protocol_info proto_info;
     proto_info.offset = UDP_LEN;
-    proto_info.table = net_ports;
+    proto_info.proto_table_num = NET_PORTS;
 
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_udp_hdr, visualize_udp_hdr);
 

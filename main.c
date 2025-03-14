@@ -38,7 +38,9 @@
 	TODO: 	Find a way to create a "netdump-devel"
 			library for users that want to create custom dissectors
 			(The compilation of the shared library itself should still be done by the user)
-	
+			Do not develop a separate packet, use a subfolder of netdump and add "api.h" (or whatever it will be called)
+			header files to usr/include/netdump
+			
 	TODO: 	Modify the CUSTOM_DISSECTORS_FOLDER (because when i install the program with dnf than it is in usr/bin probably)
 */
 

@@ -1,15 +1,10 @@
 #include "proto_tables_nums.h"
 
 #include "../utils/formats.h"
-#include "../protocols/dlt_protos.h"
-#include "../protocols/ethertypes.h"
-#include "../protocols/ip_protos.h"
-#include "../protocols/net_ports.h"
-#include "../protocols/nlpid_protos.h"
-#include "../protocols/ppp_protos.h"
 
-protocol_handler *get_proto_table(int dest_proto_table) {
-    switch (dest_proto_table) {
+
+protocol_handler *get_proto_table(int proto_table_num) {
+    switch (proto_table_num) {
         case DLT_PROTOS:        return dlt_protos;
         case ETHERTYPES:        return ethertypes;
         case IP_PROTOS:         return ip_protos;

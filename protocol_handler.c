@@ -7,6 +7,7 @@
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/dlt_protos.h"
+#include "protocols/proto_tables_nums.h"
 
 #define INLINE_SEPARATOR 		" | "
 #define SPACE_SEPARATOR 		"\n"
@@ -62,7 +63,7 @@ void dissect(
 	uint8_t *pkt, 
 	bpf_u_int32 pkt_len, 
 	int proto_id, 
-	protocol_handler *proto_hasmap,
+	int proto_table_num,
 	shared_libs *libs,
 	custom_dissectors *custom_dissectors,
 	int proto_shown
@@ -72,11 +73,12 @@ void dissect(
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
 	const char *proto_name = NULL;
+	protocol_handler *proto_hashmap = get_proto_table(proto_table_num);
 
-	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hasmap, libs);
+	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hashmap, libs);
 	
 	if (NULL != custom_handler) handler = *custom_handler;
-	else handler = get_protocol_handler(proto_id, proto_hasmap);
+	else handler = get_protocol_handler(proto_id, proto_hashmap);
 
 	if (NULL == handler.dissect_proto) {
 		if (OUTPUT_FORMAT_RAW != get_output_format(cmd)) return;
@@ -102,13 +104,13 @@ void dissect(
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
 	encap_proto_info = handler.dissect_proto(pkt, pkt_len, out_format);
-	if (NULL != encap_proto_info.table && (pkt_len - encap_proto_info.offset) > 0) {
+	if (-1 != encap_proto_info.proto_table_num && (pkt_len - encap_proto_info.offset) > 0) {
 		dissect(
 			cmd,
 			(pkt + encap_proto_info.offset),
 			(pkt_len - encap_proto_info.offset),
 			encap_proto_info.protocol,
-			encap_proto_info.table,
+			encap_proto_info.proto_table_num,
 			libs,
 			custom_dissectors,
 			proto_shown
@@ -121,6 +123,6 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
 	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
 
-	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, dlt_protos, libs, custom_dissectors, 0);
+	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, DLT_PROTOS, libs, custom_dissectors, 0);
 	printf("\n");
 }

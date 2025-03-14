@@ -2,8 +2,8 @@
 #include <arpa/inet.h>
 
 #include "ppp.h"
-#include "../ppp_protos.h"
 #include "../../utils/visualizer.h"
+#include "../proto_tables_nums.h"
 
 
 void print_ppp_hdr(const uint8_t *pkt, uint32_t len) {
@@ -33,5 +33,5 @@ void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ppp_hdr, visualize_ppp_hdr);
-    return (protocol_info){ .protocol = ntohs(PROTOCOL(pkt)), .offset = PPP_LEN, .table = ppp_protos };
+    return (protocol_info){ .protocol = ntohs(PROTOCOL(pkt)), .offset = PPP_LEN, .proto_table_num = PPP_PROTOS };
 }

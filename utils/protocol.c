@@ -89,8 +89,10 @@ protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_
 	protocol_handler *proto_handler = NULL;
 	int i;
 
-	for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
-		if (target_proto == proto_table[i].protocol) return proto_table[i];
+	if (NULL != proto_table) {
+		for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
+			if (target_proto == proto_table[i].protocol) return proto_table[i];
+		}
 	}
 	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
 }

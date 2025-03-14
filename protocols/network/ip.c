@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "ip.h"
-#include "../ip_protos.h"
 #include "../../utils/string_utils.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
+#include "../proto_tables_nums.h"
 
 
 /*
@@ -98,5 +98,5 @@ void visualize_ip_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ip_hdr, visualize_ip_hdr);
-    return (protocol_info){ .protocol = IP_PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .table = ip_protos };
+    return (protocol_info){ .protocol = IP_PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .proto_table_num = IP_PROTOS };
 }

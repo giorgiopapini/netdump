@@ -2,9 +2,8 @@
 #include <arpa/inet.h>
 
 #include "frame_relay.h"
-#include "../nlpid_protos.h"
-#include "../ethertypes.h"
 #include "../../utils/visualizer.h"
+#include "../proto_tables_nums.h"
 
 
 int snap_hdr_len(const uint8_t *pkt) {
@@ -82,14 +81,14 @@ void visualize_frelay_hdr(const uint8_t *pkt, uint32_t len) {
 protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
-    protocol_handler *table;
+    int table_num;
     uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
     
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_frelay_hdr, visualize_frelay_hdr);
 
-    if (protocol <= NLPID_THRESHOLD) table = nlpid_protos;
-    else table = ethertypes;
+    if (protocol <= NLPID_THRESHOLD) table_num = NLPID_PROTOS;
+    else table_num = ETHERTYPES;
     
     /* hdr_len + 2 (because 2 bytes long the protocol field, even if nlpid (i'm considering also the 0x00 byte)) */
-    return (protocol_info){ .protocol = protocol, .offset = offset + 2, .table = table };
+    return (protocol_info){ .protocol = protocol, .offset = offset + 2, .proto_table_num = table_num };
 }
