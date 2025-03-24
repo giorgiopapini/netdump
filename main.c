@@ -40,6 +40,10 @@
 			(The compilation of the shared library itself should still be done by the user)
 			Do not develop a separate packet, use a subfolder of netdump and add "api.h" (or whatever it will be called)
 			header files to usr/include/netdump
+
+	TODO:	Shared libs should be stored inside ~/.local/lib/netdump/custom_dissectors
+			- Create it during installation phase
+			- If the user run dnf remove netdump. It should also ask confirmation to delete this path (and everything inside of it) 
 			
 	TODO: 	Modify the CUSTOM_DISSECTORS_FOLDER (because when i install the program with dnf than it is in usr/bin probably)
 */
@@ -107,7 +111,6 @@ void run(
 
 int main(int argc, char *argv[]) {
 	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
-
 	fd_set readfds;
     int ret;
 	struct termios original, term;

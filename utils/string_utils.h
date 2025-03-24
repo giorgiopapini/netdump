@@ -5,6 +5,7 @@
 
 int find_word_len(char *sentence, int word_pos);    /* first word len? -> word_pos should be 0 (first index) */
 char *get_filename(char *path);
+void expand_tilde(const char *path, char *expanded_path, size_t size);
 int copy_file(char *source, char *destination);
 void copy_str_n(char **dest, char *src, int end_index);
 char * get_trimmed_str(char *str);

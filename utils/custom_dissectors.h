@@ -4,8 +4,8 @@
 #include "protocol.h"
 #include "../utils/shared_lib.h"
 
-#define CUSTOM_DISSECTORS_PATH      "./custom_dissectors"
-#define FUNCTION_NAME       "get_custom_protocols_mapping"
+#define CUSTOM_DISSECTORS_PATH      "~/.local/lib/netdump/custom_dissectors"
+#define FUNCTION_NAME               "get_custom_protocols_mapping"
 
 
 typedef struct dissectors_entry {  /* (e.g. [ net_ports(addr)=[{custom_proto_1}, {custom_proto_2}, ...], ]) */

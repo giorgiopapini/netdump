@@ -5,6 +5,7 @@
 #include <termios.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <pwd.h>
 
 #include "string_utils.h"
 #include "../status_handler.h"
@@ -30,6 +31,17 @@ char *get_filename(char *path) {
         filename = filename_win;
 
     return (filename) ? filename + 1 : path;
+}
+
+void expand_tilde(const char *path, char *expanded_path, size_t size) {
+    const char *usr;
+
+    if (path[0] == '~') {
+        usr = getenv("SUDO_USER");
+        if (usr) snprintf(expanded_path, size, "/home/%s%s", usr, path + 1);
+        else snprintf(expanded_path, size, "%s", path);
+    }
+    else snprintf(expanded_path, size, "%s", path);
 }
 
 int copy_file(char *source, char *destination) {

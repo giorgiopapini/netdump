@@ -56,12 +56,13 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
     int found = 0;
     struct dirent *entry;
     void *handle;
+    char expanded_dir[4096];
     char path[512];
 
     if (NULL == paths) return;
     
-    DIR *dir = opendir(CUSTOM_DISSECTORS_PATH);
-    
+    expand_tilde(CUSTOM_DISSECTORS_PATH, expanded_dir, sizeof(expanded_dir));
+    DIR *dir = opendir(expanded_dir);
 
     token = strtok(paths, STRINGS_SEPARATOR);
     while (token != NULL) {
@@ -78,7 +79,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
         rewinddir(dir);
 
         if (!found) {
-            snprintf(path, sizeof(path), "%s/%s", CUSTOM_DISSECTORS_PATH, filename);
+            snprintf(path, sizeof(path), "%s/%s", expanded_dir, filename);
             if (copy_file(trimmed, path)) {
                 handle = dlopen(path, RTLD_LAZY);
                 if (!handle) {
@@ -92,7 +93,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
             }
             else raise_error(FILE_COPY_ERROR, 0, NULL, trimmed, path);
         }
-        else raise_error(FILE_OVERWRITE_ERROR, 0, FILE_OVERWRITE_HINT, filename, CUSTOM_DISSECTORS_PATH);
+        else raise_error(FILE_OVERWRITE_ERROR, 0, FILE_OVERWRITE_HINT, filename, expanded_dir);
 
         token = strtok(NULL, STRINGS_SEPARATOR);
         free(trimmed);
@@ -104,15 +105,18 @@ void delete_dissector(shared_libs *libs, char *filenames) {
     char *trimmed;
     int target_index = -1;
     char path[512];
+    char expanded_dir[4096];
     int i;
 
     if (NULL == filenames) return;
+    
+    expand_tilde(CUSTOM_DISSECTORS_PATH, expanded_dir, sizeof(expanded_dir));
 
     token = strtok(filenames, STRINGS_SEPARATOR);
     while (token != NULL) {
         target_index = -1;
         trimmed = get_trimmed_str(token);
-        snprintf(path, sizeof(path), "%s/%s", CUSTOM_DISSECTORS_PATH, trimmed);
+        snprintf(path, sizeof(path), "%s/%s", expanded_dir, trimmed);
 
         if (NULL != libs->filenames) {
             for (i = 0; i < libs->count; i ++) {

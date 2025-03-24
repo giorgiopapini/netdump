@@ -3,7 +3,6 @@
 
 #include <dirent.h>
 
-
 typedef struct shared_libs {
     void **handles;
     char **filenames;

@@ -5,6 +5,7 @@
 
 #include "shared_lib.h"
 #include "../status_handler.h"
+#include "string_utils.h"
 
 
 shared_libs *create_shared_libs_obj() {
@@ -52,14 +53,20 @@ shared_libs *load_shared_libs(const char *directory) {
 
     struct dirent *entry;
     void *handle;
+    char expanded_dir[4096];
     char path[512];
-    
-    DIR *dir = opendir(directory);
-    if (dir == NULL) raise_error(CSTM_DISSECTORS_FOLDER_ERROR, 1, NULL);
+
+    expand_tilde(directory, expanded_dir, sizeof(expanded_dir));
+
+    DIR *dir = opendir(expanded_dir);
+    if (NULL == dir) {
+        raise_error(FOLDER_OPEN_ERROR, 0, NULL, expanded_dir);
+        return libs;
+    }
 
     while ((entry = readdir(dir)) != NULL) {
         if (strstr(entry->d_name, ".so") != NULL) {
-            snprintf(path, sizeof(path), "%s/%s", directory, entry->d_name);
+            snprintf(path, sizeof(path), "%s/%s", expanded_dir, entry->d_name);
 
             handle = dlopen(path, RTLD_LAZY);
             if (!handle) {
