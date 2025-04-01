@@ -91,7 +91,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     if (NULL == custom_dissectors->table) add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
         for (i = 0; i < custom_dissectors->len; i ++) {
-            if (custom_dissectors->table[i]->proto_table == dest_table) {
+            if (NULL != custom_dissectors->table[i] && custom_dissectors->table[i]->proto_table == dest_table) {
                 add_custom_proto(custom_dissectors->table[i], custom_handler);
                 return;
             }
@@ -162,6 +162,22 @@ protocol_handler *get_custom_protocol_handler(
     return NULL;
 }
 
+void destroy_dissectors_entry(dissectors_entry *entry) {
+    int i;
+    if (entry == NULL) return;
+    
+    if (entry->custom_protos != NULL) {
+        for (i = 0; i < entry->len; i ++) {
+            free(entry->custom_protos[i]);
+            entry->custom_protos[i] = NULL;
+        }
+        free(entry->custom_protos);
+        entry->custom_protos = NULL;
+    }
+    /* free(curr_entry->lib_filename); it is alredy deallocated in shared_libs destroy function? */
+    free(entry);
+}
+
 void destroy_custom_dissectors(custom_dissectors *custom_dissectors) {
     int i, j;
     dissectors_entry *curr_entry = NULL;
@@ -171,18 +187,7 @@ void destroy_custom_dissectors(custom_dissectors *custom_dissectors) {
 
     for (i = 0; i < custom_dissectors->len; i ++) {
         curr_entry = custom_dissectors->table[i];
-        if (curr_entry == NULL) continue;
-
-        if (curr_entry->custom_protos != NULL) {
-            for (j = 0; j < curr_entry->len; j ++) {
-                free(curr_entry->custom_protos[j]);
-                curr_entry->custom_protos[j] = NULL;
-            }
-            free(curr_entry->custom_protos);
-            curr_entry->custom_protos = NULL;
-        }
-        /* free(curr_entry->lib_filename); it is alredy deallocated in shared_libs destroy function? */
-        free(curr_entry);
+        destroy_dissectors_entry(curr_entry);
     }
 
     free(custom_dissectors->table);

@@ -100,7 +100,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
     }
 };
 
-void delete_dissector(shared_libs *libs, char *filenames) {
+void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *filenames) {
     char *token;
     char *trimmed;
     int target_index = -1;
@@ -118,6 +118,21 @@ void delete_dissector(shared_libs *libs, char *filenames) {
         trimmed = get_trimmed_str(token);
         snprintf(path, sizeof(path), "%s/%s", expanded_dir, trimmed);
 
+        if (NULL != dissectors->table) {
+            for (i = 0; i < dissectors->len; i ++) {
+                if (NULL != dissectors->table[i] && 0 == strcmp(trimmed, dissectors->table[i]->lib_filename)) {
+                    target_index = i;
+                    break;
+                }
+            }
+        }
+
+        if (0 <= target_index) {
+            destroy_dissectors_entry(dissectors->table[target_index]);
+            dissectors->table[target_index] = NULL;
+        }
+
+        target_index = -1;
         if (NULL != libs->filenames) {
             for (i = 0; i < libs->count; i ++) {
                 if (NULL != libs->filenames[i] && 0 == strcmp(trimmed, libs->filenames[i])) {
@@ -186,7 +201,7 @@ void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *cust
     if (NULL != deactivate_arg) change_dissector_status(0, deactivate_arg->val, libs);
     if (NULL != activate_arg) change_dissector_status(1, activate_arg->val, libs);
     if (NULL != add_paths) add_and_load_dissectors(libs, custom_dissectors, add_paths);
-    if (NULL != delete_filenames) delete_dissector(libs, delete_filenames);
+    if (NULL != delete_filenames) delete_dissector(libs, custom_dissectors, delete_filenames);
     if (show_list) print_dissectors_list(libs);
     /* show_list should be the final command execution, because it shows the eventual previous changes */
 }

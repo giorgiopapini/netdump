@@ -32,6 +32,7 @@ protocol_handler *get_custom_protocol_handler(
     protocol_handler *proto_table, 
     shared_libs *libs
 );
+void destroy_dissectors_entry(dissectors_entry *entry);
 void destroy_custom_dissectors(custom_dissectors *custom_dissectors);
 
 #endif
