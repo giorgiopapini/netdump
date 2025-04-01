@@ -1,25 +1,39 @@
-# Automatically include all .c files in the current directory and subdirectories
-SRC := $(filter-out custom_dissectors/%, $(wildcard *.c **/*.c ***/**/*.c))
+SRC := $(wildcard *.c **/*.c ***/**/*.c)
+OBJ := $(SRC:.c=.o)
+
 # Compiler and flags
 CC := gcc
-CFLAGS := -g -w
-LDFLAGS := -lpcap
+CFLAGS := -fPIC -g -w
+LDFLAGS := -lpcap -lm
 
-# Output binary
+# Library source files
+LIB_SRC := utils/protocol.c utils/visualizer.c protocols/proto_tables_nums.c
+LIB_OBJ := $(LIB_SRC:.c=.o)
+LIB_TARGET := libnetdump.so
+
+# Binary output
 TARGET := netdump
 
-# Default target: compile the program
-all: $(TARGET)
+# Default target: build everything
+all: $(LIB_TARGET) $(TARGET)
 
-# Compile target
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS) -lm
+# Compile object files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean target: remove the binary
+# Create shared library
+$(LIB_TARGET): $(LIB_OBJ)
+	$(CC) -shared -o $@ $^ -fPIC
+
+# Compile netdump, linking dynamically to libnetdump.so
+$(TARGET): $(OBJ) $(LIB_TARGET)
+	$(CC) -o $(TARGET) $(OBJ) -L. -lnetdump $(LDFLAGS) -Wl,-rpath,\$$ORIGIN
+
+# Clean target
 clean:
-	-rm -f $(TARGET)
+	-rm -f $(TARGET) $(LIB_TARGET) *.o **/*.o
 
-# Run target: execute the program with sudo
+# Run netdump with sudo
 run: $(TARGET)
 	sudo ./$(TARGET)
 
@@ -28,7 +42,9 @@ debug: clean $(TARGET)
 	clear
 	sudo ./$(TARGET)
 
-# Install target: install the binary to the system's bin directory
-install: $(TARGET)
+# Install target: install netdump and libnetdump.so
+install: $(TARGET) $(LIB_TARGET)
 	mkdir -p $(DESTDIR)/usr/bin
+	mkdir -p $(DESTDIR)/usr/lib64
 	install -m 0755 $(TARGET) $(DESTDIR)/usr/bin/$(TARGET)
+	install -m 0755 $(LIB_TARGET) $(DESTDIR)/usr/lib64/$(LIB_TARGET)
