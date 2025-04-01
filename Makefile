@@ -31,7 +31,7 @@ $(TARGET): $(OBJ) $(LIB_TARGET)
 
 # Clean target
 clean:
-	-rm -f $(TARGET) $(LIB_TARGET) *.o **/*.o
+	-rm -f $(TARGET) $(LIB_TARGET) *.o **/*.o ***/**/*.o
 
 # Run netdump with sudo
 run: $(TARGET)
