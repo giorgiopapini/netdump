@@ -99,7 +99,7 @@ The ```netdump-devel``` package allows you to compile your custom dissector as a
 This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the Netdump program.
 
 ## Screenshots
-![Screenshot]/(./assets/screen1.png)
-![Screenshot]/(./assets/screen2.png)
-![Screenshot]/(./assets/screen3.png)
-![Screenshot]/(./assets/screen4.png)
+![Screenshot](./assets/screen1.png)
+![Screenshot](./assets/screen2.png)
+![Screenshot](./assets/screen3.png)
+![Screenshot](./assets/screen4.png)
