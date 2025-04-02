@@ -97,3 +97,9 @@ To create a custom dissector, refer to the ```netdump-devel``` repo (https://git
 The ```netdump-devel``` package allows you to compile your custom dissector as a shared library. Once compiled as a .so file, you can add it to Netdump using the following command:
 ```netdump dissectors -add "path-to-dissector.so"```
 This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the Netdump program.
+
+## Screenshots
+![Screenshot]/(./assets/screen1.png)
+![Screenshot]/(./assets/screen2.png)
+![Screenshot]/(./assets/screen3.png)
+![Screenshot]/(./assets/screen4.png)
