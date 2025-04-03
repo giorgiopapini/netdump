@@ -152,6 +152,8 @@ protocol_handler *get_custom_protocol_handler(
 
     for (i = 0; i < custom_dissectors->len; i ++) {
         curr_entry = custom_dissectors->table[i];
+        if (NULL == curr_entry) continue;
+
         if (is_active(libs, curr_entry->lib_filename) && curr_entry->proto_table == proto_table) {
             for (j = 0; j < curr_entry->len; j ++) {
                 curr_handler = curr_entry->custom_protos[j];
