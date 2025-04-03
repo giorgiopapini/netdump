@@ -4,10 +4,10 @@ Netdump is designed to cater to users with varying levels of expertise and backg
 
 ## Installation
 Netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
-Once you cloned the repo, you can install netdump in several ways depending on your goal:
+You can install netdump in several ways depending on your goal:
 
-1) Simply compile the program using ```make```.
-2) Install the program inside ```/usr/local/bin``` by running ```sudo make install```.
+1) Clone the repo and compile the program using ```make```.
+2) Clone the repo and install the program inside ```/usr/local/bin``` by running ```sudo make install```.
 3) Install the program inside ```/usr/bin``` by using a package manager.
 
 ## Running netdump
