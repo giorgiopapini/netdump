@@ -71,7 +71,7 @@ The following table lists the allowed arguments for this command.
 | `-delete` | str | Delete a custom dissector (delete file) |
 
 ### ```save```
-This command is used to save scanned packets in a .pcap file.
+This command is used to save scanned packets to a .pcap file.
 The following table lists the allowed arguments for this command.
 
 | Arg | Value | Description |
@@ -94,9 +94,9 @@ This command is used to exit program.
 
 ## Adding custom dissectors
 To create a custom dissector, refer to the ```netdump-devel``` repo (https://github.com/giorgiopapini/netdump-devel).
-The ```netdump-devel``` package allows you to compile your custom dissector as a shared library. Once compiled as a .so file, you can add it to Netdump using the following command:
+The ```netdump-devel``` package allows you to compile your custom dissector as a shared library. Once compiled as a .so file, you can add it to netdump using the following command:
 ```netdump dissectors -add "path-to-dissector.so"```
-This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the Netdump program.
+This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the netdump program.
 
 ## Screenshots
 ![Screenshot](./assets/screen1.png)
