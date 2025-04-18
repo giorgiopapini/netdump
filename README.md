@@ -98,6 +98,27 @@ The ```netdump-devel``` package allows you to compile your custom dissector as a
 ```netdump dissectors -add "path-to-dissector.so"```
 This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the netdump program.
 
+## Benchmark
+I compared netdump with tcpdump in terms of speed, and these are the results I obtained (I disabled hostname resolution in tcpdump to make it faster).
+
+<p float="left">
+  <img src="./assets/arp_netdump.png" />
+  <img src="./assets/arp_tcpump.png" />
+</p>
+<p float="left">
+  <img src="./assets/dns_netdump.png" />
+  <img src="./assets/dns_tcpump.png" />
+</p>
+<p float="left">
+  <img src="./assets/tcp_netdump.png" />
+  <img src="./assets/tcp_tcpump.png" />
+</p>
+
+However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump traverses while dissecting a TCP packet. I placed the TCP, IPv4, and Ethernet protocols at the end of their respective proto_tables to simulate the worst-case scenario.
+The result is still amazing.
+
+<video src="./assets/netdump_exec_time.mp4" controls></video>
+
 ## Screenshots
 ![Screenshot](./assets/screen1.png)
 ![Screenshot](./assets/screen2.png)
