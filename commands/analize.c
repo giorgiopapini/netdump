@@ -3,6 +3,7 @@
 #include <string.h>
 #include <signal.h>
 #include <pcap.h>
+#include <time.h>
 
 #include "analize.h"
 #include "../utils/packet.h"
@@ -10,6 +11,7 @@
 #include "../status_handler.h"
 
 #include "../protocol_handler.h"
+
 
 #define LOOP_TO_INFINITY -1
 
@@ -63,6 +65,7 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 }
 
 void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors) {
+	
 	/* ==============================  Getting args values from cmd  ================================ */
 	int pkt_num = -1;
     int tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
@@ -81,6 +84,10 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	struct bpf_program fp;
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
+
+	struct timespec start, end;
+	double elapsed;
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
 	if (NULL != read_file) {
         handle = pcap_open_offline(read_file, errbuff);
@@ -129,7 +136,12 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	if (-1 == pcap_compile(handle, &fp, filter_exp, 0, net)) raise_error(INVALID_FILTER, 0, NULL, filter_exp);
 	else if (-1 == pcap_setfilter(handle, &fp)) raise_error(NOT_INTALLABLE_FILTER, 0, NULL, filter_exp);
 	else if (-1 == pcap_loop(handle, pkt_num, get_packet, (uint8_t *)&custom_args)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
-	else printf("\ntotal packets: %d\n", packets->len);
+	else {
+		clock_gettime(CLOCK_MONOTONIC, &end);
+		printf("\ntotal packets: %d\n", packets->len);
+		elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+    	printf("elapsed time: %.6f seconds\n", elapsed);
+	}
 
 	if (NULL != custom_args.pcap_dump) pcap_dump_close(custom_args.pcap_dump);
 	pcap_close(handle);
