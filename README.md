@@ -102,16 +102,16 @@ This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``
 I compared netdump with tcpdump in terms of speed, and these are the results I obtained (I disabled hostname resolution in tcpdump to make it faster).
 
 <p float="left">
-  <img src="./assets/arp_netdump.png" width="300"/>
-  <img src="./assets/arp_tcpdump.png" width="300"/>
+  <img src="./assets/arp_netdump.png" width="400"/>
+  <img src="./assets/arp_tcpdump.png" width="400"/>
 </p>
 <p float="left">
-  <img src="./assets/dns_netdump.png" width="300"/>
-  <img src="./assets/dns_tcpdump.png" width="300"/>
+  <img src="./assets/dns_netdump.png" width="400"/>
+  <img src="./assets/dns_tcpdump.png" width="400"/>
 </p>
 <p float="left">
-  <img src="./assets/tcp_netdump.png" width="300"/>
-  <img src="./assets/tcp_tcpdump.png" width="300"/>
+  <img src="./assets/tcp_netdump.png" width="400"/>
+  <img src="./assets/tcp_tcpdump.png" width="400"/>
 </p>
 
 However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump traverses while dissecting a TCP packet. I placed the TCP, IPv4, and Ethernet protocols at the end of their respective proto_tables to simulate the worst-case scenario.
