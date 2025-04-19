@@ -1,9 +1,9 @@
 ## What is netdump?
 Based on libpcap and completely built in C, netdump is a free and open-source network protocol analizer.
-Netdump is designed to cater to users with varying levels of expertise and backgrounds. It achieves this by providing an easy-to-use CLI tool, along with a straightforward netdump-devel package. This setup is ideal for users who need to analyze industry-specific protocols, those interested in building their own dissector implementations, and also for people who simply want to scan a network or a .pcap file.
+netdump is designed to cater to users with varying levels of expertise and backgrounds. It achieves this by providing an easy-to-use CLI tool, along with a straightforward netdump-devel package. This setup is ideal for users who need to analyze industry-specific protocols, those interested in building their own dissector implementations, and also for people who simply want to scan a network or a .pcap file.
 
 ## Installation
-Netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
+netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
 You can install netdump in several ways depending on your goal:
 
 1) Clone the repo and compile the program using ```make```.
@@ -16,6 +16,12 @@ There are several methods to execute netdump based upon the installation process
 1) Execute ```make run``` or ```sudo ./netdump``` if you just compiled the program using ```make```.
 2) Execute ```sudo /usr/local/bin/netdump``` if you installed the program using ```sudo make install```.
 3) Execute ```sudo netdump``` if you installed it using a package manager.
+
+## Remove netdump
+You can remove netdump from your system in several ways:
+
+1) Execute ```sudo make remove``` if you previously installed netdump using ```sudo make install```
+2) Uninstall netdump using the package manager you used to install it.
 
 ## Netdump commands
 The general command format is this ```netdump <command> -<arg_1> <value_1> ... -<arg_n> <value_n>```.
