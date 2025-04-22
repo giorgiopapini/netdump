@@ -106,6 +106,7 @@ This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``
 
 ## Benchmark
 I compared netdump with tcpdump in terms of speed, and these are the results I obtained (I disabled hostname resolution in tcpdump to make it faster).
+The following are some of the comparisons I made. For others, check the assets folder.
 
 <p float="left">
   <img src="./assets/arp_netdump.png" width="400"/>
