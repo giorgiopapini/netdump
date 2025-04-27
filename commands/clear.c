@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "clear.h"
-#include "./status_handler.h"
+#include "../status_handler.h"
 
 void execute_clear(command *cmd) {
     #if defined(_WIN32) || defined(_WIN64)
