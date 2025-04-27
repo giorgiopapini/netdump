@@ -1,6 +1,7 @@
 ## What is netdump?
 Based on libpcap and completely built in C, netdump is a free and open-source network protocol analizer.
 netdump is designed to cater to users with varying levels of expertise and backgrounds. It achieves this by providing an easy-to-use CLI tool, along with a straightforward netdump-devel package. This setup is ideal for users who need to analyze industry-specific protocols, those interested in building their own dissector implementations, and also for people who simply want to scan a network or a .pcap file.
+Disclaimer: netdump is entirely independent and unrelated to any other programs named "netdump" or similar.
 
 ## Installation
 netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
