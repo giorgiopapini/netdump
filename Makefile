@@ -17,17 +17,17 @@ TARGET := netdump
 
 # OS-specific variables
 ifeq ($(UNAME_S),Linux)
-    LIB_PATH := /usr/local/lib64
-    RPATH := -Wl,-rpath,\$$ORIGIN:/usr/local/lib64
-    INSTALL_LIB_PATH := /usr/local/lib64
-    INSTALL_BIN_PATH := /usr/local/bin
+	LIB_PATH := /usr/local/lib64
+	RPATH := -Wl,-rpath,\$$ORIGIN:/usr/local/lib64
+	INSTALL_LIB_PATH := /usr/local/lib64
+	INSTALL_BIN_PATH := /usr/local/bin
 endif
 
 ifeq ($(UNAME_S),FreeBSD)
-    LIB_PATH := /usr/local/lib
-    RPATH := -Wl,-rpath,\$$ORIGIN:/usr/local/lib
-    INSTALL_LIB_PATH := /usr/local/lib
-    INSTALL_BIN_PATH := /usr/local/bin
+	LIB_PATH := /usr/local/lib
+	RPATH := -Wl,-rpath,\$$ORIGIN:/usr/local/lib
+	INSTALL_LIB_PATH := /usr/local/lib
+	INSTALL_BIN_PATH := /usr/local/bin
 endif
 
 # Default target: build everything
