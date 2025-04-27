@@ -7,7 +7,7 @@ CFLAGS := -fPIC -g -w
 LDFLAGS := -lpcap -lm
 
 # Library source files
-LIB_SRC := utils/protocol.c utils/visualizer.c protocols/proto_tables_nums.c
+LIB_SRC := utils/protocol.c utils/visualizer.c
 LIB_OBJ := $(LIB_SRC:.c=.o)
 LIB_TARGET := libnetdump.so
 
