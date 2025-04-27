@@ -20,8 +20,6 @@ typedef enum protocol_layer {
 	PROTOCOL_LAYER_APPLICATION
 } protocol_layer;
 
-typedef struct protocol_handler protocol_handler;
-
 typedef struct protocol_info {
     int protocol;
     size_t offset;
