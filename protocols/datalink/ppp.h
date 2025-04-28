@@ -9,10 +9,10 @@
 #define CONTROL_LABEL           "Control"
 #define PROTOCOL_LABEL          "Protocol"
 
-#define ADDRESS(pkt)            (*((uint8_t *)pkt))
-#define CONTROL(pkt)            (*((uint8_t *)(pkt + 1)))
-#define PROTOCOL(pkt)           (*((uint16_t *)(pkt + 2)))
-#define ENCAP_DATA(pkt)         (ptr + 4)
+#define ADDRESS(pkt)            (pkt[0])
+#define CONTROL(pkt)            (pkt[1])
+#define PROTOCOL(pkt)           ((pkt[2] << 8) | pkt[3])
+#define ENCAP_DATA(pkt)         ((uint8_t *)(pkt + 4))
 
 #define PPP_LEN                 4
 

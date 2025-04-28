@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "ether.h"
@@ -17,7 +16,7 @@ void print_ether_hdr(const uint8_t *pkt, uint32_t len) {
     /* =================================================================================== */
 
 	/* =============================== printing ethertype ================================ */
-	printf(", ethertype: 0x%04x", ntohs(ETHERTYPE(pkt))); 
+	printf(", ethertype: 0x%04x", ETHERTYPE(pkt)); 
     /* =================================================================================== */
 }
 
@@ -28,7 +27,7 @@ void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
 
     snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(DEST_ADDR(pkt)));
     snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(SRC_ADDR(pkt)));
-    snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(ETHERTYPE(pkt)));
+    snprintf(ethertype, sizeof(ethertype), "0x%04x", ETHERTYPE(pkt));
 
     start_printing();
     print_field(DEST_ADDR_LABEL, dest_addr, 0);
@@ -39,5 +38,5 @@ void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ether_hdr, visualize_ether_hdr);
-    return (protocol_info){ .protocol = ntohs(ETHERTYPE(pkt)), .offset = ETHER_LEN, .proto_table_num = ETHERTYPES };
+    return (protocol_info){ .protocol = ETHERTYPE(pkt), .offset = ETHER_LEN, .proto_table_num = ETHERTYPES };
 }

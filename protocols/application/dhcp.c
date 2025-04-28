@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "dhcp.h"
 #include "../../utils/visualizer.h"
@@ -32,27 +31,27 @@ void print_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
         DHCP_HTYPE(pkt),
         DHCP_HLEN(pkt),
         DHCP_HOPS(pkt),
-        ntohl(DHCP_XID(pkt)),
-        ntohs(DHCP_SECS(pkt))
+        DHCP_XID(pkt),
+        DHCP_SECS(pkt)
     );
     
-    if (ntohs(DHCP_FLAGS(pkt)) & DHCP_BROADCAST_MASK) printf(", broadcast");
+    if (DHCP_FLAGS(pkt) & DHCP_BROADCAST_MASK) printf(", broadcast");
     else printf(", unicast");
 
     printf(", client_ip: ");
-    print_ipv4(ntohl(DHCP_CIADDR(pkt)));
+    print_ipv4(DHCP_CIADDR(pkt));
     printf(", your_(client)_ip: ");
-    print_ipv4(ntohl(DHCP_YIADDR(pkt)));
+    print_ipv4(DHCP_YIADDR(pkt));
     printf(", next_server_ip: ");
-    print_ipv4(ntohl(DHCP_SIADDR(pkt)));
+    print_ipv4(DHCP_SIADDR(pkt));
     printf(", relay_agent_ip: ");
-    print_ipv4(ntohl(DHCP_GIADDR(pkt)));
+    print_ipv4(DHCP_GIADDR(pkt));
     printf(", client_mac: ");
     print_mac(DHCP_CHADDR(pkt));
 
     printf(", server_hostname: %s", DHCP_SNAME(pkt)[0] ? (uint8_t *)DHCP_SNAME(pkt) : (uint8_t *)"(none)");
     printf(", boot_file: %s", DHCP_BOOTFILE(pkt)[0] ? (uint8_t *)DHCP_BOOTFILE(pkt) : (uint8_t *)"(none)");
-    printf(", magic_cookie: 0x%08x", ntohl(DHCP_MAGIC_COOKIE(pkt)));
+    printf(", magic_cookie: 0x%08x", DHCP_MAGIC_COOKIE(pkt));
     print_options(pkt, len);
 }
 
@@ -76,16 +75,16 @@ void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(htype, sizeof(htype), "0x%02x", DHCP_HTYPE(pkt));
     snprintf(hlen, sizeof(hlen), "%u", DHCP_HLEN(pkt));
     snprintf(hops, sizeof(hops), "%u", DHCP_HOPS(pkt));
-    snprintf(xid, sizeof(xid), "0x%08x", ntohl(DHCP_XID(pkt)));
-    snprintf(secs, sizeof(secs), "%u", ntohs(DHCP_SECS(pkt)));
-    snprintf(ciaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DHCP_CIADDR(pkt))));
-    snprintf(yiaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DHCP_YIADDR(pkt))));
-    snprintf(siaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DHCP_SIADDR(pkt))));
-    snprintf(giaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(DHCP_GIADDR(pkt))));
+    snprintf(xid, sizeof(xid), "0x%08x", DHCP_XID(pkt));
+    snprintf(secs, sizeof(secs), "%u", DHCP_SECS(pkt));
+    snprintf(ciaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(DHCP_CIADDR(pkt)));
+    snprintf(yiaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(DHCP_YIADDR(pkt)));
+    snprintf(siaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(DHCP_SIADDR(pkt)));
+    snprintf(giaddr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(DHCP_GIADDR(pkt)));
     snprintf(chaddr, sizeof(chaddr), MAC_ADDR_FORMAT, MAC_TO_STR(DHCP_CHADDR(pkt)));
     snprintf(sname, sizeof(sname), "%s", DHCP_SNAME(pkt)[0] ? (uint8_t *)DHCP_SNAME(pkt) : (uint8_t *)"(none)");
     snprintf(boot_file, sizeof(boot_file), "%s", DHCP_BOOTFILE(pkt)[0] ? (uint8_t *)DHCP_BOOTFILE(pkt) : (uint8_t *)"(none)");
-    snprintf(magic_cookie, sizeof(magic_cookie), "0x%08x", ntohl(DHCP_MAGIC_COOKIE(pkt)));
+    snprintf(magic_cookie, sizeof(magic_cookie), "0x%08x", DHCP_MAGIC_COOKIE(pkt));
 
     start_printing();
     print_additional_info("Options fields not represented in ascii art");
@@ -96,7 +95,7 @@ void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     print_field(DHCP_XID_LABEL, xid, 0);
     print_field(DHCP_SECS_LABEL, secs, 0);
 
-    if (ntohs(DHCP_FLAGS(pkt)) & DHCP_BROADCAST_MASK) print_field(DHCP_BOOTP_FLAGS_LABEL, "broadcast", 0);
+    if (DHCP_FLAGS(pkt) & DHCP_BROADCAST_MASK) print_field(DHCP_BOOTP_FLAGS_LABEL, "broadcast", 0);
     else print_field(DHCP_BOOTP_FLAGS_LABEL, "unicast", 0);
 
     print_field(DHCP_CIADDR_LABEL, ciaddr, 0);

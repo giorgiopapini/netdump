@@ -13,12 +13,11 @@
 #define FRELAY_NLPID_LABEL      "NLPID"
 #define FRELAY_ETHERTYPE_LABEL  "EtherType"
 
-
-#define FRELAY_DE(pkt)          ((*((uint8_t *)(pkt + 1)) & 0x08) >> 3)  /* discard eligibility */
-#define FRELAY_CR(pkt)          ((*((uint8_t *)(pkt + 1)) & 0x20) >> 5)  /* command/response bit */
-#define FRELAY_FECN(pkt)        ((*((uint8_t *)(pkt)) & 0x02) >> 1)
-#define FRELAY_BECN(pkt)        (*((uint8_t *)(pkt)) & 0x01)
-#define FRELAY_PROTO(pkt, len)  (*((uint16_t *)(pkt + len)))
+#define FRELAY_DE(pkt)          ((pkt[1] & 0x08) >> 3)  /* discard eligibility */
+#define FRELAY_CR(pkt)          ((pkt[1] & 0x20) >> 5)  /* command/response bit */
+#define FRELAY_FECN(pkt)        ((pkt[0] & 0x02) >> 1)
+#define FRELAY_BECN(pkt)        (pkt[0] & 0x01)
+#define FRELAY_PROTO(pkt, len)  (((pkt[len] << 8) | pkt[len + 1]))
 
 #define NLPID_THRESHOLD         0xfe
 

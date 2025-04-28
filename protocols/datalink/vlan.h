@@ -17,11 +17,11 @@
     technically redundant.
 */
 
-#define VLAN_TCI(pkt)               (*((uint16_t *)(pkt)))
+#define VLAN_TCI(pkt)               ((pkt[0] << 8) | pkt[1])
 #define VLAN_PCP                    0xe000
 #define VLAN_DEI                    0x1000
 #define VLAN_VID                    0x0fff
-#define VLAN_ETHERTYPE(pkt)         (*((uint16_t *)(pkt + 2)))
+#define VLAN_ETHERTYPE(pkt)         ((pkt[2] << 8) | pkt[3])
 
 #define VLAN_LEN                    4  /* should be 6, but the 2 bytes TPID field is not considered, so 6 - 2 = 4 bytes */
 

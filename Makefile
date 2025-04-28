@@ -3,7 +3,7 @@ OBJ := $(SRC:.c=.o)
 
 # Compiler and flags
 CC := gcc
-CFLAGS := -fPIC -g -w
+CFLAGS := -fPIC -g
 LDFLAGS := -lpcap -lm
 
 # Library source files

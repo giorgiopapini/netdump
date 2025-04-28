@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "ipv6.h"
 #include "../ip_protos.h"
@@ -9,7 +8,7 @@
 
 
 void print_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
-    uint32_t vtc_flow = ntohl(IPV6_VTC_FLOW(pkt)); 
+    uint32_t vtc_flow = IPV6_VTC_FLOW(pkt); 
 
     print_ipv6(IPV6_SRC_ADDR(pkt), NULL);
     printf(" > ");
@@ -20,7 +19,7 @@ void print_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
         (vtc_flow >> 28) & IPV6_VERSION,
         (vtc_flow >> 20) & IPV6_TRAFFIC_CLASS,
         vtc_flow & IPV6_FLOW,
-        ntohs(IPV6_PAYLOAD_LENGTH(pkt)),
+        IPV6_PAYLOAD_LENGTH(pkt),
         IPV6_NEXT_HEADER(pkt),
         IPV6_HOP_LIMIT(pkt)
     );
@@ -35,12 +34,12 @@ void visualize_ipv6_hdr(const uint8_t *pkt, uint32_t len) {
     char hop_limit[4];
     char src_addr[IPV6_ADDR_STR_LEN];
     char dest_addr[IPV6_ADDR_STR_LEN];
-    uint32_t vtc_flow = ntohl(IPV6_VTC_FLOW(pkt)); 
+    uint32_t vtc_flow = IPV6_VTC_FLOW(pkt); 
 
     snprintf(version, sizeof(version), "%u", (vtc_flow >> 28) & IPV6_VERSION);
     snprintf(traffic_class, sizeof(traffic_class), "%u", (vtc_flow >> 20) & IPV6_TRAFFIC_CLASS);
     snprintf(flow_label, sizeof(flow_label), "%u", vtc_flow & IPV6_FLOW);
-    snprintf(payload_len, sizeof(payload_len), "%u", ntohs(IPV6_PAYLOAD_LENGTH(pkt)));
+    snprintf(payload_len, sizeof(payload_len), "%u", IPV6_PAYLOAD_LENGTH(pkt));
     snprintf(next_header, sizeof(next_header), "%u", IPV6_NEXT_HEADER(pkt));
     snprintf(hop_limit, sizeof(hop_limit), "%u", IPV6_HOP_LIMIT(pkt));
     print_ipv6(IPV6_SRC_ADDR(pkt), src_addr);

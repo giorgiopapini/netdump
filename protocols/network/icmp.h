@@ -14,11 +14,11 @@
 #define ICMP_ID_LABEL           "ID"
 #define ICMP_SEQUENCE_LABEL     "Sequence"
 
-#define ICMP_TYPE(pkt)          (*((uint8_t *)pkt))
-#define ICMP_CODE(pkt)          (*((uint8_t *)(pkt + 1)))
-#define ICMP_CHECKSUM(pkt)      (*((uint16_t *)(pkt + 2)))
-#define ICMP_ID(pkt)            (*((uint16_t *)(pkt + 4)))
-#define ICMP_SEQUENCE(pkt)      (*((uint16_t *)(pkt + 6)))
+#define ICMP_TYPE(pkt)          (pkt[0])
+#define ICMP_CODE(pkt)          (pkt[1])
+#define ICMP_CHECKSUM(pkt)      ((pkt[2] << 8) | pkt[3])
+#define ICMP_ID(pkt)            ((pkt[4] << 8) | pkt[5])
+#define ICMP_SEQUENCE(pkt)      ((pkt[6] << 8) | pkt[7])
 
 #define ICMP_LEN                8
 

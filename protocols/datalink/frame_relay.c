@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "frame_relay.h"
 #include "../../utils/visualizer.h"
@@ -34,7 +33,7 @@ uint16_t extract_dlci(const uint8_t *pkt, int hdr_len) {
 void print_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
-    uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
+    uint16_t protocol = FRELAY_PROTO(pkt, offset);
 
     printf(
         "dlci: %u, fecn: %u, becn: %u, de: %u",
@@ -57,7 +56,7 @@ void visualize_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     char protocol_nlpid[5];  /* 0x00'\0' 4 chars */
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
-    uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
+    uint16_t protocol = FRELAY_PROTO(pkt, offset);
 
     snprintf(dlci, sizeof(dlci), "%u", extract_dlci(pkt, hdr_len));
     snprintf(fecn, sizeof(fecn), "%u", FRELAY_FECN(pkt) ? 1 : 0);
@@ -82,7 +81,7 @@ protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, output_format
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
     int table_num;
-    uint16_t protocol = ntohs(FRELAY_PROTO(pkt, offset));
+    uint16_t protocol = FRELAY_PROTO(pkt, offset);
     
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_frelay_hdr, visualize_frelay_hdr);
 

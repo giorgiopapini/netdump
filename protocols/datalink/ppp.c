@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "ppp.h"
 #include "../../utils/visualizer.h"
@@ -11,7 +10,7 @@ void print_ppp_hdr(const uint8_t *pkt, uint32_t len) {
         "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x",
         ADDRESS(pkt),
         CONTROL(pkt),
-        ntohs(PROTOCOL(pkt))
+        PROTOCOL(pkt)
     );
 }
 
@@ -22,7 +21,7 @@ void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
 
     snprintf(address, sizeof(address), "0x%02x", ADDRESS(pkt));
     snprintf(control, sizeof(control), "0x%02x", CONTROL(pkt));
-    snprintf(protocol, sizeof(protocol), "0x%04x", ntohs(PROTOCOL(pkt)));
+    snprintf(protocol, sizeof(protocol), "0x%04x", PROTOCOL(pkt));
 
     start_printing();
     print_field(ADDRESS_LABEL, address, 0);
@@ -33,5 +32,5 @@ void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ppp_hdr, visualize_ppp_hdr);
-    return (protocol_info){ .protocol = ntohs(PROTOCOL(pkt)), .offset = PPP_LEN, .proto_table_num = PPP_PROTOS };
+    return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = PPP_LEN, .proto_table_num = PPP_PROTOS };
 }

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "icmp.h"
 #include "../../utils/visualizer.h"
@@ -12,7 +11,7 @@ void print_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     if (ICMP_REQUEST == type) printf("request");
     else if (ICMP_REPLY == type) printf("reply");
 
-    printf(", id %u, seq %u", ntohs(ICMP_ID(pkt)), ntohs(ICMP_SEQUENCE(pkt)));
+    printf(", id %u, seq %u", ICMP_ID(pkt), ICMP_SEQUENCE(pkt));
 }
 
 void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
@@ -24,9 +23,9 @@ void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
 
     snprintf(type, sizeof(type), "%u", ICMP_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMP_CODE(pkt));
-    snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(ICMP_CHECKSUM(pkt)));
-    snprintf(id, sizeof(id), "0x%04x", ntohs(ICMP_ID(pkt)));
-    snprintf(seq, sizeof(seq), "%u", ntohs(ICMP_SEQUENCE(pkt)));
+    snprintf(checksum, sizeof(checksum), "0x%04x", ICMP_CHECKSUM(pkt));
+    snprintf(id, sizeof(id), "0x%04x", ICMP_ID(pkt));
+    snprintf(seq, sizeof(seq), "%u", ICMP_SEQUENCE(pkt));
 
     start_printing();
     print_field(ICMP_TYPE_LABEL, type, 0);

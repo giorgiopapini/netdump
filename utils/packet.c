@@ -4,7 +4,7 @@
 #include "packet.h"
 #include "../status_handler.h"
 
-packet *create_packet(struct pcap_pkthdr *hdr, int datalink_type, int num, uint8_t *bytes) {
+packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, int num, const uint8_t *bytes) {
     packet *new_pkt;
     struct pcap_pkthdr *new_hdr;
     void *new_bytes;

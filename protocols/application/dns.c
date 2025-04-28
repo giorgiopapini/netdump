@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "dns.h"
@@ -39,9 +38,9 @@ void extract_srv_record(const uint8_t *payload, int offset, int data_len) {
     target_offset = offset + 6;
     extract_domain_name(payload, target_offset, target);
 
-    printf(", priority: %u", ntohs(*(unsigned short *)(payload + offset)));
-    printf(", weight: %u", ntohs(*(unsigned short *)(payload + offset + 2)));
-    printf(", port: %u", ntohs(*(unsigned short *)(payload + offset + 4)));
+    printf(", priority: %u", *(unsigned short *)(payload + offset));
+    printf(", weight: %u", *(unsigned short *)(payload + offset + 2));
+    printf(", port: %u", *(unsigned short *)(payload + offset + 4));
     printf(", target: %s", target);
 }
 
@@ -53,23 +52,23 @@ void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
     int offset;
     int i;
 
-    printf("transaction_id: 0x%04x", ntohs(DNS_TRANSACTION_ID(pkt)));
+    printf("transaction_id: 0x%04x", DNS_TRANSACTION_ID(pkt));
 
     printf(", flags: [");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_QR) strcat(flags, "RES, ");
+    if (DNS_FLAGS(pkt) & DNS_QR) strcat(flags, "RES, ");
     else strcat(flags, "QUERY, ");
     
-    snprintf(opcode_str, sizeof(opcode_str), "OPCODE: %u, ", (ntohs(DNS_FLAGS(pkt)) & DNS_OPCODE) >> 11);
+    snprintf(opcode_str, sizeof(opcode_str), "OPCODE: %u, ", (DNS_FLAGS(pkt) & DNS_OPCODE) >> 11);
     strcat(flags, opcode_str);
 
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_AA) strcat(flags, "AA, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_TC) strcat(flags, "TC, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_RD) strcat(flags, "RD, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_RA) strcat(flags, "RA, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_AD) strcat(flags, "AD, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_CD) strcat(flags, "CD, ");
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_QR) {
-        snprintf(rcode_str, sizeof(rcode_str), "RCODE: %u, ", ntohs(DNS_FLAGS(pkt)) & DNS_RCODE);
+    if (DNS_FLAGS(pkt) & DNS_AA) strcat(flags, "AA, ");
+    if (DNS_FLAGS(pkt) & DNS_TC) strcat(flags, "TC, ");
+    if (DNS_FLAGS(pkt) & DNS_RD) strcat(flags, "RD, ");
+    if (DNS_FLAGS(pkt) & DNS_RA) strcat(flags, "RA, ");
+    if (DNS_FLAGS(pkt) & DNS_AD) strcat(flags, "AD, ");
+    if (DNS_FLAGS(pkt) & DNS_CD) strcat(flags, "CD, ");
+    if (DNS_FLAGS(pkt) & DNS_QR) {
+        snprintf(rcode_str, sizeof(rcode_str), "RCODE: %u, ", DNS_FLAGS(pkt) & DNS_RCODE);
         strcat(flags, rcode_str);  /* RCODE is there only if it's a reply, not a query */
     }
 
@@ -78,37 +77,37 @@ void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
 
     printf(
         ", questions: %u, answer_rrs: %u, auth_rrs: %u, additional_rrs: %u",
-        ntohs(DNS_QUESTIONS(pkt)),
-        ntohs(DNS_ANSWER_RRS(pkt)),
-        ntohs(DNS_AUTH_RRS(pkt)),
-        ntohs(DNS_ADDITIONAL_RRS(pkt))
+        DNS_QUESTIONS(pkt),
+        DNS_ANSWER_RRS(pkt),
+        DNS_AUTH_RRS(pkt),
+        DNS_ADDITIONAL_RRS(pkt)
     );
 
     /* print queries */
     offset = DNS_HDR_LEN;
-    for (i = 0; i < ntohs(DNS_QUESTIONS(pkt)); i ++) {
+    for (i = 0; i < DNS_QUESTIONS(pkt); i ++) {
         offset += extract_domain_name(pkt, offset, domain);
         printf(
             ", query %d: {name: %s, type: %u, class: %u}",
             i + 1,
             domain,
-            ntohs(*(uint16_t *)(pkt + offset)),
-            ntohs(*(uint16_t *)(pkt + offset + 2))
+            *(uint16_t *)(pkt + offset),
+            *(uint16_t *)(pkt + offset + 2)
         );
         offset += 4;
     }
 
     /* print answers */
-    for (i = 0; i < ntohs(DNS_ANSWER_RRS(pkt)); i++) {
+    for (i = 0; i < DNS_ANSWER_RRS(pkt); i++) {
         uint16_t type, class, data_len;
         uint32_t ttl;
         
         offset += extract_domain_name(pkt, offset, domain);
 
-        type = ntohs(*(uint16_t *)(pkt + offset));
-        class = ntohs(*(uint16_t *)(pkt + offset + 2));
-        ttl = ntohl(*(uint32_t *)(pkt + offset + 4));
-        data_len = ntohs(*(uint16_t *)(pkt + offset + 8));
+        type = *(uint16_t *)(pkt + offset);
+        class = *(uint16_t *)(pkt + offset + 2);
+        ttl = *(uint32_t *)(pkt + offset + 4);
+        data_len = *(uint16_t *)(pkt + offset + 8);
 
         printf(
             ", answer %d: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
@@ -128,17 +127,17 @@ void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
     }
 
     /* print additional records */
-    for (i = 0; i < ntohs(DNS_ADDITIONAL_RRS(pkt)); i ++) {
-        uint8_t rdlength = ntohs(*(uint8_t *)(pkt + offset + 8));
+    for (i = 0; i < DNS_ADDITIONAL_RRS(pkt); i ++) {
+        uint8_t rdlength = *(uint8_t *)(pkt + offset + 8);
 
         printf(
             ", additional_record %d: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
             i + 1,
-            ntohs(*(uint16_t *)(pkt + offset + 1)),
-            ntohs(*(uint16_t *)(pkt + offset + 3)),
+            *(uint16_t *)(pkt + offset + 1),
+            *(uint16_t *)(pkt + offset + 3),
             *(pkt + offset + 5),
             *(pkt + offset + 6),
-            ntohs(*(uint16_t *)(pkt + offset + 7)),
+            *(uint16_t *)(pkt + offset + 7),
             rdlength
         );
         offset += 10;
@@ -170,20 +169,20 @@ void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     char auth_rrs[6];
     char additional_rrs[6];
 
-    snprintf(transaction_id, sizeof(transaction_id), "0x%04x", ntohs(DNS_TRANSACTION_ID(pkt)));
-    snprintf(qr, sizeof(qr), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_QR) ? 1 : 0);
-    snprintf(opcode, sizeof(opcode), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_OPCODE) >> 11);
-    snprintf(aa, sizeof(aa), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_AA) ? 1 : 0);
-    snprintf(tc, sizeof(tc), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_TC) ? 1 : 0);
-    snprintf(rd, sizeof(rd), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_RD) ? 1 : 0);
-    snprintf(ra, sizeof(ra), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_RA) ? 1 : 0);
-    snprintf(ad, sizeof(ad), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_AD) ? 1 : 0);
-    snprintf(cd, sizeof(cd), "%u", (ntohs(DNS_FLAGS(pkt)) & DNS_CD) ? 1 : 0);
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_QR) snprintf(rcode, sizeof(rcode), "%u", ntohs(DNS_FLAGS(pkt)) & DNS_RCODE);
-    snprintf(questions, sizeof(questions), "%u", ntohs(DNS_QUESTIONS(pkt)));
-    snprintf(answer_rrs, sizeof(answer_rrs), "%u", ntohs(DNS_ANSWER_RRS(pkt)));
-    snprintf(auth_rrs, sizeof(auth_rrs), "%u", ntohs(DNS_AUTH_RRS(pkt)));
-    snprintf(additional_rrs, sizeof(additional_rrs), "%u", ntohs(DNS_ADDITIONAL_RRS(pkt)));
+    snprintf(transaction_id, sizeof(transaction_id), "0x%04x", DNS_TRANSACTION_ID(pkt));
+    snprintf(qr, sizeof(qr), "%u", (DNS_FLAGS(pkt)) & DNS_QR ? 1 : 0);
+    snprintf(opcode, sizeof(opcode), "%u", (DNS_FLAGS(pkt)) & DNS_OPCODE >> 11);
+    snprintf(aa, sizeof(aa), "%u", (DNS_FLAGS(pkt)) & DNS_AA ? 1 : 0);
+    snprintf(tc, sizeof(tc), "%u", (DNS_FLAGS(pkt)) & DNS_TC ? 1 : 0);
+    snprintf(rd, sizeof(rd), "%u", (DNS_FLAGS(pkt)) & DNS_RD ? 1 : 0);
+    snprintf(ra, sizeof(ra), "%u", (DNS_FLAGS(pkt)) & DNS_RA ? 1 : 0);
+    snprintf(ad, sizeof(ad), "%u", (DNS_FLAGS(pkt)) & DNS_AD ? 1 : 0);
+    snprintf(cd, sizeof(cd), "%u", (DNS_FLAGS(pkt)) & DNS_CD ? 1 : 0);
+    if (DNS_FLAGS(pkt) & DNS_QR) snprintf(rcode, sizeof(rcode), "%u", DNS_FLAGS(pkt) & DNS_RCODE);
+    snprintf(questions, sizeof(questions), "%u", DNS_QUESTIONS(pkt));
+    snprintf(answer_rrs, sizeof(answer_rrs), "%u", DNS_ANSWER_RRS(pkt));
+    snprintf(auth_rrs, sizeof(auth_rrs), "%u", DNS_AUTH_RRS(pkt));
+    snprintf(additional_rrs, sizeof(additional_rrs), "%u", DNS_ADDITIONAL_RRS(pkt));
 
     start_printing();
     print_additional_info("Queries, Answers and Additional Records not represented in ascii art");
@@ -196,7 +195,7 @@ void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     print_field(DNS_RA_LABEL, ra, 0);
     print_field(DNS_AD_LABEL, ad, 0);
     print_field(DNS_CD_LABEL, cd, 0);
-    if (ntohs(DNS_FLAGS(pkt)) & DNS_QR) print_field(DNS_RCODE_LABEL, rcode, 0);
+    if (DNS_FLAGS(pkt) & DNS_QR) print_field(DNS_RCODE_LABEL, rcode, 0);
     print_field(DNS_QUESTIONS_LABEL, questions, 0);
     print_field(DNS_ANSWER_RRS_LABEL, answer_rrs, 0);
     print_field(DNS_AUTH_RRS_LABEL, auth_rrs, 0);

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "ip.h"
@@ -15,32 +14,33 @@ void print_ip_options(const uint8_t *pkt) {
 }
 */
 
+
 void print_ip_hdr(const uint8_t *pkt, uint32_t len) {
     char flags[9] = "";  /* max: "DF, MF, \0" */
 
     /* ===================== printing src (IP) > dest (IP) ====================== */
-    print_ipv4(ntohl(IP_SRC_ADDR(pkt)));
+    print_ipv4(NP_IP_SRC_ADDR(pkt));
     printf(" > ");
-    print_ipv4(ntohl(IP_DEST_ADDR(pkt)));
+    print_ipv4(NP_IP_DEST_ADDR(pkt));
     /* ========================================================================== */
 
     printf(
         " tos: 0x%01x, ttl: %d, id: %d, offset: %d,", 
-        IP_TOS(pkt), 
-        IP_TTL(pkt), 
-        ntohs(IP_ID(pkt)),
-        ntohs(IP_OFFSET(pkt)) & IP_OFFSET_MASK
+        NP_IP_TOS(pkt), 
+        NP_IP_TTL(pkt), 
+        NP_IP_ID(pkt),
+        NP_IP_OFFSET(pkt) & NP_IP_OFFSET_MASK
     );
 
     /* ============================= printing flags ============================= */
     printf(" flags: [");
-    if (ntohs(IP_OFFSET(pkt)) & IP_DF) strcat(flags, "DF, ");
-    if (ntohs(IP_OFFSET(pkt)) & IP_MF) strcat(flags, "MF, ");
+    if (NP_IP_OFFSET(pkt) & NP_IP_DF) strcat(flags, "DF, ");
+    if (NP_IP_OFFSET(pkt) & NP_IP_MF) strcat(flags, "MF, ");
     flags[strlen(flags) - 2] = '\0';    /* remove last ", " chars */
     printf("%s],", flags);
     /* ========================================================================== */
 
-    printf(" proto: %d", IP_PROTOCOL(pkt));
+    printf(" proto: %d", NP_IP_PROTOCOL(pkt));
     
     /*if (IP_HLEN(pkt) > 5) print_ip_options(pkt);*/
 }
@@ -61,21 +61,21 @@ void visualize_ip_hdr(const uint8_t *pkt, uint32_t len) {
     char src_addr[IP_ADDR_STR_LEN];
     char dest_addr[IP_ADDR_STR_LEN];
 
-    snprintf(version, sizeof(version), "%u", IP_VERSION(pkt));
-    snprintf(ihl, sizeof(ihl), "%u", IP_HLEN(pkt));
-    snprintf(tos, sizeof(tos), "0x%02x", IP_TOS(pkt));
-    snprintf(totlen, sizeof(totlen), "%u", ntohs(IP_TOTLEN(pkt)));
-    snprintf(id, sizeof(id), "%u", ntohs(IP_ID(pkt)));
-    snprintf(rf, sizeof(rf), "%u", (ntohs(IP_OFFSET(pkt)) & IP_RF) ? 1 : 0);
-    snprintf(df, sizeof(df), "%u", (ntohs(IP_OFFSET(pkt)) & IP_DF) ? 1 : 0);
-    snprintf(mf, sizeof(mf), "%u", (ntohs(IP_OFFSET(pkt)) & IP_MF) ? 1 : 0);
-    uint_to_bin_str(offset_frag, (ntohs(IP_OFFSET(pkt)) & IP_OFFSET_MASK), sizeof(offset_frag));
-    snprintf(ttl, sizeof(ttl), "%u", IP_TTL(pkt));
-    snprintf(protocol, sizeof(protocol), "%u", IP_PROTOCOL(pkt));
+    snprintf(version, sizeof(version), "%u", NP_IP_VERSION(pkt));
+    snprintf(ihl, sizeof(ihl), "%u", NP_IP_HLEN(pkt));
+    snprintf(tos, sizeof(tos), "0x%02x", NP_IP_TOS(pkt));
+    snprintf(totlen, sizeof(totlen), "%u", NP_IP_TOTLEN(pkt));
+    snprintf(id, sizeof(id), "%u", NP_IP_ID(pkt));
+    snprintf(rf, sizeof(rf), "%u", (NP_IP_OFFSET(pkt) & NP_IP_RF) ? 1 : 0);
+    snprintf(df, sizeof(df), "%u", (NP_IP_OFFSET(pkt) & NP_IP_DF) ? 1 : 0);
+    snprintf(mf, sizeof(mf), "%u", (NP_IP_OFFSET(pkt) & NP_IP_MF) ? 1 : 0);
+    uint_to_bin_str(offset_frag, (NP_IP_OFFSET(pkt) & NP_IP_OFFSET_MASK), sizeof(offset_frag));
+    snprintf(ttl, sizeof(ttl), "%u", NP_IP_TTL(pkt));
+    snprintf(protocol, sizeof(protocol), "%u", NP_IP_PROTOCOL(pkt));
     
-    snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(IP_CHECKSUM(pkt)));
-    snprintf(src_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(IP_SRC_ADDR(pkt))));
-    snprintf(dest_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(ntohl(IP_DEST_ADDR(pkt))));
+    snprintf(checksum, sizeof(checksum), "0x%04x", NP_IP_CHECKSUM(pkt));
+    snprintf(src_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(NP_IP_SRC_ADDR(pkt)));
+    snprintf(dest_addr, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(NP_IP_DEST_ADDR(pkt)));
 
     start_printing();
     print_additional_info("Options fields not represented in ascii art");
@@ -98,5 +98,5 @@ void visualize_ip_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ip_hdr, visualize_ip_hdr);
-    return (protocol_info){ .protocol = IP_PROTOCOL(pkt), .offset = (IP_HLEN(pkt) * 4), .proto_table_num = IP_PROTOS };
+    return (protocol_info){ .protocol = NP_IP_PROTOCOL(pkt), .offset = (NP_IP_HLEN(pkt) * 4), .proto_table_num = IP_PROTOS };
 }

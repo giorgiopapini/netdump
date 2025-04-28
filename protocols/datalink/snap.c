@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "snap.h"
 #include "../../utils/visualizer.h"
@@ -10,7 +9,7 @@ void print_snap_hdr(const uint8_t *pkt, uint32_t len) {
     printf(
         "oui: %02x:%02x:%02x, ethertype: 0x%04x", 
         SNAP_OUI(pkt, 0), SNAP_OUI(pkt, 1), SNAP_OUI(pkt, 2),
-        ntohs(SNAP_TYPE(pkt))
+        SNAP_TYPE(pkt)
     );
 }
 
@@ -19,7 +18,7 @@ void visualize_snap_hdr(const uint8_t *pkt, uint32_t len) {
     char ethertype[7];
 
     snprintf(oui, sizeof(oui), "%02x:%02x:%02x", SNAP_OUI(pkt, 0), SNAP_OUI(pkt, 1), SNAP_OUI(pkt, 2));
-    snprintf(ethertype, sizeof(ethertype), "0x%04x", ntohs(SNAP_TYPE(pkt)));
+    snprintf(ethertype, sizeof(ethertype), "0x%04x", SNAP_TYPE(pkt));
 
     start_printing();
     print_field(SNAP_OUI_LABEL, oui, 0);
@@ -29,5 +28,5 @@ void visualize_snap_hdr(const uint8_t *pkt, uint32_t len) {
 
 protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_snap_hdr, visualize_snap_hdr);
-    return (protocol_info){ .protocol = ntohs(SNAP_TYPE(pkt)), .offset = SNAP_LEN, .proto_table_num = ETHERTYPES };
+    return (protocol_info){ .protocol = SNAP_TYPE(pkt), .offset = SNAP_LEN, .proto_table_num = ETHERTYPES };
 }

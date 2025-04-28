@@ -96,7 +96,7 @@ void print_tcp_options(const uint8_t *pkt) {
 
 void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
-    printf("src_port: %u, dest_port: %u", ntohs(TCP_SRC_PORT(pkt)), ntohs(TCP_DEST_PORT(pkt)));
+    printf("src_port: %u, dest_port: %u", TCP_SRC_PORT(pkt), TCP_DEST_PORT(pkt));
     
     printf(", flags: [");
     if (TCP_FLAGS(pkt) & TCP_CWR) strcat(flags, "CWR, ");
@@ -110,11 +110,11 @@ void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     flags[strlen(flags) - 2] = '\0';    /* remove last ", " chars */
     printf("%s]", flags);
 
-    printf(", seq: %u", ntohl(TCP_SEQUENCE(pkt)));
-    printf(", ack: %u", ntohl(TCP_ACK_NUM(pkt)));
-    printf(", win: %u", ntohs(TCP_WINDOW_SIZE(pkt)));
-    printf(", cksum: 0x%04x", ntohs(TCP_CHECKSUM(pkt)));
-    if (TCP_FLAGS(pkt) & TCP_URG) printf(", urgent_pointer: 0x%04x", ntohs(TCP_URGENT_POINTER(pkt)));
+    printf(", seq: %u", TCP_SEQUENCE(pkt));
+    printf(", ack: %u", TCP_ACK_NUM(pkt));
+    printf(", win: %u", TCP_WINDOW_SIZE(pkt));
+    printf(", cksum: 0x%04x", TCP_CHECKSUM(pkt));
+    if (TCP_FLAGS(pkt) & TCP_URG) printf(", urgent_pointer: 0x%04x", TCP_URGENT_POINTER(pkt));
     if (0 < tcp_options_len(pkt)) print_tcp_options(pkt);
 }
 
@@ -138,10 +138,10 @@ void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     char urgent_pointer[7];
     /* char options[];  */
 
-    snprintf(src_port, sizeof(src_port), "%u", ntohs(TCP_SRC_PORT(pkt)));
-    snprintf(dest_port, sizeof(dest_port), "%u", ntohs(TCP_DEST_PORT(pkt)));
-    snprintf(seq, sizeof(seq), "%u", ntohl(TCP_SEQUENCE(pkt)));
-    snprintf(ack_num, sizeof(ack_num), "%u", ntohl(TCP_ACK_NUM(pkt)));
+    snprintf(src_port, sizeof(src_port), "%u", TCP_SRC_PORT(pkt));
+    snprintf(dest_port, sizeof(dest_port), "%u", TCP_DEST_PORT(pkt));
+    snprintf(seq, sizeof(seq), "%u", TCP_SEQUENCE(pkt));
+    snprintf(ack_num, sizeof(ack_num), "%u", TCP_ACK_NUM(pkt));
     snprintf(data_offset, sizeof(data_offset), "%u", TCP_DATA_OFFSET(pkt));
     uint_to_bin_str(reserved, TCP_RESERVED(pkt), sizeof(reserved));
     snprintf(cwr, sizeof(cwr), "%d", (TCP_FLAGS(pkt) & TCP_CWR) ? 1 : 0);
@@ -152,9 +152,9 @@ void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     snprintf(rst, sizeof(rst), "%d", (TCP_FLAGS(pkt) & TCP_RST) ? 1 : 0);
     snprintf(syn, sizeof(syn), "%d", (TCP_FLAGS(pkt) & TCP_SYN) ? 1 : 0);
     snprintf(fin, sizeof(fin), "%d", (TCP_FLAGS(pkt) & TCP_FIN) ? 1 : 0);
-    snprintf(window_size, sizeof(window_size), "%u", ntohs(TCP_WINDOW_SIZE(pkt)));
-    snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(TCP_CHECKSUM(pkt)));
-    snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", ntohs(TCP_URGENT_POINTER(pkt)));
+    snprintf(window_size, sizeof(window_size), "%u", TCP_WINDOW_SIZE(pkt));
+    snprintf(checksum, sizeof(checksum), "0x%04x", TCP_CHECKSUM(pkt));
+    snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", TCP_URGENT_POINTER(pkt));
 
     start_printing();
     print_additional_info("Options fields not represented in ascii art");
@@ -188,8 +188,8 @@ protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, output_format fm
     proto_info.proto_table_num = NET_PORTS;
 
     if (((TCP_FLAGS(pkt) & (TCP_ACK | TCP_PSH)) == (TCP_ACK | TCP_PSH)) || ((TCP_FLAGS(pkt) & TCP_ACK) == TCP_ACK)) {
-        if (IS_WELL_DEFINED_PORT(ntohs(TCP_DEST_PORT(pkt)))) proto_info.protocol = ntohs(TCP_DEST_PORT(pkt));
-        else if (IS_WELL_DEFINED_PORT(ntohs(TCP_SRC_PORT(pkt)))) proto_info.protocol = ntohs(TCP_SRC_PORT(pkt));
+        if (IS_WELL_DEFINED_PORT(TCP_DEST_PORT(pkt))) proto_info.protocol = TCP_DEST_PORT(pkt);
+        else if (IS_WELL_DEFINED_PORT(TCP_SRC_PORT(pkt))) proto_info.protocol = TCP_SRC_PORT(pkt);
         else proto_info = NO_ENCAP_PROTO;
     }
     else proto_info = NO_ENCAP_PROTO;

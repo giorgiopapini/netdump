@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <arpa/inet.h>
 
 #include "icmpv6.h"
 #include "../../utils/visualizer.h"
@@ -32,14 +31,14 @@ void print_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
     printf(
         ", code: %u, checksum: 0x%04x",
         ICMPV6_CODE(pkt),
-        ntohs(ICMPV6_CHECKSUM(pkt))
+        ICMPV6_CHECKSUM(pkt)
     );
 
     if (ICMPV6_ECHO_REQUEST_CODE == ICMPV6_TYPE(pkt) || ICMPV6_ECHO_REPLY_CODE == ICMPV6_TYPE(pkt)) {
         printf(
             ", id: 0x%04x, seq: %u", 
-            ntohs(ICMPV6_ID(pkt)), 
-            ntohs(ICMPV6_SEQ(pkt))
+            ICMPV6_ID(pkt), 
+            ICMPV6_SEQ(pkt)
         );
     }
 }
@@ -51,7 +50,7 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
 
     snprintf(type, sizeof(type), "%u", ICMPV6_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMPV6_CODE(pkt));
-    snprintf(checksum, sizeof(checksum), "0x%04x", ntohs(ICMPV6_CHECKSUM(pkt)));
+    snprintf(checksum, sizeof(checksum), "0x%04x", ICMPV6_CHECKSUM(pkt));
 
     start_printing();
     print_field(ICMPV6_TYPE_LABEL, type, 0);
@@ -62,8 +61,8 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
         char id[7];  /* 0x0000'\0' 7 chars */
         char seq[6];  /* 65535'\0' 6 chars */
 
-        snprintf(id, sizeof(id), "0x%04x", ntohs(ICMPV6_ID(pkt)));
-        snprintf(seq, sizeof(seq), "%u", ntohs(ICMPV6_SEQ(pkt)));
+        snprintf(id, sizeof(id), "0x%04x", ICMPV6_ID(pkt));
+        snprintf(seq, sizeof(seq), "%u", ICMPV6_SEQ(pkt));
 
         print_field(ICMPV6_ID_LABEL, id, 0);
         print_field(ICMPV6_SEQ_LABEL, seq, 0);

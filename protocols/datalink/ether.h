@@ -9,9 +9,9 @@
 #define SRC_ADDR_LABEL          "Source MAC Address"
 #define ETHERTYPE_LABEL         "EtherType"
 
-#define DEST_ADDR(pkt)          (pkt)
-#define SRC_ADDR(pkt)           (pkt + 6)
-#define ETHERTYPE(pkt)          (*((uint16_t *)(pkt + 12)))
+#define DEST_ADDR(pkt)          ((uint8_t *)pkt)
+#define SRC_ADDR(pkt)           ((uint8_t *)(pkt + 6))
+#define ETHERTYPE(pkt)          ((pkt[12] << 8) | pkt[13])
 
 #define ETHER_LEN               14
 
