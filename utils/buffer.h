@@ -18,7 +18,7 @@
 typedef struct buffer {
     char content[MAX_BUFFER_LEN];
     size_t len;
-    int cursor_pos;
+    size_t cursor_pos;
     int status;
 } buffer;
 

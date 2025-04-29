@@ -11,7 +11,7 @@ void print_ipv4(uint32_t addr) {
 }
 
 void print_ipv6(uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
-    int i;
+    size_t i;
     int empty = 0;
     char temp[10];
     char res[IPV6_ADDR_STR_LEN] = "\0";
@@ -37,9 +37,9 @@ void print_ipv6(uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
 }
 
 void print_mac(uint8_t mac_addr[6]) {
-    int i;
-    for (i = 0; i < 5; i ++) {      /* the last 8 bits are printed after without the trailing ':' */
-		printf("%02x:", mac_addr[i] & 0xff);
-	}
+    size_t i;
+
+    /* the last 8 bits are printed after without the trailing ':' */
+    for (i = 0; i < 5; i ++) printf("%02x:", mac_addr[i] & 0xff);
     printf("%02x", mac_addr[5]);
 }

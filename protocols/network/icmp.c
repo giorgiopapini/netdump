@@ -4,7 +4,9 @@
 #include "../../utils/visualizer.h"
 
 
-void print_icmp_hdr(const uint8_t *pkt, uint32_t len) {
+void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     printf("ICMP echo ");
     uint8_t type = ICMP_TYPE(pkt);
 
@@ -14,9 +16,11 @@ void print_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     printf(", id %u, seq %u", ICMP_ID(pkt), ICMP_SEQUENCE(pkt));
 }
 
-void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
-    char type[3];
-    char code[3];
+void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
+    char type[4];
+    char code[4];
     char checksum[7];  /* 0x0000'\0' are 7 chars */
     char id[7];  /* 0x0000'\0' are 7 chars */
     char seq[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
@@ -36,7 +40,7 @@ void visualize_icmp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_icmp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_icmp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmp_hdr, visualize_icmp_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -23,7 +23,7 @@ custom_dissectors *create_custom_dissectors() {
 }
 
 void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto) {
-    int i;
+    size_t i;
 
     if (NULL == arr->custom_protos) {
         arr->custom_protos = (protocol_handler **)malloc(sizeof(protocol_handler *));
@@ -68,8 +68,6 @@ dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protoco
 }
 
 void add_dissector_entry(custom_dissectors *custom_dissectors, dissectors_entry *new_dissectors_entry) {
-    int i;
-    
     if (NULL == custom_dissectors->table) {
         custom_dissectors->table = (dissectors_entry **)malloc(sizeof(dissectors_entry *));
         custom_dissectors->table[0] = new_dissectors_entry;
@@ -86,7 +84,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     if (NULL == custom_dissectors) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
 
     protocol_handler *dest_table = get_proto_table(dest_table_val);
-    int i;
+    size_t i;
 
     if (NULL == custom_dissectors->table) add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
@@ -101,7 +99,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
 }
 
 void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
-    int i;
+    size_t i;
 
     for (i = 0; mappings[i] != NULL; i ++) {
         dissector_add(
@@ -117,7 +115,6 @@ void load_dissector(custom_dissectors *custom_dissectors, void *handle, char *fi
     protocol_handler_mapping **mappings;
     protocol_handler_mapping **(*get_custom_protocols_mapping)();
     char *error;
-    int i;
 
     if (NULL == handle) return;
     if (NULL == custom_dissectors) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
@@ -145,7 +142,7 @@ protocol_handler *get_custom_protocol_handler(
 ) {
     dissectors_entry *curr_entry = NULL;
     protocol_handler *curr_handler = NULL;
-    int i, j;
+    size_t i, j;
     
     if (NULL == custom_dissectors) return NULL;
     if (NULL == custom_dissectors->table) return NULL;
@@ -165,7 +162,7 @@ protocol_handler *get_custom_protocol_handler(
 }
 
 void destroy_dissectors_entry(dissectors_entry *entry) {
-    int i;
+    size_t i;
     if (entry == NULL) return;
     
     if (entry->custom_protos != NULL) {
@@ -181,7 +178,7 @@ void destroy_dissectors_entry(dissectors_entry *entry) {
 }
 
 void destroy_custom_dissectors(custom_dissectors *custom_dissectors) {
-    int i, j;
+    size_t i;
     dissectors_entry *curr_entry = NULL;
 
     if (NULL == custom_dissectors) return;

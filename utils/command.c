@@ -10,14 +10,14 @@ arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
         be recognizable)    */
 
-    int len = strlen(token);
+    size_t len = strlen(token);
     if (0 == len) return NULL;
 
     if (' ' == token[len - 1]) token[len - 1] = '\0';
 
-    int token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
-    int label_len;
-    int value_len;
+    size_t token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
+    size_t label_len;
+    size_t value_len;
     char copy[token_len];
     arg *new_arg = (arg *)malloc(sizeof(arg));
     if (NULL == new_arg) raise_error(NULL_POINTER, 1, NULL, "arg *new_arg", __FILE__);
@@ -51,12 +51,13 @@ unsigned long djb2_hash(char *str) {
     unsigned long hash = 5381;
     int c;
 
-    while (c = *str++)
+    while ((c = *str++))
         hash = ((hash << 5) + hash) + c;
     return hash % MAX_HASHES;
 }
 
 void add_arg(command *cmd, arg *new_arg) {
+    char *old_label;
     unsigned long hash = djb2_hash(new_arg->label);
 
     if (NULL == cmd->args[hash]) {
@@ -65,7 +66,7 @@ void add_arg(command *cmd, arg *new_arg) {
         cmd->n_hashes ++;
     }
     else {
-        char *old_label = cmd->args[hash]->label;
+        old_label = cmd->args[hash]->label;
         if (0 == strcmp(old_label, new_arg->label)) cmd->args[hash] = new_arg;
         else cmd->args[hash]->next = new_arg;  /* if alredy exist arg with hash=(x), than add new one to the linked list */
     }
@@ -109,11 +110,12 @@ int is_command(command *cmd, const char *command) {
 void reset_cmd(command *cmd) {
     arg *tmp;
     arg *curr = NULL;
+    size_t i;
 
     if (NULL == cmd) raise_error(NULL_POINTER, 0, NULL, "cmd", __FILE__);
 
     /* deallocate hashmap */
-    for (int i = 0; i < cmd->n_hashes; i ++) {
+    for (i = 0; i < cmd->n_hashes; i ++) {
         curr = cmd->args[cmd->hashes[i]];
         while (NULL != curr) {
             free(curr->label);

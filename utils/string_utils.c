@@ -11,7 +11,7 @@
 #include "../status_handler.h"
 
 int find_word_len(char *sentence, int word_pos) {
-    int i;
+    size_t i;
 
     for (i = 0; i < strlen(sentence) + 1; i ++) {
         if (' ' == sentence[i] || '\n' == sentence[i]) {
@@ -138,6 +138,7 @@ void uint_to_bin_str(char *str, uint64_t num, size_t dest_str_size) {
 char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     if (n_str == 0 || str_arr == NULL) return NULL;
 
+    char *new_str;
     size_t total_len = 0;
     size_t prefix_len = prefix ? strlen(prefix) : 0;
     size_t separator_len = separator ? strlen(separator) : 0;
@@ -151,7 +152,7 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     }
     total_len ++; /* For null terminator */
 
-    char *new_str = (char *)malloc(total_len);
+    new_str = (char *)malloc(total_len);
     if (new_str == NULL) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
 
     new_str[0] = '\0';

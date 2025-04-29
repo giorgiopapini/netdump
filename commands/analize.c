@@ -26,7 +26,7 @@ typedef struct custom_data {
 	pcap_dumper_t *pcap_dump;
 } custom_data;
 
-void handle_sigint(int sig) {
+void handle_sigint() {
 	pcap_breakloop(handle);
 	printf("\n");
 }
@@ -81,6 +81,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
     custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_dissectors = custom_dissectors, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
+	struct pcap_if *alldevs;
 	struct bpf_program fp;
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
@@ -97,7 +98,16 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 		}
 		printf(CAPTURE_FROM_FILE_MSG, read_file);
     } else {
-		if (NULL == dev) dev = pcap_lookupdev(errbuff);
+		if (pcap_findalldevs(&alldevs, errbuff) == -1 && NULL != dev) {
+			raise_error(PCAP_FINDALLDEVS_ERROR, 0, NULL, errbuff);
+			return;
+		}
+		if (alldevs == NULL && NULL != dev) {
+			raise_error(DEVICES_SCAN_ERROR, 0, NULL);
+			return;
+		}
+
+		if (NULL == dev) dev = alldevs->name;
         if (NULL == dev) {
             raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT, dev);
             mask = 0;
@@ -118,6 +128,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
         if (NULL == handle) raise_error(NO_ACCESS_DEVICE_ERROR, 1, NULL, dev);
 
         printf(CAPTURE_DEVICE_MSG, dev);
+		pcap_freealldevs(alldevs);
     }
 
 	if (-1 == pcap_datalink(handle)) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
@@ -138,7 +149,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	else if (-1 == pcap_loop(handle, pkt_num, get_packet, (uint8_t *)&custom_args)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
 	else {
 		clock_gettime(CLOCK_MONOTONIC, &end);
-		printf("\ntotal packets: %d\n", packets->len);
+		printf("\ntotal packets: %ld\n", packets->len);
 		elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
     	printf("elapsed time: %.6f seconds\n", elapsed);
 	}

@@ -5,8 +5,8 @@
 #include "../status_handler.h"
 
 
-void print_raw_pkt(const uint8_t *pkt, uint32_t len) {
-	int i;
+void print_raw_pkt(const uint8_t *pkt, size_t len) {
+	size_t i;
 	if (len > 0) printf("[%02x", *pkt);
 	for (i = 1; i < len; i ++) printf(" %02x", pkt[i]);
 	printf("]");
@@ -14,8 +14,8 @@ void print_raw_pkt(const uint8_t *pkt, uint32_t len) {
 
 void *select_output_func(
 	output_format fmt,
-	void (*print_func)(const uint8_t *, uint32_t), 
-	void (*visualize_func)(const uint8_t *, uint32_t)
+	void (*print_func)(const uint8_t *, size_t), 
+	void (*visualize_func)(const uint8_t *, size_t)
 ) {
 	switch (fmt) {
 		case OUTPUT_FORMAT_NONE: 		return NULL;
@@ -29,7 +29,7 @@ void *select_output_func(
 protocol_handler *create_protocol_handler(
 	int proto, 
 	protocol_layer layer, 
-	protocol_info (*dissect_proto)(const uint8_t *pkt, uint32_t pkt_len, output_format fmt),
+	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len, output_format fmt),
 	const char *protocol_name
 ) {
 	protocol_handler *new_handler = (protocol_handler *)malloc(sizeof(protocol_handler));
@@ -71,7 +71,7 @@ void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *
 }
 
 void destroy_mappings(protocol_handler_mapping **mappings) {
-	int i;
+	size_t i;
 
 	if (mappings) {
         for (i = 0; mappings[i] != NULL; i ++) {
@@ -86,8 +86,7 @@ void destroy_mappings(protocol_handler_mapping **mappings) {
 }
 
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
-	protocol_handler *proto_handler = NULL;
-	int i;
+	size_t i;
 
 	if (NULL != proto_table) {
 		for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {

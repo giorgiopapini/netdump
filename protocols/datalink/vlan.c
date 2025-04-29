@@ -5,7 +5,9 @@
 #include "../proto_tables_nums.h"
 
 
-void print_vlan_hdr(const uint8_t *pkt, uint32_t len) {
+void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     printf(
         "TCI: 0x%04x, ethertype: 0x%04x",
         VLAN_TCI(pkt),
@@ -13,9 +15,11 @@ void print_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     );
 }
 
-void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
-    char priority[2];  /* 3 bits, max int value = 7; */
-    char dei[2];  /* 1 bit */
+void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
+    char priority[6];
+    char dei[6];
     char vlan_id[5];  /* 12 bits, max int value = 4095; so "4095'\0'" = 5 chars */
     char ethertype[7];  /* 0xXXXX'\0' */
 
@@ -32,7 +36,7 @@ void visualize_vlan_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_vlan(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_vlan(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_vlan_hdr, visualize_vlan_hdr);
     return (protocol_info){ .protocol = VLAN_ETHERTYPE(pkt), .offset = VLAN_LEN, .proto_table_num = ETHERTYPES };
 }

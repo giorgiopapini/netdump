@@ -20,14 +20,17 @@ void execute_save(command *cmd, raw_array *packets) {
     pcap_dumper_t *dumper;
     packet *tmp_pkt;
     char *dest_path = get_raw_val(cmd, DEST_FILE_ARG);
-    int pkt_num = str_to_num(get_raw_val(cmd, NUMBER_ARG));  /* if pkt_num == 0 than save ALL the packets */
-    int i;
+    long raw_pkt_num = str_to_num(get_raw_val(cmd, NUMBER_ARG));
+    size_t pkt_num;  /* if pkt_num == 0 than save ALL the packets */
+    size_t i;
 
     print_cwd(); 
 
+    if (raw_pkt_num < 0) { raise_error(NEGATIVE_N_PACKETS, 0, NULL, raw_pkt_num); return; }
+    else pkt_num = (size_t)raw_pkt_num;
+
     if (packets->len <= 0) { raise_error(SAVING_EMPTY_PACKETS_ERROR, 0, NULL); return; }
     if (pkt_num > packets->len) { raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, pkt_num, packets->len); return; }
-    if (pkt_num < 0) { raise_error(NEGATIVE_N_PACKETS, 0, NULL, pkt_num); return; }
 
     handle = pcap_open_dead(DLT_EN10MB, 65535);  /* 65535 snaplen for DLT_EN10MB, but should be sufficient for every DLT (Datalink Type) */ 
     if (NULL == handle) raise_error(PCAP_HANDLE_ERROR, 1, NULL);

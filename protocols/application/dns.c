@@ -29,7 +29,7 @@ int extract_domain_name(const uint8_t *payload, int offset, char *domain) {
     return (offset - start_offset) + 1;
 }
 
-void extract_srv_record(const uint8_t *payload, int offset, int data_len) {
+void extract_srv_record(const uint8_t *payload, int offset, size_t data_len) {
     char target[256];
     int target_offset;
 
@@ -44,7 +44,9 @@ void extract_srv_record(const uint8_t *payload, int offset, int data_len) {
     printf(", target: %s", target);
 }
 
-void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
+void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     char opcode_str[16];
     char rcode_str[16];
@@ -153,7 +155,9 @@ void print_dns_hdr(const uint8_t *pkt, uint32_t len) {
     }
 }
 
-void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     char transaction_id[7];  /* 0x0000'\0' 7 chars */
     char qr[2];
     char opcode[3];
@@ -203,7 +207,7 @@ void visualize_dns_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_dns(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_dns_hdr, visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -14,7 +14,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     char *token;
     char *trimmed;
     int target_index = -1;
-    int i;
+    size_t i;
 
     if (NULL == filenames) {
         for (i = 0; i < libs->count; i ++) libs->statuses[i] = new_status;
@@ -57,7 +57,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
     struct dirent *entry;
     void *handle;
     char expanded_dir[4096];
-    char path[512];
+    char path[8192];
 
     if (NULL == paths) return;
     
@@ -103,10 +103,10 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
 void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *filenames) {
     char *token;
     char *trimmed;
-    int target_index = -1;
-    char path[512];
+    int found = 0;
+    char path[8192];
     char expanded_dir[4096];
-    int i;
+    size_t i;
 
     if (NULL == filenames) return;
     
@@ -114,44 +114,44 @@ void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *fi
 
     token = strtok(filenames, STRINGS_SEPARATOR);
     while (token != NULL) {
-        target_index = -1;
+        found = 0;
         trimmed = get_trimmed_str(token);
         snprintf(path, sizeof(path), "%s/%s", expanded_dir, trimmed);
 
         if (NULL != dissectors->table) {
             for (i = 0; i < dissectors->len; i ++) {
                 if (NULL != dissectors->table[i] && 0 == strcmp(trimmed, dissectors->table[i]->lib_filename)) {
-                    target_index = i;
+                    found = 1;
                     break;
                 }
             }
         }
 
-        if (0 <= target_index) {
-            destroy_dissectors_entry(dissectors->table[target_index]);
-            dissectors->table[target_index] = NULL;
+        if (0 != found) {
+            destroy_dissectors_entry(dissectors->table[i]);
+            dissectors->table[i] = NULL;
         }
 
-        target_index = -1;
+        found = 0;
         if (NULL != libs->filenames) {
             for (i = 0; i < libs->count; i ++) {
                 if (NULL != libs->filenames[i] && 0 == strcmp(trimmed, libs->filenames[i])) {
-                    target_index = i;
+                    found = 1;
                     break;
                 }
             }
         }
 
-        if (-1 == target_index) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
+        if (0 == found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
         else {
             if (0 != remove(path)) raise_error(DELETE_FILE_ERROR, 0, NULL, path);
             else {
-                dlclose(libs->handles[target_index]);
-                libs->handles[target_index] = NULL;
+                dlclose(libs->handles[i]);
+                libs->handles[i] = NULL;
                 print_success_msg(DISSECTOR_DELETED_SUCCESS);
-                free(libs->filenames[target_index]);
-                libs->filenames[target_index] = NULL;
-                libs->statuses[target_index] = 0;
+                free(libs->filenames[i]);
+                libs->filenames[i] = NULL;
+                libs->statuses[i] = 0;
             }
         }
 
@@ -162,7 +162,7 @@ void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *fi
 
 void print_dissectors_list(shared_libs *libs) {
     int empty = 1;
-    int i;
+    size_t i;
 
     for (i = 0; i < libs->count; i ++) {
         if (NULL != libs->filenames[i]) {

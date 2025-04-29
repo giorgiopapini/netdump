@@ -5,24 +5,20 @@
 #include "../proto_tables_nums.h"
 
 
-int snap_hdr_len(const uint8_t *pkt) {
-    uint8_t ea1 = pkt[0] & 0x01;
+size_t snap_hdr_len(const uint8_t *pkt) {
+    size_t hdr_len = 2;
     uint8_t ea2 = pkt[1] & 0x01;
-    uint8_t ea3, ea4;
-    int hdr_len = 2;  /* default len */
+    uint8_t ea3;
 
-    if (0 == ea2) {
-        uint8_t ea3 = pkt[2] & 0x01;
+    if (ea2 == 0) {
+        ea3 = pkt[2] & 0x01;
         hdr_len = 3;
-
-        if (0 == ea3) hdr_len = 4;
+        if (ea3 == 0) hdr_len = 4;
     }
-
-    
     return hdr_len;
 }
 
-uint16_t extract_dlci(const uint8_t *pkt, int hdr_len) {
+uint16_t extract_dlci(const uint8_t *pkt, size_t hdr_len) {
     uint16_t dlci = ((pkt[0] & 0xfc) << 2) | ((pkt[1] & 0xf0) >> 4);
 
     if (3 == hdr_len) dlci = (dlci << 7) | ((pkt[2] & 0xfe) >> 1);
@@ -30,7 +26,9 @@ uint16_t extract_dlci(const uint8_t *pkt, int hdr_len) {
     return dlci;
 }
 
-void print_frelay_hdr(const uint8_t *pkt, uint32_t len) {
+void print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
     uint16_t protocol = FRELAY_PROTO(pkt, offset);
@@ -47,7 +45,9 @@ void print_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     else printf(", ethertype: 0x%04x", protocol);
 }
 
-void visualize_frelay_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     char dlci[7];  /* 2 bytes, max = 65535'\0' 7 chars */
     char fecn[2];
     char becn[2];
@@ -77,7 +77,7 @@ void visualize_frelay_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     int hdr_len = snap_hdr_len(pkt);
     int offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
     int table_num;

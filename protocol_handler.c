@@ -72,7 +72,6 @@ void dissect(
 	protocol_handler *custom_handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
-	const char *proto_name = NULL;
 	protocol_handler *proto_hashmap = get_proto_table(proto_table_num);
 
 	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hashmap, libs);
@@ -103,8 +102,8 @@ void dissect(
 	}
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
-	encap_proto_info = handler.dissect_proto(pkt, pkt_len, out_format);
-	if (-1 != encap_proto_info.proto_table_num && (pkt_len - encap_proto_info.offset) > 0) {
+	encap_proto_info = handler.dissect_proto(pkt, (size_t)pkt_len, out_format);
+	if (-1 != encap_proto_info.proto_table_num && (size_t)pkt_len > encap_proto_info.offset) {
 		dissect(
 			cmd,
 			(pkt + encap_proto_info.offset),

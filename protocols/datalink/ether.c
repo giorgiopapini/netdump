@@ -8,8 +8,9 @@
 #include "../proto_tables_nums.h"
 
 
-void print_ether_hdr(const uint8_t *pkt, uint32_t len) {
-    	/* ========================= printing src (MAC) > dest (MAC) ========================= */
+void print_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    /* ========================= printing src (MAC) > dest (MAC) ========================= */
     print_mac(SRC_ADDR(pkt));
     printf(" > ");
 	print_mac(DEST_ADDR(pkt));
@@ -20,7 +21,9 @@ void print_ether_hdr(const uint8_t *pkt, uint32_t len) {
     /* =================================================================================== */
 }
 
-void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char dest_addr[MAC_ADDR_STR_LEN];
     char src_addr[MAC_ADDR_STR_LEN];
     char ethertype[7];  /* 0xXXXX'\0' */
@@ -36,7 +39,7 @@ void visualize_ether_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_ether(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_ether(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ether_hdr, visualize_ether_hdr);
     return (protocol_info){ .protocol = ETHERTYPE(pkt), .offset = ETHER_LEN, .proto_table_num = ETHERTYPES };
 }

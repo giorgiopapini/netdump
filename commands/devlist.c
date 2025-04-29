@@ -4,8 +4,9 @@
 #include "devlist.h"
 #include "../status_handler.h"
 #include "../utils/colors.h"
+#include "../utils/formats.h"
 
-void execute_devlist(command *cmd) {
+void execute_devlist() {
     printf("\n");
 
     pcap_if_t *alldevs;

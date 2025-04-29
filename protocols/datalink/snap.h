@@ -14,6 +14,6 @@
 #define SNAP_LEN                5
 
 
-protocol_info dissect_snap(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
+protocol_info dissect_snap(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 
 #endif

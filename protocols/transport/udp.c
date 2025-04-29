@@ -6,7 +6,9 @@
 #include "../proto_tables_nums.h"
 
 
-void print_udp_hdr(const uint8_t *pkt, uint32_t len) {
+void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     printf(
         "src_port: %u, dest_port: %u, length: %u, cksum: 0x%04x", 
         UDP_SRC_PORT(pkt),
@@ -16,7 +18,9 @@ void print_udp_hdr(const uint8_t *pkt, uint32_t len) {
     );
 }
 
-void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char length[6];
@@ -35,7 +39,7 @@ void visualize_udp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_udp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     protocol_info proto_info;
     proto_info.offset = UDP_LEN;
     proto_info.proto_table_num = NET_PORTS;

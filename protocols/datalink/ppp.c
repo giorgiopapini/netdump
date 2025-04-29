@@ -5,7 +5,9 @@
 #include "../proto_tables_nums.h"
 
 
-void print_ppp_hdr(const uint8_t *pkt, uint32_t len) {
+void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     printf(
         "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x",
         ADDRESS(pkt),
@@ -14,7 +16,9 @@ void print_ppp_hdr(const uint8_t *pkt, uint32_t len) {
     );
 }
 
-void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char address[5];  /* 0x00'\0' are 5 chars */
     char control[5];
     char protocol[7];  /* 0x0000'\0' are 7 chars */
@@ -30,7 +34,7 @@ void visualize_ppp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_ppp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_ppp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ppp_hdr, visualize_ppp_hdr);
     return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = PPP_LEN, .proto_table_num = PPP_PROTOS };
 }

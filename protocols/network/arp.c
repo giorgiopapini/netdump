@@ -6,9 +6,10 @@
 #include "../../utils/visualizer.h"
 
 
-void print_arp_hdr(const uint8_t *pkt, uint32_t len) {
-    uint16_t operation = OPERATION(pkt);
+void print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
 
+    uint16_t operation = OPERATION(pkt);
     if (operation == ARP_REQUEST) {
         printf("ARP who-has ");
         print_ipv4(TARGET_P_ADDR(pkt));
@@ -36,7 +37,9 @@ void print_arp_hdr(const uint8_t *pkt, uint32_t len) {
     else printf("(unrecognized operation = %u)", operation);
 }
 
-void visualize_arp_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char hw_type[7];
     char p_type[7];
     char hw_len[5];
@@ -70,7 +73,7 @@ void visualize_arp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_arp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_arp_hdr, visualize_arp_hdr);
     return NO_ENCAP_PROTO;
 }

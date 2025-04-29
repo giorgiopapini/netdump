@@ -7,7 +7,7 @@ typedef struct shared_libs {
     void **handles;
     char **filenames;
     int *statuses;  /* 1 = lib active, 0 = lib deactive (but still in memory) */
-    int count;
+    size_t count;
 } shared_libs;
 
 

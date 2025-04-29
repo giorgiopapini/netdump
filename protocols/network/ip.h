@@ -37,6 +37,6 @@
 #define NP_IP_DEST_ADDR(pkt)    ((pkt[16] << 24) | (pkt[17] << 16) | (pkt[18] << 8) | pkt[19])
 
 
-protocol_info dissect_ip(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
+protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 
 #endif

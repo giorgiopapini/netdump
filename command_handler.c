@@ -22,7 +22,7 @@
 
 
 int check_compliance(buffer *buff) {
-    int i;
+    size_t i;
 
     for (i = 1; i < buff->len; i ++) {
         /* if char at (i - 1) is not empty and is not the leading char (which may happen, because of the buffer trim func) */
@@ -38,7 +38,7 @@ int check_compliance(buffer *buff) {
 int create_cmd_from_buff(command *cmd, buffer *buff) {
     size_t args_num = 0;
     char temp[buff->len + 1];  /* including null terminator */
-    int i, j;
+    size_t i, j;
     int str_arg_value = 0;  /* flag to check if " already showed up */
     int writing_arg = 0;  /* flag to check if ARG_PREFIX alredy showed up */
     int status = 0;
@@ -96,10 +96,10 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
 int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
     arg *tmp = NULL;
     int valid = 1;
-    int i;
-    int j = 0;  /* will represent length of missing_args array */
-    int k;  
-    int m = 0;  /* will represent length of unrecognized_args array */
+    size_t i;
+    size_t j = 0;  /* will represent length of missing_args array */
+    size_t k;  
+    size_t m = 0;  /* will represent length of unrecognized_args array */
 
     char *missing_args[MAX_ARGS]; /* size_t len might represents the 'worst case length'?. Every arg misses so missing_args has length = len */
     char *missing_args_message = NULL;
@@ -177,7 +177,7 @@ int execute_command(
     }
     else if (is_command(cmd, RESET_COMMAND)) {
         if (CHECK_ARGS(cmd, RESET_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(cmd, packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(packets);
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
@@ -185,7 +185,7 @@ int execute_command(
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear(cmd);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear();
     }
     else if (is_command(cmd, EXIT_COMMAND)) {
         if (CHECK_ARGS(cmd, EXIT_ARGS))
@@ -197,7 +197,7 @@ int execute_command(
     }
     else if (is_command(cmd, HELP_COMMAND)) {
         if (CHECK_ARGS(cmd, HELP_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) execute_help(cmd);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) execute_help();
     }
     else return 1;
 

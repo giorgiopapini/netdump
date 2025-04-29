@@ -41,12 +41,12 @@ void split_header_line(const char *header_line, char *key, char *value) {
     }
 }
 
-void print_http_hdr(const uint8_t *pkt, uint32_t len) {
-    int i;
-    for (i = 0; i < len; i ++) printf("%c", pkt[i]);
+void print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
+    size_t i;
+    for (i = 0; i < pkt_len; i ++) printf("%c", pkt[i]);
 }
 
-void visualize_http_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     char line[HTTP_MAX_HEADER_LEN];
     char key[HTTP_MAX_HEADER_LEN];
     char value[HTTP_MAX_HEADER_LEN];
@@ -55,28 +55,45 @@ void visualize_http_hdr(const uint8_t *pkt, uint32_t len) {
     char version[HTTP_MAX_HEADER_LEN];
 
     const uint8_t *ptr = pkt;
+    const uint8_t *end = pkt + pkt_len;
+    size_t len;
 
-    sscanf(ptr, "%[^\r\n]", line);  /* Read the first line (request line) */
-    ptr += strlen(line) + 2;  /* Skip over the first line's "\r\n" */
+    len = strcspn((const char *)ptr, "\r\n");
+    if (len >= sizeof(line)) len = sizeof(line) - 1;
+    strncpy(line, (const char *)ptr, len);
+    line[len] = '\0';
+
+    ptr += len;
+    if (ptr < end && *ptr == '\r') ptr ++;
+    if (ptr < end && *ptr == '\n') ptr ++;
 
     start_printing();
     print_additional_info("Payload not represented in ascii art");
-    
+
     extract_http_request_line(line, method, path, version);
     print_field(HTTP_METHOD_LABEL, method, 0);
     print_field(HTTP_PATH_LABEL, path, 0);
     print_field(HTTP_VERSION_LABEL, version, 0);
 
-    while (sscanf(ptr, "%[^\r\n]", line) > 0) {
-        ptr += strlen(line) + 2;  /* +2 to skip over \r\n */
-        split_header_line(line, key, value);
+    while (ptr < end) {
+        len = strcspn((const char *)ptr, "\r\n");
+        if (len >= sizeof(line)) len = sizeof(line) - 1;
+        strncpy(line, (const char *)ptr, len);
+        line[len] = '\0';
 
+        ptr += len;
+        if (ptr < end && *ptr == '\r') ptr ++;
+        if (ptr < end && *ptr == '\n') ptr ++;
+
+        if (line[0] == '\0') break;
+
+        split_header_line(line, key, value);
         if (key[0] != '\0') print_field(key, value, 0);
     }
     end_printing();
 }
 
-protocol_info dissect_http(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_http_hdr, visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

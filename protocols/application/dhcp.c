@@ -5,8 +5,8 @@
 #include "../../utils/formats.h"
 
 
-void print_options(const uint8_t *pkt, uint32_t len) {
-    int i;
+void print_options(const uint8_t *pkt, size_t len) {
+    size_t i;
 
     printf(", options: [");
     for (i = DHCP_OPTIONS_OFFSET; i < len && DHCP_END_OPTIONS != (uint8_t)pkt[i]; i ++) {
@@ -15,14 +15,10 @@ void print_options(const uint8_t *pkt, uint32_t len) {
     printf("%02x]", pkt[i]);
 }
 
-void print_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
-    uint8_t sname[64];
-    uint8_t file[128];
-    uint32_t magic;
-    uint8_t options[312];
+void print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
 
     printf("op: %u", DHCP_OP(pkt));
-
     if (1 == DHCP_OP(pkt)) printf(" (BOOTREQUEST)");
     else if (2 == DHCP_OP(pkt)) printf(" (BOOTREPLY)");
 
@@ -52,11 +48,13 @@ void print_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     printf(", server_hostname: %s", DHCP_SNAME(pkt)[0] ? (uint8_t *)DHCP_SNAME(pkt) : (uint8_t *)"(none)");
     printf(", boot_file: %s", DHCP_BOOTFILE(pkt)[0] ? (uint8_t *)DHCP_BOOTFILE(pkt) : (uint8_t *)"(none)");
     printf(", magic_cookie: 0x%08x", DHCP_MAGIC_COOKIE(pkt));
-    print_options(pkt, len);
+    print_options(pkt, pkt_len);
 }
 
-void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
-    char operation[2];
+void visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
+    char operation[5];
     char htype[5];  /* 0x00'\0' */
     char hlen[4];
     char hops[4];
@@ -109,7 +107,7 @@ void visualize_dhcp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_dhcp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_dhcp_hdr, visualize_dhcp_hdr);
     return NO_ENCAP_PROTO;
 }

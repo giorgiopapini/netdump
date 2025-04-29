@@ -20,7 +20,7 @@ shared_libs *create_shared_libs_obj() {
 }
 
 int is_active(shared_libs *libs, char *filename) {
-    int i;
+    size_t i;
 
     if (NULL == libs->filenames) return 0;
 
@@ -54,7 +54,7 @@ shared_libs *load_shared_libs(const char *directory) {
     struct dirent *entry;
     void *handle;
     char expanded_dir[4096];
-    char path[512];
+    char path[8192];
 
     expand_tilde(directory, expanded_dir, sizeof(expanded_dir));
 
@@ -78,12 +78,11 @@ shared_libs *load_shared_libs(const char *directory) {
         }
     }
     closedir(dir);
-
     return libs;
 }
 
 void destroy_shared_libs(shared_libs *libs) {
-    int i;
+    size_t i;
     
     if (NULL != libs->filenames) {
         for (i = 0; i < libs->count; i ++) {

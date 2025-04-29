@@ -25,6 +25,6 @@
 /* https://chatgpt.com/c/679d43c7-218c-8000-bcfd-35c05769061b */
 
 
-protocol_info dissect_frelay(const uint8_t *pkt, uint32_t pkt_len, output_format fmt);
+protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 
 #endif

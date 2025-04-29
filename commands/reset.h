@@ -1,8 +1,9 @@
 #ifndef RESET_H
 #define RESET_H
 
-#include "../command_handler.h"
+#include "../utils/raw_array.h"
 
-void execute_reset(command *cmd, raw_array *packets);
+
+void execute_reset(raw_array *packets);
 
 #endif

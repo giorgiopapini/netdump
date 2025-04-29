@@ -12,8 +12,8 @@
 #define IS_LITERAL(c)                       (20 <= c && 126 >= c)
 
 #define MOVE_CURSOR(x, y)                   (printf("\033[%d;%dH", (y), (x)))
-#define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%dC", len - pos); } while (0)
-#define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%dD", (len - 1) - pos); } while (0)
+#define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%ldC", len - pos); } while (0)
+#define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%ldD", (len - 1) - pos); } while (0)
 #define CLEAR_STRN(len)                     do { for (int i = len; i > 0; i --) printf("\b \b"); } while (0)
 
 
@@ -28,7 +28,7 @@ buffer *create_buffer() {
 }
 
 void copy_buffer(buffer *src, buffer *dest) {
-    int i;
+    size_t i;
     for (i = 0; i < src->len; i ++) dest->content[i] = src->content[i];
     dest->len = src->len;
     dest->status = src->status;
@@ -36,7 +36,7 @@ void copy_buffer(buffer *src, buffer *dest) {
 
 buffer *copy_to_heap(buffer *src) {
     buffer *dest = create_buffer();
-    int i;
+    size_t i;
     
     for (i = 0; i < src->len; i ++) dest->content[i] = src->content[i];
     dest->len = src->len;
@@ -49,8 +49,8 @@ int compare_buffers(buffer *b1, buffer *b2) {
     
     if (b1->len != b2->len) return 0;
     if (b1->status != b2->status) return 0;
-    
-    if (NULL == b2->content && NULL == b1->content) return 1;
+
+    if ('\0' == b2->content[0] && '\0' == b1->content[0]) return 1;
     else if (0 != strcmp(b1->content, b2->content)) return 0;
 
     return 1;
@@ -64,8 +64,8 @@ void normalize_content(buffer *buff) {
     buff->content[buff->len] = '\0';
 }
 
-void refresh_output(buffer *buff, int old_len) {   /* refresh string, the cursor is kept at the end of string */
-    int i;
+void refresh_output(buffer *buff, size_t old_len) {   /* refresh string, the cursor is kept at the end of string */
+    size_t i;
     
     MOVE_CURSOR_TO_END(buff->cursor_pos, old_len);
     CLEAR_STRN(old_len);
@@ -73,7 +73,7 @@ void refresh_output(buffer *buff, int old_len) {   /* refresh string, the cursor
 }
 
 int arrow_up(buffer *buff, circular_list *list, int *end) {
-    int old_len = buff->len;
+    size_t old_len = buff->len;
     int prev_pos = buff->cursor_pos;
     if (NULL == list->head) return ARROW_UP_KEY;
 
@@ -87,9 +87,8 @@ int arrow_up(buffer *buff, circular_list *list, int *end) {
 }
 
 int arrow_down(buffer *buff, circular_list *list, int *end) {
-    int old_len = buff->len;
+    size_t old_len = buff->len;
     int prev_pos = buff->cursor_pos;
-    int i;
 
     if (NULL == list->head) return ARROW_DOWN_KEY;
     if (list->curr == list->head) {
@@ -131,8 +130,7 @@ int arrow_left(buffer *buff) {
 }
 
 int canc(buffer *buff) {
-    int old_len = buff->len;
-    int i;
+    size_t old_len = buff->len;
     getch();
     if (buff->len == buff->cursor_pos) return CANC_KEY;
 
@@ -144,7 +142,7 @@ int canc(buffer *buff) {
 }
 
 int backspace(buffer *buff) {
-    int old_len = buff->len;
+    size_t old_len = buff->len;
     if (0 >= buff->cursor_pos) return BACKSPACE_KEY;
 
     delete_char(buff->content, buff->cursor_pos - 1);
@@ -158,11 +156,11 @@ int backspace(buffer *buff) {
 }
 
 int literal_key(buffer *buff, char c) {
-    int old_len = buff->len;
+    size_t old_len = buff->len;
 
     if (TILDE_KEY == c) return c;
 
-    if ((old_len + 1) > MAX_BUFFER_LEN) {
+    if (old_len >= MAX_BUFFER_LEN) {
         raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, MAX_BUFFER_LEN);
         return -1;
     }
@@ -181,7 +179,7 @@ int populate(buffer *buff, circular_list *history) {
     int end = 1;
     int ret;
 
-    if (buff->len + 1 >= MAX_BUFFER_LEN) {
+    if (buff->len >= MAX_BUFFER_LEN) {
         buff->status = BUFFER_OVERFLOW_ERROR;
         return -1;
     }

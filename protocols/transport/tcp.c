@@ -15,8 +15,8 @@ void print_tcp_options(const uint8_t *pkt) {
     uint8_t *options = TCP_OPTIONS(pkt);
     uint8_t kind;
     uint8_t length;
-    int i = 0;
-    int j = 0;
+    size_t i = 0;
+    size_t j = 0;
 
     printf(", options: [");
 
@@ -94,7 +94,9 @@ void print_tcp_options(const uint8_t *pkt) {
     printf("]");
 }
 
-void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
+void print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
     printf("src_port: %u, dest_port: %u", TCP_SRC_PORT(pkt), TCP_DEST_PORT(pkt));
     
@@ -118,7 +120,9 @@ void print_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     if (0 < tcp_options_len(pkt)) print_tcp_options(pkt);
 }
 
-void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char seq[11];  /* 32 bit can represent a max of 4294967295'\0' ==> len = 11 */
@@ -179,7 +183,7 @@ void visualize_tcp_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_tcp(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_tcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     protocol_info proto_info;
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_tcp_hdr, visualize_tcp_hdr);
 

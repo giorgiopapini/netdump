@@ -97,16 +97,16 @@ void run(
 	prompt();
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
 	fd_set readfds;
     int ret;
 	struct termios original, term;
 
-	buffer buff = { .len = 0, .status = 0, .cursor_pos = 0 };
-	command cmd = { .n_hashes = 0, .label = NULL, .hashes = 0, .args = NULL };
-	raw_array packets = { .values = NULL, .allocated = 0, .len = 0 };
-	circular_list history = { .head = NULL, .len = 0 };
+	buffer buff = { 0 };
+	command cmd ={ 0 };
+	raw_array packets = { 0 };
+	circular_list history = { 0 };
 	shared_libs *libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
 	custom_dissectors *custom_dissectors = load_custom_dissectors(libs);
 

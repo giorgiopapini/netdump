@@ -1,8 +1,7 @@
 #ifndef CLEAR_H
 #define CLEAR_H
 
-#include "../command_handler.h"
 
-void execute_clear(command *cmd);
+void execute_clear();
 
 #endif

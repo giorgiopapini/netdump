@@ -3,7 +3,7 @@ OBJ := $(SRC:.c=.o)
 
 # Compiler and flags
 CC := gcc
-CFLAGS := -fPIC -g
+CFLAGS := -fPIC -g -Wall -Wextra
 LDFLAGS := -lpcap -lm
 
 # Library source files
@@ -48,3 +48,9 @@ install: $(TARGET) $(LIB_TARGET)
 	mkdir -p $(DESTDIR)/usr/local/lib64
 	install -m 0755 $(TARGET) $(DESTDIR)/usr/local/bin/$(TARGET)
 	install -m 0755 $(LIB_TARGET) $(DESTDIR)/usr/local/lib64/$(LIB_TARGET)
+
+# Remove target: remove netdump, libnetdump.so and .o files
+remove:
+	make clean
+	rm -f $(DESTDIR)/usr/local/bin/$(TARGET)
+	rm -f $(DESTDIR)/usr/local/lib64/$(LIB_TARGET)

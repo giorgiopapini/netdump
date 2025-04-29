@@ -109,7 +109,7 @@ void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     print_field(TELNET_COMMAND_LABEL, res, 0);
 }
 
-int visualize_telnet_data(const uint8_t *pkt, uint32_t telnet_len) {
+int visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     char buff[512] = "";
     size_t i = 0;
     size_t buff_len = 0;
@@ -136,15 +136,15 @@ int visualize_telnet_data(const uint8_t *pkt, uint32_t telnet_len) {
     return i;
 }
 
-void print_telnet_hdr(const uint8_t *pkt, uint32_t len) {
+void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     int data_segment_len = 0;
-    int i;
+    size_t i;
 
-    for (i = 0; i < len;) {  /* +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand) */
+    for (i = 0; i < pkt_len;) {  /* +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand) */
         if (TELNET_IAC == pkt[i]) {
             print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
         
-            if ((i + 3) >= len) printf(")");
+            if ((i + 3) >= pkt_len) printf(")");
             else printf("), ");
 
             i += 3;
@@ -155,7 +155,7 @@ void print_telnet_hdr(const uint8_t *pkt, uint32_t len) {
             
             if ('\r' == pkt[i] && '\n' == pkt[i + 1]) {
                 printf("\\r\\n");
-                if ((i + 2) < len) {
+                if ((i + 2) < pkt_len) {
                     if (TELNET_IAC != pkt[i + 2]) printf(", ");
                     else printf("), ");
                 }
@@ -166,7 +166,7 @@ void print_telnet_hdr(const uint8_t *pkt, uint32_t len) {
             }
             else {
                 printf("%c", pkt[i]);
-                if (i + 1 < len) {
+                if (i + 1 < pkt_len) {
                     if (TELNET_IAC == pkt[i + 1]) printf("), ");
                 }
                 else printf(")");
@@ -178,22 +178,21 @@ void print_telnet_hdr(const uint8_t *pkt, uint32_t len) {
     }
 }
 
-void visualize_telnet_hdr(const uint8_t *pkt, uint32_t len) {
-    int data_segment_len = 0;
-    int i;
+void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
+    size_t i;
 
     start_printing();
-    for (i = 0; i < len;) {
+    for (i = 0; i < pkt_len;) {
         if (TELNET_IAC == pkt[i]) {
             visualize_telnet_cmd(pkt[i + 1], pkt[i + 2]);
             i += 3;
         }
-        else i += visualize_telnet_data(pkt, len);
+        else i += visualize_telnet_data(pkt, pkt_len);
     }
     end_printing();
 }
 
-protocol_info dissect_telnet(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_telnet(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_telnet_hdr, visualize_telnet_hdr);
     return NO_ENCAP_PROTO;
 }

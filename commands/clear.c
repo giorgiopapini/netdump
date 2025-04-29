@@ -3,7 +3,7 @@
 #include "clear.h"
 #include "../status_handler.h"
 
-void execute_clear(command *cmd) {
+void execute_clear() {
     #if defined(_WIN32) || defined(_WIN64)
         system("cls");
         #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)

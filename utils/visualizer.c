@@ -124,11 +124,8 @@ void print_line(char *val, int *curr_x, int *curr_y, int offset_left, int offset
 }
 
 void print_value(char *label, char *content, int *curr_x, int *curr_y, int max_len) {
-    int off_left, off_right;
     int label_len = strlen(label);
     int content_len = strlen(content);
-    int min = MIN(label_len, content_len);
-    int max = MAX(label_len, content_len);
     int used_rows;
     char partial_str[MAX_X];
     int partial_i;

@@ -25,9 +25,10 @@ void print_type(uint8_t type) {
     printf(" (%u)", type);
 }
 
-void print_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
+void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    
     print_type(ICMPV6_TYPE(pkt));
-
     printf(
         ", code: %u, checksum: 0x%04x",
         ICMPV6_CODE(pkt),
@@ -43,7 +44,9 @@ void print_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
     }
 }
 
-void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
+void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+
     char type[4];  /* 4 bits --> max: 255'\0' 4 chars */
     char code[4];
     char checksum[7];  /* 0x0000'\0' 7 chars */
@@ -70,7 +73,7 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, uint32_t len) {
     end_printing();
 }
 
-protocol_info dissect_icmpv6(const uint8_t *pkt, uint32_t pkt_len, output_format fmt) {
+protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmpv6_hdr, visualize_icmpv6_hdr);
     return NO_ENCAP_PROTO;
 }

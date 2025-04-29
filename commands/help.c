@@ -4,6 +4,7 @@
 #include "help.h"
 #include "../utils/colors.h"
 #include "../command_handler.h"
+#include "../utils/formats.h"
 
 
 void print_cmd(char *cmd, char *desc) {
@@ -19,7 +20,7 @@ void print_arg(char *arg, char *desc, char *prefix_space, char *prefix_str, char
     if (NULL != arg) printf(CYAN " %s" RESET_COLOR, arg);
     if (NULL != desc) printf(" (%s)", desc);
     if (NULL != example) printf(YELLOW " (e.g. '%s')" RESET_COLOR, example);
-    if (prefix_str == DEFAULT_CORNER) printf("\n");
+    if (strcmp(prefix_str, DEFAULT_CORNER) == 0) printf("\n");
     /* this is a pointer comparison, not a string comparison, strcmp is not needed */
 }
 
@@ -87,7 +88,7 @@ void save_help() {
     print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NUMBER_ARG_EG);
 }
 
-void execute_help(command *cmd) {
+void execute_help() {
     printf("Default command format: " COMMAND_FORMAT "\n");
 
     analize_help();

@@ -21,6 +21,7 @@ char * get_error_format(err_code code) {
         case PCAP_FILE_ERROR:                   return "Couldn't open '%s' file"; break;
         case PCAP_HANDLE_ERROR:                 return "Couldn't open pcap handle"; break;
         case PCAP_DUMP_FILE_ERROR:              return "Couldn't open dump file"; break;
+        case PCAP_FINDALLDEVS_ERROR:            return "Error in pcap_findalldevs: %s"; break;
         case NO_DEVICE_FOUND:                   return "Couldn't find device '%s'"; break;
         case DEVICES_SCAN_ERROR:                return "Couldn't find devices"; break;
         case NETMASK_ERROR:                     return "Couldn't get netmask for device '%s'"; break;
