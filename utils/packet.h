@@ -7,11 +7,11 @@
 typedef struct packet {
     struct pcap_pkthdr *header;
     int datalink_type;
-    int num;
+    size_t num;
     uint8_t *bytes;
 } packet;
 
-packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, int num, const uint8_t *bytes);
+packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t num, const uint8_t *bytes);
 void destroy_packet(void *pkt);
 
 #endif

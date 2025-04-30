@@ -6,6 +6,9 @@
 #include "../proto_tables_nums.h"
 
 
+void print_udp_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
     (void)pkt_len;
 
@@ -19,12 +22,11 @@ void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-    
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char length[6];
     char checksum[7];  /* 0x0000'\0' */
+    (void)pkt_len;
 
     snprintf(src_port, sizeof(src_port), "%u", UDP_SRC_PORT(pkt));
     snprintf(dest_port, sizeof(dest_port), "%u", UDP_DEST_PORT(pkt));

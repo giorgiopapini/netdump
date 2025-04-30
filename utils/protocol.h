@@ -38,16 +38,19 @@ typedef struct protocol_handler_mapping {
 	int proto_table_num;
 } protocol_handler_mapping;
 
+typedef void (*output_func_t)(const uint8_t *, size_t);
+
+
 #define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .proto_table_num = -1 };
 #define NULL_PROTO_HANDLER		{ .protocol = 0, .layer = PROTOCOL_LAYER_NONE, .dissect_proto = NULL, .protocol_name = NULL }
 #define IS_NULL_HANDLER(hdl)	(0 == hdl.protocol && PROTOCOL_LAYER_NONE == hdl.layer && NULL == hdl.dissect_proto && NULL == hdl.protocol_name)
 #define SHOW_OUTPUT(pkt, len, fmt, print_func, visualize_func) \
 		do { \
-			void (*output_func)(const uint8_t *, size_t) = select_output_func(fmt, print_func, visualize_func); \
+			output_func_t output_func = select_output_func(fmt, print_func, visualize_func); \
     		if (NULL != output_func && len > 0) output_func(pkt, len); \
 		} while(0)
 
-void *select_output_func(
+output_func_t select_output_func(
     output_format fmt,
     void (*print_func)(const uint8_t *, size_t), 
     void (*visualize_func)(const uint8_t *, size_t)
@@ -62,7 +65,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 	protocol_handler *handler,
 	int proto_table_num
 );
-protocol_handler_mapping **create_mappings_arr();
+protocol_handler_mapping **create_mappings_arr(void);
 void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *new_mapping);
 void destroy_mappings(protocol_handler_mapping **mappings);
 protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table);

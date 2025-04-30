@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <pcap.h>
 #include <time.h>
+#include <limits.h>
 
 #include "analize.h"
 #include "../utils/packet.h"
@@ -26,7 +26,8 @@ typedef struct custom_data {
 	pcap_dumper_t *pcap_dump;
 } custom_data;
 
-void handle_sigint() {
+void handle_sigint(int sig) {
+	(void)sig;
 	pcap_breakloop(handle);
 	printf("\n");
 }
@@ -64,22 +65,9 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	dissect_packet(data->cmd, pkt, data->libs, data->custom_dissectors);
 }
 
-void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors) {
-	
+void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
 	/* ==============================  Getting args values from cmd  ================================ */
-	int pkt_num = -1;
-    int tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
-    char *filter_exp = get_raw_val(cmd, FILTER_ARG);
-	char *dev = get_raw_val(cmd, DEVICE_ARG);
-	char *read_file = get_raw_val(cmd, READ_FILE_ARG);
-	char *write_file = get_raw_val(cmd, WRITE_FILE_ARG);
-    int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
-
-    /* if -n not provided (or -n value not set) returns 0. Analizing 0 packets doesn't make sense, so assume to scan to infinity */
-    if (0 != tmp) pkt_num = tmp;
-	/* ============================================================================================== */
-
-    custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_dissectors = custom_dissectors, .pcap_dump = NULL };
+	custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_dissectors = custom_diss, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct pcap_if *alldevs;
 	struct bpf_program fp;
@@ -88,8 +76,24 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
 	struct timespec start, end;
 	double elapsed;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+	
+	int pkt_num = -1;
+	long raw_tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
+	int tmp;
+    char *filter_exp = get_raw_val(cmd, FILTER_ARG);
+	char *dev = get_raw_val(cmd, DEVICE_ARG);
+	char *read_file = get_raw_val(cmd, READ_FILE_ARG);
+	char *write_file = get_raw_val(cmd, WRITE_FILE_ARG);
+    int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
 
+	if (raw_tmp > INT_MAX || raw_tmp < INT_MIN) raise_error(LONG_TO_INT_CAST_ERROR, 0, NULL);
+	else tmp = (int)raw_tmp;
+
+    /* if -n not provided (or -n value not set) returns 0. Analizing 0 packets doesn't make sense, so assume to scan to infinity */
+    if (0 != tmp) pkt_num = tmp;
+	/* ============================================================================================== */
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
 	if (NULL != read_file) {
         handle = pcap_open_offline(read_file, errbuff);
         if (NULL == handle) {
@@ -150,7 +154,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	else {
 		clock_gettime(CLOCK_MONOTONIC, &end);
 		printf("\ntotal packets: %ld\n", packets->len);
-		elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+		elapsed = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
     	printf("elapsed time: %.6f seconds\n", elapsed);
 	}
 

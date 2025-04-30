@@ -17,8 +17,8 @@
 #include "commands/save.h"
 #include "commands/help.h"
 
-#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
-#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (char*[]){__VA_ARGS__}, LEN(char*, __VA_ARGS__)))
+#define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
+#define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 
 
 int check_compliance(buffer *buff) {
@@ -38,7 +38,8 @@ int check_compliance(buffer *buff) {
 int create_cmd_from_buff(command *cmd, buffer *buff) {
     size_t args_num = 0;
     char temp[buff->len + 1];  /* including null terminator */
-    size_t i, j;
+    size_t i;
+    int j;
     int str_arg_value = 0;  /* flag to check if " already showed up */
     int writing_arg = 0;  /* flag to check if ARG_PREFIX alredy showed up */
     int status = 0;
@@ -56,7 +57,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         if (NULL == cmd->label) {
             if (j > 0 && ' ' == temp[j]) {
                 temp[j] = '\0';
-                cmd->label = (char *)malloc(j + 1);
+                cmd->label = (char *)malloc((size_t)j + 1); /* (j > 0) is certain at this point */
                 if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
                 strcpy(cmd->label, temp);
                 j = -1;
@@ -80,11 +81,17 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         }
     }
 
+    if (0 > j) {
+        raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, j);
+        return 0;
+    }
+
     temp[j] = '\0';
     if (NULL == cmd->label) {
-        cmd->label = (char *)malloc(j + 1);
+        cmd->label = (char *)malloc((size_t)j + 1);
         if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
-        strcpy(cmd->label, temp);
+        strncpy(cmd->label, temp, (size_t)j);
+        cmd->label[(size_t)j] = '\0';
     }
     else {
         if (strlen(temp) > 0) status = add_arg_from_token(cmd, temp, &args_num);
@@ -93,7 +100,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
     return 0;
 }
 
-int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
+int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len) {
     arg *tmp = NULL;
     int valid = 1;
     size_t i;
@@ -101,10 +108,12 @@ int is_valid(command *cmd, int opt_args, char **expected_args, size_t len) {
     size_t k;  
     size_t m = 0;  /* will represent length of unrecognized_args array */
 
-    char *missing_args[MAX_ARGS]; /* size_t len might represents the 'worst case length'?. Every arg misses so missing_args has length = len */
+    const char *missing_args[MAX_ARGS]; /* size_t len might represents the 'worst case length'?. Every arg misses so missing_args has length = len */
     char *missing_args_message = NULL;
-    char *unrecognized_args[MAX_ARGS];
+    const char *unrecognized_args[MAX_ARGS];
     char *unrecognized_args_message = NULL;
+
+    if (len > 0 && strcmp(expected_args[0], NONE_ARG) == 0) return valid;
 
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
@@ -161,19 +170,19 @@ int execute_command(
     raw_array *packets, 
     circular_list *history, 
     shared_libs *libs, 
-    custom_dissectors *custom_dissectors
+    custom_dissectors *custom_diss
 ) {
     if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, libs, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, libs, custom_diss);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist(cmd);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist();
     }
     else if (is_command(cmd, DISSECTORS_COMMAND)) {
         if (CHECK_ARGS(cmd, DISSECTORS_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_DISSECTORS_ARGS)) execute_dissectors(cmd, libs, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DISSECTORS_ARGS)) execute_dissectors(cmd, libs, custom_diss);
     }
     else if (is_command(cmd, RESET_COMMAND)) {
         if (CHECK_ARGS(cmd, RESET_ARGS))
@@ -181,7 +190,7 @@ int execute_command(
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, libs, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, libs, custom_diss);
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
@@ -189,7 +198,7 @@ int execute_command(
     }
     else if (is_command(cmd, EXIT_COMMAND)) {
         if (CHECK_ARGS(cmd, EXIT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history, libs, custom_dissectors);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history, libs, custom_diss);
     }
     else if (is_command(cmd, SAVE_COMMAND)) {
         if (CHECK_ARGS(cmd, SAVE_ARGS))

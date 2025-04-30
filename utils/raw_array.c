@@ -8,10 +8,10 @@
 void init_arr(raw_array *arr, int n) {
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
 
-    arr->values = (void **)malloc(n * sizeof(void *));
+    arr->values = (void **)malloc((size_t)n * sizeof(void *));  /* At this point n is certain to be > 0 */
     if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, "arr->values", __FILE__);
 
-    arr->allocated = n;
+    arr->allocated = (size_t)n;
 }
 
 void allocate(raw_array *arr, int n) {
@@ -20,14 +20,14 @@ void allocate(raw_array *arr, int n) {
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
     if (0 == arr->allocated) init_arr(arr, n);
     else {        
-        new_ptr = realloc(arr->values, (arr->allocated + n) * sizeof(void *));
+        new_ptr = realloc(arr->values, (arr->allocated + (size_t)n) * sizeof(void *));  /* At this point n is certain to be > 0 */
         if (NULL == new_ptr) raise_error(NULL_POINTER, 1, NULL, "new_ptr", __FILE__);
 
         /* realloc copied everything to a different memory block, update arr-values to point to the freshly allocated block */
         if (new_ptr != arr->values) arr->values = new_ptr;
         if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, "arr->values", __FILE__);
         
-        arr->allocated += n;
+        arr->allocated += (size_t)n;
     }
 }
 
@@ -51,9 +51,9 @@ void * get(raw_array *arr, size_t n) {
 }
 
 void reset_arr(raw_array *arr, void (*deallocate_content)(void *)) {
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
-
     size_t i;
+
+    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
     for (i = 0; i < arr->len; i ++) deallocate_content(arr->values[i]);
     free(arr->values);
 

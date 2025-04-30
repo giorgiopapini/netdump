@@ -85,6 +85,12 @@ const char *telnet_options_second_segment[] = {
     "TELOPT PRAGMA HEARTBEAT"
 };
 
+void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
+void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
+size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len);
+void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     printf("%s (", telnet_commands[cmd - TELNET_COMMAND_OFFSET]);
     if (sub_cmd <= TELNET_END_I_OPTIONS) printf("%s", telnet_options_first_segment[sub_cmd]);
@@ -109,11 +115,13 @@ void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     print_field(TELNET_COMMAND_LABEL, res, 0);
 }
 
-int visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
+size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     char buff[512] = "";
+    char temp[4];
     size_t i = 0;
-    size_t buff_len = 0;
+    size_t buff_len;
 
+    buff_len = 0;
     for (i = 0; i < telnet_len; i++) {
         if (buff_len >= sizeof(buff) - 1) break;
         
@@ -125,8 +133,8 @@ int visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
                 if (pkt[i + 2] != TELNET_IAC) strncat(buff, ", ", sizeof(buff) - buff_len - 1);
             }
             i ++;
-        } else {
-            char temp[4];  /* small buffer to store one character */
+        }
+        else {
             snprintf(temp, sizeof(temp), "%c", pkt[i]);
             strncat(buff, temp, sizeof(buff) - buff_len - 1);
             buff_len = strlen(buff);
@@ -137,14 +145,15 @@ int visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
 }
 
 void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
-    int data_segment_len = 0;
+    int data_segment_len;
     size_t i;
 
+    data_segment_len = 0;
     for (i = 0; i < pkt_len;) {  /* +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand) */
         if (TELNET_IAC == pkt[i]) {
             print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
         
-            if ((i + 3) >= pkt_len) printf(")");
+            if ((pkt_len >= 4) && (i <= pkt_len - 4)) printf(")");
             else printf("), ");
 
             i += 3;
@@ -155,7 +164,7 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
             
             if ('\r' == pkt[i] && '\n' == pkt[i + 1]) {
                 printf("\\r\\n");
-                if ((i + 2) < pkt_len) {
+                if (pkt_len >= 3 && i <= pkt_len - 3) {
                     if (TELNET_IAC != pkt[i + 2]) printf(", ");
                     else printf("), ");
                 }
@@ -166,7 +175,7 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
             }
             else {
                 printf("%c", pkt[i]);
-                if (i + 1 < pkt_len) {
+                if (pkt_len >= 2 && i <= pkt_len - 2) {
                     if (TELNET_IAC == pkt[i + 1]) printf("), ");
                 }
                 else printf(")");

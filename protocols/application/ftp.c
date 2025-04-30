@@ -6,40 +6,46 @@
 #include "../../utils/visualizer.h"
 
 
-void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, char *message) {
-    if (!response || !code || !message == 0) return;
+void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size);
+void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size);
+void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
+
+void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size) {
+    size_t code_len;
+    size_t i;
+    size_t msg_end;
+    size_t copy_len;
+
+    if (!response || !code || !message || code_size < 4 || message_size == 0) return;
     if (pkt_len < 5) return;
 
-    size_t remaining;
-    size_t copy_len;
-    size_t msg_len = strlen(message);
-    size_t safe_len = 0;
+    if (pkt_len < 3) return;
+    code_len = (code_size > 3) ? 3 : code_size - 1;
+    memcpy(code, response, code_len);
+    code[code_len] = '\0';
 
-    while (safe_len < pkt_len && response[safe_len] != '\0') safe_len ++;
-    if (safe_len == pkt_len) return;
+    i = 4;
+    msg_end = i;
+    while (msg_end < pkt_len && response[msg_end] != '\0') msg_end++;
 
-    strncpy(code, (const char *)response, 3);
-    code[3] = '\0';
+    if (msg_end >= 2 && response[msg_end - 2] == '\r' && response[msg_end - 1] == '\n') msg_end -= 2;
+    copy_len = msg_end > i ? msg_end - i : 0;
+    if (copy_len >= message_size) copy_len = message_size - 1;
 
-    remaining = pkt_len - 4;
-    copy_len = (remaining < msg_len - 1) ? remaining : msg_len - 1;
-
-    strncpy(message, (const char *)(response + 4), copy_len);
+    memcpy(message, response + i, copy_len);
     message[copy_len] = '\0';
-
-    if (msg_len >= 2 && message[msg_len - 2] == '\r' && message[msg_len - 1] == '\n') message[msg_len - 2] = '\0';
 }
 
-void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, char *argument) {
-    if (!request || pkt_len == 0 || !command || !argument == 0) return;
-
-    size_t i = 0;
+void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size) {
+    size_t i;
     size_t arg_len;
-    size_t command_size = strlen(command);
-    size_t argument_size = strlen(argument);
+    
+    i = 0;
+    if (!request || pkt_len == 0 || !command || command_size == 0 || !argument || argument_size == 0) return;
 
     while (i < pkt_len && request[i] != ' ' && request[i] != '\0' && i < command_size - 1 && i < 4) {
-        command[i] = request[i];
+        command[i] = (char)request[i];
         i ++;
     }
     command[i] = '\0';
@@ -48,23 +54,20 @@ void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, ch
         i ++;
         arg_len = pkt_len - i;
 
-        if (arg_len >= 2 && request[i + arg_len - 2] == '\r' && request[i + arg_len - 1] == '\n') {
-            arg_len -= 2;
-        }
-        if (arg_len >= argument_size) {
-            arg_len = argument_size - 1;
-        }
+        if (arg_len >= 2 && request[i + arg_len - 2] == '\r' && request[i + arg_len - 1] == '\n') arg_len -= 2;
+        if (arg_len >= argument_size) arg_len = argument_size - 1;
 
-        memcpy(argument, request + i, arg_len);
+        memcpy(argument, &request[i], arg_len);
         argument[arg_len] = '\0';
     }
     else argument[0] = '\0';
 }
 
 void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    size_t i;
     (void)pkt_len;
 
-    size_t i = 0;
+    i = 0;
     if (!pkt || pkt[0] == '\0') return;
     
     if (isdigit(pkt[0])) printf("Response: ");
@@ -77,21 +80,21 @@ void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-    
     char str1[FTP_HEADER_MAX_LEN];
     char str2[FTP_HEADER_MAX_LEN];
+    
+    (void)pkt_len;
     if (!pkt || pkt[0] == '\0') return;
     
     start_printing();
     if (isdigit(pkt[0])) {
-        parse_ftp_response(pkt, pkt_len, str1, str2);
+        parse_ftp_response(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
         print_field(FTP_TYPE_LABEL, "Response", 0);
         if (strlen(str1) > 0) print_field(FTP_RES_CODE_LABEL, str1, 0);
         if (strlen(str2) > 0) print_field(FTP_TYPE_LABEL, str2, 0);
     }
     else if (isupper(pkt[0])) {
-        parse_ftp_request(pkt, pkt_len, str1, str2);
+        parse_ftp_request(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
         print_field(FTP_TYPE_LABEL, "Response", 0);
         if (strlen(str1) > 0) print_field(FTP_COMMAND_LABEL, str1, 0);
         if (strlen(str2) > 0) print_field(FTP_ARGUMENT_LABEL, str2, 0);

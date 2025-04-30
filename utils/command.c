@@ -10,16 +10,20 @@ arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
         be recognizable)    */
 
-    size_t len = strlen(token);
-    if (0 == len) return NULL;
-
-    if (' ' == token[len - 1]) token[len - 1] = '\0';
-
-    size_t token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
+    size_t len;
+    size_t token_len;
     size_t label_len;
     size_t value_len;
-    char copy[token_len];
-    arg *new_arg = (arg *)malloc(sizeof(arg));
+    char copy[strlen(token) + 1];
+    arg *new_arg;
+
+    len = strlen(token);
+    if (0 == len) return NULL;
+    if (' ' == token[len - 1]) token[len - 1] = '\0';
+
+    token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
+
+    new_arg = (arg *)malloc(sizeof(arg));
     if (NULL == new_arg) raise_error(NULL_POINTER, 1, NULL, "arg *new_arg", __FILE__);
     new_arg->label = NULL;
     new_arg->val = NULL;
@@ -47,12 +51,14 @@ arg * create_arg_from_token(char *token) {
     return new_arg;
 }
 
-unsigned long djb2_hash(char *str) {
-    unsigned long hash = 5381;
+unsigned long djb2_hash(const char *str) {  /* Bernstein algorithm */
+    unsigned long hash;
     int c;
 
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c;
+    if (!str) return 0;
+    
+    hash = 5381;
+    while ((c = *str++)) hash = ((hash << 5) + hash) + (unsigned char)c;
     return hash % MAX_HASHES;
 }
 
@@ -72,7 +78,7 @@ void add_arg(command *cmd, arg *new_arg) {
     }
 }
 
-arg * get_arg(command *cmd, char *label) {
+arg * get_arg(command *cmd, const char *label) {
     arg *res = cmd->args[djb2_hash(label)];
     while (NULL != res) {
         if (0 == strcmp(res->label, label)) return res;
@@ -81,7 +87,7 @@ arg * get_arg(command *cmd, char *label) {
     return NULL;
 }
 
-char *get_raw_val(command *cmd, char *label) {
+char *get_raw_val(command *cmd, const char *label) {
     arg *obt = get_arg(cmd, label);
     if (NULL == obt) return NULL;
     else if (NULL == obt->val) return NULL;
@@ -101,9 +107,9 @@ int add_arg_from_token(command *cmd, char *temp, size_t *args_num) {
     return 0;
 }
 
-int is_command(command *cmd, const char *command) {
-    if (NULL == cmd->label || NULL == command) return 0;
-    if (0 == strcmp(cmd->label, command)) return 1;
+int is_command(command *cmd, const char *raw_cmd_label) {
+    if (NULL == cmd->label || NULL == raw_cmd_label) return 0;
+    if (0 == strcmp(cmd->label, raw_cmd_label)) return 1;
     return 0;
 }
 

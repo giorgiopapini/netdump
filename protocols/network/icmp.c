@@ -4,11 +4,15 @@
 #include "../../utils/visualizer.h"
 
 
+void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    uint8_t type;
     (void)pkt_len;
 
     printf("ICMP echo ");
-    uint8_t type = ICMP_TYPE(pkt);
+    type = ICMP_TYPE(pkt);
 
     if (ICMP_REQUEST == type) printf("request");
     else if (ICMP_REPLY == type) printf("reply");
@@ -17,14 +21,13 @@ void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char type[4];
     char code[4];
     char checksum[7];  /* 0x0000'\0' are 7 chars */
     char id[7];  /* 0x0000'\0' are 7 chars */
     char seq[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
-
+    (void)pkt_len;
+    
     snprintf(type, sizeof(type), "%u", ICMP_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMP_CODE(pkt));
     snprintf(checksum, sizeof(checksum), "0x%04x", ICMP_CHECKSUM(pkt));

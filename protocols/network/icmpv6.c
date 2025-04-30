@@ -4,6 +4,10 @@
 #include "../../utils/visualizer.h"
 
 
+void print_type(uint8_t type);
+void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_type(uint8_t type) {
     switch (type) {
         case ICMPV6_DEST_UNREACH_CODE:      printf("destination unreachable"); break;
@@ -45,12 +49,13 @@ void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char type[4];  /* 4 bits --> max: 255'\0' 4 chars */
     char code[4];
     char checksum[7];  /* 0x0000'\0' 7 chars */
-
+    char id[7];  /* 0x0000'\0' 7 chars */
+    char seq[6];  /* 65535'\0' 6 chars */
+    (void)pkt_len;
+    
     snprintf(type, sizeof(type), "%u", ICMPV6_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMPV6_CODE(pkt));
     snprintf(checksum, sizeof(checksum), "0x%04x", ICMPV6_CHECKSUM(pkt));
@@ -61,9 +66,6 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     print_field(ICMPV6_CHECKSUM_LABEL, checksum, 0);
 
     if (ICMPV6_ECHO_REQUEST_CODE == ICMPV6_TYPE(pkt) || ICMPV6_ECHO_REPLY_CODE == ICMPV6_TYPE(pkt)) {
-        char id[7];  /* 0x0000'\0' 7 chars */
-        char seq[6];  /* 65535'\0' 6 chars */
-
         snprintf(id, sizeof(id), "0x%04x", ICMPV6_ID(pkt));
         snprintf(seq, sizeof(seq), "%u", ICMPV6_SEQ(pkt));
 

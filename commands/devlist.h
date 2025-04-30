@@ -2,6 +2,6 @@
 #define DEVLIST_H
 
 
-void execute_devlist();
+void execute_devlist(void);
 
 #endif

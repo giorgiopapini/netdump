@@ -6,11 +6,12 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <pwd.h>
+#include <limits.h>
 
 #include "string_utils.h"
 #include "../status_handler.h"
 
-int find_word_len(char *sentence, int word_pos) {
+size_t find_word_len(char *sentence, int word_pos) {
     size_t i;
 
     for (i = 0; i < strlen(sentence) + 1; i ++) {
@@ -23,9 +24,12 @@ int find_word_len(char *sentence, int word_pos) {
 }
 
 char *get_filename(char *path) {
+    char *filename;
+    char *filename_win;
     if (NULL == path) return NULL;
-    char *filename = strrchr(path, '/');
-    char *filename_win = strrchr(path, '\\');
+    
+    filename = strrchr(path, '/');
+    filename_win = strrchr(path, '\\');
 
     if (filename_win && (!filename || filename_win > filename))
         filename = filename_win;
@@ -47,11 +51,13 @@ void expand_tilde(const char *path, char *expanded_path, size_t size) {
 int copy_file(char *source, char *destination) {
     char buffer[4096];
     size_t bytes_read;
+    FILE *src_file;
+    FILE *dest_file;
 
-    FILE *src_file = fopen(source, "rb");
+    src_file = fopen(source, "rb");
     if (NULL == src_file) return 0;
 
-    FILE *dest_file = fopen(destination, "wb");
+    dest_file = fopen(destination, "wb");
     if (NULL == dest_file) {
         fclose(src_file);
         return 0;
@@ -68,12 +74,12 @@ void lower_str_except_interval(char *str, char interval_symbol) {
     int locked = 0;
     while ('\0' != *str) {
         if (*str == interval_symbol) locked = !locked;
-        if (0 == locked) *str = tolower(*str);
+        if (0 == locked) *str = (char)tolower((unsigned char)*str);
         str += 1;
     }
 }
 
-void copy_str_n(char **dest, char *src, int n) {
+void copy_str_n(char **dest, char *src, size_t n) {
     *dest = (char *)malloc(n + 1);
     if (NULL == *dest) raise_error(NULL_POINTER, 1, NULL, "char **dest", __FILE__);
     memset(*dest, '\0', n + 1);
@@ -123,27 +129,34 @@ long str_to_num(char *str) {
 }
 
 void uint_to_bin_str(char *str, uint64_t num, size_t dest_str_size) {
+    size_t i;
+    
     if (dest_str_size > (sizeof(num) * 8 + 1)) {
         raise_error(BUFFER_OVERFLOW_ERROR, 1, NULL, __FILE__, dest_str_size);
         return;
     }
 
-    for (int i = dest_str_size - 2; i >= 0; i--) {
+    for (i = dest_str_size - 2; i < dest_str_size - 1; --i) {
         str[i] = (num & 1) + '0';
         num >>= 1;
     }
     str[dest_str_size - 1] = '\0';
 }
 
-char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
+char *str_concat(const char **str_arr, const char *prefix, const char *separator, size_t n_str) {
+    char *new_str;
+    size_t total_len;
+    size_t prefix_len;
+    size_t separator_len;
+    size_t i;
+
+    total_len = 0;
+    prefix_len = prefix ? strlen(prefix) : 0;
+    separator_len = separator ? strlen(separator) : 0;
+
     if (n_str == 0 || str_arr == NULL) return NULL;
 
-    char *new_str;
-    size_t total_len = 0;
-    size_t prefix_len = prefix ? strlen(prefix) : 0;
-    size_t separator_len = separator ? strlen(separator) : 0;
-
-    for (size_t i = 0; i < n_str; i ++) {
+    for (i = 0; i < n_str; i ++) {
         if (str_arr[i] == NULL) return NULL;
         total_len += strlen(str_arr[i]) + prefix_len;
     }
@@ -156,7 +169,7 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     if (new_str == NULL) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
 
     new_str[0] = '\0';
-    for (size_t i = 0; i < n_str; i ++) {
+    for (i = 0; i < n_str; i ++) {
         if (prefix) strcat(new_str, prefix);
         strcat(new_str, str_arr[i]);
         if (separator && i < n_str - 1) strcat(new_str, separator);
@@ -165,15 +178,15 @@ char *str_concat(char **str_arr, char *prefix, char *separator, size_t n_str) {
     return new_str;
 }
 
-char getch() {
+int getch() {
 	struct termios oldt, newt;
     int oldf;
-    char ch;
+    int ch;
 
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
 
-    newt.c_lflag &= ~(ICANON | ECHO);
+    newt.c_lflag &= (tcflag_t)~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
     oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
@@ -187,28 +200,34 @@ char getch() {
     return ch;
 }
 
-void delete_char(char *str, int pos) {  /* deleting by shifting every other char */
-    int i;
-    int len = strlen(str);
+void delete_char(char *str, size_t pos) {  /* deleting by shifting every other char */
+    size_t i;
+    size_t len = strlen(str);
 
     if (pos == len) return;
-    if (pos < 0) {
-        raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, pos);
-        return;
-    }
-
     for (i = pos; i < len; i ++) str[i] = str[i + 1];
 }
 
-void push_char(char *str, int buffer_size, int pos, char c) {
-    int i;
-    int len = strlen(str);
+void push_char(char *str, size_t buffer_size, size_t pos, int c) {
+    size_t len = strlen(str);
+    size_t i;
 
-    if ((len + 1) > buffer_size) {
+    if (c < CHAR_MIN || c > CHAR_MAX) {
+        raise_error(INT_TO_CHAR_CAST_ERROR, 0, NULL);
+        return;
+    }    
+    
+    if (len + 1 >= buffer_size) {
         raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, buffer_size);
         return;
     }
 
-    for (i = (len - 1); i >= pos; i --) str[i + 1] = str[i];
-    str[pos] = c;    
+    if (pos >= len) {
+        str[pos] = (char)c;
+        str[pos + 1] = '\0';
+    }
+    else {
+        for (i = len; i > pos; i--) str[i] = str[i - 1];
+        str[pos] = (char)c;
+    }
 }

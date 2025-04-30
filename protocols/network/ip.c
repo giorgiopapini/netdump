@@ -14,11 +14,13 @@ void print_ip_options(const uint8_t *pkt) {
 }
 */
 
+void print_ip_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len);
 
 void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
+    char flags[9] = "";  /* max: "DF, MF, \0" */
     (void)pkt_len;
 
-    char flags[9] = "";  /* max: "DF, MF, \0" */
     /* ===================== printing src (IP) > dest (IP) ====================== */
     print_ipv4(NP_IP_SRC_ADDR(pkt));
     printf(" > ");
@@ -47,8 +49,6 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char version[4];
     char ihl[4];
     char tos[5];  /* 0x00'\0' are 5 chars */
@@ -63,7 +63,8 @@ void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char checksum[7];  /* 0x0000'\0' are 7 chars */
     char src_addr[IP_ADDR_STR_LEN];
     char dest_addr[IP_ADDR_STR_LEN];
-
+    (void)pkt_len;
+    
     snprintf(version, sizeof(version), "%u", NP_IP_VERSION(pkt));
     snprintf(ihl, sizeof(ihl), "%u", NP_IP_HLEN(pkt));
     snprintf(tos, sizeof(tos), "0x%02x", NP_IP_TOS(pkt));

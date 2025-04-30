@@ -7,10 +7,12 @@
 #include "../proto_tables_nums.h"
 
 
-void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
+void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
 
+void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint32_t vtc_flow = IPV6_VTC_FLOW(pkt);
+    (void)pkt_len;
 
     print_ipv6(IPV6_SRC_ADDR(pkt), NULL);
     printf(" > ");
@@ -28,8 +30,6 @@ void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-    
     char version[3];  /* 4 bits --> max = 15 --> 16'\0' 3 chars */
     char traffic_class[4];  /* 8 bits --> max = 255 --> 255'\0' 4 chars */
     char flow_label[8];  /* 20 bits --> max = 1048575 --> 1048575'\0' 8 chars */
@@ -38,8 +38,9 @@ void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char hop_limit[4];
     char src_addr[IPV6_ADDR_STR_LEN];
     char dest_addr[IPV6_ADDR_STR_LEN];
-    uint32_t vtc_flow = IPV6_VTC_FLOW(pkt); 
-
+    uint32_t vtc_flow = IPV6_VTC_FLOW(pkt);
+    (void)pkt_len;
+    
     snprintf(version, sizeof(version), "%u", (vtc_flow >> 28) & IPV6_VERSION);
     snprintf(traffic_class, sizeof(traffic_class), "%u", (vtc_flow >> 20) & IPV6_TRAFFIC_CLASS);
     snprintf(flow_label, sizeof(flow_label), "%u", vtc_flow & IPV6_FLOW);

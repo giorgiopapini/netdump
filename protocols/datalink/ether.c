@@ -8,6 +8,9 @@
 #include "../proto_tables_nums.h"
 
 
+void print_ether_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
     (void)pkt_len;
     /* ========================= printing src (MAC) > dest (MAC) ========================= */
@@ -22,12 +25,11 @@ void print_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char dest_addr[MAC_ADDR_STR_LEN];
     char src_addr[MAC_ADDR_STR_LEN];
     char ethertype[7];  /* 0xXXXX'\0' */
-
+    (void)pkt_len;
+    
     snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(DEST_ADDR(pkt)));
     snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(SRC_ADDR(pkt)));
     snprintf(ethertype, sizeof(ethertype), "0x%04x", ETHERTYPE(pkt));

@@ -28,6 +28,7 @@
 #define EXIT_COMMAND_DESC           "Exit program"
 
 #define ARG_PREFIX                  "-"
+#define NONE_ARG                    ""
 #define NUMBER_ARG                  "n"
 #define FILTER_ARG                  "filter"
 #define DEVICE_ARG                  "dev"
@@ -71,17 +72,17 @@
 #define DEACTIVATE_LIB_ARG_DESC     "Deactivate custom dissector (empty = all)"
 #define DELETE_LIB_ARG_DESC         "Delete a custom dissector (delete file)"
 
-#define NUMBER_ARG_EG           ARG_PREFIX NUMBER_ARG               " 7"
-#define FILTER_ARG_EG           ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
-#define DEVICE_ARG_EG           ARG_PREFIX DEVICE_ARG               " \"device-name\""
-#define OUTPUT_FORMAT_ARG_EG    ARG_PREFIX OUTPUT_FORMAT_ARG        " \"art\""
-#define READ_FILE_ARG_EG        ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
-#define WRITE_FILE_ARG_EG       ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
-#define DEST_FILE_ARG_EG        ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
-#define ADD_DISSECTOR_ARG_EG    ARG_PREFIX ADD_DISSECTOR_ARG        " \"/dir/file-7.so" STRINGS_SEPARATOR " /dir/file-8.so\""
-#define ACTIVATE_LIB_ARG_EG     ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
-#define DEACTIVATE_LIB_ARG_EG   ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
-#define DELETE_LIB_ARG_EG       ARG_PREFIX DELETE_LIB_ARG           " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define NUMBER_ARG_EG               ARG_PREFIX NUMBER_ARG               " 7"
+#define FILTER_ARG_EG               ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
+#define DEVICE_ARG_EG               ARG_PREFIX DEVICE_ARG               " \"device-name\""
+#define OUTPUT_FORMAT_ARG_EG        ARG_PREFIX OUTPUT_FORMAT_ARG        " \"art\""
+#define READ_FILE_ARG_EG            ARG_PREFIX READ_FILE_ARG            " \"file-7.pcap\""
+#define WRITE_FILE_ARG_EG           ARG_PREFIX WRITE_FILE_ARG           " \"file-7.pcap\""
+#define DEST_FILE_ARG_EG            ARG_PREFIX DEST_FILE_ARG            " \"file-7.pcap\""
+#define ADD_DISSECTOR_ARG_EG        ARG_PREFIX ADD_DISSECTOR_ARG        " \"/dir/file-7.so" STRINGS_SEPARATOR " /dir/file-8.so\""
+#define ACTIVATE_LIB_ARG_EG         ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define DEACTIVATE_LIB_ARG_EG       ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define DELETE_LIB_ARG_EG           ARG_PREFIX DELETE_LIB_ARG           " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 
 #define OUTPUT_ARG_VAL_STD          "std"
 #define OUTPUT_ARG_VAL_RAW          "raw"
@@ -94,35 +95,36 @@
 */
                    
 #define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
-#define REQUIRED_ANALIZE_ARGS
+#define REQUIRED_ANALIZE_ARGS       NONE_ARG
 
-#define DEVICES_LIST_ARGS           
-#define REQUIRED_DEVICES_LIST_ARGS
+#define DEVICES_LIST_ARGS           NONE_ARG
+#define REQUIRED_DEVICES_LIST_ARGS  NONE_ARG
 
 #define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG, DELETE_LIB_ARG
-#define REQUIRED_DISSECTORS_ARGS
+#define REQUIRED_DISSECTORS_ARGS    NONE_ARG
 
-#define RESET_ARGS
-#define REQUIRED_RESET_ARGS
+#define RESET_ARGS                  NONE_ARG
+#define REQUIRED_RESET_ARGS         NONE_ARG
 
 #define PRINT_ARGS                  NUMBER_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, OUTPUT_FORMAT_ARG, PACKET_NUM_ARG
-#define REQUIRED_PRINT_ARGS
+#define REQUIRED_PRINT_ARGS         NONE_ARG
 
-#define CLEAR_ARGS
-#define REQUIRED_CLEAR_ARGS
+#define CLEAR_ARGS                  NONE_ARG
+#define REQUIRED_CLEAR_ARGS         NONE_ARG
 
-#define EXIT_ARGS          
-#define REQUIRED_EXIT_ARGS
+#define EXIT_ARGS                   NONE_ARG
+#define REQUIRED_EXIT_ARGS          NONE_ARG
 
 #define SAVE_ARGS                   NUMBER_ARG, DEST_FILE_ARG
 #define REQUIRED_SAVE_ARGS          DEST_FILE_ARG
 
-#define HELP_ARGS                   
-#define REQUIRED_HELP_ARGS
+#define HELP_ARGS                   NONE_ARG
+#define REQUIRED_HELP_ARGS          NONE_ARG
 
 
+int check_compliance(buffer *buff);
 int create_cmd_from_buff(command *cmd, buffer *buff);
-int is_valid(command *cmd, int opt_args, char **expected_args, size_t len);
+int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len);
 int execute_command(command *cmd, raw_array *packets, circular_list *history, shared_libs *libs, custom_dissectors *custom_dissectors);
 
 #endif

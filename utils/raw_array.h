@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define LEN(type, ...)                (sizeof((type[]){__VA_ARGS__}) / sizeof(type))
+#define LEN(type, ...)                (sizeof((const type[]){__VA_ARGS__}) / sizeof(type))
 
 
 typedef struct raw_array {

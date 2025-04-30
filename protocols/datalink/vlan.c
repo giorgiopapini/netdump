@@ -5,6 +5,9 @@
 #include "../proto_tables_nums.h"
 
 
+void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
     (void)pkt_len;
     
@@ -16,13 +19,12 @@ void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char priority[6];
     char dei[6];
     char vlan_id[5];  /* 12 bits, max int value = 4095; so "4095'\0'" = 5 chars */
     char ethertype[7];  /* 0xXXXX'\0' */
-
+    (void)pkt_len;
+    
     snprintf(priority, sizeof(priority), "%u", VLAN_TCI(pkt) & VLAN_PCP);
     snprintf(dei, sizeof(dei), "%u", VLAN_TCI(pkt) & VLAN_DEI);
     snprintf(vlan_id, sizeof(vlan_id), "%u", VLAN_TCI(pkt) & VLAN_VID);

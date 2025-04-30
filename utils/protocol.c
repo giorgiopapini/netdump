@@ -5,6 +5,8 @@
 #include "../status_handler.h"
 
 
+void print_raw_pkt(const uint8_t *pkt, size_t len);
+
 void print_raw_pkt(const uint8_t *pkt, size_t len) {
 	size_t i;
 	if (len > 0) printf("[%02x", *pkt);
@@ -12,10 +14,10 @@ void print_raw_pkt(const uint8_t *pkt, size_t len) {
 	printf("]");
 }
 
-void *select_output_func(
+output_func_t select_output_func(
 	output_format fmt,
-	void (*print_func)(const uint8_t *, size_t), 
-	void (*visualize_func)(const uint8_t *, size_t)
+	output_func_t print_func,
+	output_func_t visualize_func
 ) {
 	switch (fmt) {
 		case OUTPUT_FORMAT_NONE: 		return NULL;
@@ -63,7 +65,7 @@ void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *
 	int count = 0;
 	while (*arr_ptr && (*arr_ptr)[count] != NULL) count ++;
 
-	*arr_ptr = (protocol_handler_mapping **)realloc(*arr_ptr, (count + 2) * sizeof(protocol_handler_mapping *));
+	*arr_ptr = (protocol_handler_mapping **)realloc(*arr_ptr, (size_t)(count + 2) * sizeof(protocol_handler_mapping *));
     if (!*arr_ptr) raise_error(NULL_POINTER, 1, NULL, "*arr_ptr", __FILE__);
 
     (*arr_ptr)[count] = new_mapping;

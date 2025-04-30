@@ -8,18 +8,37 @@
 #include "../proto_tables_nums.h"
 
 
-size_t tcp_options_len(const uint8_t *pkt) { return (TCP_DATA_OFFSET(pkt) * 4) - 20; }  /* 20 = standard tcp header length */
+size_t tcp_options_len(const uint8_t *pkt);
+void print_tcp_options(const uint8_t *pkt);
+void print_tcp_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len);
+
+size_t tcp_options_len(const uint8_t *pkt) {
+    int raw_len;
+    raw_len = (TCP_DATA_OFFSET(pkt) * 4) - 20;
+
+    if (raw_len > 0) return (size_t)raw_len; 
+    return 0;
+}  /* 20 = standard tcp header length */
 
 void print_tcp_options(const uint8_t *pkt) {
-    size_t opts_len = tcp_options_len(pkt);
-    uint8_t *options = TCP_OPTIONS(pkt);
+    size_t opts_len;
+    const uint8_t *options;
     uint8_t kind;
     uint8_t length;
     size_t i = 0;
     size_t j = 0;
+    uint16_t mss;
+    uint8_t scale;
+    uint32_t left_edge;
+    uint32_t right_edge;
+    uint32_t ts_val;
+    uint32_t ts_echo;
+
+    opts_len = tcp_options_len(pkt);
+    options = TCP_OPTIONS(pkt);
 
     printf(", options: [");
-
     while (i < opts_len) {
         kind = options[i];
         if (0 == kind) {
@@ -44,14 +63,14 @@ void print_tcp_options(const uint8_t *pkt) {
             switch (kind) {
             case 2: {
                 if (length == 4) {
-                    uint16_t mss = ntohs(*(uint16_t *)(options + i + 2));
+                    mss = ntohs(*(const uint16_t *)(options + i + 2));
                     printf("mss: %d", mss);
                 }
                 break;
             }
             case 3: {
                 if (length == 3) {
-                    uint8_t scale = options[i + 2];
+                    scale = options[i + 2];
                     printf("ws: %d", scale);
                 }
                 break;
@@ -64,8 +83,8 @@ void print_tcp_options(const uint8_t *pkt) {
                 printf("sack");
                 for (j = 2; j < length; j += 8) {
                     if (j + 7 < length) {
-                        uint32_t left_edge = ntohl(*(uint32_t *)(options + i + j));
-                        uint32_t right_edge = ntohl(*(uint32_t *)(options + i + j + 4));
+                        left_edge = ntohl(*(const uint32_t *)(options + i + j));
+                        right_edge = ntohl(*(const uint32_t *)(options + i + j + 4));
                         printf(" (left_edge: %u, right_edge: %u)", left_edge, right_edge);
                     }
                 }
@@ -73,8 +92,8 @@ void print_tcp_options(const uint8_t *pkt) {
             }
             case 8: {
                 if (length == 10) {
-                    uint32_t ts_val = ntohl(*(uint32_t *)(options + i + 2));
-                    uint32_t ts_echo = ntohl(*(uint32_t *)(options + i + 6));
+                    ts_val = ntohl(*(const uint32_t *)(options + i + 2));
+                    ts_echo = ntohl(*(const uint32_t *)(options + i + 6));
                     printf("TSval: %u, TSecr: %u", ts_val, ts_echo);
                 }
                 break;
@@ -89,17 +108,16 @@ void print_tcp_options(const uint8_t *pkt) {
             }
             i += length;
         }
-        if ((i + 1) < opts_len) printf(", ");
+        if (opts_len >= 2 && i <= opts_len - 2) printf(", ");
     }
     printf("]");
 }
 
 void print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+    char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
     (void)pkt_len;
 
-    char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
     printf("src_port: %u, dest_port: %u", TCP_SRC_PORT(pkt), TCP_DEST_PORT(pkt));
-    
     printf(", flags: [");
     if (TCP_FLAGS(pkt) & TCP_CWR) strcat(flags, "CWR, ");
     if (TCP_FLAGS(pkt) & TCP_ECE) strcat(flags, "ECE, ");
@@ -121,8 +139,6 @@ void print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-    
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char seq[11];  /* 32 bit can represent a max of 4294967295'\0' ==> len = 11 */
@@ -140,6 +156,7 @@ void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char window_size[6];
     char checksum[7];  /* 0x0000'\0' */
     char urgent_pointer[7];
+    (void)pkt_len;
     /* char options[];  */
 
     snprintf(src_port, sizeof(src_port), "%u", TCP_SRC_PORT(pkt));

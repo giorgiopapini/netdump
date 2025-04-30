@@ -5,6 +5,9 @@
 #include "../proto_tables_nums.h"
 
 
+void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
     (void)pkt_len;
     
@@ -17,12 +20,11 @@ void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char address[5];  /* 0x00'\0' are 5 chars */
     char control[5];
     char protocol[7];  /* 0x0000'\0' are 7 chars */
-
+    (void)pkt_len;
+    
     snprintf(address, sizeof(address), "0x%02x", ADDRESS(pkt));
     snprintf(control, sizeof(control), "0x%02x", CONTROL(pkt));
     snprintf(protocol, sizeof(protocol), "0x%04x", PROTOCOL(pkt));

@@ -24,10 +24,10 @@ typedef struct command {
 
 arg * create_arg_from_token(char *token);
 int add_arg_from_token(command *cmd, char *temp, size_t *args_num);
-unsigned long djb2_hash(char *str);
+unsigned long djb2_hash(const char *str);
 void add_arg(command *cmd, arg *arg);
-arg *get_arg(command *cmd, char *label);
-char *get_raw_val(command *cmd, char *label);
+arg *get_arg(command *cmd, const char *label);
+char *get_raw_val(command *cmd, const char *label);
 
 int is_command(command *cmd, const char *command);
 void reset_cmd(command *cmd);

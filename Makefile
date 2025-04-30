@@ -3,8 +3,36 @@ OBJ := $(SRC:.c=.o)
 
 # Compiler and flags
 CC := gcc
-CFLAGS := -fPIC -g -Wall -Wextra
 LDFLAGS := -lpcap -lm
+CFLAGS := -fPIC -g
+#CFLAGS += -std=c99
+#CFLAGS += -Wpedantic -pedantic-errors
+CFLAGS += -Werror
+CFLAGS += -Wall
+CFLAGS += -Wextra
+#CFLAGS += -Waggregate-return
+CFLAGS += -Wbad-function-cast
+CFLAGS += -Wcast-align
+CFLAGS += -Wcast-qual
+CFLAGS += -Wdeclaration-after-statement
+CFLAGS += -Wfloat-equal
+CFLAGS += -Wformat=2
+CFLAGS += -Wlogical-op
+CFLAGS += -Wmissing-declarations
+CFLAGS += -Wmissing-include-dirs
+CFLAGS += -Wmissing-prototypes
+CFLAGS += -Wnested-externs
+CFLAGS += -Wpointer-arith
+CFLAGS += -Wredundant-decls
+CFLAGS += -Wsequence-point
+CFLAGS += -Wshadow
+CFLAGS += -Wstrict-prototypes
+CFLAGS += -Wswitch
+CFLAGS += -Wundef
+CFLAGS += -Wunreachable-code
+CFLAGS += -Wunused-but-set-parameter
+CFLAGS += -Wwrite-strings
+CFLAGS += -Wconversion -Wsign-conversion
 
 # Library source files
 LIB_SRC := utils/protocol.c utils/visualizer.c

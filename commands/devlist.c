@@ -7,12 +7,11 @@
 #include "../utils/formats.h"
 
 void execute_devlist() {
-    printf("\n");
-
     pcap_if_t *alldevs;
     pcap_if_t *device;
     char errbuff[PCAP_ERRBUF_SIZE];
 
+    printf("\n");
     if (-1 == pcap_findalldevs(&alldevs, errbuff)) {
         raise_error(DEVICES_SCAN_ERROR, 0, NULL);
         return;

@@ -25,7 +25,7 @@
 #define DHCP_HTYPE(pkt)         (pkt[1])
 #define DHCP_HLEN(pkt)          (pkt[2])
 #define DHCP_HOPS(pkt)          (pkt[3])
-#define DHCP_XID(pkt)           (*((uint32_t *)(pkt + 4)))
+#define DHCP_XID(pkt)           (*((const uint32_t *)(pkt + 4)))
 #define DHCP_SECS(pkt)          ((pkt[8] << 8) | pkt[9])
 #define DHCP_FLAGS(pkt)         ((pkt[10] << 8) | pkt[11])
 #define DHCP_BROADCAST_MASK     0x8000
@@ -33,9 +33,9 @@
 #define DHCP_YIADDR(pkt)        ((pkt[16] << 24) | (pkt[17] << 16) | (pkt[18] << 8) | pkt[19])
 #define DHCP_SIADDR(pkt)        ((pkt[20] << 24) | (pkt[21] << 16) | (pkt[22] << 8) | pkt[23])
 #define DHCP_GIADDR(pkt)        ((pkt[24] << 24) | (pkt[25] << 16) | (pkt[26] << 8) | pkt[27])
-#define DHCP_CHADDR(pkt)        ((uint8_t *)(pkt + 28))  /* After this there are NULL bytes for padding */
-#define DHCP_SNAME(pkt)         ((uint8_t *)(pkt + 44))
-#define DHCP_BOOTFILE(pkt)      ((uint8_t *)(pkt) + 108)
+#define DHCP_CHADDR(pkt)        ((const uint8_t *)(pkt + 28))  /* After this there are NULL bytes for padding */
+#define DHCP_SNAME(pkt)         ((const uint8_t *)(pkt + 44))
+#define DHCP_BOOTFILE(pkt)      ((const uint8_t *)(pkt) + 108)
 #define DHCP_MAGIC_COOKIE(pkt)  ((pkt[236] << 24) | (pkt[237] << 16) | (pkt[238] << 8) | pkt[239])
 #define DHCP_OPTIONS_OFFSET     240
 #define DHCP_END_OPTIONS        0xff

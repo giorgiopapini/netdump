@@ -22,7 +22,7 @@ typedef struct buffer {
     int status;
 } buffer;
 
-buffer *create_buffer();
+buffer *create_buffer(void);
 void copy_buffer(buffer *src, buffer *dest);
 buffer *copy_to_heap(buffer *src);
 int compare_buffers(buffer *b1, buffer *b2);

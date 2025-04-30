@@ -11,7 +11,7 @@ typedef struct shared_libs {
 } shared_libs;
 
 
-shared_libs *create_shared_libs_obj();
+shared_libs *create_shared_libs_obj(void);
 int is_active(shared_libs *libs, char *filename);
 void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int new_status);
 shared_libs *load_shared_libs(const char *folder);

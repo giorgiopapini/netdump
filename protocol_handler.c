@@ -3,7 +3,6 @@
 #include "protocol_handler.h"
 #include "command_handler.h"
 #include "status_handler.h"
-#include "utils/protocol.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/dlt_protos.h"
@@ -61,11 +60,11 @@ int should_print_pkt(command *cmd, protocol_layer layer) {
 void dissect(
 	command *cmd, 
 	uint8_t *pkt, 
-	bpf_u_int32 pkt_len, 
+	size_t pkt_len, 
 	int proto_id, 
 	int proto_table_num,
 	shared_libs *libs,
-	custom_dissectors *custom_dissectors,
+	custom_dissectors *custom_diss,
 	int proto_shown
 ) {
 	protocol_handler handler;
@@ -74,7 +73,7 @@ void dissect(
 	output_format out_format = OUTPUT_FORMAT_NONE;
 	protocol_handler *proto_hashmap = get_proto_table(proto_table_num);
 
-	custom_handler = get_custom_protocol_handler(custom_dissectors, proto_id, proto_hashmap, libs);
+	custom_handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
 	
 	if (NULL != custom_handler) handler = *custom_handler;
 	else handler = get_protocol_handler(proto_id, proto_hashmap);
@@ -102,8 +101,8 @@ void dissect(
 	}
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
-	encap_proto_info = handler.dissect_proto(pkt, (size_t)pkt_len, out_format);
-	if (-1 != encap_proto_info.proto_table_num && (size_t)pkt_len > encap_proto_info.offset) {
+	encap_proto_info = handler.dissect_proto(pkt, pkt_len, out_format);
+	if (-1 != encap_proto_info.proto_table_num && pkt_len > encap_proto_info.offset) {
 		dissect(
 			cmd,
 			(pkt + encap_proto_info.offset),
@@ -111,17 +110,17 @@ void dissect(
 			encap_proto_info.protocol,
 			encap_proto_info.proto_table_num,
 			libs,
-			custom_dissectors,
+			custom_diss,
 			proto_shown
 		);
 	}
 }
 
-void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_dissectors) {
+void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
-	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%d) " RESET_COLOR, pkt->num);
+	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%ld) " RESET_COLOR, pkt->num);
 	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
 
-	dissect(cmd, pkt->bytes, pkt->header->caplen, pkt->datalink_type, DLT_PROTOS, libs, custom_dissectors, 0);
+	dissect(cmd, pkt->bytes, (size_t)pkt->header->caplen, pkt->datalink_type, DLT_PROTOS, libs, custom_diss, 0);
 	printf("\n");
 }

@@ -8,12 +8,12 @@
 
 #define USED_ROWS(label, content)           (calc_rows(label) + calc_rows(content))
 
-int calc_rows(char *str);
-int get_cursor_position(int *col, int *row);
-void move_to_next_line(int *curr_x, int *curr_y, int used_rows);
-void start_printing();
-void end_printing();
-void print_field(char *label, char *content, int newline);
-void print_additional_info(char *info);
+size_t calc_rows(const char *str);
+int get_cursor_position(size_t *col, size_t *row);
+void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows);
+void start_printing(void);
+void end_printing(void);
+void print_field(const char *label, const char *content, int newline);
+void print_additional_info(const char *info);
 
 #endif

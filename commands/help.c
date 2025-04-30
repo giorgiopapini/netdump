@@ -7,24 +7,24 @@
 #include "../utils/formats.h"
 
 
-void print_cmd(char *cmd, char *desc) {
+void print_cmd(const char *cmd, const char *desc) {
     printf("\n" PREFIX_STR);
     if (NULL != cmd) printf(GREEN "%s" RESET_COLOR, cmd);
     if (NULL != desc) printf(" (%s)", desc);
 }
 
-void print_arg(char *arg, char *desc, char *prefix_space, char *prefix_str, char *example) {
+void print_arg(const char *arg_value, const char *desc, const char *prefix_space, const char *prefix_str, const char *example) {
     printf("\n");
     if (NULL != prefix_space) printf("%s", prefix_space);
     if (NULL != prefix_str) printf("%s", prefix_str);
-    if (NULL != arg) printf(CYAN " %s" RESET_COLOR, arg);
+    if (NULL != arg_value) printf(CYAN " %s" RESET_COLOR, arg_value);
     if (NULL != desc) printf(" (%s)", desc);
     if (NULL != example) printf(YELLOW " (e.g. '%s')" RESET_COLOR, example);
     if (strcmp(prefix_str, DEFAULT_CORNER) == 0) printf("\n");
     /* this is a pointer comparison, not a string comparison, strcmp is not needed */
 }
 
-void analize_help() {
+void analize_help(void) {
     print_cmd(ANALIZE_COMMAND, ANALIZE_COMMAND_DESC);
 
     print_arg(NUMBER_ARG, PACKET_AMOUNT_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
@@ -42,11 +42,11 @@ void analize_help() {
     print_arg(WRITE_FILE_ARG, WRITE_FILE_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, WRITE_FILE_ARG_EG);
 }
 
-void devlist_help() {
+void devlist_help(void) {
     print_cmd(DEVICES_LIST_COMMAND, DEVICES_LIST_COMMAND_DESC);
 }
 
-void dissectors_help() {
+void dissectors_help(void) {
     print_cmd(DISSECTORS_COMMAND, DISSECTORS_COMMAND_DESC);
     print_arg(DISSECTOR_LIST_ARG, DISSECTOR_LIST_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NULL);
     print_arg(ADD_DISSECTOR_ARG, ADD_DISSECTOR_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, ADD_DISSECTOR_ARG_EG);
@@ -55,11 +55,11 @@ void dissectors_help() {
     print_arg(DELETE_LIB_ARG, DELETE_LIB_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, DELETE_LIB_ARG_EG);
 }
 
-void reset_help() {
+void reset_help(void) {
     print_cmd(RESET_COMMAND, RESET_COMMAND_DESC);
 }
 
-void print_help() {
+void print_help(void) {
     print_cmd(PRINT_COMMAND, PRINT_COMMAND_DESC);
 
     print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
@@ -73,22 +73,22 @@ void print_help() {
     print_arg(PACKET_NUM_ARG, PACKET_NUM_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NULL);
 }
 
-void clear_help() {
+void clear_help(void) {
     print_cmd(CLEAR_COMMAND, CLEAR_COMMAND_DESC);
 }
 
-void exit_help() {
+void exit_help(void) {
     print_cmd(EXIT_COMMAND, EXIT_COMMAND_DESC);
 }
 
-void save_help() {
+void save_help(void) {
     print_cmd(SAVE_COMMAND, SAVE_COMMAND_DESC);
 
     print_arg(DEST_FILE_ARG, DEST_FILE_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, DEST_FILE_ARG_EG);
     print_arg(NUMBER_ARG, NUMBER_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NUMBER_ARG_EG);
 }
 
-void execute_help() {
+void execute_help(void) {
     printf("Default command format: " COMMAND_FORMAT "\n");
 
     analize_help();

@@ -9,7 +9,7 @@
 #include "../utils/string_utils.h"
 
 
-void print_cwd() {
+void print_cwd(void) {
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL) printf("Current working directory: %s\n", cwd);
     else raise_error(CURR_WORK_DIR_ERROR, 1, NULL);

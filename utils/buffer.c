@@ -14,8 +14,17 @@
 #define MOVE_CURSOR(x, y)                   (printf("\033[%d;%dH", (y), (x)))
 #define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%ldC", len - pos); } while (0)
 #define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%ldD", (len - 1) - pos); } while (0)
-#define CLEAR_STRN(len)                     do { for (int i = len; i > 0; i --) printf("\b \b"); } while (0)
+#define CLEAR_STRN(len)                     do { for (size_t z = len; z > 0; z --) printf("\b \b"); } while (0)
 
+
+void refresh_output(buffer *buff, size_t old_len);
+int arrow_up(buffer *buff, circular_list *list, int *end);
+int arrow_down(buffer *buff, circular_list *list, int *end);
+int arrow_right(buffer *buff);
+int arrow_left(buffer *buff);
+int canc(buffer *buff);
+int backspace(buffer *buff);
+int literal_key(buffer *buff, int c);
 
 buffer *create_buffer() {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
@@ -74,7 +83,7 @@ void refresh_output(buffer *buff, size_t old_len) {   /* refresh string, the cur
 
 int arrow_up(buffer *buff, circular_list *list, int *end) {
     size_t old_len = buff->len;
-    int prev_pos = buff->cursor_pos;
+    size_t prev_pos = buff->cursor_pos;
     if (NULL == list->head) return ARROW_UP_KEY;
 
     *end = 0;  /* not at the end of history */
@@ -88,7 +97,7 @@ int arrow_up(buffer *buff, circular_list *list, int *end) {
 
 int arrow_down(buffer *buff, circular_list *list, int *end) {
     size_t old_len = buff->len;
-    int prev_pos = buff->cursor_pos;
+    size_t prev_pos = buff->cursor_pos;
 
     if (NULL == list->head) return ARROW_DOWN_KEY;
     if (list->curr == list->head) {
@@ -155,7 +164,7 @@ int backspace(buffer *buff) {
     return BACKSPACE_KEY;
 }
 
-int literal_key(buffer *buff, char c) {
+int literal_key(buffer *buff, int c) {
     size_t old_len = buff->len;
 
     if (TILDE_KEY == c) return c;
@@ -175,7 +184,7 @@ int literal_key(buffer *buff, char c) {
 }
 
 int populate(buffer *buff, circular_list *history) {
-    char c;
+    int c;
     int end = 1;
     int ret;
 

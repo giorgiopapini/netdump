@@ -13,7 +13,7 @@
 void change_dissector_status(int new_status, char *filenames, shared_libs *libs) {
     char *token;
     char *trimmed;
-    int target_index = -1;
+    int found = 0;
     size_t i;
 
     if (NULL == filenames) {
@@ -25,23 +25,23 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
 
     token = strtok(filenames, STRINGS_SEPARATOR);
     while (token != NULL) {
-        target_index = -1;
+        found = 0;
         trimmed = get_trimmed_str(token);
 
         if (NULL != libs->filenames) {
             for (i = 0; i < libs->count; i ++) {
                 if (NULL != libs->filenames[i] && 0 == strcmp(trimmed, libs->filenames[i])) {
-                    target_index = i;
+                    found = 1;
                     break;
                 }
             }
         }
 
-        if (-1 == target_index) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
+        if (found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
         else {
             if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS);
             else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS);
-            libs->statuses[target_index] = new_status;
+            libs->statuses[i] = new_status;
         }
 
         token = strtok(NULL, STRINGS_SEPARATOR);
@@ -58,11 +58,12 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
     void *handle;
     char expanded_dir[4096];
     char path[8192];
+    DIR *dir;
 
     if (NULL == paths) return;
     
     expand_tilde(CUSTOM_DISSECTORS_PATH, expanded_dir, sizeof(expanded_dir));
-    DIR *dir = opendir(expanded_dir);
+    dir = opendir(expanded_dir);
 
     token = strtok(paths, STRINGS_SEPARATOR);
     while (token != NULL) {
@@ -98,7 +99,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
         token = strtok(NULL, STRINGS_SEPARATOR);
         free(trimmed);
     }
-};
+}
 
 void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *filenames) {
     char *token;
@@ -190,7 +191,7 @@ void print_dissectors_list(shared_libs *libs) {
     printf("\n");
 }
 
-void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *custom_dissectors) {
+void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *custom_diss) {
     int show_list = (NULL != get_arg(cmd, DISSECTOR_LIST_ARG) || 0 == cmd->n_hashes);
     arg *activate_arg = get_arg(cmd, ACTIVATE_LIB_ARG);
     arg *deactivate_arg = get_arg(cmd, DEACTIVATE_LIB_ARG);
@@ -200,8 +201,8 @@ void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *cust
     /* first deactivate, than eventually activate. Deactivation has priority over activation */
     if (NULL != deactivate_arg) change_dissector_status(0, deactivate_arg->val, libs);
     if (NULL != activate_arg) change_dissector_status(1, activate_arg->val, libs);
-    if (NULL != add_paths) add_and_load_dissectors(libs, custom_dissectors, add_paths);
-    if (NULL != delete_filenames) delete_dissector(libs, custom_dissectors, delete_filenames);
+    if (NULL != add_paths) add_and_load_dissectors(libs, custom_diss, add_paths);
+    if (NULL != delete_filenames) delete_dissector(libs, custom_diss, delete_filenames);
     if (show_list) print_dissectors_list(libs);
     /* show_list should be the final command execution, because it shows the eventual previous changes */
 }

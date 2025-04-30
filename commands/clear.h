@@ -2,6 +2,6 @@
 #define CLEAR_H
 
 
-void execute_clear();
+void execute_clear(void);
 
 #endif

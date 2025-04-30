@@ -14,7 +14,9 @@
 #include "../protocols/ppp_protos.h"
 
 
-custom_dissectors *create_custom_dissectors() {
+void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
+
+custom_dissectors *create_custom_dissectors(void) {
     custom_dissectors *dissectors = (custom_dissectors *)malloc(sizeof(custom_dissectors));
     if (NULL == dissectors) raise_error(NULL_POINTER, 1, NULL, "dissectors", __FILE__);
     dissectors->len = 0;
@@ -67,34 +69,35 @@ dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protoco
     return new_entry;
 }
 
-void add_dissector_entry(custom_dissectors *custom_dissectors, dissectors_entry *new_dissectors_entry) {
-    if (NULL == custom_dissectors->table) {
-        custom_dissectors->table = (dissectors_entry **)malloc(sizeof(dissectors_entry *));
-        custom_dissectors->table[0] = new_dissectors_entry;
-        custom_dissectors->len = 1;
+void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_dissectors_entry) {
+    if (NULL == custom_diss->table) {
+        custom_diss->table = (dissectors_entry **)malloc(sizeof(dissectors_entry *));
+        custom_diss->table[0] = new_dissectors_entry;
+        custom_diss->len = 1;
     }
     else {
-        custom_dissectors->len ++;
-        custom_dissectors->table = realloc(custom_dissectors->table, custom_dissectors->len * sizeof(dissectors_entry *));
-        custom_dissectors->table[custom_dissectors->len - 1] = new_dissectors_entry;
+        custom_diss->len ++;
+        custom_diss->table = realloc(custom_diss->table, custom_diss->len * sizeof(dissectors_entry *));
+        custom_diss->table[custom_diss->len - 1] = new_dissectors_entry;
     }
 }
 
-void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_dissectors, char *filename) {
-    if (NULL == custom_dissectors) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
-
-    protocol_handler *dest_table = get_proto_table(dest_table_val);
+void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_diss, char *filename) {
+    protocol_handler *dest_table;
     size_t i;
 
-    if (NULL == custom_dissectors->table) add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
+    dest_table = get_proto_table(dest_table_val);
+    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
+
+    if (NULL == custom_diss->table) add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
-        for (i = 0; i < custom_dissectors->len; i ++) {
-            if (NULL != custom_dissectors->table[i] && custom_dissectors->table[i]->proto_table == dest_table) {
-                add_custom_proto(custom_dissectors->table[i], custom_handler);
+        for (i = 0; i < custom_diss->len; i ++) {
+            if (NULL != custom_diss->table[i] && custom_diss->table[i]->proto_table == dest_table) {
+                add_custom_proto(custom_diss->table[i], custom_handler);
                 return;
             }
         }
-        add_dissector_entry(custom_dissectors, create_dissectors_entry(dest_table, custom_handler, filename));
+        add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
     }
 }
 
@@ -111,15 +114,15 @@ void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_
     }
 }
 
-void load_dissector(custom_dissectors *custom_dissectors, void *handle, char *filename) {
+void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename) {
     protocol_handler_mapping **mappings;
-    protocol_handler_mapping **(*get_custom_protocols_mapping)();
+    protocol_handler_mapping **(*get_custom_protocols_mapping)(void);
     char *error;
 
     if (NULL == handle) return;
-    if (NULL == custom_dissectors) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
+    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, "custom_diss", __FILE__);
 
-    get_custom_protocols_mapping = dlsym(handle, FUNCTION_NAME);
+    get_custom_protocols_mapping = (protocol_handler_mapping **(*)(void))dlsym(handle, FUNCTION_NAME);
 
     error = dlerror();
     if (error != NULL) {
@@ -129,13 +132,13 @@ void load_dissector(custom_dissectors *custom_dissectors, void *handle, char *fi
     }
 
     mappings = get_custom_protocols_mapping();
-    populate_custom_dissectors(custom_dissectors, mappings, filename);
+    populate_custom_dissectors(custom_diss, mappings, filename);
     
     destroy_mappings(mappings);
 }
 
 protocol_handler *get_custom_protocol_handler(
-    custom_dissectors *custom_dissectors, 
+    custom_dissectors *custom_diss, 
     int target_proto, 
     protocol_handler *proto_table,
     shared_libs *libs
@@ -144,11 +147,11 @@ protocol_handler *get_custom_protocol_handler(
     protocol_handler *curr_handler = NULL;
     size_t i, j;
     
-    if (NULL == custom_dissectors) return NULL;
-    if (NULL == custom_dissectors->table) return NULL;
+    if (NULL == custom_diss) return NULL;
+    if (NULL == custom_diss->table) return NULL;
 
-    for (i = 0; i < custom_dissectors->len; i ++) {
-        curr_entry = custom_dissectors->table[i];
+    for (i = 0; i < custom_diss->len; i ++) {
+        curr_entry = custom_diss->table[i];
         if (NULL == curr_entry) continue;
 
         if (is_active(libs, curr_entry->lib_filename) && curr_entry->proto_table == proto_table) {
@@ -177,21 +180,21 @@ void destroy_dissectors_entry(dissectors_entry *entry) {
     free(entry);
 }
 
-void destroy_custom_dissectors(custom_dissectors *custom_dissectors) {
+void destroy_custom_dissectors(custom_dissectors *custom_diss) {
     size_t i;
     dissectors_entry *curr_entry = NULL;
 
-    if (NULL == custom_dissectors) return;
-    if (NULL == custom_dissectors->table) return;
+    if (NULL == custom_diss) return;
+    if (NULL == custom_diss->table) return;
 
-    for (i = 0; i < custom_dissectors->len; i ++) {
-        curr_entry = custom_dissectors->table[i];
+    for (i = 0; i < custom_diss->len; i ++) {
+        curr_entry = custom_diss->table[i];
         destroy_dissectors_entry(curr_entry);
     }
 
-    free(custom_dissectors->table);
-    custom_dissectors->table = NULL;
-    custom_dissectors->len = 0;
+    free(custom_diss->table);
+    custom_diss->table = NULL;
+    custom_diss->len = 0;
 
-    free(custom_dissectors);
+    free(custom_diss);
 }

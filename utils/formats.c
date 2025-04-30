@@ -4,13 +4,13 @@
 #include "formats.h"
 
 
-void print_ipv4(uint32_t addr) {
+void print_ipv4(const uint32_t addr) {
     char buff[IP_ADDR_STR_LEN];
     snprintf(buff, IP_ADDR_STR_LEN, IP_ADDR_FORMAT, IP_TO_STR(addr));
     printf("%s", buff);  
 }
 
-void print_ipv6(uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
+void print_ipv6(const uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
     size_t i;
     int empty = 0;
     char temp[10];
@@ -36,7 +36,7 @@ void print_ipv6(uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
     else printf("%s", res);
 }
 
-void print_mac(uint8_t mac_addr[6]) {
+void print_mac(const uint8_t mac_addr[6]) {
     size_t i;
 
     /* the last 8 bits are printed after without the trailing ':' */

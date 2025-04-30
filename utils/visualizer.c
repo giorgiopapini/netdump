@@ -14,17 +14,22 @@
 #define FIELD_MIN_Y_LEN 3
 #define MAX_X 80
 
-#define MOVE_CURSOR(x, y)                       (printf("\033[%d;%dH", (y), (x)))
+#define MOVE_CURSOR(x, y)                       (printf("\033[%ld;%ldH", (long)(y), (long)(x)))
 #define MAX(x, y)                               ((x > y) ? x : y)
 #define MIN(x, y)                               ((x > y) ? y : x)
 #define Y_DEVIATION(rows)                       (rows + 1)  /* considering field rows + bottom border row */
 #define PRINTABLE_CHARS(len, cols, max_x)       (MIN(MIN(cols, max_x), len))
 #define OFFSET_LEFT(max, min)                   ((max - min) / 2)
-#define OFFSET_RIGHT(max, min)                  (ceil(((max % min) == 0) ? ((double)max - (double)min) / (double)2 : (((double)max - (double)min) / (double)2)))
+#define OFFSET_RIGHT(max, min) \
+    ((size_t)(((max % min) == 0) ? round((double)(max - min) / 2.0) : round((double)(max - min) / 2.0)))
 
 
-int prev_used_rows = 0;
+void get_terminal_size(size_t *cols, size_t *rows);
+void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y);
+void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right);
+void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len);
 
+size_t prev_used_rows = 0;
 
 void start_printing() { prev_used_rows = 0; }
 
@@ -33,7 +38,7 @@ void end_printing() {
     prev_used_rows = 0;
 }
 
-void get_terminal_size(int *cols, int *rows) {
+void get_terminal_size(size_t *cols, size_t *rows) {
     struct winsize w;
     if (-1 == ioctl(STDOUT_FILENO, TIOCGWINSZ, &w)) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
 
@@ -41,28 +46,32 @@ void get_terminal_size(int *cols, int *rows) {
     *rows = w.ws_row;
 }
 
-int calc_rows(char *str) {
-    int cols, rows;
-    int usable_cols;
-    int max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
+size_t calc_rows(const char *str) {
+    size_t cols, rows;
+    size_t usable_cols;
+    size_t max_len;
+    
+    if (!str) raise_error(NULL_POINTER, 1, NULL);
+
+    max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
     get_terminal_size(&cols, &rows);
 
     usable_cols = MIN(cols, MAX_X);
-    if (0 >= usable_cols) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
+    if (usable_cols == 0) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
 
-    return (max_len / usable_cols) == 0 ? 1 : ((max_len + usable_cols - 1) / usable_cols);
+    return (max_len + usable_cols - 1) / usable_cols;
 }
 
-int get_cursor_position(int *col, int *row) {
+int get_cursor_position(size_t *col, size_t *row) {
     char buf[32];
     unsigned int i = 0;
-    int ret;
+    ssize_t ret;
 
     struct termios saved, raw;
     tcgetattr(STDIN_FILENO, &saved);
 
     raw = saved;
-    raw.c_lflag &= ~(ICANON | ECHO);
+    raw.c_lflag &= (tcflag_t)~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &raw);
 
     printf("\033[6n");
@@ -80,15 +89,15 @@ int get_cursor_position(int *col, int *row) {
     tcsetattr(STDIN_FILENO, TCSANOW, &saved);
 
     if (buf[0] == '\033' && buf[1] == '[') {
-        sscanf(buf + 2, "%d;%d", row, col);
+        sscanf(buf + 2, "%ld;%ld", row, col);
     }
     else return -1;
     return 0;
 }
 
-void move_to_next_line(int *curr_x, int *curr_y, int used_rows) {
+void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
     if (NULL == curr_x && NULL == curr_y) {
-        int x, y;
+        size_t x, y;
         get_cursor_position(&x, &y);
         MOVE_CURSOR(0, y + Y_DEVIATION(used_rows));
         printf("\n");
@@ -100,8 +109,8 @@ void move_to_next_line(int *curr_x, int *curr_y, int used_rows) {
     }
 }
 
-void print_horizontal_border(int len, int *curr_x, int *curr_y) {
-    int i;
+void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
+    size_t i;
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
 
     MOVE_CURSOR(*curr_x, *curr_y);
@@ -110,7 +119,7 @@ void print_horizontal_border(int len, int *curr_x, int *curr_y) {
     printf(JUNCTION);
 }
 
-void print_line(char *val, int *curr_x, int *curr_y, int offset_left, int offset_right) {
+void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
     printf("\n");  /* creates new line if no more rows available in terminal */
     
     *curr_y += 1; 
@@ -123,13 +132,13 @@ void print_line(char *val, int *curr_x, int *curr_y, int offset_left, int offset
     printf(MARGIN VERTICAL_BORDER);
 }
 
-void print_value(char *label, char *content, int *curr_x, int *curr_y, int max_len) {
-    int label_len = strlen(label);
-    int content_len = strlen(content);
-    int used_rows;
+void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len) {
+    size_t label_len = strlen(label);
+    size_t content_len = strlen(content);
+    size_t used_rows;
     char partial_str[MAX_X];
-    int partial_i;
-    int i;
+    size_t partial_i;
+    size_t i;
 
     partial_i = (max_len - (2 * strlen(MARGIN)) - (2 * strlen(VERTICAL_BORDER)));
 
@@ -173,18 +182,20 @@ void print_value(char *label, char *content, int *curr_x, int *curr_y, int max_l
     *curr_y += 1;
 }
 
-void print_field(char *label, char *content, int newline) {
+void print_field(const char *label, const char *content, int newline) {
+    size_t label_len;
+    size_t content_len;
+    size_t total_rows;
+    size_t max_len;
+    size_t term_cols;
+    size_t term_rows;
+    size_t curr_x;
+    size_t curr_y;
+    size_t initial_y;
     if (NULL == label || NULL == content) return;
-    
-    int label_len = strlen(label);
-    int content_len = strlen(content);
-    int total_rows;
-    int max_len;
-    int term_cols;
-    int term_rows;
-    int curr_x;
-    int curr_y;
-    int initial_y;
+
+    label_len = strlen(label);
+    content_len = strlen(content);
 
     get_terminal_size(&term_cols, &term_rows);
 
@@ -218,4 +229,4 @@ void print_field(char *label, char *content, int newline) {
     prev_used_rows = total_rows;
 }
 
-void print_additional_info(char *info) { if (NULL != info) printf(YELLOW "(%s)\n" RESET_COLOR, info); }
+void print_additional_info(const char *info) { if (NULL != info) printf(YELLOW "(%s)\n" RESET_COLOR, info); }

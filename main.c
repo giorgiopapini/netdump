@@ -36,24 +36,68 @@
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
 */
 
+void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
+void run(buffer *, command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
+void prompt(void);
+
+
+int main(void) {
+	fd_set readfds;
+    int ret;
+	struct termios original, term;
+
+	buffer buff = { 0 };
+	command cmd ={ 0 };
+	raw_array packets = { 0 };
+	circular_list history = { 0 };
+	shared_libs *libs;
+	custom_dissectors *custom_diss;
+
+	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
+	
+	libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
+	custom_diss = load_custom_dissectors(libs);
+
+    tcgetattr(STDIN_FILENO, &original);
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= (tcflag_t)~(ICANON | ECHO);
+    term.c_cc[VMIN] = 1;
+	term.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+
+	prompt();
+    while (1) {
+        FD_ZERO(&readfds);
+        FD_SET(STDIN_FILENO, &readfds);
+
+        ret = select(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL);
+
+        if (-1 == ret) {
+			if (EINTR == errno) break;
+			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
+		}
+		else run(&buff, &cmd, &packets, &history, libs, custom_diss);
+    }
+	tcsetattr(STDIN_FILENO, TCSANOW, &original);
+
+	deallocate_heap(&cmd, &packets, &history, libs, custom_diss);
+	return 0;
+}
+
+
 void deallocate_heap(
 	command *cmd,
 	raw_array *packets,
 	circular_list *history,
 	shared_libs *libs,
-	custom_dissectors *custom_dissectors
+	custom_dissectors *custom_diss
 ) {
 	destroy_list(history, destroy_buffer);
 	reset_cmd(cmd);
 	reset_arr(packets, destroy_packet);
 	destroy_shared_libs(libs);
-	destroy_custom_dissectors(custom_dissectors);
+	destroy_custom_dissectors(custom_diss);
 }
-
-void prompt() { 
-	printf(PROMPT_STRING); 
-	fflush(stdout);
-};
 
 void run(
 	buffer *buff, 
@@ -61,9 +105,9 @@ void run(
 	raw_array *packets, 
 	circular_list *history,
 	shared_libs *libs,
-	custom_dissectors *custom_dissectors
+	custom_dissectors *custom_diss
 ) {
-	char pressed_key = populate(buff, history);
+	int pressed_key = populate(buff, history);
 
 	if (-1 == pressed_key) return;  /* if an error occoured, exit function */
 	if (ENTER_KEY != pressed_key) return;  /* if enter is not pressed, than do not start executing partial cmd */
@@ -87,7 +131,7 @@ void run(
 
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
-			if (0 != execute_command(cmd, packets, history, libs, custom_dissectors)) {
+			if (0 != execute_command(cmd, packets, history, libs, custom_diss)) {
 				raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
 			}
 		}
@@ -97,41 +141,7 @@ void run(
 	prompt();
 }
 
-int main() {
-	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
-	fd_set readfds;
-    int ret;
-	struct termios original, term;
-
-	buffer buff = { 0 };
-	command cmd ={ 0 };
-	raw_array packets = { 0 };
-	circular_list history = { 0 };
-	shared_libs *libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
-	custom_dissectors *custom_dissectors = load_custom_dissectors(libs);
-
-    tcgetattr(STDIN_FILENO, &original);
-	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= ~(ICANON | ECHO);
-    term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
-
-	prompt();
-    while (1) {
-        FD_ZERO(&readfds);
-        FD_SET(STDIN_FILENO, &readfds);
-
-        ret = select(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL);
-
-        if (-1 == ret) {
-			if (EINTR == errno) break;
-			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
-		}
-		else run(&buff, &cmd, &packets, &history, libs, custom_dissectors);
-    }
-	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-
-	deallocate_heap(&cmd, &packets, &history, libs, custom_dissectors);
-	return 0;
+void prompt() { 
+	printf(PROMPT_STRING); 
+	fflush(stdout);
 }

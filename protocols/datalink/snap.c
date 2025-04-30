@@ -5,6 +5,9 @@
 #include "../proto_tables_nums.h"
 
 
+void print_snap_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len);
+
 void print_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
     (void)pkt_len;
     
@@ -16,11 +19,10 @@ void print_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
     char oui[9];  /* 00:00:00'\0' 9 chars */
     char ethertype[7];
-
+    (void)pkt_len;
+    
     snprintf(oui, sizeof(oui), "%02x:%02x:%02x", SNAP_OUI(pkt, 0), SNAP_OUI(pkt, 1), SNAP_OUI(pkt, 2));
     snprintf(ethertype, sizeof(ethertype), "0x%04x", SNAP_TYPE(pkt));
 

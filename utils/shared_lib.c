@@ -48,17 +48,16 @@ void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int
 }
 
 shared_libs *load_shared_libs(const char *directory) {
-    shared_libs *libs = create_shared_libs_obj();
-    if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
-
     struct dirent *entry;
     void *handle;
     char expanded_dir[4096];
     char path[8192];
+    DIR *dir;
+    shared_libs *libs = create_shared_libs_obj();
+    if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
 
     expand_tilde(directory, expanded_dir, sizeof(expanded_dir));
-
-    DIR *dir = opendir(expanded_dir);
+    dir = opendir(expanded_dir);
     if (NULL == dir) {
         raise_error(FOLDER_OPEN_ERROR, 0, NULL, expanded_dir);
         return libs;

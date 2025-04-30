@@ -5,8 +5,14 @@
 #include "../../utils/visualizer.h"
 
 
-int extract_domain_name(const uint8_t *payload, int offset, char *domain) {
-    int i = 0, len, start_offset = offset;
+size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain);
+void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len);
+void print_dns_hdr(const uint8_t *pkt, size_t pkt_len);
+void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len);
+
+size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain) {
+    size_t i = 0, start_offset = offset;
+    uint8_t len;
     uint16_t pointer_offset;
 
     while ((len = payload[offset]) > 0) {
@@ -18,9 +24,9 @@ int extract_domain_name(const uint8_t *payload, int offset, char *domain) {
             return offset - start_offset;
         } 
         else {
-            if (i > 0) domain[i++] = '.';
+            if (i > 0) domain[i ++] = '.';
             offset ++;
-            memcpy(&domain[i], &payload[offset], len);
+            memcpy(&domain[i], &payload[offset], (size_t)len);
             i += len;
             offset += len;
         }
@@ -29,30 +35,32 @@ int extract_domain_name(const uint8_t *payload, int offset, char *domain) {
     return (offset - start_offset) + 1;
 }
 
-void extract_srv_record(const uint8_t *payload, int offset, size_t data_len) {
+void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) {
     char target[256];
-    int target_offset;
+    size_t target_offset;
 
     if (data_len < 6) return;
     
     target_offset = offset + 6;
     extract_domain_name(payload, target_offset, target);
 
-    printf(", priority: %u", *(unsigned short *)(payload + offset));
-    printf(", weight: %u", *(unsigned short *)(payload + offset + 2));
-    printf(", port: %u", *(unsigned short *)(payload + offset + 4));
+    printf(", priority: %u", *(const uint8_t *)(payload + offset));
+    printf(", weight: %u", *(const uint8_t *)(payload + offset + 2));
+    printf(", port: %u", *(const uint8_t *)(payload + offset + 4));
     printf(", target: %s", target);
 }
 
 void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-
-    char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     char opcode_str[16];
     char rcode_str[16];
     char domain[256];
-    int offset;
-    int i;
+    uint8_t rdlength;
+    uint16_t type, class, data_len;
+    uint32_t ttl;
+    size_t offset;
+    size_t i, j;
+    char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
+    (void)pkt_len;
 
     printf("transaction_id: 0x%04x", DNS_TRANSACTION_ID(pkt));
 
@@ -87,32 +95,29 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 
     /* print queries */
     offset = DNS_HDR_LEN;
-    for (i = 0; i < DNS_QUESTIONS(pkt); i ++) {
+    for (i = 0; i < (size_t)DNS_QUESTIONS(pkt); i ++) {
         offset += extract_domain_name(pkt, offset, domain);
         printf(
-            ", query %d: {name: %s, type: %u, class: %u}",
+            ", query %ld: {name: %s, type: %u, class: %u}",
             i + 1,
             domain,
-            *(uint16_t *)(pkt + offset),
-            *(uint16_t *)(pkt + offset + 2)
+            *(const uint16_t *)(pkt + offset),
+            *(const uint16_t *)(pkt + offset + 2)
         );
         offset += 4;
     }
 
     /* print answers */
-    for (i = 0; i < DNS_ANSWER_RRS(pkt); i++) {
-        uint16_t type, class, data_len;
-        uint32_t ttl;
-        
+    for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i++) {
         offset += extract_domain_name(pkt, offset, domain);
 
-        type = *(uint16_t *)(pkt + offset);
-        class = *(uint16_t *)(pkt + offset + 2);
-        ttl = *(uint32_t *)(pkt + offset + 4);
-        data_len = *(uint16_t *)(pkt + offset + 8);
+        type = *(const uint16_t *)(pkt + offset);
+        class = *(const uint16_t *)(pkt + offset + 2);
+        ttl = *(const uint32_t *)(pkt + offset + 4);
+        data_len = *(const uint16_t *)(pkt + offset + 8);
 
         printf(
-            ", answer %d: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
+            ", answer %ld: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
             i + 1,
             domain,
             type,
@@ -129,24 +134,24 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 
     /* print additional records */
-    for (i = 0; i < DNS_ADDITIONAL_RRS(pkt); i ++) {
-        uint8_t rdlength = *(uint8_t *)(pkt + offset + 8);
+    for (i = 0; i < (size_t)DNS_ADDITIONAL_RRS(pkt); i ++) {
+        rdlength = *(const uint8_t *)(pkt + offset + 8);
 
         printf(
-            ", additional_record %d: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
+            ", additional_record %ld: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
             i + 1,
-            *(uint16_t *)(pkt + offset + 1),
-            *(uint16_t *)(pkt + offset + 3),
+            *(const uint16_t *)(pkt + offset + 1),
+            *(const uint16_t *)(pkt + offset + 3),
             *(pkt + offset + 5),
             *(pkt + offset + 6),
-            *(uint16_t *)(pkt + offset + 7),
+            *(const uint16_t *)(pkt + offset + 7),
             rdlength
         );
         offset += 10;
 
         if (rdlength > 0) {
             printf(", rdata: (");
-            for (int j = 0; j < rdlength; j++) printf("%02x ", pkt[offset + j]);
+            for (j = 0; j < rdlength; j++) printf("%02x ", pkt[offset + j]);
             printf(")");
         }
         printf("}");
@@ -156,8 +161,6 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
-    
     char transaction_id[7];  /* 0x0000'\0' 7 chars */
     char qr[2];
     char opcode[3];
@@ -172,7 +175,8 @@ void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char answer_rrs[6];
     char auth_rrs[6];
     char additional_rrs[6];
-
+    (void)pkt_len;
+    
     snprintf(transaction_id, sizeof(transaction_id), "0x%04x", DNS_TRANSACTION_ID(pkt));
     snprintf(qr, sizeof(qr), "%u", (DNS_FLAGS(pkt)) & DNS_QR ? 1 : 0);
     snprintf(opcode, sizeof(opcode), "%u", (DNS_FLAGS(pkt)) & DNS_OPCODE >> 11);

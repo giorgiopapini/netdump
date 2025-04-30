@@ -42,7 +42,7 @@
 #define TCP_WINDOW_SIZE(pkt)        ((pkt[14] << 8) | pkt[15])
 #define TCP_CHECKSUM(pkt)           ((pkt[16] << 8) | pkt[17])
 #define TCP_URGENT_POINTER(pkt)     ((pkt[18] << 8) | pkt[19])
-#define TCP_OPTIONS(pkt)            ((uint8_t *)(pkt + 20))  /* pointer to options, 20 is the fixed amount of bytes of the tcp header */
+#define TCP_OPTIONS(pkt)            ((const uint8_t *)(pkt + 20))  /* pointer to options, 20 is the fixed amount of bytes of the tcp header */
 
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */
 

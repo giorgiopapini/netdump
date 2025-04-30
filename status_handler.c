@@ -6,7 +6,7 @@
 #include "utils/colors.h"
 #include "utils/formats.h"
 
-char * get_error_format(err_code code) {
+const char * get_error_format(err_code code) {
     switch(code) {
         case USER_NOT_ROOT_ERROR:               return "root privileges are required to perform packet scanning"; break;
         case SELECT_FAILED_ERROR:               return "'select()' failed in file '%s'. Reason: '%s'"; break;
@@ -33,7 +33,7 @@ char * get_error_format(err_code code) {
         case TOO_MANY_ARGS:                     return "Too many args (MAX_ARGS=%d)"; break;
         case MISSING_ARGS_ERROR:                return "Missing arguments: %s"; break;
         case UNRECOGNIZED_ARGS_ERROR:           return "Unrecognized arguments: %s"; break;
-        case BUFFER_OVERFLOW_ERROR:             return "Buffer overflowed isn file '%s' (max characters allowed = %d)"; break;
+        case BUFFER_OVERFLOW_ERROR:             return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
         case NEGATIVE_BUFFER_INDEX:             return "Buffer index cannot be a negative number '(%d < 0)'"; break;
         case CURSOR_POSITION_ERROR:             return "Couldn't retrieve the current cursor position"; break;
         case TERMINAL_SIZE_ERROR:               return "Couldn't retrieve the current terminal size"; break;
@@ -46,18 +46,20 @@ char * get_error_format(err_code code) {
         case DELETE_FILE_ERROR:                 return "Couldn't delete '%s'"; break;
         case FILE_COPY_ERROR:                   return "Couldn't copy '%s' to '%s'"; break;
         case FILE_OVERWRITE_ERROR:              return "'%s' already exists in '%s' directory"; break;
+        case LONG_TO_INT_CAST_ERROR:            return "Failed to cast from long to int: value exceeds the range of int"; break;
+        case INT_TO_CHAR_CAST_ERROR:            return "Failed to cast from int to char: value exceeds the range of char"; break;
         default:                                return "Unkown error, please report this issue to mantainers"; break;
     }
 }
 
-char * get_warning_msg(warinng_code code) {
+const char * get_warning_msg(warinng_code code) {
     switch(code) {
         case DISSECTORS_EMPTY_WARNING:          return "No custom dissectors found (.so)"; break;
         default:                                return NULL; break;
     }
 }
 
-char * get_success_msg(success_code code) {
+const char * get_success_msg(success_code code) {
     switch(code) {
         case ARRAY_RESET_SUCCESS:               return "Array resetted correctly."; break;
         case ARRAY_EMPTY_SUCCESS:               return "Array alredy empty"; break;
@@ -70,7 +72,7 @@ char * get_success_msg(success_code code) {
     }
 }
 
-void raise_error(err_code code, int should_exit, char *hint, ...) {
+void raise_error(err_code code, int should_exit, const char *hint, ...) {
     const char *format = get_error_format(code);
 
     va_list args;

@@ -6,6 +6,6 @@
 #include "../utils/shared_lib.h"
 
 
-void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);
+void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
 
 #endif

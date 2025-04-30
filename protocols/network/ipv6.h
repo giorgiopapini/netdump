@@ -21,8 +21,8 @@
 #define IPV6_PAYLOAD_LENGTH(pkt)        ((pkt[4] << 8) | pkt[5])
 #define IPV6_NEXT_HEADER(pkt)           (pkt[6])
 #define IPV6_HOP_LIMIT(pkt)             (pkt[7])
-#define IPV6_SRC_ADDR(pkt)              ((uint8_t *)(pkt + 8))
-#define IPV6_DEST_ADDR(pkt)             ((uint8_t *)(pkt + 24))
+#define IPV6_SRC_ADDR(pkt)              ((const uint8_t *)(pkt + 8))
+#define IPV6_DEST_ADDR(pkt)             ((const uint8_t *)(pkt + 24))
 
 #define IPV6_HEADER_LEN                 40
 
