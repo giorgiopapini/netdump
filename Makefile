@@ -33,6 +33,10 @@ CFLAGS += -Wunreachable-code
 CFLAGS += -Wunused-but-set-parameter
 CFLAGS += -Wwrite-strings
 CFLAGS += -Wconversion -Wsign-conversion
+# Only for debugging!
+#LDFLAGS += -fsanitize=address,undefined
+#CFLAGS += -fsanitize=address,undefined
+#CFLAGS += -O0
 
 # Library source files
 LIB_SRC := utils/protocol.c utils/visualizer.c

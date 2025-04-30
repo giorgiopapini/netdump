@@ -107,7 +107,7 @@ char * get_trimmed_str(char *str) {
         new_index ++;
     }
 
-    if (new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
+    if (new_index > 0 && new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
 
     if (' ' == new_str[0]) new_index --;
     result = (char *)malloc(new_index  + 1);
