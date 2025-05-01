@@ -6,7 +6,16 @@
 #define VERTICAL_BORDER "|"
 #define JUNCTION "*"
 
+#define CONT_HORIZONTAL_BORDER "─"
+#define CONT_VERTICAL_BORDER "│"
+#define CONT_JUNCTION "•"
+
 #define USED_ROWS(label, content)           (calc_rows(label) + calc_rows(content))
+
+typedef enum {
+    BORDER_STANDARD,
+    BORDER_MODERN
+} border_type;
 
 size_t calc_rows(const char *str);
 int get_cursor_position(size_t *col, size_t *row);

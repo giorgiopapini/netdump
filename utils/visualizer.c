@@ -114,9 +114,9 @@ void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
 
     MOVE_CURSOR(*curr_x, *curr_y);
-    printf(JUNCTION);
-    for (i = 0; i < len; i ++) printf(HORIZONTAL_BORDER);
-    printf(JUNCTION);
+    printf(CONT_JUNCTION);
+    for (i = 0; i < len; i ++) printf(CONT_HORIZONTAL_BORDER);
+    printf(CONT_JUNCTION);
 }
 
 void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
@@ -125,11 +125,11 @@ void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_l
     *curr_y += 1; 
     MOVE_CURSOR(*curr_x, *curr_y);
     
-    printf(VERTICAL_BORDER MARGIN);
+    printf(CONT_VERTICAL_BORDER MARGIN);
     for (; offset_left > 0; offset_left --) printf(" ");
     printf("%s", val);
     for (; offset_right > 0; offset_right --) printf(" ");
-    printf(MARGIN VERTICAL_BORDER);
+    printf(MARGIN CONT_VERTICAL_BORDER);
 }
 
 void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len) {
