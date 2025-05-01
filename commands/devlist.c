@@ -6,7 +6,7 @@
 #include "../utils/colors.h"
 #include "../utils/formats.h"
 
-void execute_devlist() {
+void execute_devlist(void) {
     pcap_if_t *alldevs;
     pcap_if_t *device;
     char errbuff[PCAP_ERRBUF_SIZE];

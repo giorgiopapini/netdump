@@ -54,15 +54,17 @@ int device_exists(char *dev) {
 }
 
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes) {
-	custom_data *data = (custom_data *)args;
+	custom_data data;
+	packet *pkt;
 
+	memcpy(&data, args, sizeof(custom_data));
 	/* data->packets->len + 1 because otherwise it would start from 0 */
-	packet *pkt = create_packet(header, pcap_datalink(handle), data->packets->len + 1, bytes);
-	insert(data->packets, pkt);
+	pkt = create_packet(header, pcap_datalink(handle), data.packets->len + 1, bytes);
+	insert(data.packets, pkt);
 	
-	if (NULL != data->pcap_dump) pcap_dump((uint8_t *)data->pcap_dump, header, bytes);
+	if (NULL != data.pcap_dump) pcap_dump((uint8_t *)data.pcap_dump, header, bytes);
 
-	dissect_packet(data->cmd, pkt, data->libs, data->custom_dissectors);
+	dissect_packet(data.cmd, pkt, data.libs, data.custom_dissectors);
 }
 
 void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
@@ -78,8 +80,8 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	double elapsed;
 	
 	int pkt_num = -1;
+	int tmp = 0;
 	long raw_tmp = str_to_num(get_raw_val(cmd, NUMBER_ARG));
-	int tmp;
     char *filter_exp = get_raw_val(cmd, FILTER_ARG);
 	char *dev = get_raw_val(cmd, DEVICE_ARG);
 	char *read_file = get_raw_val(cmd, READ_FILE_ARG);

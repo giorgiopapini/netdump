@@ -24,10 +24,10 @@
 #define TCP_URGENT_POINTER_LABEL    "Urgent Pointer"
 #define TCP_OPTIONS_LABEL           "Options"
 
-#define TCP_SRC_PORT(pkt)           ((pkt[0] << 8) | pkt[1])
-#define TCP_DEST_PORT(pkt)          ((pkt[2] << 8) | pkt[3])
-#define TCP_SEQUENCE(pkt)           ((pkt[4] << 24) | (pkt[5] << 16) | (pkt[6] << 8) | pkt[7])
-#define TCP_ACK_NUM(pkt)            ((pkt[8] << 24) | (pkt[9] << 16) | (pkt[10] << 8) | pkt[11])
+#define TCP_SRC_PORT(pkt)           ((uint16_t)(pkt[0] << 8) | (uint16_t)pkt[1])
+#define TCP_DEST_PORT(pkt)          ((uint16_t)(pkt[2] << 8) | (uint16_t)pkt[3])
+#define TCP_SEQUENCE(pkt)           ((uint32_t)(pkt[4] << 24) | (uint32_t)(pkt[5] << 16) | (uint32_t)(pkt[6] << 8) | (uint32_t)pkt[7])
+#define TCP_ACK_NUM(pkt)            ((uint32_t)(pkt[8] << 24) | (uint32_t)(pkt[9] << 16) | (uint32_t)(pkt[10] << 8) | (uint32_t)pkt[11])
 #define TCP_DATA_OFFSET(pkt)        (pkt[12] >> 4)
 #define TCP_RESERVED(pkt)           (pkt[12] & 0x0f)  
 #define TCP_FLAGS(pkt)              (pkt[13])
@@ -39,9 +39,9 @@
 #define TCP_RST                     0x04
 #define TCP_SYN                     0x02
 #define TCP_FIN                     0x01
-#define TCP_WINDOW_SIZE(pkt)        ((pkt[14] << 8) | pkt[15])
-#define TCP_CHECKSUM(pkt)           ((pkt[16] << 8) | pkt[17])
-#define TCP_URGENT_POINTER(pkt)     ((pkt[18] << 8) | pkt[19])
+#define TCP_WINDOW_SIZE(pkt)        ((uint16_t)(pkt[14] << 8) | (uint16_t)pkt[15])
+#define TCP_CHECKSUM(pkt)           ((uint16_t)(pkt[16] << 8) | (uint16_t)pkt[17])
+#define TCP_URGENT_POINTER(pkt)     ((uint16_t)(pkt[18] << 8) | (uint16_t)pkt[19])
 #define TCP_OPTIONS(pkt)            ((const uint8_t *)(pkt + 20))  /* pointer to options, 20 is the fixed amount of bytes of the tcp header */
 
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */

@@ -20,8 +20,8 @@
 #define DNS_AUTH_RRS_LABEL              "Authority RRs"
 #define DNS_ADDITIONAL_RRS_LABEL        "Additional RRs"
 
-#define DNS_TRANSACTION_ID(pkt)         ((pkt[0] << 8) | pkt[1])
-#define DNS_FLAGS(pkt)                  ((pkt[2] << 8) | pkt[3])
+#define DNS_TRANSACTION_ID(pkt)         ((uint16_t)(pkt[0] << 8) | (uint16_t)pkt[1])
+#define DNS_FLAGS(pkt)                  ((uint16_t)(pkt[2] << 8) | (uint16_t)pkt[3])
 #define DNS_QR                          0x8000              
 #define DNS_OPCODE                      0x7800
 #define DNS_AA                          0x0400
@@ -32,10 +32,10 @@
 #define DNS_AD                          0x0020
 #define DNS_CD                          0x0010
 #define DNS_RCODE                       0x000f
-#define DNS_QUESTIONS(pkt)              ((pkt[4] << 8) | pkt[5])
-#define DNS_ANSWER_RRS(pkt)             ((pkt[6] << 8) | pkt[7])
-#define DNS_AUTH_RRS(pkt)               ((pkt[8] << 8) | pkt[9])
-#define DNS_ADDITIONAL_RRS(pkt)         ((pkt[10] << 8) | pkt[11])
+#define DNS_QUESTIONS(pkt)              ((uint16_t)(pkt[4] << 8) | (uint16_t)pkt[5])
+#define DNS_ANSWER_RRS(pkt)             ((uint16_t)(pkt[6] << 8) | (uint16_t)pkt[7])
+#define DNS_AUTH_RRS(pkt)               ((uint16_t)(pkt[8] << 8) | (uint16_t)pkt[9])
+#define DNS_ADDITIONAL_RRS(pkt)         ((uint16_t)(pkt[10] << 8) | (uint16_t)pkt[11])
 
 #define DNS_HDR_LEN                     12
 

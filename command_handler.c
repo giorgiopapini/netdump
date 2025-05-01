@@ -48,7 +48,6 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
         return 1;
     }
-    if (NULL == ARG_PREFIX) raise_error(NULL_POINTER, 1, NULL, "ARG_PREFIX", __FILE__);
 
     cmd->label = NULL;
     for (i = 0, j = 0; i < buff->len; i ++, j ++) {

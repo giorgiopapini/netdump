@@ -44,9 +44,9 @@ void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) 
     target_offset = offset + 6;
     extract_domain_name(payload, target_offset, target);
 
-    printf(", priority: %u", *(const uint8_t *)(payload + offset));
-    printf(", weight: %u", *(const uint8_t *)(payload + offset + 2));
-    printf(", port: %u", *(const uint8_t *)(payload + offset + 4));
+    printf(", priority: %u", payload[offset]);
+    printf(", weight: %u", payload[offset + 2]);
+    printf(", port: %u", payload[offset + 4]);
     printf(", target: %s", target);
 }
 
@@ -101,20 +101,20 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
             ", query %ld: {name: %s, type: %u, class: %u}",
             i + 1,
             domain,
-            *(const uint16_t *)(pkt + offset),
-            *(const uint16_t *)(pkt + offset + 2)
+            ((pkt[offset] << 8) | pkt[offset + 1]),
+            ((pkt[offset + 2] << 8) | pkt[offset + 3])
         );
         offset += 4;
     }
 
     /* print answers */
-    for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i++) {
+    for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i ++) {
         offset += extract_domain_name(pkt, offset, domain);
 
-        type = *(const uint16_t *)(pkt + offset);
-        class = *(const uint16_t *)(pkt + offset + 2);
-        ttl = *(const uint32_t *)(pkt + offset + 4);
-        data_len = *(const uint16_t *)(pkt + offset + 8);
+        type = ((pkt[offset] << 8) | pkt[offset + 1]),
+        class = ((pkt[offset + 2] << 8) | pkt[offset + 3]),
+        ttl = ((pkt[offset + 4] << 8) | pkt[offset + 5]),
+        data_len = ((pkt[offset + 6] << 8) | pkt[offset + 7]),
 
         printf(
             ", answer %ld: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
@@ -135,23 +135,23 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 
     /* print additional records */
     for (i = 0; i < (size_t)DNS_ADDITIONAL_RRS(pkt); i ++) {
-        rdlength = *(const uint8_t *)(pkt + offset + 8);
+        rdlength = pkt[offset + 8];
 
         printf(
             ", additional_record %ld: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
             i + 1,
-            *(const uint16_t *)(pkt + offset + 1),
-            *(const uint16_t *)(pkt + offset + 3),
-            *(pkt + offset + 5),
-            *(pkt + offset + 6),
-            *(const uint16_t *)(pkt + offset + 7),
+            ((pkt[offset + 1] << 8) | pkt[offset + 2]),
+            ((pkt[offset + 3] << 8) | pkt[offset + 4]),
+            pkt[offset + 5],
+            pkt[offset + 6],
+            ((pkt[offset + 7] << 8) | pkt[offset + 8]),
             rdlength
         );
         offset += 10;
 
         if (rdlength > 0) {
             printf(", rdata: (");
-            for (j = 0; j < rdlength; j++) printf("%02x ", pkt[offset + j]);
+            for (j = 0; j < rdlength; j ++) printf("%02x ", pkt[offset + j]);
             printf(")");
         }
         printf("}");

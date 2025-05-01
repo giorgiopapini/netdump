@@ -13,9 +13,9 @@
 
 #define ICMPV6_TYPE(pkt)            (pkt[0])
 #define ICMPV6_CODE(pkt)            (pkt[1])
-#define ICMPV6_CHECKSUM(pkt)        ((pkt[2] << 8) | pkt[3])
-#define ICMPV6_ID(pkt)              ((pkt[4] << 8) | pkt[5])
-#define ICMPV6_SEQ(pkt)             ((pkt[6] << 8) | pkt[7])
+#define ICMPV6_CHECKSUM(pkt)        ((uint16_t)(pkt[2] << 8) | (uint16_t)pkt[3])
+#define ICMPV6_ID(pkt)              ((uint16_t)(pkt[4] << 8) | (uint16_t)pkt[5])
+#define ICMPV6_SEQ(pkt)             ((uint16_t)(pkt[6] << 8) | (uint16_t)pkt[7])
 
 #define ICMPV6_DEST_UNREACH_CODE    1
 #define ICMPV6_TOO_LARGE_CODE       2

@@ -64,6 +64,7 @@ int main(void) {
 	term.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 	
+	retval = RET_UNKNOWN;
 	prompt();
     while (1) {
         FD_ZERO(&readfds);
@@ -107,7 +108,7 @@ cmd_retval run(
 	shared_libs *libs,
 	custom_dissectors *custom_diss
 ) {
-	cmd_retval retval;
+	cmd_retval retval = RET_UNKNOWN;
 	int pressed_key = populate(buff, history);
 
 	if (-1 == pressed_key) return RET_UNKNOWN;  /* if an error occoured, exit function */
@@ -142,7 +143,7 @@ cmd_retval run(
 	return retval;
 }
 
-void prompt() { 
+void prompt(void) { 
 	printf(PROMPT_STRING); 
 	fflush(stdout);
 }
