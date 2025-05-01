@@ -30,12 +30,17 @@ void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y);
 void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right);
 void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len);
 
+int unsupported_terminal = 0;
 size_t prev_used_rows = 0;
 
-void start_printing() { prev_used_rows = 0; }
+void start_printing() {
+    unsupported_terminal = 0;
+    prev_used_rows = 0;
+}
 
 void end_printing() {
     move_to_next_line(NULL, NULL, prev_used_rows);
+    unsupported_terminal = 0;
     prev_used_rows = 0;
 }
 
@@ -212,6 +217,8 @@ void print_field(const char *label, const char *content, int newline) {
     size_t curr_x;
     size_t curr_y;
     size_t initial_y;
+
+    if (unsupported_terminal) return;
     if (NULL == label || NULL == content) return;
 
     label_len = strlen(label);
@@ -221,6 +228,7 @@ void print_field(const char *label, const char *content, int newline) {
 
     if (0 != get_cursor_position(&curr_x, &curr_y)) {
         raise_error(CURSOR_POSITION_ERROR, 0, UNCOMPATIBLE_TERMINAL_HINT);
+        unsupported_terminal = 1;
         return;
     }
 
