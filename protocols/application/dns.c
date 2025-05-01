@@ -17,7 +17,7 @@ size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain) 
 
     while ((len = payload[offset]) > 0) {
         if (len & 0xC0) {
-            pointer_offset = ((payload[offset] & 0x3F) << 8) | payload[offset + 1];
+            pointer_offset = ((uint16_t)(payload[offset] & 0x3F) << 8) | (uint16_t)payload[offset + 1];
             offset += 2;
 
             i += extract_domain_name(payload, pointer_offset, domain + i);
