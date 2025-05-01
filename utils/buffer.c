@@ -14,7 +14,7 @@
 #define MOVE_CURSOR(x, y)                   (printf("\033[%d;%dH", (y), (x)))
 #define MOVE_CURSOR_TO_END(pos, len)        do { if (pos != len) printf("\033[%ldC", len - pos); } while (0)
 #define MOVE_CURSOR_TO_PREV_POS(pos, len)   do { if ((len - 1) != pos) printf("\033[%ldD", (len - 1) - pos); } while (0)
-#define CLEAR_STRN(len)                     do { for (size_t z = len; z > 0; z --) printf("\b \b"); } while (0)
+#define CLEAR_STRN(len)                     do { for (size_t z = (size_t)len; z > 0; z --) printf("\b \b"); } while (0)
 
 
 void refresh_output(buffer *buff, size_t old_len);
@@ -157,9 +157,11 @@ int backspace(buffer *buff) {
     delete_char(buff->content, buff->cursor_pos - 1);
     buff->len --;
     refresh_output(buff, old_len);
-    MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, old_len);
 
-    if (buff->cursor_pos < old_len) arrow_left(buff);
+    if (buff->cursor_pos < old_len){
+        MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, old_len);
+        arrow_left(buff);
+    }
     else buff->cursor_pos --;
     return BACKSPACE_KEY;
 }

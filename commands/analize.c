@@ -113,9 +113,10 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
 		if (NULL == dev) dev = alldevs->name;
         if (NULL == dev) {
-            raise_error(NO_DEVICE_FOUND, 1, NO_DEVICE_HINT, dev);
+            raise_error(NO_DEVICE_FOUND, 0, NO_DEVICE_HINT, dev);
             mask = 0;
             net = 0;
+			return;
         }
 
 		if (!device_exists(dev)) {
@@ -129,8 +130,10 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 		}
 
         handle = pcap_open_live(dev, BUFSIZ, prom_mode, 1000, errbuff);  // promiscuous mode (third argument) = 1
-        if (NULL == handle) raise_error(NO_ACCESS_DEVICE_ERROR, 1, NULL, dev);
-
+        if (NULL == handle) {
+			raise_error(NO_ACCESS_DEVICE_ERROR, 0, NULL, dev);
+			return;
+		}
         printf(CAPTURE_DEVICE_MSG, dev);
 		pcap_freealldevs(alldevs);
     }
