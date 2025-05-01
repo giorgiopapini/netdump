@@ -28,10 +28,10 @@ size_t snap_hdr_len(const uint8_t *pkt) {
 
 uint16_t extract_dlci(const uint8_t *pkt, size_t hdr_len) {
     uint16_t dlci;
-    dlci = ((pkt[0] & 0xfc) << 2) | ((pkt[1] & 0xf0) >> 4);
+    dlci = ((uint16_t)((pkt[0] & 0xfc) << 2) | (uint16_t)((pkt[1] & 0xf0) >> 4));
 
-    if (3 == hdr_len) dlci = (uint16_t)((dlci << 7) | ((pkt[2] & 0xfe) >> 1));
-    else if (4 == hdr_len) dlci = (uint16_t)((dlci << 7) | ((pkt[3] & 0xfe) >> 1));
+    if (3 == hdr_len) dlci = ((uint16_t)(dlci << 7) | (uint16_t)((pkt[2] & 0xfe) >> 1));
+    else if (4 == hdr_len) dlci = ((uint16_t)(dlci << 7) | (uint16_t)((pkt[3] & 0xfe) >> 1));
     return dlci;
 }
 

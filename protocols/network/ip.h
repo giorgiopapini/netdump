@@ -1,5 +1,5 @@
 #ifndef IP_H
-#define IP_h
+#define IP_H
 
 #include <stdint.h>
 #include "../../utils/protocol.h"

@@ -27,7 +27,7 @@ void print_tcp_options(const uint8_t *pkt) {
     uint8_t kind;
     uint8_t length;
     size_t i = 0;
-    size_t j = 0;
+    uint8_t j = 0;  /* extracted from pkt, could be max an uint8_t */
     uint16_t mss;
     uint8_t scale;
     uint32_t left_edge;
@@ -50,12 +50,12 @@ void print_tcp_options(const uint8_t *pkt) {
             i ++;
         }
         else {
-            if (i + 1 >= opts_len) {
+            if (opts_len > 0 && i >= opts_len - 1) {
                 printf("(malformed_option: kind %d)", kind);
                 break;
             }
             length = options[i + 1];
-            if (length < 2 || i + length > opts_len) {
+            if (length < 2 || length > opts_len || i > opts_len - length) {
                 printf("(malformed_option: kind %d, length %d)", kind, length);
                 break;
             }
@@ -63,7 +63,7 @@ void print_tcp_options(const uint8_t *pkt) {
             switch (kind) {
             case 2: {
                 if (length == 4) {
-                    mss = ntohs(*(const uint16_t *)(options + i + 2));
+                    mss = (((uint16_t)options[i + 2] << 8) | (uint16_t)options[i + 3]);
                     printf("mss: %d", mss);
                 }
                 break;
@@ -82,9 +82,15 @@ void print_tcp_options(const uint8_t *pkt) {
             case 5: {
                 printf("sack");
                 for (j = 2; j < length; j += 8) {
-                    if (j + 7 < length) {
-                        left_edge = ntohl(*(const uint32_t *)(options + i + j));
-                        right_edge = ntohl(*(const uint32_t *)(options + i + j + 4));
+                    if (j < length - 7) {
+                        left_edge = ((uint32_t)options[i + j] << 24) |
+                                    ((uint32_t)options[i + j + 1] << 16) |
+                                    ((uint32_t)options[i + j + 2] << 8)  |
+                                    ((uint32_t)options[i + j + 3]);
+                        right_edge = ((uint32_t)options[i + j + 4] << 24) |
+                                    ((uint32_t)options[i + j + 5] << 16) |
+                                    ((uint32_t)options[i + j + 6] << 8)  |
+                                    ((uint32_t)options[i + j + 7]);
                         printf(" (left_edge: %u, right_edge: %u)", left_edge, right_edge);
                     }
                 }
@@ -92,8 +98,14 @@ void print_tcp_options(const uint8_t *pkt) {
             }
             case 8: {
                 if (length == 10) {
-                    ts_val = ntohl(*(const uint32_t *)(options + i + 2));
-                    ts_echo = ntohl(*(const uint32_t *)(options + i + 6));
+                    ts_val = ((uint32_t)options[i + 2] << 24) |
+                            ((uint32_t)options[i + 3] << 16) |
+                            ((uint32_t)options[i + 4] << 8)  |
+                            ((uint32_t)options[i + 5]);
+                    ts_echo = ((uint32_t)options[i + 6] << 24) |
+                            ((uint32_t)options[i + 7] << 16) |
+                            ((uint32_t)options[i + 8] << 8)  |
+                            ((uint32_t)options[i + 9]);
                     printf("TSval: %u, TSecr: %u", ts_val, ts_echo);
                 }
                 break;
