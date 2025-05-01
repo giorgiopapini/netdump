@@ -64,23 +64,22 @@ size_t calc_rows(const char *str) {
 }
 
 int get_cursor_position(size_t *col, size_t *row) {
-    char buf[32];
+    char buf[64];
     struct timeval tv;
     fd_set fds;
     ssize_t ret;
-    size_t i;
+    size_t i = 0;
     int sel;
     struct termios saved, raw;
-    
-    tcgetattr(STDIN_FILENO, &saved);
+
+    if (tcgetattr(STDIN_FILENO, &saved) == -1) return -1;
     raw = saved;
     raw.c_lflag &= (tcflag_t)~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &raw);
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) == -1) return -1;
 
     printf("\033[6n");
     fflush(stdout);
 
-    i = 0;
     while (i < sizeof(buf) - 1) {
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
@@ -88,23 +87,35 @@ int get_cursor_position(size_t *col, size_t *row) {
         tv.tv_usec = 0;
 
         sel = select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
-        if (sel <= 0) return -1;
+        if (sel <= 0) goto cleanup;
 
         ret = read(STDIN_FILENO, buf + i, 1);
-        if (ret != 1 || buf[i] == 'R') break;
+        if (ret != 1) goto cleanup;
+
+        if (buf[i] == 'R') {
+            i ++;
+            break;
+        }
         i ++;
     }
-    buf[i] = '\0';
-    tcsetattr(STDIN_FILENO, TCSANOW, &saved);
 
-    if (buf[0] == '\033' && buf[1] == '[') sscanf(buf + 2, "%ld;%ld", row, col);
-    else return -1;
-    return 0;
+    buf[i] = '\0';
+
+    if (buf[0] == '\033' && buf[1] == '[') {
+        if (sscanf(buf + 2, "%zu;%zu", row, col) == 2) {
+            tcsetattr(STDIN_FILENO, TCSANOW, &saved);
+            return 0;
+        }
+    }
+
+cleanup:
+    tcsetattr(STDIN_FILENO, TCSANOW, &saved);
+    return -1;
 }
 
 void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
     size_t x, y;
-    
+
     if (NULL == curr_x && NULL == curr_y) {
         get_cursor_position(&x, &y);
         MOVE_CURSOR(0, y + Y_DEVIATION(used_rows));
