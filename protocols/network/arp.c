@@ -13,7 +13,7 @@ void print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint16_t operation;
     (void)pkt_len;
     
-    operation = OPERATION(pkt);
+    operation = (uint16_t)OPERATION(pkt);
     if (operation == ARP_REQUEST) {
         printf("ARP who-has ");
         print_ipv4(TARGET_P_ADDR(pkt));
