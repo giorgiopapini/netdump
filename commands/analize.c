@@ -131,7 +131,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
         handle = pcap_open_live(dev, BUFSIZ, prom_mode, 1000, errbuff);  // promiscuous mode (third argument) = 1
         if (NULL == handle) {
-			raise_error(NO_ACCESS_DEVICE_ERROR, 0, NULL, dev);
+			raise_error(NO_ACCESS_DEVICE_ERROR, 0, NO_ACCESS_DEVICE_HINT, dev);
 			return;
 		}
         printf(CAPTURE_DEVICE_MSG, dev);

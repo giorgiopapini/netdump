@@ -37,12 +37,13 @@
 */
 
 void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
-void run(buffer *, command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
+cmd_retval run(buffer *, command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
 void prompt(void);
 
 
 int main(void) {
 	fd_set readfds;
+	cmd_retval retval;
     int ret;
 	struct termios original, term;
 
@@ -52,8 +53,6 @@ int main(void) {
 	circular_list history = { 0 };
 	shared_libs *libs;
 	custom_dissectors *custom_diss;
-
-	if (0 != geteuid()) raise_error(USER_NOT_ROOT_ERROR, 1, NULL);	/* root access is needed in order to execute pcap packet scan */
 	
 	libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
 	custom_diss = load_custom_dissectors(libs);
@@ -64,7 +63,7 @@ int main(void) {
     term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
-
+	
 	prompt();
     while (1) {
         FD_ZERO(&readfds);
@@ -76,10 +75,11 @@ int main(void) {
 			if (EINTR == errno) break;
 			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
 		}
-		else run(&buff, &cmd, &packets, &history, libs, custom_diss);
+		else retval = run(&buff, &cmd, &packets, &history, libs, custom_diss);
+		if (RET_EXIT == retval) break;
     }
+	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-
 	deallocate_heap(&cmd, &packets, &history, libs, custom_diss);
 	return 0;
 }
@@ -99,7 +99,7 @@ void deallocate_heap(
 	destroy_custom_dissectors(custom_diss);
 }
 
-void run(
+cmd_retval run(
 	buffer *buff, 
 	command *cmd, 
 	raw_array *packets, 
@@ -107,16 +107,17 @@ void run(
 	shared_libs *libs,
 	custom_dissectors *custom_diss
 ) {
+	cmd_retval retval;
 	int pressed_key = populate(buff, history);
 
-	if (-1 == pressed_key) return;  /* if an error occoured, exit function */
-	if (ENTER_KEY != pressed_key) return;  /* if enter is not pressed, than do not start executing partial cmd */
+	if (-1 == pressed_key) return RET_UNKNOWN;  /* if an error occoured, exit function */
+	if (ENTER_KEY != pressed_key) return RET_UNKNOWN;  /* if enter is not pressed, than do not start executing partial cmd */
 
 	reset_cmd(cmd);  /* ensure that cmd structure is empty when new command entered */
 
 	if (buff->len == 0 || '\0' == buff->content[0]) {
 		prompt();
-		return;
+		return RET_UNKNOWN;
 	}
 
 	if (NULL != history->curr) history->curr = history->head;  /* at each cmd execution reset history->curr position */
@@ -131,14 +132,14 @@ void run(
 
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
-			if (0 != execute_command(cmd, packets, history, libs, custom_diss)) {
-				raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
-			}
+			retval = execute_command(cmd, packets, libs, custom_diss);
+			if (RET_UNKNOWN == retval) raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
 		}
 	}
 
 	clear_buffer(buff);
-	prompt();
+	if (RET_EXIT != retval) prompt();
+	return retval;
 }
 
 void prompt() { 

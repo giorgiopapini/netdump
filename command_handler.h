@@ -121,10 +121,23 @@
 #define HELP_ARGS                   NONE_ARG
 #define REQUIRED_HELP_ARGS          NONE_ARG
 
+typedef enum {
+    RET_UNKNOWN,
+    RET_ANALIZE,
+    RET_DEVLIST,
+    RET_DISSECTORS,
+    RET_RESET,
+    RET_PRINT,
+    RET_CLEAR,
+    RET_EXIT,
+    RET_SAVE,
+    RET_HELP
+} cmd_retval;
+
 
 int check_compliance(buffer *buff);
 int create_cmd_from_buff(command *cmd, buffer *buff);
 int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len);
-int execute_command(command *cmd, raw_array *packets, circular_list *history, shared_libs *libs, custom_dissectors *custom_dissectors);
+cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);
 
 #endif

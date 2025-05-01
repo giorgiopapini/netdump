@@ -13,7 +13,6 @@
 #include "commands/reset.h"
 #include "commands/print.h"
 #include "commands/clear.h"
-#include "commands/exit.h"
 #include "commands/save.h"
 #include "commands/help.h"
 
@@ -165,50 +164,73 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
 
 
 /* CHECK_ARGS() checks for unkown args; CHECK_REQ_ARGS() checks for required args missing */
-int execute_command(
+cmd_retval execute_command(
     command *cmd, 
-    raw_array *packets, 
-    circular_list *history, 
+    raw_array *packets,
     shared_libs *libs, 
     custom_dissectors *custom_diss
 ) {
+    cmd_retval retval = RET_UNKNOWN;
+
     if (is_command(cmd, ANALIZE_COMMAND)) {
         if (CHECK_ARGS(cmd, ANALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, libs, custom_diss);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) {
+            execute_analize(cmd, packets, libs, custom_diss);
+            retval = RET_ANALIZE; 
+        }
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist();
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) {
+            execute_devlist();
+            retval = RET_DEVLIST;
+        }
     }
     else if (is_command(cmd, DISSECTORS_COMMAND)) {
         if (CHECK_ARGS(cmd, DISSECTORS_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_DISSECTORS_ARGS)) execute_dissectors(cmd, libs, custom_diss);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_DISSECTORS_ARGS)) {
+            execute_dissectors(cmd, libs, custom_diss);
+            retval = RET_DISSECTORS;
+        }
     }
     else if (is_command(cmd, RESET_COMMAND)) {
         if (CHECK_ARGS(cmd, RESET_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) {
+            execute_reset(packets);
+            retval = RET_RESET;
+        }
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         if (CHECK_ARGS(cmd, PRINT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) execute_print(cmd, packets, libs, custom_diss);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PRINT_ARGS)) {
+            execute_print(cmd, packets, libs, custom_diss);
+            retval = RET_PRINT;
+        }
     }
     else if (is_command(cmd, CLEAR_COMMAND)) {
         if (CHECK_ARGS(cmd, CLEAR_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear();
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) {
+            execute_clear();
+            retval = RET_CLEAR;
+        }
     }
     else if (is_command(cmd, EXIT_COMMAND)) {
         if (CHECK_ARGS(cmd, EXIT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit(cmd, packets, history, libs, custom_diss);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) retval = RET_EXIT;
     }
     else if (is_command(cmd, SAVE_COMMAND)) {
         if (CHECK_ARGS(cmd, SAVE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_SAVE_ARGS)) execute_save(cmd, packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_SAVE_ARGS)) {
+            execute_save(cmd, packets);
+            retval = RET_SAVE;
+        }
     }
     else if (is_command(cmd, HELP_COMMAND)) {
         if (CHECK_ARGS(cmd, HELP_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) execute_help();
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_HELP_ARGS)) {
+            execute_help();
+            retval = RET_HELP;
+        }
     }
-    else return 1;
-
-    return 0;
+    return retval;
 }

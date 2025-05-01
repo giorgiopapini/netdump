@@ -68,7 +68,7 @@ int get_cursor_position(size_t *col, size_t *row) {
     struct timeval tv;
     fd_set fds;
     ssize_t ret;
-    size_t i = 0;
+    size_t i;
     int sel;
     struct termios saved, raw;
 
@@ -80,10 +80,11 @@ int get_cursor_position(size_t *col, size_t *row) {
     printf("\033[6n");
     fflush(stdout);
 
+    i = 0;
     while (i < sizeof(buf) - 1) {
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
-        tv.tv_sec = 3;
+        tv.tv_sec = 1;
         tv.tv_usec = 0;
 
         sel = select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
