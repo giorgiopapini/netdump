@@ -1,7 +1,9 @@
 # Compiler and flags
-CC ?= gcc
-LDFLAGS ?= -lpcap -lm
-CFLAGS ?= -fPIC -g
+CC = gcc
+LDFLAGS = -lpcap -lm
+LDFLAGS += -L. -lnetdump
+
+CFLAGS = -g
 #CFLAGS += -std=c99
 #CFLAGS += -Wpedantic -pedantic-errors
 CFLAGS += -Werror
@@ -45,19 +47,19 @@ LIB_TARGET = libnetdump.so
 TARGET = netdump
 
 # Default target
-all: ${LIB_TARGET} ${TARGET}
+all: ${TARGET} ${LIB_TARGET}
 
 # Compile object files
 .c.o:
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} -fPIC ${CFLAGS} -c $< -o $@
 
 # Create shared library
 ${LIB_TARGET}: ${LIB_OBJ}
-	${CC} -shared -o $@ ${LIB_OBJ} -fPIC
+	${CC} -shared -fPIC -o $@ ${LIB_OBJ}
 
 # Link target with shared library
 ${TARGET}: ${OBJ} ${LIB_TARGET}
-	${CC} -o $@ ${OBJ} -L. -lnetdump ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:/usr/local/lib64
+	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:/usr/local/lib64
 
 # Clean
 clean:
