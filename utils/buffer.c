@@ -67,6 +67,8 @@ int compare_buffers(buffer *b1, buffer *b2) {
 
 void normalize_content(buffer *buff) {
     char *normalized_str = get_trimmed_str(buff->content);
+    if (NULL == normalized_str) return;
+    
     strncpy(buff->content, normalized_str, MAX_BUFFER_LEN - 1);
     buff->len = strlen(buff->content);
     lower_str_except_interval(buff->content, STRING_DELIMITER);

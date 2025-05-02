@@ -113,8 +113,14 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 			return;
 		}
 
-		if (NULL == dev) dev = alldevs->name;
-        if (NULL == dev) {
+		if (NULL == dev) {
+			if (NULL == alldevs) {
+				raise_error(NULL_POINTER, 0, NULL, "alldevs", __FILE__);
+				return;
+			}
+			else dev = alldevs->name;
+		}
+		if (NULL == dev) {
             raise_error(NO_DEVICE_FOUND, 0, NO_DEVICE_HINT, dev);
             mask = 0;
             net = 0;

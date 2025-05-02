@@ -92,6 +92,8 @@ char * get_trimmed_str(char *str) {
     char *start = str;
     char *end;
     char *result;
+
+    if (NULL == str) return NULL;
     
     while (*start != '\0') {
         if (*start != ' ') {
