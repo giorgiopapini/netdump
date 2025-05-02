@@ -8,7 +8,7 @@
 #include "string_utils.h"
 
 
-shared_libs *create_shared_libs_obj() {
+shared_libs *create_shared_libs_obj(void) {
     shared_libs *libs = (shared_libs *)malloc(sizeof(shared_libs));
     if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
 

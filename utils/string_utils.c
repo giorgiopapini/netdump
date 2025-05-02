@@ -178,7 +178,7 @@ char *str_concat(const char **str_arr, const char *prefix, const char *separator
     return new_str;
 }
 
-int getch() {
+int getch(void) {
 	struct termios oldt, newt;
     int oldf;
     int ch;

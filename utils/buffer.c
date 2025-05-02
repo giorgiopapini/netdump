@@ -26,7 +26,7 @@ int canc(buffer *buff);
 int backspace(buffer *buff);
 int literal_key(buffer *buff, int c);
 
-buffer *create_buffer() {
+buffer *create_buffer(void) {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
     if (NULL == new_buff) raise_error(NULL_POINTER, 1, NULL, "new_buff", __FILE__);
     
@@ -188,7 +188,7 @@ int literal_key(buffer *buff, int c) {
 int populate(buffer *buff, circular_list *history) {
     int c;
     int end = 1;
-    int ret;
+    int ret = -1;
 
     if (buff->len >= MAX_BUFFER_LEN) {
         buff->status = BUFFER_OVERFLOW_ERROR;

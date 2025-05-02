@@ -33,12 +33,12 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
 int unsupported_terminal = 0;
 size_t prev_used_rows = 0;
 
-void start_printing() {
+void start_printing(void) {
     unsupported_terminal = 0;
     prev_used_rows = 0;
 }
 
-void end_printing() {
+void end_printing(void) {
     move_to_next_line(NULL, NULL, prev_used_rows);
     unsupported_terminal = 0;
     prev_used_rows = 0;

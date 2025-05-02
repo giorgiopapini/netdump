@@ -65,12 +65,13 @@ static const char success_formats[][256] = {
     [DISSECTOR_DELETED_SUCCESS] = "Custom dissector successfully deleted"
 };
 
+
 void raise_error(err_code code, int should_exit, const char *hint, ...) {
     va_list args;
     va_start(args, hint);
 
     fprintf(stderr, RED "[ERROR] (code: %d) -> ", code);
-    vfprintf(stderr, error_formats[code], args);
+    vfprintf(stderr, (const char *)error_formats[code], args);
     if (NULL != hint) {
         fprintf(stderr, ".\n");
         fprintf(stderr, RESET_COLOR YELLOW "(%s)", hint);

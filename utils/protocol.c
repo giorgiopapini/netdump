@@ -52,7 +52,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 	return new_mapping;
 }
 
-protocol_handler_mapping **create_mappings_arr() {  /* NULL terminated array */
+protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array */
 	protocol_handler_mapping **new_mappings = (protocol_handler_mapping **)malloc(sizeof(protocol_handler_mapping *) * 2);
     if (!new_mappings) raise_error(NULL_POINTER, 1, NULL, "**new_mappings", __FILE__);
 
