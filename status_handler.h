@@ -49,12 +49,14 @@ typedef enum {
     FILE_COPY_ERROR,
     FILE_OVERWRITE_ERROR,
     LONG_TO_INT_CAST_ERROR,
-    INT_TO_CHAR_CAST_ERROR
+    INT_TO_CHAR_CAST_ERROR,
+    UNKNOWN_ERROR
 } err_code;
 
 typedef enum {
-    DISSECTORS_EMPTY_WARNING
-} warinng_code;
+    DISSECTORS_EMPTY_WARNING,
+    UNKNOWN_WARNING
+} warning_code;
 
 typedef enum {
     ARRAY_RESET_SUCCESS,
@@ -66,13 +68,9 @@ typedef enum {
     DISSECTOR_DELETED_SUCCESS
 } success_code;
 
-const char * get_error_format(err_code code);
+
 void raise_error(err_code code, int should_exit, const char *hint, ...);
-
-const char * get_warning_msg(warinng_code code);
-void print_warning_msg(warinng_code code);
-
-const char * get_success_msg(success_code code);
+void print_warning_msg(warning_code code);
 void print_success_msg(success_code code);
 
 #endif

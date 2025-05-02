@@ -6,98 +6,97 @@
 #include "utils/colors.h"
 #include "utils/formats.h"
 
-const char * get_error_format(err_code code) {
-    switch(code) {
-        case SELECT_FAILED_ERROR:               return "'select()' failed in file '%s'. Reason: '%s'"; break;
-        case UNKNOWN_COMMAND_ERROR:             return "No such command '%s'"; break; 
-        case COMMAND_NOT_SUPPORTED_ERROR:       return "Your OS does not support the '%s' command"; break;
-        case WRONG_OPTIONS_FORMAT_ERROR:        return "Invalid argument format. Usage: " COMMAND_FORMAT; break;
-        case NEGATIVE_N_PACKETS:                return "Packets number cannot be a negative quantity '(%d < 0)'"; break;
-        case SAVING_EMPTY_PACKETS_ERROR:        return "Couldn't save packets because packet array is empty"; break;
-        case NULL_POINTER:                      return "NULL pointer when allocating '%s' in file '%s'"; break;
-        case INPUT_ERROR:                       return "An error occured while reading input bytes"; break;
-        case INDEX_OUT_OF_BOUNDS:               return "Tried to access packet number '%d' but array was '%d' packets long"; break;
-        case PCAP_FILE_ERROR:                   return "Couldn't open '%s' file"; break;
-        case PCAP_HANDLE_ERROR:                 return "Couldn't open pcap handle"; break;
-        case PCAP_DUMP_FILE_ERROR:              return "Couldn't open dump file"; break;
-        case PCAP_FINDALLDEVS_ERROR:            return "Error in pcap_findalldevs: %s"; break;
-        case NO_DEVICE_FOUND:                   return "Couldn't find device '%s'"; break;
-        case DEVICES_SCAN_ERROR:                return "Couldn't find devices"; break;
-        case NETMASK_ERROR:                     return "Couldn't get netmask for device '%s'"; break;
-        case NO_ACCESS_DEVICE_ERROR:            return "Couldn't open device '%s'"; break;
-        case DATALINK_HEADER_ERROR:             return "Couldn't get datalink header type. (%s)"; break;
-        case INVALID_FILTER:                    return "Couldn't parse filter '%s'"; break;
-        case NOT_INTALLABLE_FILTER:             return "Couldn't install filter '%s'"; break;
-        case PCAP_LOOP_ERROR:                   return "pcap_loop() failed"; break;
-        case TOO_MANY_ARGS:                     return "Too many args (MAX_ARGS=%d)"; break;
-        case MISSING_ARGS_ERROR:                return "Missing arguments: %s"; break;
-        case UNRECOGNIZED_ARGS_ERROR:           return "Unrecognized arguments: %s"; break;
-        case BUFFER_OVERFLOW_ERROR:             return "Buffer overflowed in file '%s' (max characters allowed = %d)"; break;
-        case NEGATIVE_BUFFER_INDEX:             return "Buffer index cannot be a negative number '(%d < 0)'"; break;
-        case CURSOR_POSITION_ERROR:             return "Couldn't retrieve the current cursor position"; break;
-        case TERMINAL_SIZE_ERROR:               return "Couldn't retrieve the current terminal size"; break;
-        case CURR_WORK_DIR_ERROR:               return "Couldn't resolve current working directory"; break;
-        case FOLDER_OPEN_ERROR:                 return "Couldn't open '%s' folder"; break;
-        case CSTM_DISSECTORS_CONFLICT_ERROR:    return "Dissectors conflict between '%s' and '%s', both have same key: %d in '%s' table"; break;
-        case LOADING_SHARED_LIB_ERROR:          return "Error loading '%s' lib (%s)"; break;
-        case FUNCTION_NOT_FOUND_ERROR:          return "Error finding function (%s)"; break;
-        case LIB_NOT_FOUND_ERROR:               return "Library '%s' not found"; break;
-        case DELETE_FILE_ERROR:                 return "Couldn't delete '%s'"; break;
-        case FILE_COPY_ERROR:                   return "Couldn't copy '%s' to '%s'"; break;
-        case FILE_OVERWRITE_ERROR:              return "'%s' already exists in '%s' directory"; break;
-        case LONG_TO_INT_CAST_ERROR:            return "Failed to cast from long to int: value exceeds the range of int"; break;
-        case INT_TO_CHAR_CAST_ERROR:            return "Failed to cast from int to char: value exceeds the range of char"; break;
-        default:                                return "Unkown error, please report this issue to mantainers"; break;
-    }
-}
 
-const char * get_warning_msg(warinng_code code) {
-    switch(code) {
-        case DISSECTORS_EMPTY_WARNING:          return "No custom dissectors found (.so)"; break;
-        default:                                return NULL; break;
-    }
-}
+static const char *const error_formats[] = {
+    [SELECT_FAILED_ERROR] = "'select()' failed in file '%s'. Reason: '%s'",
+    [UNKNOWN_COMMAND_ERROR] = "No such command '%s'",
+    [COMMAND_NOT_SUPPORTED_ERROR] = "Your OS does not support the '%s' command",
+    [WRONG_OPTIONS_FORMAT_ERROR] = "Invalid argument format. Usage: " COMMAND_FORMAT,
+    [NEGATIVE_N_PACKETS] = "Packets number cannot be a negative quantity '(%d < 0)'",
+    [SAVING_EMPTY_PACKETS_ERROR] = "Couldn't save packets because packet array is empty",
+    [NULL_POINTER] = "NULL pointer when allocating '%s' in file '%s'",
+    [INPUT_ERROR] = "An error occured while reading input bytes",
+    [INDEX_OUT_OF_BOUNDS] = "Tried to access packet number '%d' but array was '%d' packets long",
+    [PCAP_FILE_ERROR] = "Couldn't open '%s' file",
+    [PCAP_HANDLE_ERROR] = "Couldn't open pcap handle",
+    [PCAP_DUMP_FILE_ERROR] = "Couldn't open dump file",
+    [PCAP_FINDALLDEVS_ERROR] = "Error in pcap_findalldevs: %s",
+    [NO_DEVICE_FOUND] = "Couldn't find device '%s'",
+    [DEVICES_SCAN_ERROR] = "Couldn't find devices",
+    [NETMASK_ERROR] = "Couldn't get netmask for device '%s'",
+    [NO_ACCESS_DEVICE_ERROR] = "Couldn't open device '%s'",
+    [DATALINK_HEADER_ERROR] = "Couldn't get datalink header type. (%s)",
+    [INVALID_FILTER] = "Couldn't parse filter '%s'",
+    [NOT_INTALLABLE_FILTER] = "Couldn't install filter '%s'",
+    [PCAP_LOOP_ERROR] = "pcap_loop() failed",
+    [TOO_MANY_ARGS] = "Too many args (MAX_ARGS=%d)",
+    [MISSING_ARGS_ERROR] = "Missing arguments: %s",
+    [UNRECOGNIZED_ARGS_ERROR] = "Unrecognized arguments: %s",
+    [BUFFER_OVERFLOW_ERROR] = "Buffer overflowed in file '%s' (max characters allowed = %d)",
+    [NEGATIVE_BUFFER_INDEX] = "Buffer index cannot be a negative number '(%d < 0)'",
+    [CURSOR_POSITION_ERROR] = "Couldn't retrieve the current cursor position",
+    [TERMINAL_SIZE_ERROR] = "Couldn't retrieve the current terminal size",
+    [CURR_WORK_DIR_ERROR] = "Couldn't resolve current working directory",
+    [FOLDER_OPEN_ERROR] = "Couldn't open '%s' folder",
+    [CSTM_DISSECTORS_CONFLICT_ERROR] = "Dissectors conflict between '%s' and '%s', both have same key: %d in '%s' table",
+    [LOADING_SHARED_LIB_ERROR] = "Error loading '%s' lib (%s)",
+    [FUNCTION_NOT_FOUND_ERROR] = "Error finding function (%s)",
+    [LIB_NOT_FOUND_ERROR] = "Library '%s' not found",
+    [DELETE_FILE_ERROR] = "Couldn't delete '%s'",
+    [FILE_COPY_ERROR] = "Couldn't copy '%s' to '%s'",
+    [FILE_OVERWRITE_ERROR] = "'%s' already exists in '%s' directory",
+    [LONG_TO_INT_CAST_ERROR] = "Failed to cast from long to int: value exceeds the range of int",
+    [INT_TO_CHAR_CAST_ERROR] = "Failed to cast from int to char: value exceeds the range of char",
+    [UNKNOWN_ERROR] = "Unknown error, please report this issue to mantainers",
+};
 
-const char * get_success_msg(success_code code) {
-    switch(code) {
-        case ARRAY_RESET_SUCCESS:               return "Array resetted correctly."; break;
-        case ARRAY_EMPTY_SUCCESS:               return "Array alredy empty"; break;
-        case PACKETS_DUMP_SUCCESS:              return "Packets have successfully been written to file"; break;
-        case DISSECTOR_ACTIVATED_SUCCESS:       return "Custom dissector successfully activated"; break;
-        case DISSECTOR_DEACTIVATED_SUCCESS:     return "Custom dissector successfully deactivated"; break;
-        case DISSECTOR_LOADED_SUCCESS:          return "Custom dissector successfully loaded"; break;
-        case DISSECTOR_DELETED_SUCCESS:         return "Custom dissector successfully deleted"; break;
-        default:                                return "Operation succeded"; break;
-    }
-}
+static const char *const warning_formats[] = {
+    [DISSECTORS_EMPTY_WARNING] = "No custom dissectors found (.so)",
+    [UNKNOWN_WARNING] = "Unknown warning, please report this issue to mantainers"
+};
+
+static const char *const success_formats[] = {
+    [ARRAY_RESET_SUCCESS] = "Array resetted correctly.",
+    [ARRAY_EMPTY_SUCCESS] = "Array alredy empty",
+    [PACKETS_DUMP_SUCCESS] = "Packets have successfully been written to file",
+    [DISSECTOR_ACTIVATED_SUCCESS] = "Custom dissector successfully activated",
+    [DISSECTOR_DEACTIVATED_SUCCESS] = "Custom dissector successfully deactivated",
+    [DISSECTOR_LOADED_SUCCESS] = "Custom dissector successfully loaded",
+    [DISSECTOR_DELETED_SUCCESS] = "Custom dissector successfully deleted"
+};
 
 void raise_error(err_code code, int should_exit, const char *hint, ...) {
-    const char *format = get_error_format(code);
-
     va_list args;
+    const char *format = error_formats[code];
+
     va_start(args, hint);
 
-    printf(RED "[ERROR] (code: %d) -> ", code);
-    vprintf(format, args);
+    fprintf(stderr, RED "[ERROR] (code: %d) -> ", code);
+    vfprintf(stderr, format, args);
     if (NULL != hint) {
-        printf(".\n");
-        printf(RESET_COLOR YELLOW "(%s)", hint);
+        fprintf(stderr, ".\n");
+        fprintf(stderr, RESET_COLOR YELLOW "(%s)", hint);
     }
-    printf(".\n" RESET_COLOR);
-
+    fprintf(stderr, ".\n" RESET_COLOR);
+    
     va_end(args);
 
-    if (should_exit) exit(EXIT_FAILURE);
-    /* instead of writing trivial goto mechanism simply let the OS deallocate the remaining memory (this happens only in case
-        of errors) */
+    if (should_exit) {
+        fflush(stderr);
+        exit(EXIT_FAILURE);
+    }
+    /* 
+        instead of writing trivial goto mechanism simply let the OS deallocate the remaining memory
+        (this happens only in case of errors)
+    */
 }
 
-void print_warning_msg(warinng_code code) {
-    const char *msg = get_warning_msg(code);
+void print_warning_msg(warning_code code) {
+    const char *msg = warning_formats[code];
     printf(YELLOW "[WARNING] -> %s\n" RESET_COLOR, msg);
 }
 
 void print_success_msg(success_code code) {
-    const char *msg = get_success_msg(code);
+    const char *msg = success_formats[code];
     printf(GREEN "[SUCCESS] -> %s\n" RESET_COLOR, msg);
 }
