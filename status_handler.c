@@ -7,7 +7,7 @@
 #include "utils/formats.h"
 
 
-static const char *const error_formats[] = {
+static const char error_formats[][256] = {
     [SELECT_FAILED_ERROR] = "'select()' failed in file '%s'. Reason: '%s'",
     [UNKNOWN_COMMAND_ERROR] = "No such command '%s'",
     [COMMAND_NOT_SUPPORTED_ERROR] = "Your OS does not support the '%s' command",
@@ -50,12 +50,12 @@ static const char *const error_formats[] = {
     [UNKNOWN_ERROR] = "Unknown error, please report this issue to mantainers",
 };
 
-static const char *const warning_formats[] = {
+static const char warning_formats[][256] = {
     [DISSECTORS_EMPTY_WARNING] = "No custom dissectors found (.so)",
     [UNKNOWN_WARNING] = "Unknown warning, please report this issue to mantainers"
 };
 
-static const char *const success_formats[] = {
+static const char success_formats[][256] = {
     [ARRAY_RESET_SUCCESS] = "Array resetted correctly.",
     [ARRAY_EMPTY_SUCCESS] = "Array alredy empty",
     [PACKETS_DUMP_SUCCESS] = "Packets have successfully been written to file",
@@ -67,12 +67,10 @@ static const char *const success_formats[] = {
 
 void raise_error(err_code code, int should_exit, const char *hint, ...) {
     va_list args;
-    const char *format = error_formats[code];
-
     va_start(args, hint);
 
     fprintf(stderr, RED "[ERROR] (code: %d) -> ", code);
-    vfprintf(stderr, format, args);
+    vfprintf(stderr, error_formats[code], args);
     if (NULL != hint) {
         fprintf(stderr, ".\n");
         fprintf(stderr, RESET_COLOR YELLOW "(%s)", hint);
