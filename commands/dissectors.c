@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dlfcn.h>
+#include <dirent.h>
+#include <limits.h>
+#include <sys/stat.h>
 #include <string.h>
 
 #include "dissectors.h"
@@ -10,11 +13,19 @@
 #include "../utils/string_utils.h"
 
 
+void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path);
+void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path);
+
 void change_dissector_status(int new_status, char *filenames, shared_libs *libs) {
     char *token;
     char *trimmed;
     int found = 0;
     size_t i;
+
+    if (NULL == libs) {
+        print_warning_msg(DISSECTORS_EMPTY_WARNING);
+        return;
+    }
 
     if (NULL == filenames) {
         for (i = 0; i < libs->count; i ++) libs->statuses[i] = new_status;
@@ -37,7 +48,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
             }
         }
 
-        if (found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
+        if (!found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
         else {
             if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS);
             else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS);
@@ -49,112 +60,68 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     }
 }
 
+void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path) {
+    char *filename;
+    void *handle;
+
+    filename = get_filename(path);
+    if (!has_shared_lib_ext((const char *)filename)) return;  /* ADD MESSAGE ERROR! */
+
+    handle = dlopen(path, RTLD_LAZY);
+    if (NULL != handle) {
+        add_shared_lib(libs, handle, strdup(filename), 1);
+        load_dissector(dissectors, handle, strdup(filename));
+        print_success_msg(DISSECTOR_LOADED_SUCCESS);
+    }
+    else raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, filename, dlerror());
+}
+
+void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path) {
+    struct dirent *entry;
+    char full_path[PATH_MAX];
+    DIR *dir;
+    
+    if (NULL == dir_path) return;
+
+    dir = opendir(dir_path);
+    if (!dir) {
+        raise_error(DIR_OPEN_ERROR, 0, NULL, dir_path);
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG || entry->d_type == DT_LNK || entry->d_type == DT_UNKNOWN) {
+            if (has_shared_lib_ext(entry->d_name)) {
+                if (dir_path[strlen(dir_path) - 1] == '/')
+                    snprintf(full_path, sizeof(full_path), "%s%s", dir_path, entry->d_name);
+                else
+                    snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
+                add_and_load_single_dissector(libs, dissectors, full_path);
+            }
+        }
+    }
+
+    closedir(dir);
+}
+
 void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, char *paths) {
+    struct stat path_stat;
     char *token;
     char *trimmed;
-    char *filename;
-    int found = 0;
-    struct dirent *entry;
-    void *handle;
-    char expanded_dir[4096];
-    char path[8192];
-    DIR *dir;
 
     if (NULL == paths) return;
-    
-    expand_tilde(CUSTOM_DISSECTORS_PATH, expanded_dir, sizeof(expanded_dir));
-    dir = opendir(expanded_dir);
 
     token = strtok(paths, STRINGS_SEPARATOR);
     while (token != NULL) {
-        found = 0;
         trimmed = get_trimmed_str(token);
-        filename = get_filename(trimmed);
 
-        while ((entry = readdir(dir)) != NULL) {
-            if (0 == strcmp(entry->d_name, filename)) {
-                found = 1;
-                break;
-            }
-        }
-        rewinddir(dir);
-
-        if (!found) {
-            snprintf(path, sizeof(path), "%s/%s", expanded_dir, filename);
-            if (copy_file(trimmed, path)) {
-                handle = dlopen(path, RTLD_LAZY);
-                if (!handle) {
-                    raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, filename, dlerror());
-                    continue;
-                }
-
-                add_shared_lib(libs, handle, strdup(filename), 1);
-                load_dissector(dissectors, handle, strdup(filename));
-                print_success_msg(DISSECTOR_LOADED_SUCCESS);
-            }
-            else raise_error(FILE_COPY_ERROR, 0, NULL, trimmed, path);
-        }
-        else raise_error(FILE_OVERWRITE_ERROR, 0, FILE_OVERWRITE_HINT, filename, expanded_dir);
-
-        token = strtok(NULL, STRINGS_SEPARATOR);
-        free(trimmed);
-    }
-}
-
-void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *filenames) {
-    char *token;
-    char *trimmed;
-    int found = 0;
-    char path[8192];
-    char expanded_dir[4096];
-    size_t i;
-
-    if (NULL == filenames) return;
-    
-    expand_tilde(CUSTOM_DISSECTORS_PATH, expanded_dir, sizeof(expanded_dir));
-
-    token = strtok(filenames, STRINGS_SEPARATOR);
-    while (token != NULL) {
-        found = 0;
-        trimmed = get_trimmed_str(token);
-        snprintf(path, sizeof(path), "%s/%s", expanded_dir, trimmed);
-
-        if (NULL != dissectors->table) {
-            for (i = 0; i < dissectors->len; i ++) {
-                if (NULL != dissectors->table[i] && 0 == strcmp(trimmed, dissectors->table[i]->lib_filename)) {
-                    found = 1;
-                    break;
-                }
-            }
+        if (0 != stat(trimmed, &path_stat)) {
+            raise_error(NO_SUCH_FILE_OR_DIR_ERROR, 0, NULL, trimmed);
+            return;
         }
 
-        if (0 != found) {
-            destroy_dissectors_entry(dissectors->table[i]);
-            dissectors->table[i] = NULL;
-        }
-
-        found = 0;
-        if (NULL != libs->filenames) {
-            for (i = 0; i < libs->count; i ++) {
-                if (NULL != libs->filenames[i] && 0 == strcmp(trimmed, libs->filenames[i])) {
-                    found = 1;
-                    break;
-                }
-            }
-        }
-
-        if (0 == found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
-        else {
-            if (0 != remove(path)) raise_error(DELETE_FILE_ERROR, 0, NULL, path);
-            else {
-                dlclose(libs->handles[i]);
-                libs->handles[i] = NULL;
-                print_success_msg(DISSECTOR_DELETED_SUCCESS);
-                free(libs->filenames[i]);
-                libs->filenames[i] = NULL;
-                libs->statuses[i] = 0;
-            }
-        }
+        if (S_ISDIR(path_stat.st_mode)) add_and_load_dissectors_dir(libs, dissectors, trimmed);
+        else if (S_ISREG(path_stat.st_mode)) add_and_load_single_dissector(libs, dissectors, trimmed);
 
         token = strtok(NULL, STRINGS_SEPARATOR);
         free(trimmed);
@@ -164,6 +131,11 @@ void delete_dissector(shared_libs *libs, custom_dissectors *dissectors, char *fi
 void print_dissectors_list(shared_libs *libs) {
     int empty = 1;
     size_t i;
+
+    if (NULL == libs) {
+        print_warning_msg(DISSECTORS_EMPTY_WARNING);
+        return;
+    }
 
     for (i = 0; i < libs->count; i ++) {
         if (NULL != libs->filenames[i]) {
@@ -196,13 +168,11 @@ void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *cust
     arg *activate_arg = get_arg(cmd, ACTIVATE_LIB_ARG);
     arg *deactivate_arg = get_arg(cmd, DEACTIVATE_LIB_ARG);
     char *add_paths = get_raw_val(cmd, ADD_DISSECTOR_ARG);
-    char *delete_filenames = get_raw_val(cmd, DELETE_LIB_ARG);
 
     /* first deactivate, than eventually activate. Deactivation has priority over activation */
     if (NULL != deactivate_arg) change_dissector_status(0, deactivate_arg->val, libs);
     if (NULL != activate_arg) change_dissector_status(1, activate_arg->val, libs);
     if (NULL != add_paths) add_and_load_dissectors(libs, custom_diss, add_paths);
-    if (NULL != delete_filenames) delete_dissector(libs, custom_diss, delete_filenames);
     if (show_list) print_dissectors_list(libs);
     /* show_list should be the final command execution, because it shows the eventual previous changes */
 }

@@ -7,7 +7,6 @@
 #define UNSCANNED_NET_HINT "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 #define ABSOLUTE_PATH_HINT "Make sure to start with the '/' character if you intend to insert an absolute path"
-#define FILE_OVERWRITE_HINT "Rename the file before attempting to copy it again"
 #define CSTM_DISSECTORS_CONFLICT_HINT "Resolve the conflicts to ensure the program operates correctly (deterministically)"
 
 typedef enum {
@@ -40,14 +39,13 @@ typedef enum {
     CURSOR_POSITION_ERROR,
     TERMINAL_SIZE_ERROR,
     CURR_WORK_DIR_ERROR,
-    FOLDER_OPEN_ERROR,
+    DIR_OPEN_ERROR,
     CSTM_DISSECTORS_CONFLICT_ERROR,
     LOADING_SHARED_LIB_ERROR,
     FUNCTION_NOT_FOUND_ERROR,
     LIB_NOT_FOUND_ERROR,
+    NO_SUCH_FILE_OR_DIR_ERROR,
     DELETE_FILE_ERROR,
-    FILE_COPY_ERROR,
-    FILE_OVERWRITE_ERROR,
     LONG_TO_INT_CAST_ERROR,
     INT_TO_CHAR_CAST_ERROR,
     UNKNOWN_ERROR

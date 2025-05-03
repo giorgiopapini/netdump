@@ -28,7 +28,7 @@ char *get_filename(char *path) {
     char *filename_win;
     if (NULL == path) return NULL;
     
-    filename = strrchr(path, '/');
+    filename = strrchr(path, '/');  /* filename is a pointer to the old string */
     filename_win = strrchr(path, '\\');
 
     if (filename_win && (!filename || filename_win > filename))
@@ -37,37 +37,9 @@ char *get_filename(char *path) {
     return (filename) ? filename + 1 : path;
 }
 
-void expand_tilde(const char *path, char *expanded_path, size_t size) {
-    const char *usr;
-
-    if (path[0] == '~') {
-        usr = getenv("SUDO_USER");
-        if (usr) snprintf(expanded_path, size, "/home/%s%s", usr, path + 1);
-        else snprintf(expanded_path, size, "%s", path);
-    }
-    else snprintf(expanded_path, size, "%s", path);
-}
-
-int copy_file(char *source, char *destination) {
-    char buffer[4096];
-    size_t bytes_read;
-    FILE *src_file;
-    FILE *dest_file;
-
-    src_file = fopen(source, "rb");
-    if (NULL == src_file) return 0;
-
-    dest_file = fopen(destination, "wb");
-    if (NULL == dest_file) {
-        fclose(src_file);
-        return 0;
-    }
-
-    while ((bytes_read = fread(buffer, 1, sizeof(buffer), src_file)) > 0) fwrite(buffer, 1, bytes_read, dest_file);
-
-    fclose(src_file);
-    fclose(dest_file);
-    return 1;
+int has_shared_lib_ext(const char *filename) {
+    const char *ext = strrchr(filename, '.');
+    return ext && (0 == strcmp(ext, ".so") || 0 == strcmp(ext, ".dylib"));
 }
 
 void lower_str_except_interval(char *str, char interval_symbol) {

@@ -22,6 +22,7 @@ shared_libs *create_shared_libs_obj(void) {
 int is_active(shared_libs *libs, char *filename) {
     size_t i;
 
+    if (NULL == libs) return 0;
     if (NULL == libs->filenames) return 0;
 
     for (i = 0; i < libs->count; i ++) {
@@ -47,42 +48,10 @@ void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int
     libs->count ++;
 }
 
-shared_libs *load_shared_libs(const char *directory) {
-    struct dirent *entry;
-    void *handle;
-    char expanded_dir[4096];
-    char path[8192];
-    DIR *dir;
-    shared_libs *libs = create_shared_libs_obj();
-    if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, "libs", __FILE__);
-
-    expand_tilde(directory, expanded_dir, sizeof(expanded_dir));
-    dir = opendir(expanded_dir);
-    if (NULL == dir) {
-        raise_error(FOLDER_OPEN_ERROR, 0, NULL, expanded_dir);
-        return libs;
-    }
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (strstr(entry->d_name, ".so") != NULL) {
-            snprintf(path, sizeof(path), "%s/%s", expanded_dir, entry->d_name);
-
-            handle = dlopen(path, RTLD_LAZY);
-            if (!handle) {
-                raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, entry->d_name, dlerror());
-                continue;
-            }
-
-            add_shared_lib(libs, handle, strdup(entry->d_name), 1);
-        }
-    }
-    closedir(dir);
-    return libs;
-}
-
 void destroy_shared_libs(shared_libs *libs) {
     size_t i;
-    
+    if (NULL == libs) return;
+
     if (NULL != libs->filenames) {
         for (i = 0; i < libs->count; i ++) {
             if (NULL != libs->handles[i]) dlclose(libs->handles[i]);
@@ -93,5 +62,4 @@ void destroy_shared_libs(shared_libs *libs) {
 
     if (NULL != libs->handles) free(libs->handles);    
     if (NULL != libs->statuses) free(libs->statuses);
-    free(libs);
 }

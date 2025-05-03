@@ -48,7 +48,6 @@
 #define ADD_DISSECTOR_ARG           "add"
 #define ACTIVATE_LIB_ARG            "on"
 #define DEACTIVATE_LIB_ARG          "off"
-#define DELETE_LIB_ARG              "delete"
 
 #define NUMBER_ARG_DESC             "Choose a packet by its scanning order number"
 #define PACKET_AMOUNT_ARG_DESC      "Set a packet scanning limit"
@@ -70,7 +69,6 @@
 #define ADD_DISSECTOR_ARG_DESC      "Add custom dissector"
 #define ACTIVATE_LIB_ARG_DESC       "Activate custom dissector (empty = all)"
 #define DEACTIVATE_LIB_ARG_DESC     "Deactivate custom dissector (empty = all)"
-#define DELETE_LIB_ARG_DESC         "Delete a custom dissector (delete file)"
 
 #define NUMBER_ARG_EG               ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG               ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
@@ -82,7 +80,6 @@
 #define ADD_DISSECTOR_ARG_EG        ARG_PREFIX ADD_DISSECTOR_ARG        " \"/dir/file-7.so" STRINGS_SEPARATOR " /dir/file-8.so\""
 #define ACTIVATE_LIB_ARG_EG         ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 #define DEACTIVATE_LIB_ARG_EG       ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
-#define DELETE_LIB_ARG_EG           ARG_PREFIX DELETE_LIB_ARG           " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 
 #define OUTPUT_ARG_VAL_STD          "std"
 #define OUTPUT_ARG_VAL_RAW          "raw"
@@ -100,7 +97,7 @@
 #define DEVICES_LIST_ARGS           NONE_ARG
 #define REQUIRED_DEVICES_LIST_ARGS  NONE_ARG
 
-#define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG, DELETE_LIB_ARG
+#define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG
 #define REQUIRED_DISSECTORS_ARGS    NONE_ARG
 
 #define RESET_ARGS                  NONE_ARG

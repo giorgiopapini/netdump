@@ -4,7 +4,6 @@
 #include "protocol.h"
 #include "../utils/shared_lib.h"
 
-#define CUSTOM_DISSECTORS_PATH      "~/.local/lib/netdump/custom_dissectors"
 #define FUNCTION_NAME               "get_custom_protocols_mapping"
 
 

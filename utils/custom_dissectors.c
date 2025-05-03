@@ -195,6 +195,4 @@ void destroy_custom_dissectors(custom_dissectors *custom_diss) {
     free(custom_diss->table);
     custom_diss->table = NULL;
     custom_diss->len = 0;
-
-    free(custom_diss);
 }

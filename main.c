@@ -7,13 +7,11 @@
 #include <sys/select.h>
 
 #include "command_handler.h"
-#include "custom_dissectors_handler.h"
 #include "status_handler.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
 #include "utils/circular_linked_list.h"
 #include "utils/packet.h"
-#include "utils/shared_lib.h"
 #include "utils/string_utils.h"
 #include "utils/visualizer.h"
 #include "utils/formats.h"
@@ -34,6 +32,9 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
+
+	TODO: 	Add a way to load any .so file in the program given one or more directories to look at
+			(like: "home/dissectors" or "home/dissectors/" look inside the directory and load any .so file)
 */
 
 void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
@@ -48,14 +49,11 @@ int main(void) {
 	struct termios original, term;
 
 	buffer buff = { 0 };
-	command cmd ={ 0 };
+	command cmd = { 0 };
 	raw_array packets = { 0 };
 	circular_list history = { 0 };
-	shared_libs *libs;
-	custom_dissectors *custom_diss;
-	
-	libs = load_shared_libs(CUSTOM_DISSECTORS_PATH);
-	custom_diss = load_custom_dissectors(libs);
+	shared_libs libs = { 0 };
+	custom_dissectors custom_diss = { 0 };
 
     tcgetattr(STDIN_FILENO, &original);
 	tcgetattr(STDIN_FILENO, &term);
@@ -76,12 +74,12 @@ int main(void) {
 			if (EINTR == errno) break;
 			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
 		}
-		else retval = run(&buff, &cmd, &packets, &history, libs, custom_diss);
+		else retval = run(&buff, &cmd, &packets, &history, &libs, &custom_diss);
 		if (RET_EXIT == retval) break;
     }
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	deallocate_heap(&cmd, &packets, &history, libs, custom_diss);
+	deallocate_heap(&cmd, &packets, &history, &libs, &custom_diss);
 	return 0;
 }
 

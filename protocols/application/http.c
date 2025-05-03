@@ -54,7 +54,7 @@ void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_H
             strncpy(key, header_line, (size_t)key_len);
             key[(size_t)key_len] = '\0';
 
-            value_start = colon_pos + 1;
+            value_start = colon_pos;
             while (*value_start == ' ') value_start ++;
 
             if (value_start != NULL) {
