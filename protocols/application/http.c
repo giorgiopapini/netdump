@@ -6,21 +6,27 @@
 #include "../../utils/visualizer.h"
 
 
-void extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]);
+int extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]);
 void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_HEADER_LEN]);
 void print_http_hdr(const uint8_t *pkt, size_t pkt_len);
 void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]) {
+int extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]) {
     ptrdiff_t path_len;
+    char *first_space;
     const char *path_start;
     const char *path_end;
     const char *version_start;
 
-    path_start = strchr(request_line, ' ') + 1;
-    path_end = strchr(path_start, ' ');
-    version_start = NULL;
+    first_space = strchr(request_line, ' ');
+    if (NULL == first_space) return 0;
 
+    path_start = first_space + 1;
+
+    path_end = strchr(path_start, ' ');
+    if (NULL == path_end) return 0;
+
+    version_start = NULL;
     sscanf(request_line, "%s", method);
 
     if (path_end != NULL) {
@@ -40,6 +46,7 @@ void extract_http_request_line(const char *request_line, char *method, char *pat
         version[HTTP_MAX_HEADER_LEN - 1] = '\0';
     }
     else version[0] = '\0';
+    return 1;
 }
 
 void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_HEADER_LEN]) {
@@ -95,10 +102,12 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (ptr < end && *ptr == '\r') ptr ++;
     if (ptr < end && *ptr == '\n') ptr ++;
 
+
+    if (0 == extract_http_request_line(line, method, path, version)) return;
+
     start_printing();
     print_additional_info("Payload not represented in ascii art");
 
-    extract_http_request_line(line, method, path, version);
     print_field(HTTP_METHOD_LABEL, method, 0);
     print_field(HTTP_PATH_LABEL, path, 0);
     print_field(HTTP_VERSION_LABEL, version, 0);
