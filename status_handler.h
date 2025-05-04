@@ -2,8 +2,8 @@
 #define ERROR_HANDLER_H
 
 #define UNKNOWN_COMMAND_HINT "Run 'help' command for assistance"
-#define NO_DEVICE_HINT "The selected device may not exist, or there could be an issue with your internet connection."
-#define NO_ACCESS_DEVICE_HINT "You might not have the necessary permissions to capture packets on this device."
+#define NO_DEVICE_HINT "The selected device may not exist, or there could be an issue with your internet connection"
+#define NO_ACCESS_DEVICE_HINT "You might not have the necessary permissions to capture packets on this device"
 #define UNSCANNED_NET_HINT "You are probably trying to print or visualize a packet without first scanning the network, run 'analize' command to scan the network"
 #define UNCOMPATIBLE_TERMINAL_HINT "Check if your terminal supports ANSI escape sequences"
 #define ABSOLUTE_PATH_HINT "Make sure to start with the '/' character if you intend to insert an absolute path"

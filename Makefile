@@ -66,11 +66,6 @@ clean:
 	rm -f ${TARGET} ${LIB_TARGET}
 	find . -name '*.o' -exec rm -f {} +
 
-# Debug
-debug: clean ${TARGET}
-	@echo "Running ${TARGET}..."
-	sudo ./${TARGET}
-
 # Install
 install: ${TARGET} ${LIB_TARGET}
 	mkdir -p ${DESTDIR}/usr/local/bin
