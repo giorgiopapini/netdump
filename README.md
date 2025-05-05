@@ -6,7 +6,7 @@ Disclaimer: netdump is entirely independent and unrelated to any other programs 
 
 ## Makefile configuration
 Check the default Makefile variable configuration using ```make show-config```.
-If your system stores those files in different locations, you can run ```make install VARIABLE_NAME>```
+If your system stores those files in different locations, you can run ```make install VARIABLE_NAME='/path/'```
 
 Remember that these commands might need to be run with elevated privileges.
 
