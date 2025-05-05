@@ -4,19 +4,25 @@ netdump is designed to cater to users with varying levels of expertise and backg
 
 Disclaimer: netdump is entirely independent and unrelated to any other programs named "netdump" or similar.
 
+## Makefile configuration
+Check the default Makefile variable configuration using ```make show-config```.
+If your system stores those files in different locations, you can run ```make install VARIABLE_NAME>
+
+Remember that these commands might need to be run with elevated privileges.
+
 ## Installation
 netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
 You can install netdump in several ways depending on your goal:
 
 1) Clone the repo and compile the program using ```make```.
-2) Clone the repo and install the program inside ```/usr/local/bin``` by running ```sudo make install```.
+2) Clone the repo and install the program inside ```/usr/local/bin``` by running ```make install```.
 3) Install the program inside ```/usr/bin``` by using a package manager.
 
 ## Running netdump
 There are several methods to execute netdump based upon the installation process you chose:
 
-1) Execute ./netdump if you just compiled the program using ```make```.
-2) Execute ```sudo /usr/local/bin/netdump``` (or ```netdump```) if you installed the program using ```sudo make install```.
+1) Execute ```./netdump``` if you just compiled the program using ```make```.
+2) Execute ```/usr/local/bin/netdump``` (or ```netdump```) if you installed the program using ```make install```.
 3) Execute ```netdump``` if you installed it using a package manager.
 
 Some features, such as real-time network scanning, require netdump to be run with elevated privileges.
@@ -80,7 +86,6 @@ The following table lists the allowed arguments for this command.
 | `-add` | str | Add custom dissector |
 | `-on` | str | Activate custom dissector (empty = all) |
 | `-off` | str | Deactivate custom dissector (empty = all) |
-| `-delete` | str | Delete a custom dissector (delete file) |
 
 ### ```save```
 This command is used to save scanned packets to a .pcap file.
@@ -106,9 +111,8 @@ This command is used to exit program.
 
 ## Adding custom dissectors
 To create a custom dissector, refer to the ```netdump-devel``` repo (https://github.com/giorgiopapini/netdump-devel).
-The ```netdump-devel``` package allows you to compile your custom dissector as a shared library. Once compiled as a .so file, you can add it to netdump using the following command:
-```netdump dissectors -add "path-to-dissector.so"```
-This will place the dissector in the ```~.local/lib/netdump/custom_dissectors/``` directory. Once added, your dissector will be correctly loaded into the netdump program.
+The ```netdump-devel``` package allows you to compile your custom dissector as a shared library. Once compiled as a shared lib, you can add it to netdump using the following command:
+```netdump dissectors -add "path-to-dissector.so"``` (.so if your system is Linux or *BSD. Otherwise, adjust it according to your system).
 
 ## Benchmark
 I compared netdump with tcpdump in terms of speed, and these are the results I obtained (I disabled hostname resolution in tcpdump to make it faster).
