@@ -46,6 +46,10 @@ LIB_OBJ = ${LIB_SRC:.c=.o}
 LIB_TARGET = libnetdump.so
 TARGET = netdump
 
+PREFIX = /usr/local
+BIN_DIR = $(PREFIX)/bin
+LIB_DIR = $(PREFIX)/lib64
+
 # Default target
 all: ${TARGET} ${LIB_TARGET}
 
@@ -59,7 +63,7 @@ ${LIB_TARGET}: ${LIB_OBJ}
 
 # Link target with shared library
 ${TARGET}: ${OBJ} ${LIB_TARGET}
-	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:/usr/local/lib64
+	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIB_DIR}
 
 # Clean
 clean:
@@ -68,12 +72,16 @@ clean:
 
 # Install
 install: ${TARGET} ${LIB_TARGET}
-	mkdir -p ${DESTDIR}/usr/local/bin
-	mkdir -p ${DESTDIR}/usr/local/lib64
-	install -m 0755 ${TARGET} ${DESTDIR}/usr/local/bin/${TARGET}
-	install -m 0755 ${LIB_TARGET} ${DESTDIR}/usr/local/lib64/${LIB_TARGET}
+	mkdir -p ${DESTDIR}${BIN_DIR}
+	mkdir -p ${DESTDIR}${LIB_DIR}
+
+	@echo "Installing netdump (binaries) to ${DESTDIR}${BIN_DIR}"
+	install -m 0755 ${TARGET} ${DESTDIR}${BIN_DIR}/${TARGET}
+	
+	@echo "Installing ${LIB_TARGET} (shared lib) to ${DESTDIR}${LIB_DIR}"
+	install -m 0755 ${LIB_TARGET} ${DESTDIR}${LIB_DIR}/${LIB_TARGET}
 
 # Remove
 remove: clean
-	rm -f ${DESTDIR}/usr/local/bin/${TARGET}
-	rm -f ${DESTDIR}/usr/local/lib64/${LIB_TARGET}
+	rm -f ${DESTDIR}${BIN_DIR}/${TARGET}
+	rm -f ${DESTDIR}${LIB_DIR}/${LIB_TARGET}

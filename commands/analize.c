@@ -37,6 +37,8 @@ int device_exists(char *dev) {
     pcap_if_t *device;
     char errbuff[PCAP_ERRBUF_SIZE];
 
+	if (NULL == dev) return 0;
+
     if (-1 == pcap_findalldevs(&alldevs, errbuff)) {
         raise_error(DEVICES_SCAN_ERROR, 0, NULL);
         return 0;
