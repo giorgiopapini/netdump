@@ -15,15 +15,19 @@ You can install netdump in several ways depending on your goal:
 ## Running netdump
 There are several methods to execute netdump based upon the installation process you chose:
 
-1) Execute ```make run``` or ```sudo ./netdump``` if you just compiled the program using ```make```.
-2) Execute ```sudo /usr/local/bin/netdump``` if you installed the program using ```sudo make install```.
-3) Execute ```sudo netdump``` if you installed it using a package manager.
+1) Execute ./netdump if you just compiled the program using ```make```.
+2) Execute ```sudo /usr/local/bin/netdump``` (or ```netdump```) if you installed the program using ```sudo make install```.
+3) Execute ```netdump``` if you installed it using a package manager.
+
+Some features, such as real-time network scanning, require netdump to be run with elevated privileges.
 
 ## Remove netdump
 You can remove netdump from your system in several ways:
 
-1) Execute ```sudo make remove``` if you previously installed netdump using ```sudo make install```
+1) Execute ```make remove``` if you previously installed netdump using ```make install```.
 2) Uninstall netdump using the package manager you used to install it.
+
+Remember that these commands might need to be run with elevated privileges.
 
 ## Netdump commands
 The general command format is this ```netdump <command> -<arg_1> <value_1> ... -<arg_n> <value_n>```.
