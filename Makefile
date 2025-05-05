@@ -84,8 +84,8 @@ clean:
 
 # Install
 install: ${TARGET} ${LIB_TARGET}
-	mkdir -p ${DESTDIR}${BINDIR}
-	mkdir -p ${DESTDIR}${LIBDIR}
+	@test -d ${BINDIR} || (echo "Error: BINDIR '${BINDIR}' does not exist. Set it correctly."; exit 1)
+	@test -d ${LIBDIR} || (echo "Error: LIBDIR '${LIBDIR}' does not exist. Set it correctly."; exit 1)
 
 	@echo "Installing netdump (binaries) to ${DESTDIR}${BINDIR}"
 	install -m 0755 ${TARGET} ${DESTDIR}${BINDIR}/${TARGET}
