@@ -43,12 +43,13 @@ OBJ = ${SRC:.c=.o}
 
 LIB_SRC = utils/protocol.c utils/visualizer.c
 LIB_OBJ = ${LIB_SRC:.c=.o}
-LIB_TARGET = libnetdump.so
+LIB_EXT = .so
+LIB_TARGET = libnetdump${LIB_EXT}
 TARGET = netdump
 
 PREFIX = /usr/local
-BIN_DIR = $(PREFIX)/bin
-LIB_DIR = $(PREFIX)/lib64
+BINDIR = $(PREFIX)/bin
+LIBDIR = $(PREFIX)/lib64
 
 # Default target
 all: ${TARGET} ${LIB_TARGET}
@@ -63,7 +64,18 @@ ${LIB_TARGET}: ${LIB_OBJ}
 
 # Link target with shared library
 ${TARGET}: ${OBJ} ${LIB_TARGET}
-	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIB_DIR}
+	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIBDIR}
+
+show-config:
+	@echo "Configuration:"
+	@echo "		PREFIX     = ${PREFIX}"
+	@echo "		BINDIR     = ${BINDIR}"
+	@echo "		LIBDIR     = ${LIBDIR}"
+	@echo "		LIB_EXT    = ${LIB_EXT}"
+	@echo "		LIB_TARGET = ${LIB_TARGET}"
+	@echo "		CC         = ${CC}"
+	@echo "		CFLAGS     = ${CFLAGS}"
+	@echo "		LDFLAGS    = ${LDFLAGS}"
 
 # Clean
 clean:
@@ -72,16 +84,16 @@ clean:
 
 # Install
 install: ${TARGET} ${LIB_TARGET}
-	mkdir -p ${DESTDIR}${BIN_DIR}
-	mkdir -p ${DESTDIR}${LIB_DIR}
+	mkdir -p ${DESTDIR}${BINDIR}
+	mkdir -p ${DESTDIR}${LIBDIR}
 
-	@echo "Installing netdump (binaries) to ${DESTDIR}${BIN_DIR}"
-	install -m 0755 ${TARGET} ${DESTDIR}${BIN_DIR}/${TARGET}
+	@echo "Installing netdump (binaries) to ${DESTDIR}${BINDIR}"
+	install -m 0755 ${TARGET} ${DESTDIR}${BINDIR}/${TARGET}
 	
-	@echo "Installing ${LIB_TARGET} (shared lib) to ${DESTDIR}${LIB_DIR}"
-	install -m 0755 ${LIB_TARGET} ${DESTDIR}${LIB_DIR}/${LIB_TARGET}
+	@echo "Installing ${LIB_TARGET} (shared lib) to ${DESTDIR}${LIBDIR}"
+	install -m 0755 ${LIB_TARGET} ${DESTDIR}${LIBDIR}/${LIB_TARGET}
 
 # Remove
 remove: clean
-	rm -f ${DESTDIR}${BIN_DIR}/${TARGET}
-	rm -f ${DESTDIR}${LIB_DIR}/${LIB_TARGET}
+	rm -f ${DESTDIR}${BINDIR}/${TARGET}
+	rm -f ${DESTDIR}${LIBDIR}/${LIB_TARGET}
