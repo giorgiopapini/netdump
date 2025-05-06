@@ -153,8 +153,8 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
         if (TELNET_IAC == pkt[i]) {
             print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
         
-            if ((pkt_len >= 4) && (i <= pkt_len - 4)) printf(")");
-            else printf("), ");
+            if ((pkt_len >= 4) && (i <= pkt_len - 4)) printf("), ");
+            else printf(")");
 
             i += 3;
             data_segment_len = 0;
