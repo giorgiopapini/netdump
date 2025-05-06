@@ -32,7 +32,10 @@ void print_ipv6(const uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]) {
     }
 
 
-    if (NULL != output) strncpy(output, res, IPV6_ADDR_STR_LEN - 1);
+    if (NULL != output) {
+        strncpy(output, res, IPV6_ADDR_STR_LEN - 1);
+        output[IPV6_ADDR_STR_LEN - 1] = '\0';
+    }
     else printf("%s", res);
 }
 

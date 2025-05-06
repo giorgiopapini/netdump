@@ -3,7 +3,7 @@ CC = gcc
 LDFLAGS = -lpcap -lm
 LDFLAGS += -L. -lnetdump
 
-CFLAGS = -g
+CFLAGS = -g -O2
 #CFLAGS += -std=c99
 #CFLAGS += -Wpedantic -pedantic-errors
 CFLAGS += -Werror

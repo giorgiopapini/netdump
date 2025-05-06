@@ -95,7 +95,7 @@ void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     printf("%s (", telnet_commands[cmd - TELNET_COMMAND_OFFSET]);
     if (sub_cmd <= TELNET_END_I_OPTIONS) printf("%s", telnet_options_first_segment[sub_cmd]);
     else if (sub_cmd >= TELNET_START_II_OPTIONS && 
-            sub_cmd <= TELNET_END_II_OPTIONS) printf("%s", telnet_options_second_segment[sub_cmd]);
+            sub_cmd <= TELNET_END_II_OPTIONS) printf("%s", telnet_options_second_segment[sub_cmd - TELNET_START_II_OPTIONS]);
     else if (sub_cmd == TELNET_EXTENDED_OPT_LIST) printf("Extended-Options-List");
     else printf("Unassigned");
 }
@@ -106,8 +106,8 @@ void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     strncat(res, telnet_commands[cmd - TELNET_COMMAND_OFFSET], sizeof(res) - strlen(res) - 1);
     strncat(res, " (", sizeof(res) - strlen(res) - 1);
     if (sub_cmd <= TELNET_END_I_OPTIONS) strncat(res, telnet_options_first_segment[sub_cmd], sizeof(res) - strlen(res) - 1);
-    else if (sub_cmd >= TELNET_START_II_OPTIONS && 
-            sub_cmd <= TELNET_END_II_OPTIONS) strncat(res, telnet_options_second_segment[sub_cmd], sizeof(res) - strlen(res) - 1);
+    else if (sub_cmd >= TELNET_START_II_OPTIONS && sub_cmd <= TELNET_END_II_OPTIONS) 
+        strncat(res, telnet_options_second_segment[sub_cmd - TELNET_START_II_OPTIONS], sizeof(res) - strlen(res) - 1);
     else if (sub_cmd == TELNET_EXTENDED_OPT_LIST) strncat(res, "Extended-Options-List", sizeof(res) - strlen(res) - 1);
     else strncat(res, "Unassigned", sizeof(res) - strlen(res) - 1);
     strncat(res, ")", sizeof(res) - strlen(res) - 1);
