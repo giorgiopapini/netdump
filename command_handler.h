@@ -27,7 +27,7 @@
 #define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
 
-#define ARG_PREFIX                  "-"
+#define ARG_PREFIX                  "-"  /* it has to be ONE char */
 #define NONE_ARG                    ""
 #define NUMBER_ARG                  "n"
 #define FILTER_ARG                  "filter"

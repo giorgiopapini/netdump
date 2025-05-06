@@ -1,5 +1,5 @@
 # Compiler and flags
-CC = gcc
+CC = gcc  # clang is also supported
 LDFLAGS = -lpcap -lm
 LDFLAGS += -L. -lnetdump
 
@@ -32,13 +32,14 @@ CFLAGS += -Wunreachable-code
 CFLAGS += -Wunused-but-set-parameter
 CFLAGS += -Wwrite-strings
 CFLAGS += -Wconversion -Wsign-conversion
+
 # Only for debugging!
 #LDFLAGS += -fsanitize=address,undefined
 #CFLAGS += -fsanitize=address,undefined
 #CFLAGS += -O0
 
 # Source files (recursive find using shell, for portability)
-SRC != find . -name '*.c'
+SRC != find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c'
 OBJ = ${SRC:.c=.o}
 
 LIB_SRC = utils/protocol.c utils/visualizer.c

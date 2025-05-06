@@ -112,7 +112,7 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
     const char *unrecognized_args[MAX_ARGS];
     char *unrecognized_args_message = NULL;
 
-    if (len > 0 && strcmp(expected_args[0], NONE_ARG) == 0) return valid;
+    if (0 < len && 0 == strcmp(expected_args[0], NONE_ARG)) return valid;
 
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
