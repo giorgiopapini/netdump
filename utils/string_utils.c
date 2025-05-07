@@ -58,8 +58,8 @@ void copy_str_n(char **dest, char *src, size_t n) {
     strncpy(*dest, src, n);
 }
 
-char * get_trimmed_str(char *str) {
-    char new_str[strlen(str) + 1];
+char * get_trimmed_str(char *str, size_t str_len) {
+    char new_str[str_len + 1];
     size_t new_index = 0;
     char *start = str;
     char *end;
@@ -83,7 +83,7 @@ char * get_trimmed_str(char *str) {
 
     if (new_index > 0 && new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
 
-    if (' ' == new_str[0]) new_index --;
+    if (' ' == new_str[0] && new_index > 0) new_index --;
     result = (char *)malloc(new_index  + 1);
     if (NULL == result) raise_error(NULL_POINTER, 1, NULL, "char *result", __FILE__);
 

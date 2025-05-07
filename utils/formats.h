@@ -16,7 +16,7 @@
     ((const uint8_t)((addr) >> 16) & 0xFF), \
     ((const uint8_t)((addr) >> 8) & 0xFF), \
     ((const uint8_t)(addr) & 0xFF)
-#define IP_ADDR_FORMAT "%d.%d.%d.%d"
+#define IP_ADDR_FORMAT "%u.%u.%u.%u"
 #define IP_ADDR_STR_LEN 16  /* 255.255.255.255'\0' */
 
 #define IPV6_ADDR_STR_LEN 40  /* 0000:0000:0000:0000:0000:0000:0000:0000'\0' */

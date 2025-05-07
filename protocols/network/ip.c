@@ -18,7 +18,9 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len);
 void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len);
 
 void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
-    char flags[9] = "";  /* max: "DF, MF, \0" */
+    char flags[9] = { 0 };  /* max: "DF, MF, \0" */
+    int raw_offset;
+    size_t offset = 0;
     (void)pkt_len;
 
     /* ===================== printing src (IP) > dest (IP) ====================== */
@@ -28,7 +30,7 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     /* ========================================================================== */
 
     printf(
-        " tos: 0x%01x, ttl: %d, id: %d, offset: %d,", 
+        " tos: 0x%01x, ttl: %u, id: %u, offset: %u,", 
         NP_IP_TOS(pkt), 
         NP_IP_TTL(pkt), 
         NP_IP_ID(pkt),
@@ -37,13 +39,15 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
 
     /* ============================= printing flags ============================= */
     printf(" flags: [");
-    if (NP_IP_OFFSET(pkt) & NP_IP_DF) strcat(flags, "DF, ");
-    if (NP_IP_OFFSET(pkt) & NP_IP_MF) strcat(flags, "MF, ");
-    flags[strlen(flags) - 2] = '\0';    /* remove last ", " chars */
+    if (NP_IP_OFFSET(pkt) & NP_IP_DF)
+        raw_offset = snprintf(flags + offset, sizeof(flags) - offset, "DF, ");
+    if (NP_IP_OFFSET(pkt) & NP_IP_MF)
+        raw_offset += snprintf(flags + offset, sizeof(flags) - offset, "MF, ");
+    if (offset >= 2) flags[offset - 2] = '\0';
     printf("%s],", flags);
     /* ========================================================================== */
 
-    printf(" proto: %d", NP_IP_PROTOCOL(pkt));
+    printf(" proto: %u", NP_IP_PROTOCOL(pkt));
     
     /*if (IP_HLEN(pkt) > 5) print_ip_options(pkt);*/
 }

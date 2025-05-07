@@ -32,9 +32,28 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
+	
+	TODO: 	In analize.c 'execute_analize()' I have a dangerous behaviur I should avoid. returning prematurely.
+			Suppose the following script
 
-	TODO: 	Add a way to load any .so file in the program given one or more directories to look at
-			(like: "home/dissectors" or "home/dissectors/" look inside the directory and load any .so file)
+			int *a = (int *)malloc(sizeof(int) * 3);
+			...
+			if (generic_condition(a) == true) return;
+			...
+			free(a);
+
+			I'm exiting prematurely WITHOUT DEALLOCATING (a). THIS CAUSES A MEMORY LEAKEAGE.ABSOLUTE_PATH_HINT
+			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
+
+	TODO:	(FIX THIS)
+			protocols/network/ip.c:51:27: runtime error: index 32762 out of bounds for type 'char [9]'
+			protocols/network/ip.c:51:40: runtime error: store to address 0x7f29c9308f1a with insufficient space for an object of type 'char'
+			0x7f29c9308f1a: note: pointer points here
+			00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00
+						^ 
+			protocols/network/ip.c:27:16: runtime error: left shift of 192 by 24 places cannot be represented in type 'int'
+			protocols/network/ip.c:29:16: runtime error: left shift of 192 by 24 places cannot be represented in type 'int'
+
 */
 
 void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);

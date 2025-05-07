@@ -50,12 +50,12 @@ void print_tcp_options(const uint8_t *pkt) {
         }
         else {
             if (opts_len > 0 && i >= opts_len - 1) {
-                printf("(malformed_option: kind %d)", kind);
+                printf("(malformed_option: kind %u)", kind);
                 break;
             }
             length = options[i + 1];
             if (length < 2 || length > opts_len || i > opts_len - length) {
-                printf("(malformed_option: kind %d, length %d)", kind, length);
+                printf("(malformed_option: kind %u, length %u)", kind, length);
                 break;
             }
 
@@ -63,14 +63,14 @@ void print_tcp_options(const uint8_t *pkt) {
             case 2: {
                 if (length == 4) {
                     mss = (uint16_t)(((uint16_t)options[i + 2] << 8) | (uint16_t)options[i + 3]);
-                    printf("mss: %d", mss);
+                    printf("mss: %u", mss);
                 }
                 break;
             }
             case 3: {
                 if (length == 3) {
                     scale = options[i + 2];
-                    printf("ws: %d", scale);
+                    printf("ws: %u", scale);
                 }
                 break;
             }
@@ -176,14 +176,14 @@ void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     snprintf(ack_num, sizeof(ack_num), "%u", TCP_ACK_NUM(pkt));
     snprintf(data_offset, sizeof(data_offset), "%u", TCP_DATA_OFFSET(pkt));
     uint_to_bin_str(reserved, TCP_RESERVED(pkt), sizeof(reserved));
-    snprintf(cwr, sizeof(cwr), "%d", (TCP_FLAGS(pkt) & TCP_CWR) ? 1 : 0);
-    snprintf(ece, sizeof(ece), "%d", (TCP_FLAGS(pkt) & TCP_ECE) ? 1 : 0);
-    snprintf(urg, sizeof(urg), "%d", (TCP_FLAGS(pkt) & TCP_URG) ? 1 : 0);
-    snprintf(ack, sizeof(ack), "%d", (TCP_FLAGS(pkt) & TCP_ACK) ? 1 : 0);
-    snprintf(psh, sizeof(psh), "%d", (TCP_FLAGS(pkt) & TCP_PSH) ? 1 : 0);
-    snprintf(rst, sizeof(rst), "%d", (TCP_FLAGS(pkt) & TCP_RST) ? 1 : 0);
-    snprintf(syn, sizeof(syn), "%d", (TCP_FLAGS(pkt) & TCP_SYN) ? 1 : 0);
-    snprintf(fin, sizeof(fin), "%d", (TCP_FLAGS(pkt) & TCP_FIN) ? 1 : 0);
+    snprintf(cwr, sizeof(cwr), "%u", (TCP_FLAGS(pkt) & TCP_CWR) ? 1 : 0);
+    snprintf(ece, sizeof(ece), "%u", (TCP_FLAGS(pkt) & TCP_ECE) ? 1 : 0);
+    snprintf(urg, sizeof(urg), "%u", (TCP_FLAGS(pkt) & TCP_URG) ? 1 : 0);
+    snprintf(ack, sizeof(ack), "%u", (TCP_FLAGS(pkt) & TCP_ACK) ? 1 : 0);
+    snprintf(psh, sizeof(psh), "%u", (TCP_FLAGS(pkt) & TCP_PSH) ? 1 : 0);
+    snprintf(rst, sizeof(rst), "%u", (TCP_FLAGS(pkt) & TCP_RST) ? 1 : 0);
+    snprintf(syn, sizeof(syn), "%u", (TCP_FLAGS(pkt) & TCP_SYN) ? 1 : 0);
+    snprintf(fin, sizeof(fin), "%u", (TCP_FLAGS(pkt) & TCP_FIN) ? 1 : 0);
     snprintf(window_size, sizeof(window_size), "%u", TCP_WINDOW_SIZE(pkt));
     snprintf(checksum, sizeof(checksum), "0x%04x", TCP_CHECKSUM(pkt));
     snprintf(urgent_pointer, sizeof(urgent_pointer), "0x%04x", TCP_URGENT_POINTER(pkt));

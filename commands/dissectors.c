@@ -37,7 +37,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     token = strtok(filenames, STRINGS_SEPARATOR);
     while (token != NULL) {
         found = 0;
-        trimmed = get_trimmed_str(token);
+        trimmed = get_trimmed_str(token, strlen(token));
 
         if (NULL != libs->filenames) {
             for (i = 0; i < libs->count; i ++) {
@@ -113,7 +113,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
 
     token = strtok(paths, STRINGS_SEPARATOR);
     while (token != NULL) {
-        trimmed = get_trimmed_str(token);
+        trimmed = get_trimmed_str(token, strlen(token));
 
         if (0 != stat(trimmed, &path_stat)) {
             raise_error(NO_SUCH_FILE_OR_DIR_ERROR, 0, NULL, trimmed);

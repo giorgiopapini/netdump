@@ -15,7 +15,7 @@
 
 #define LOOP_TO_INFINITY -1
 
-static pcap_t *handle;
+static pcap_t *handle = NULL;
 
 
 typedef struct custom_data {
@@ -41,6 +41,7 @@ int device_exists(char *dev) {
 
     if (-1 == pcap_findalldevs(&alldevs, errbuff)) {
         raise_error(DEVICES_SCAN_ERROR, 0, NULL);
+		pcap_freealldevs(alldevs);
         return 0;
     }
 
@@ -73,7 +74,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	/* ==============================  Getting args values from cmd  ================================ */
 	custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_dissectors = custom_diss, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
-	struct pcap_if *alldevs;
+	struct pcap_if *alldevs = NULL;
 	struct bpf_program fp;
 	bpf_u_int32 mask;
 	bpf_u_int32 net;
@@ -89,6 +90,8 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	char *read_file = get_raw_val(cmd, READ_FILE_ARG);
 	char *write_file = get_raw_val(cmd, WRITE_FILE_ARG);
     int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
+	
+	handle = NULL;  /* reset global var handle to NULL at each 'execute_analize' call */
 
 	if (raw_tmp > INT_MAX || raw_tmp < INT_MIN) raise_error(LONG_TO_INT_CAST_ERROR, 0, NULL);
 	else tmp = (int)raw_tmp;
@@ -102,23 +105,24 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
         handle = pcap_open_offline(read_file, errbuff);
         if (NULL == handle) {
 			raise_error(PCAP_FILE_ERROR, 0, ABSOLUTE_PATH_HINT, read_file);
-			return;
+			goto exit;
 		}
 		printf(CAPTURE_FROM_FILE_MSG, read_file);
-    } else {
+    }
+	else {
 		if (pcap_findalldevs(&alldevs, errbuff) == -1 && NULL != dev) {
 			raise_error(PCAP_FINDALLDEVS_ERROR, 0, NULL, errbuff);
-			return;
+			goto exit;
 		}
 		if (alldevs == NULL && NULL != dev) {
 			raise_error(DEVICES_SCAN_ERROR, 0, NULL);
-			return;
+			goto exit;
 		}
 
 		if (NULL == dev) {
 			if (NULL == alldevs) {
 				raise_error(NULL_POINTER, 0, NULL, "alldevs", __FILE__);
-				return;
+				goto exit;
 			}
 			else dev = alldevs->name;
 		}
@@ -126,26 +130,25 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
             raise_error(NO_DEVICE_FOUND, 0, NO_DEVICE_HINT, dev);
             mask = 0;
             net = 0;
-			return;
+			goto exit;
         }
 
 		if (!device_exists(dev)) {
 			raise_error(NO_DEVICE_FOUND, 0, NO_DEVICE_HINT, dev);
-			return;
+			goto exit;
 		}
 
         if (-1 == pcap_lookupnet(dev, &net, &mask, errbuff)) {
 			raise_error(NETMASK_ERROR, 0, NULL, dev);
-			return;
+			goto exit;
 		}
 
         handle = pcap_open_live(dev, BUFSIZ, prom_mode, 1000, errbuff);  // promiscuous mode (third argument) = 1
         if (NULL == handle) {
 			raise_error(NO_ACCESS_DEVICE_ERROR, 0, NO_ACCESS_DEVICE_HINT, dev);
-			return;
+			goto exit;
 		}
         printf(CAPTURE_DEVICE_MSG, dev);
-		pcap_freealldevs(alldevs);
     }
 
 	if (-1 == pcap_datalink(handle)) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
@@ -157,7 +160,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 		if (NULL == custom_args.pcap_dump) {
 			pcap_close(handle);
 			raise_error(PCAP_FILE_ERROR, 0, ABSOLUTE_PATH_HINT, write_file);
-			return;
+			goto exit;
 		}
 	}
 
@@ -172,5 +175,9 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	}
 
 	if (NULL != custom_args.pcap_dump) pcap_dump_close(custom_args.pcap_dump);
-	pcap_close(handle);
+
+exit:
+	pcap_freecode(&fp);
+	if (NULL != alldevs) pcap_freealldevs(alldevs);
+	if (NULL != handle) pcap_close(handle);
 }
