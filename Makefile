@@ -34,9 +34,9 @@ CFLAGS += -Wwrite-strings
 CFLAGS += -Wconversion -Wsign-conversion
 
 # Only for debugging!
-#LDFLAGS += -fsanitize=address,undefined
-#CFLAGS += -fsanitize=address,undefined
-#CFLAGS += -O0
+LDFLAGS += -fsanitize=address,undefined
+CFLAGS += -fsanitize=address,undefined
+CFLAGS += -O0
 
 # Source files (recursive find using shell, for portability)
 SRC != find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c'
