@@ -46,13 +46,7 @@
 			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
 
 	TODO:	(FIX THIS)
-			protocols/network/ip.c:51:27: runtime error: index 32762 out of bounds for type 'char [9]'
-			protocols/network/ip.c:51:40: runtime error: store to address 0x7f29c9308f1a with insufficient space for an object of type 'char'
-			0x7f29c9308f1a: note: pointer points here
-			00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00 00 00
-						^ 
-			protocols/network/ip.c:27:16: runtime error: left shift of 192 by 24 places cannot be represented in type 'int'
-			protocols/network/ip.c:29:16: runtime error: left shift of 192 by 24 places cannot be represented in type 'int'
+			SUMMARY: AddressSanitizer: heap-buffer-overflow protocols/application/dns.c:18 in extract_domain_name
 
 */
 

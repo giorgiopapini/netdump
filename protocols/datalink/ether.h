@@ -11,7 +11,7 @@
 
 #define DEST_ADDR(pkt)          ((const uint8_t *)pkt)
 #define SRC_ADDR(pkt)           ((const uint8_t *)(pkt + 6))
-#define ETHERTYPE(pkt)          ((uint16_t)(pkt[12] << 8) | (uint16_t)pkt[13])
+#define ETHERTYPE(pkt)          (((uint16_t)pkt[12] << 8) | (uint16_t)pkt[13])
 
 #define ETHER_LEN               14
 

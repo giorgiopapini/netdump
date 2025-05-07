@@ -19,7 +19,7 @@ void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len);
 
 void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char flags[9] = { 0 };  /* max: "DF, MF, \0" */
-    int raw_offset;
+    int raw_offset = 0;
     size_t offset = 0;
     (void)pkt_len;
 
@@ -42,8 +42,9 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (NP_IP_OFFSET(pkt) & NP_IP_DF)
         raw_offset = snprintf(flags + offset, sizeof(flags) - offset, "DF, ");
     if (NP_IP_OFFSET(pkt) & NP_IP_MF)
-        raw_offset += snprintf(flags + offset, sizeof(flags) - offset, "MF, ");
-    if (offset >= 2) flags[offset - 2] = '\0';
+        raw_offset = snprintf(flags + offset, sizeof(flags) - offset, "MF, ");
+    if (0 <= raw_offset) offset = (size_t)raw_offset;
+    if (2 <= offset) flags[offset - 2] = '\0';
     printf("%s],", flags);
     /* ========================================================================== */
 

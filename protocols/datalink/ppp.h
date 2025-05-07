@@ -11,7 +11,7 @@
 
 #define ADDRESS(pkt)            (pkt[0])
 #define CONTROL(pkt)            (pkt[1])
-#define PROTOCOL(pkt)           ((uint16_t)(pkt[2] << 8) | (uint16_t)pkt[3])
+#define PROTOCOL(pkt)           (((uint16_t)pkt[2] << 8) | (uint16_t)pkt[3])
 #define ENCAP_DATA(pkt)         ((const uint8_t *)(pkt + 4))
 
 #define PPP_LEN                 4

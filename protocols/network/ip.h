@@ -23,18 +23,18 @@
 #define NP_IP_HLEN(pkt)         (pkt[0] & 0x0f)
 #define NP_IP_VERSION(pkt)      (pkt[0] >> 4)
 #define NP_IP_TOS(pkt)          (pkt[1])
-#define NP_IP_TOTLEN(pkt)       ((uint16_t)(pkt[2] << 8) | (uint16_t)pkt[3])
-#define NP_IP_ID(pkt)           ((uint16_t)(pkt[4] << 8) | (uint16_t)pkt[5])
-#define NP_IP_OFFSET(pkt)       ((uint16_t)(pkt[6] << 8) | (uint16_t)pkt[7])
+#define NP_IP_TOTLEN(pkt)       (((uint16_t)pkt[2] << 8) | (uint16_t)pkt[3])
+#define NP_IP_ID(pkt)           (((uint16_t)pkt[4] << 8) | (uint16_t)pkt[5])
+#define NP_IP_OFFSET(pkt)       (((uint16_t)pkt[6] << 8) | (uint16_t)pkt[7])
 #define NP_IP_MF                0x2000  /* 14th bit */
 #define NP_IP_DF                0x4000  /* 15th bit */
 #define NP_IP_RF                0x8000  /* 16th bit */
 #define NP_IP_OFFSET_MASK       0x1fff  /* last 13 bits reserved for the offset field */
 #define NP_IP_TTL(pkt)          (pkt[8])
 #define NP_IP_PROTOCOL(pkt)     (pkt[9])
-#define NP_IP_CHECKSUM(pkt)     ((uint16_t)(pkt[10] << 8) | (uint16_t)pkt[11])
-#define NP_IP_SRC_ADDR(pkt)     ((uint32_t)(pkt[12] << 24) | (uint32_t)(pkt[13] << 16) | (uint32_t)(pkt[14] << 8) | (uint32_t)pkt[15])
-#define NP_IP_DEST_ADDR(pkt)    ((uint32_t)(pkt[16] << 24) | (uint32_t)(pkt[17] << 16) | (uint32_t)(pkt[18] << 8) | (uint32_t)pkt[19])
+#define NP_IP_CHECKSUM(pkt)     (((uint16_t)pkt[10] << 8) | (uint16_t)pkt[11])
+#define NP_IP_SRC_ADDR(pkt)     (((uint32_t)pkt[12] << 24) | ((uint32_t)pkt[13] << 16) | ((uint32_t)pkt[14] << 8) | (uint32_t)pkt[15])
+#define NP_IP_DEST_ADDR(pkt)    (((uint32_t)pkt[16] << 24) | ((uint32_t)pkt[17] << 16) | ((uint32_t)pkt[18] << 8) | (uint32_t)pkt[19])
 
 
 protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt);
