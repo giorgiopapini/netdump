@@ -17,7 +17,7 @@ size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain) 
 
     while ((len = payload[offset]) > 0) {
         if (len & 0xC0) {
-            pointer_offset = ((uint16_t)((payload[offset] & 0x3F) << 8) | (uint16_t)payload[offset + 1]);
+            pointer_offset = ((uint16_t)(((uint16_t)(payload)[offset] & 0x3F) << 8) | (uint16_t)(payload)[offset + 1]);
             offset += 2;
 
             i += extract_domain_name(payload, pointer_offset, domain + i);
@@ -101,8 +101,8 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
             ", query %ld: {name: %s, type: %u, class: %u}",
             i + 1,
             domain,
-            ((uint16_t)(pkt[offset] << 8) | (uint16_t)pkt[offset + 1]),
-            ((uint16_t)(pkt[offset + 2] << 8) | (uint16_t)pkt[offset + 3])
+            ((uint16_t)((uint16_t)(pkt)[offset] << 8) | (uint16_t)(pkt)[offset + 1]),
+            ((uint16_t)((uint16_t)(pkt)[offset + 2] << 8) | (uint16_t)(pkt)[offset + 3])
         );
         offset += 4;
     }
@@ -111,10 +111,10 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i ++) {
         offset += extract_domain_name(pkt, offset, domain);
 
-        type = ((uint16_t)(pkt[offset] << 8) | (uint16_t)pkt[offset + 1]),
-        class = ((uint16_t)(pkt[offset + 2] << 8) | (uint16_t)pkt[offset + 3]),
-        ttl = ((uint16_t)(pkt[offset + 4] << 8) | (uint16_t)pkt[offset + 5]),
-        data_len = ((uint16_t)(pkt[offset + 6] << 8) | (uint16_t)pkt[offset + 7]),
+        type = ((uint16_t)((uint16_t)(pkt)[offset] << 8) | (uint16_t)(pkt)[offset + 1]),
+        class = ((uint16_t)((uint16_t)(pkt)[offset + 2] << 8) | (uint16_t)(pkt)[offset + 3]),
+        ttl = ((uint16_t)((uint16_t)(pkt)[offset + 4] << 8) | (uint16_t)(pkt)[offset + 5]),
+        data_len = ((uint16_t)((uint16_t)(pkt)[offset + 6] << 8) | (uint16_t)(pkt)[offset + 7]),
 
         printf(
             ", answer %ld: {name: %s, type: %u, class: %u, ttl: %u, data_length: %u",
@@ -140,11 +140,11 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
         printf(
             ", additional_record %ld: {name: <Root>, type: %u, udp_payload_size: %u, higher_bits_in_rcode: %u, EDNS0_v: %u, Z: 0x%04x, rdlength: %u",
             i + 1,
-            ((uint16_t)(pkt[offset + 1] << 8) | (uint16_t)pkt[offset + 2]),
-            ((uint16_t)(pkt[offset + 3] << 8) | (uint16_t)pkt[offset + 4]),
+            ((uint16_t)((uint16_t)(pkt)[offset + 1] << 8) | (uint16_t)(pkt)[offset + 2]),
+            ((uint16_t)((uint16_t)(pkt)[offset + 3] << 8) | (uint16_t)(pkt)[offset + 4]),
             pkt[offset + 5],
             pkt[offset + 6],
-            ((uint16_t)(pkt[offset + 7] << 8) | (uint16_t)pkt[offset + 8]),
+            ((uint16_t)((uint16_t)(pkt)[offset + 7] << 8) | (uint16_t)(pkt)[offset + 8]),
             rdlength
         );
         offset += 10;

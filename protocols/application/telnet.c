@@ -125,11 +125,11 @@ size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     for (i = 0; i < telnet_len; i++) {
         if (buff_len >= sizeof(buff) - 1) break;
         
-        if (pkt[i] == '\r' && (i + 1 < telnet_len) && pkt[i + 1] == '\n') {
+        if (pkt[i] == '\r' && (i < telnet_len - 1) && pkt[i + 1] == '\n') {
             strncat(buff, "\\r\\n", sizeof(buff) - strlen(buff) - 1);
             buff_len = strlen(buff);
 
-            if ((i + 2) < telnet_len) {
+            if (i < telnet_len -2) {
                 if (pkt[i + 2] != TELNET_IAC) strncat(buff, ", ", sizeof(buff) - buff_len - 1);
             }
             i ++;
@@ -145,11 +145,14 @@ size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
 }
 
 void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
-    int data_segment_len;
+    int data_segment_len = 0;
     size_t i;
 
-    data_segment_len = 0;
-    for (i = 0; i < pkt_len;) {  /* +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand) */
+    /*
+        +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand)
+        !(i > pkt_len - 4) to ensure that inside the for loop the code doesn't access an index greater then the actual length of the arr
+    */
+    for (i = 0; (i < pkt_len) && !(i > pkt_len - 4);) {
         if (TELNET_IAC == pkt[i]) {
             print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
         

@@ -45,9 +45,8 @@
 			I'm exiting prematurely WITHOUT DEALLOCATING (a). THIS CAUSES A MEMORY LEAKEAGE.ABSOLUTE_PATH_HINT
 			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
 
-	TODO:	(FIX THIS)
-			SUMMARY: AddressSanitizer: heap-buffer-overflow protocols/application/dns.c:18 in extract_domain_name
-
+	FIXED:	(FIX THIS)
+			When i run analize -e -a -t -r "tests_pcap/telnet.pcapng" it crashes
 */
 
 void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
