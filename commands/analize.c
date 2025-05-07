@@ -172,12 +172,11 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 		printf("\ntotal packets: %ld\n", packets->len);
 		elapsed = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
     	printf("elapsed time: %.6f seconds\n", elapsed);
+		pcap_freecode(&fp);
 	}
-
 	if (NULL != custom_args.pcap_dump) pcap_dump_close(custom_args.pcap_dump);
 
 exit:
-	pcap_freecode(&fp);
 	if (NULL != alldevs) pcap_freealldevs(alldevs);
 	if (NULL != handle) pcap_close(handle);
 }
