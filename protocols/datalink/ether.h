@@ -13,7 +13,7 @@
 #define SRC_ADDR(pkt)           ((const uint8_t *)(pkt + 6))
 #define ETHERTYPE(pkt)          (((uint16_t)pkt[12] << 8) | (uint16_t)pkt[13])
 
-#define ETHER_LEN               14
+#define ETHER_HDR_LEN           14
 
 
 protocol_info dissect_ether(const uint8_t *pkt, size_t pkt_len, output_format fmt);

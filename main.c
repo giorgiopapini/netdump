@@ -46,11 +46,25 @@
 			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
 
 	FIXED:	(FIX THIS)
-			When i run analize -e -a -t -r "tests_pcap/telnet.pcapng" it crashes
+			CHECK FOR (pkt) LENGTH EVERYWHERE IN PROTOCOLS. (pkt_len should be at least the minimum packet protocol length (standard))
+			Otherwise macros access pkt[11] but maybe pkt is not long as much, so it access an unkown block of memory causing UB
 */
 
-void deallocate_heap(command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
-cmd_retval run(buffer *, command *, raw_array *, circular_list *, shared_libs *, custom_dissectors *);
+void deallocate_heap(
+	command *cmd,
+	raw_array *packets,
+	circular_list *history,
+	shared_libs *libs,
+	custom_dissectors *custom_diss
+);
+cmd_retval run(
+	buffer *buff, 
+	command *cmd, 
+	raw_array *packets, 
+	circular_list *history,
+	shared_libs *libs,
+	custom_dissectors *custom_diss
+);
 void prompt(void);
 
 

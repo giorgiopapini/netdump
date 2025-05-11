@@ -23,7 +23,7 @@
 #define VLAN_VID                    0x0fff
 #define VLAN_ETHERTYPE(pkt)         (((uint16_t)pkt[2] << 8) | (uint16_t)pkt[3])
 
-#define VLAN_LEN                    4  /* should be 6, but the 2 bytes TPID field is not considered, so 6 - 2 = 4 bytes */
+#define VLAN_HDR_LEN                4  /* should be 6, but the 2 bytes TPID field is not considered, so 6 - 2 = 4 bytes */
 
 
 protocol_info dissect_vlan(const uint8_t *pkt, size_t pkt_len, output_format fmt);

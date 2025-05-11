@@ -9,7 +9,7 @@
 #define HTTP_PATH_LABEL         "Path"
 #define HTTP_VERSION_LABEL      "Version"
 
-#define HTTP_MAX_HEADER_LEN     1024
+#define MAX_HTTP_HDR_LEN        1024
 
 
 protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt);

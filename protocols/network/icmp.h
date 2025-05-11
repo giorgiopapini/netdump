@@ -20,7 +20,7 @@
 #define ICMP_ID(pkt)            (((uint16_t)pkt[4] << 8) | (uint16_t)pkt[5])
 #define ICMP_SEQUENCE(pkt)      (((uint16_t)pkt[6] << 8) | (uint16_t)pkt[7])
 
-#define ICMP_LEN                8
+#define ICMP_HDR_LEN            8
 
 
 protocol_info dissect_icmp(const uint8_t *pkt, size_t pkt_len, output_format fmt);

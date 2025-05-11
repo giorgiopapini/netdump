@@ -10,7 +10,7 @@ void print_udp_hdr(const uint8_t *pkt, size_t pkt_len);
 void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len);
 
 void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
+    if (pkt_len < UDP_HDR_LEN) return;
 
     printf(
         "src_port: %u, dest_port: %u, length: %u, cksum: 0x%04x", 
@@ -26,7 +26,8 @@ void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char dest_port[6];
     char length[6];
     char checksum[7];  /* 0x0000'\0' */
-    (void)pkt_len;
+    
+    if (pkt_len < UDP_HDR_LEN) return;
 
     snprintf(src_port, sizeof(src_port), "%u", UDP_SRC_PORT(pkt));
     snprintf(dest_port, sizeof(dest_port), "%u", UDP_DEST_PORT(pkt));
@@ -43,7 +44,7 @@ void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
 
 protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     protocol_info proto_info;
-    proto_info.offset = UDP_LEN;
+    proto_info.offset = UDP_HDR_LEN;
     proto_info.proto_table_num = NET_PORTS;
 
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_udp_hdr, visualize_udp_hdr);

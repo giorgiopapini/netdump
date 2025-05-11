@@ -11,7 +11,7 @@
 #define SNAP_OUI(pkt, index)    (pkt[index])
 #define SNAP_TYPE(pkt)          (((uint16_t)pkt[3] << 8) | (uint16_t)pkt[4])
 
-#define SNAP_LEN                5
+#define SNAP_HDR_LEN            5
 
 
 protocol_info dissect_snap(const uint8_t *pkt, size_t pkt_len, output_format fmt);

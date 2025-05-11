@@ -60,7 +60,8 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t offset;
     size_t i, j;
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
-    (void)pkt_len;
+    
+    if (pkt_len < DNS_HDR_LEN) return;
 
     printf("transaction_id: 0x%04x", DNS_TRANSACTION_ID(pkt));
 
@@ -175,7 +176,8 @@ void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char answer_rrs[6];
     char auth_rrs[6];
     char additional_rrs[6];
-    (void)pkt_len;
+    
+    if (pkt_len < DNS_HDR_LEN) return;
     
     snprintf(transaction_id, sizeof(transaction_id), "0x%04x", DNS_TRANSACTION_ID(pkt));
     snprintf(qr, sizeof(qr), "%u", (DNS_FLAGS(pkt)) & DNS_QR ? 1 : 0);

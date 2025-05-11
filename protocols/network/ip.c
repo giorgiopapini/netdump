@@ -21,7 +21,8 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char flags[9] = { 0 };  /* max: "DF, MF, \0" */
     int raw_offset = 0;
     size_t offset = 0;
-    (void)pkt_len;
+
+    if (pkt_len < IP_HDR_LEN(pkt)) return;
 
     /* ===================== printing src (IP) > dest (IP) ====================== */
     print_ipv4(NP_IP_SRC_ADDR(pkt));
@@ -68,7 +69,8 @@ void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char checksum[7];  /* 0x0000'\0' are 7 chars */
     char src_addr[IP_ADDR_STR_LEN];
     char dest_addr[IP_ADDR_STR_LEN];
-    (void)pkt_len;
+    
+    if (pkt_len < IP_HDR_LEN(pkt)) return;
     
     snprintf(version, sizeof(version), "%u", NP_IP_VERSION(pkt));
     snprintf(ihl, sizeof(ihl), "%u", NP_IP_HLEN(pkt));
@@ -107,5 +109,5 @@ void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
 
 protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ip_hdr, visualize_ip_hdr);
-    return (protocol_info){ .protocol = NP_IP_PROTOCOL(pkt), .offset = (NP_IP_HLEN(pkt) * 4), .proto_table_num = IP_PROTOS };
+    return (protocol_info){ .protocol = NP_IP_PROTOCOL(pkt), .offset = IP_HDR_LEN(pkt), .proto_table_num = IP_PROTOS };
 }

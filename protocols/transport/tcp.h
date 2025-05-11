@@ -44,6 +44,8 @@
 #define TCP_URGENT_POINTER(pkt)     (((uint16_t)pkt[18] << 8) | (uint16_t)pkt[19])
 #define TCP_OPTIONS(pkt)            ((const uint8_t *)(pkt + 20))  /* pointer to options, 20 is the fixed amount of bytes of the tcp header */
 
+#define TCP_HDR_LEN(pkt)            (TCP_DATA_OFFSET(pkt) * 4)
+
 /* https://networklessons.com/cisco/ccie-routing-switching-written/tcp-header */
 
 

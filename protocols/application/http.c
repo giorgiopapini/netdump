@@ -6,12 +6,12 @@
 #include "../../utils/visualizer.h"
 
 
-int extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]);
-void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_HEADER_LEN]);
+int extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]);
+void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]);
 void print_http_hdr(const uint8_t *pkt, size_t pkt_len);
 void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len);
 
-int extract_http_request_line(const char *request_line, char *method, char *path, char version[HTTP_MAX_HEADER_LEN]) {
+int extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]) {
     ptrdiff_t path_len;
     char *first_space;
     const char *path_start;
@@ -42,14 +42,14 @@ int extract_http_request_line(const char *request_line, char *method, char *path
     }
 
     if (version_start != NULL) {
-        strncpy(version, version_start + 1, HTTP_MAX_HEADER_LEN - 1);
-        version[HTTP_MAX_HEADER_LEN - 1] = '\0';
+        strncpy(version, version_start + 1, MAX_HTTP_HDR_LEN - 1);
+        version[MAX_HTTP_HDR_LEN - 1] = '\0';
     }
     else version[0] = '\0';
     return 1;
 }
 
-void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_HEADER_LEN]) {
+void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]) {
     ptrdiff_t key_len;
     const char *value_start;
     const char *colon_pos;
@@ -65,8 +65,8 @@ void split_header_line(const char *header_line, char *key, char value[HTTP_MAX_H
             while (*value_start == ' ') value_start ++;
 
             if (value_start != NULL) {
-                strncpy(value, value_start + 1, HTTP_MAX_HEADER_LEN - 1);
-                value[HTTP_MAX_HEADER_LEN - 1] = '\0';
+                strncpy(value, value_start + 1, MAX_HTTP_HDR_LEN - 1);
+                value[MAX_HTTP_HDR_LEN - 1] = '\0';
             }
         }
     } 
@@ -82,12 +82,12 @@ void print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
-    char line[HTTP_MAX_HEADER_LEN];
-    char key[HTTP_MAX_HEADER_LEN];
-    char value[HTTP_MAX_HEADER_LEN];
-    char method[HTTP_MAX_HEADER_LEN];
-    char path[HTTP_MAX_HEADER_LEN];
-    char version[HTTP_MAX_HEADER_LEN];
+    char line[MAX_HTTP_HDR_LEN];
+    char key[MAX_HTTP_HDR_LEN];
+    char value[MAX_HTTP_HDR_LEN];
+    char method[MAX_HTTP_HDR_LEN];
+    char path[MAX_HTTP_HDR_LEN];
+    char version[MAX_HTTP_HDR_LEN];
 
     const uint8_t *ptr = pkt;
     const uint8_t *end = pkt + pkt_len;

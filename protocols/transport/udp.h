@@ -15,7 +15,7 @@
 #define UDP_LENGTH(pkt)         (((uint16_t)pkt[4] << 8) | (uint16_t)pkt[5])
 #define UDP_CHECKSUM(pkt)       (((uint16_t)pkt[6] << 8) | (uint16_t)pkt[7])
 
-#define UDP_LEN                 8
+#define UDP_HDR_LEN             8
 
 
 protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt);

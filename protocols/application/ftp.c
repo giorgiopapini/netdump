@@ -80,8 +80,8 @@ void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    char str1[FTP_HEADER_MAX_LEN];
-    char str2[FTP_HEADER_MAX_LEN];
+    char str1[MAX_FTP_HDR_LEN];
+    char str2[MAX_FTP_HDR_LEN];
     
     (void)pkt_len;
     if (!pkt || pkt[0] == '\0') return;

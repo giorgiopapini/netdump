@@ -12,7 +12,8 @@ void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
 
 void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint32_t vtc_flow = IPV6_VTC_FLOW(pkt);
-    (void)pkt_len;
+    
+    if (pkt_len < IPV6_HDR_LEN) return;
 
     print_ipv6(IPV6_SRC_ADDR(pkt), NULL);
     printf(" > ");
@@ -39,7 +40,8 @@ void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char src_addr[IPV6_ADDR_STR_LEN];
     char dest_addr[IPV6_ADDR_STR_LEN];
     uint32_t vtc_flow = IPV6_VTC_FLOW(pkt);
-    (void)pkt_len;
+
+    if (pkt_len < IPV6_HDR_LEN) return;
     
     snprintf(version, sizeof(version), "%u", (vtc_flow >> 28) & IPV6_VERSION);
     snprintf(traffic_class, sizeof(traffic_class), "%u", (vtc_flow >> 20) & IPV6_TRAFFIC_CLASS);
@@ -64,5 +66,5 @@ void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 
 protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ipv6_hdr, visualize_ipv6_hdr);
-    return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HEADER_LEN, .proto_table_num = IP_PROTOS };
+    return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HDR_LEN, .proto_table_num = IP_PROTOS };
 }

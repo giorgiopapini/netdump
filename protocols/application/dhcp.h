@@ -40,6 +40,8 @@
 #define DHCP_OPTIONS_OFFSET     240
 #define DHCP_END_OPTIONS        0xff
 
+#define MIN_DHCP_HDR_LEN        240
+
 
 protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 

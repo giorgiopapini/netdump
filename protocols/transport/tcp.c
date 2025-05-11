@@ -126,7 +126,8 @@ void print_tcp_options(const uint8_t *pkt) {
 
 void print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
-    (void)pkt_len;
+    
+    if (pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return;
 
     printf("src_port: %u, dest_port: %u", TCP_SRC_PORT(pkt), TCP_DEST_PORT(pkt));
     printf(", flags: [");
@@ -167,8 +168,9 @@ void visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char window_size[6];
     char checksum[7];  /* 0x0000'\0' */
     char urgent_pointer[7];
-    (void)pkt_len;
     /* char options[];  */
+
+    if (pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return;
 
     snprintf(src_port, sizeof(src_port), "%u", TCP_SRC_PORT(pkt));
     snprintf(dest_port, sizeof(dest_port), "%u", TCP_DEST_PORT(pkt));
@@ -216,7 +218,7 @@ protocol_info dissect_tcp(const uint8_t *pkt, size_t pkt_len, output_format fmt)
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_tcp_hdr, visualize_tcp_hdr);
 
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
-    proto_info.offset = (TCP_DATA_OFFSET(pkt) * 4);
+    proto_info.offset = TCP_HDR_LEN(pkt);
     proto_info.proto_table_num = NET_PORTS;
 
     if (((TCP_FLAGS(pkt) & (TCP_ACK | TCP_PSH)) == (TCP_ACK | TCP_PSH)) || ((TCP_FLAGS(pkt) & TCP_ACK) == TCP_ACK)) {

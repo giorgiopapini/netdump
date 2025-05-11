@@ -16,7 +16,7 @@ CFLAGS += -Wcast-qual
 CFLAGS += -Wdeclaration-after-statement
 CFLAGS += -Wfloat-equal
 CFLAGS += -Wformat=2
-#CFLAGS += -Wlogical-op
+#CFLAGS += -Wlogical-op  # NOT supported on clang
 CFLAGS += -Wmissing-declarations
 CFLAGS += -Wmissing-include-dirs
 CFLAGS += -Wmissing-prototypes

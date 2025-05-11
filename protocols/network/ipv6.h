@@ -25,7 +25,7 @@
 #define IPV6_SRC_ADDR(pkt)              ((const uint8_t *)(pkt + 8))
 #define IPV6_DEST_ADDR(pkt)             ((const uint8_t *)(pkt + 24))
 
-#define IPV6_HEADER_LEN                 40
+#define IPV6_HDR_LEN                    40
 
 
 protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len, output_format fmt);

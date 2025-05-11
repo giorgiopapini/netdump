@@ -36,6 +36,8 @@
 #define NP_IP_SRC_ADDR(pkt)     (((uint32_t)pkt[12] << 24) | ((uint32_t)pkt[13] << 16) | ((uint32_t)pkt[14] << 8) | (uint32_t)pkt[15])
 #define NP_IP_DEST_ADDR(pkt)    (((uint32_t)pkt[16] << 24) | ((uint32_t)pkt[17] << 16) | ((uint32_t)pkt[18] << 8) | (uint32_t)pkt[19])
 
+#define IP_HDR_LEN(pkt)         (NP_IP_HLEN(pkt) * 4)
+
 
 protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 

@@ -39,10 +39,13 @@ void print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t hdr_len;
     size_t offset;
     uint16_t protocol;
-    (void)pkt_len;
     
     hdr_len = snap_hdr_len(pkt);
+    if (hdr_len > pkt_len) return;
+
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
+    if ((offset + (size_t)1) > pkt_len) return;  /* +1 is needed because FRELAY_PROTO(...) access offset + 1 */
+
     protocol = FRELAY_PROTO(pkt, offset);
 
     printf(
@@ -53,7 +56,8 @@ void print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
         FRELAY_DE(pkt)
     );
 
-    if (protocol <= NLPID_THRESHOLD) printf(", nlpid: 0x%02x", protocol);
+    /* safe to cast protocol to (uint8_t) because of the bound checking condition */
+    if (protocol <= NLPID_THRESHOLD) printf(", nlpid: 0x%02x", (uint8_t)protocol);
     else printf(", ethertype: 0x%04x", protocol);
 }
 
@@ -67,10 +71,13 @@ void visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t hdr_len;
     size_t offset;
     uint16_t protocol;
-    (void)pkt_len;
 
     hdr_len = snap_hdr_len(pkt);
+    if (hdr_len > pkt_len) return;
+
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
+    if ((offset + (size_t)1) > pkt_len) return;  /* +1 is needed because FRELAY_PROTO(...) access offset + 1 */
+
     protocol = FRELAY_PROTO(pkt, offset);
 
     snprintf(dlci, sizeof(dlci), "%u", extract_dlci(pkt, hdr_len));
@@ -78,6 +85,7 @@ void visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     snprintf(becn, sizeof(becn), "%u", FRELAY_BECN(pkt) ? 1 : 0);
     snprintf(de, sizeof(de), "%u", FRELAY_DE(pkt) ? 1 : 0);
 
+    /* safe to cast protocol to (uint8_t) because of the bound checking condition */
     if (protocol <= NLPID_THRESHOLD) snprintf(protocol_nlpid, sizeof(protocol_nlpid), "0x%02x", protocol);
     else snprintf(protocol_ether, sizeof(protocol_ether), "0x%04x", protocol);
 

@@ -30,7 +30,7 @@ void print_type(uint8_t type) {
 }
 
 void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    (void)pkt_len;
+    if (pkt_len < ICMPV6_HDR_LEN) return;
     
     print_type(ICMPV6_TYPE(pkt));
     printf(
@@ -54,7 +54,8 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char checksum[7];  /* 0x0000'\0' 7 chars */
     char id[7];  /* 0x0000'\0' 7 chars */
     char seq[6];  /* 65535'\0' 6 chars */
-    (void)pkt_len;
+    
+    if (pkt_len < ICMPV6_HDR_LEN) return;
     
     snprintf(type, sizeof(type), "%u", ICMPV6_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMPV6_CODE(pkt));

@@ -4,14 +4,14 @@
 #include <stdint.h>
 #include "../../utils/protocol.h"
 
-#define FTP_HEADER_LABEL        "FTP Header"
+#define MAX_FTP_HDR_LEN_LABEL        "FTP Header"
 #define FTP_TYPE_LABEL          "Type"
 #define FTP_RES_CODE_LABEL      "Code"
 #define FTP_COMMAND_LABEL       "Command"
 #define FTP_MESSAGE_LABEL       "Message"
 #define FTP_ARGUMENT_LABEL      "Arguments"
 
-#define FTP_HEADER_MAX_LEN      512
+#define MAX_FTP_HDR_LEN         512
 
 
 protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt);

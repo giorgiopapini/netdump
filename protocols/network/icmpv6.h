@@ -34,6 +34,8 @@
 #define ICMPV6_ADJ_ROUTER_ANN_CODE  136
 #define ICMPV6_MESSAGE_REDIR_CODE   137
 
+#define ICMPV6_HDR_LEN              8
+
 
 protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt);
 
