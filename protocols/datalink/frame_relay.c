@@ -86,7 +86,7 @@ void visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     snprintf(de, sizeof(de), "%u", FRELAY_DE(pkt) ? 1 : 0);
 
     /* safe to cast protocol to (uint8_t) because of the bound checking condition */
-    if (protocol <= NLPID_THRESHOLD) snprintf(protocol_nlpid, sizeof(protocol_nlpid), "0x%02x", protocol);
+    if (protocol <= NLPID_THRESHOLD) snprintf(protocol_nlpid, sizeof(protocol_nlpid), "0x%02x", (uint8_t)protocol);
     else snprintf(protocol_ether, sizeof(protocol_ether), "0x%04x", protocol);
 
     start_printing();
