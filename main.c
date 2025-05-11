@@ -42,12 +42,8 @@
 			...
 			free(a);
 
-			I'm exiting prematurely WITHOUT DEALLOCATING (a). THIS CAUSES A MEMORY LEAKEAGE.ABSOLUTE_PATH_HINT
+			I'm exiting prematurely WITHOUT DEALLOCATING (a). THIS CAUSES A MEMORY LEAKEAGE.
 			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
-
-	FIXED:	(FIX THIS)
-			CHECK FOR (pkt) LENGTH EVERYWHERE IN PROTOCOLS. (pkt_len should be at least the minimum packet protocol length (standard))
-			Otherwise macros access pkt[11] but maybe pkt is not long as much, so it access an unkown block of memory causing UB
 */
 
 void deallocate_heap(
