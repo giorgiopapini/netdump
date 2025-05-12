@@ -1,6 +1,8 @@
-#include <pcap.h>
 #include "dlt_protos.h"
 
+#include <pcap/dlt.h>
+
+#include "../utils/protocol.h"
 #include "datalink/ether.h"
 #include "datalink/ppp.h"
 #include "datalink/frame_relay.h"

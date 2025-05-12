@@ -1,8 +1,10 @@
+#include "snap.h"
+
 #include <stdio.h>
 
-#include "snap.h"
 #include "../../utils/visualizer.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h"
 
 
 void print_snap_hdr(const uint8_t *pkt, size_t pkt_len);

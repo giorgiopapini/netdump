@@ -1,7 +1,9 @@
 #ifndef FRAME_RELAY_H
 #define FRAME_RELAY_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define FRELAY_HEADER_LABEL     "Frame Relay Header"

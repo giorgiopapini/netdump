@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "raw_array.h"
+
+#include <stdlib.h>
+
 #include "../status_handler.h"
 
 

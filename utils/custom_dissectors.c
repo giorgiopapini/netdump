@@ -1,17 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <dlfcn.h>
-
 #include "custom_dissectors.h"
-#include "../status_handler.h"
+
+#include <dlfcn.h>
+#include <stdlib.h>
+
 #include "../protocols/proto_tables_nums.h"
-#include "../protocols/dlt_protos.h"
-#include "../protocols/ethertypes.h"
-#include "../protocols/ip_protos.h"
-#include "../protocols/net_ports.h"
-#include "../protocols/nlpid_protos.h"
-#include "../protocols/ppp_protos.h"
+#include "../status_handler.h"
+#include "shared_lib.h"
 
 
 void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);

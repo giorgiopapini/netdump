@@ -1,16 +1,23 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <time.h>
-#include <limits.h>
-
 #include "analize.h"
+
+#include <limits.h>
+#include <sys/types.h>  /* needed for u_int/u_char used in <pcap/bpf.h> */
+#include <pcap/bpf.h>
+#include <pcap/pcap.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+#include "../command_handler.h"
+#include "../protocol_handler.h"
+#include "../status_handler.h"
 #include "../utils/packet.h"
 #include "../utils/string_utils.h"
-#include "../status_handler.h"
-
-#include "../protocol_handler.h"
+#include "../utils/command.h"
+#include "../utils/custom_dissectors.h"
+#include "../utils/raw_array.h"
+#include "../utils/shared_lib.h"
 
 
 #define LOOP_TO_INFINITY -1

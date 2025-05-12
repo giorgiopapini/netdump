@@ -1,7 +1,9 @@
 #ifndef ICMP_H
 #define ICMP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define ICMP_REPLY              0

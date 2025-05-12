@@ -2,12 +2,6 @@
 #define PROTO_TABLES_NUMS_H
 
 #include "../utils/protocol.h"
-#include "../protocols/dlt_protos.h"
-#include "../protocols/ethertypes.h"
-#include "../protocols/ip_protos.h"
-#include "../protocols/net_ports.h"
-#include "../protocols/nlpid_protos.h"
-#include "../protocols/ppp_protos.h"
 
 #define DLT_PROTOS          1
 #define ETHERTYPES          2

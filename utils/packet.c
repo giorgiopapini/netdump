@@ -1,8 +1,11 @@
+#include "packet.h"
+
+#include <pcap/pcap.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "packet.h"
 #include "../status_handler.h"
+
 
 packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t num, const uint8_t *bytes) {
     packet *new_pkt;

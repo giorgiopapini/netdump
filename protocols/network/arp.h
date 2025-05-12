@@ -1,7 +1,9 @@
 #ifndef ARP_H
 #define ARP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define ARP_REQUEST             1

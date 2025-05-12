@@ -1,12 +1,13 @@
 #ifndef COMMAND_HANDLER_H
 #define COMMAND_HANDLER_H
 
+#include <stddef.h>
+
 #include "utils/command.h"
 #include "utils/shared_lib.h"
 #include "utils/custom_dissectors.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
-#include "utils/circular_linked_list.h"
 
 #define ANALIZE_COMMAND             "analize"
 #define DEVICES_LIST_COMMAND        "devlist"

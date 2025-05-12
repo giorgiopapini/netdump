@@ -1,6 +1,8 @@
 #ifndef CIRCULAR_LINKED_LIST
 #define CIRCULAR_LINKED_LIST
 
+#include <stddef.h>
+
 typedef struct node {
     void *content;
     struct node *next;

@@ -1,7 +1,8 @@
+#include "protocol.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "protocol.h"
 #include "../status_handler.h"
 
 

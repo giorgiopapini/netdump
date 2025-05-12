@@ -1,6 +1,8 @@
 #ifndef CUSTOM_DISSECTORS_H
 #define CUSTOM_DISSECTORS_H
 
+#include <stddef.h>
+
 #include "protocol.h"
 #include "../utils/shared_lib.h"
 

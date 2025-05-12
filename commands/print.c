@@ -1,8 +1,17 @@
 #include "print.h"
-#include "../utils/string_utils.h"
-#include "../utils/packet.h"
+
+#include <stddef.h>
+
 #include "../protocol_handler.h"
 #include "../status_handler.h"
+#include "../utils/packet.h"
+#include "../utils/string_utils.h"
+#include "../command_handler.h"
+#include "../utils/custom_dissectors.h"
+#include "../utils/shared_lib.h"
+#include "../utils/command.h"
+#include "../utils/raw_array.h"
+
 
 void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
     packet *pkt;

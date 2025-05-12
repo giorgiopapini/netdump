@@ -1,7 +1,9 @@
 #ifndef IP_H
 #define IP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define IP_HEADER_LABEL         "IP Header"

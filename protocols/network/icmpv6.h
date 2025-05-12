@@ -1,7 +1,9 @@
 #ifndef ICMPV6_H
 #define ICMPV6_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define ICMPV6_HEADER_LABEL         "ICMPv6 Header"

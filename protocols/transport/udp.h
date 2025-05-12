@@ -1,7 +1,9 @@
 #ifndef UDP_H
 #define UDP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define UDP_HEADER_LABEL        "UDP Header"

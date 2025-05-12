@@ -1,8 +1,10 @@
+#include "dns.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "dns.h"
 #include "../../utils/visualizer.h"
+#include "../../utils/protocol.h"
 
 
 size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain);

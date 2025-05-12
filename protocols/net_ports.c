@@ -1,5 +1,8 @@
 #include "net_ports.h"
 
+#include <stddef.h>
+
+#include "../utils/protocol.h"
 #include "application/dhcp.h"
 #include "application/http.h"
 #include "application/ftp.h"

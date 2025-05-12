@@ -1,7 +1,8 @@
 #ifndef SHARED_LIB_H
 #define SHARED_LIB_H
 
-#include <dirent.h>
+#include <stddef.h>
+
 
 typedef struct shared_libs {
     void **handles;

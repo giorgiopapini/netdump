@@ -1,11 +1,11 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "ether.h"
-#include "../ethertypes.h"
+
+#include <stdio.h>
+
 #include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h"
 
 
 void print_ether_hdr(const uint8_t *pkt, size_t pkt_len);

@@ -1,8 +1,10 @@
+#include "ppp.h"
+
 #include <stdio.h>
 
-#include "ppp.h"
 #include "../../utils/visualizer.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h"
 
 
 void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len);

@@ -1,15 +1,16 @@
+#include "string_utils.h"
+
+#include <ctype.h>
+#include <fcntl.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <termios.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <pwd.h>
-#include <limits.h>
+#include <unistd.h>
 
-#include "string_utils.h"
 #include "../status_handler.h"
+
 
 size_t find_word_len(char *sentence, int word_pos) {
     size_t i;

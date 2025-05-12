@@ -1,7 +1,6 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
-#include <stdint.h>
 #include <stddef.h>
 
 #define MAX_HASHES 128

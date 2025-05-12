@@ -1,7 +1,9 @@
 #ifndef VLAN_H
 #define VLAN_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define VLAN_HEADER_LABEL       "VLAN Header"

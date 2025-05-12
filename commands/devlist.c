@@ -1,7 +1,8 @@
-#include <stdio.h>
-#include <pcap.h>
-
 #include "devlist.h"
+
+#include <stdio.h>
+#include <pcap/pcap.h>
+
 #include "../status_handler.h"
 #include "../utils/colors.h"
 #include "../utils/formats.h"

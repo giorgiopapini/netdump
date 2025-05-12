@@ -1,11 +1,12 @@
+#include "protocol_handler.h"
+
+#include <pcap/pcap.h>
+#include <stdio.h>
 #include <string.h>
 
-#include "protocol_handler.h"
 #include "command_handler.h"
-#include "status_handler.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
-#include "protocols/dlt_protos.h"
 #include "protocols/proto_tables_nums.h"
 
 #define INLINE_SEPARATOR 		" | "

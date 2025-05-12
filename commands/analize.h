@@ -2,11 +2,14 @@
 #define ANALIZE_H
 
 #include <stdint.h>
-#include <pcap.h>
 
-#include "../command_handler.h"
 #include "../utils/custom_dissectors.h"
 #include "../utils/shared_lib.h"
+#include "../utils/command.h"
+#include "../utils/raw_array.h"
+
+struct pcap_pkthdr;
+
 
 #define CAPTURE_FROM_FILE_MSG "Reading from pcap file: %s\n"
 #define CAPTURE_DEVICE_MSG "Capturing from live device: %s\n"

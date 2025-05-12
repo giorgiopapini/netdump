@@ -1,6 +1,7 @@
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 size_t find_word_len(char *sentence, int word_pos);    /* first word len? -> word_pos should be 0 (first index) */

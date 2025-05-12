@@ -1,10 +1,13 @@
+#include "tcp.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "tcp.h"
 #include "../../utils/visualizer.h"
 #include "../../utils/string_utils.h"
 #include "../proto_tables_nums.h"
+#include "../net_ports.h"
+#include "../../utils/protocol.h"
 
 
 size_t tcp_options_len(const uint8_t *pkt);

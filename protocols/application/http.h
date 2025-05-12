@@ -1,7 +1,9 @@
 #ifndef HTTP_H
 #define HTTP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define HTTP_HEADER_LABEL       "HTTP Header"

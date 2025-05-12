@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <termios.h>
+#include <termios.h>  /* Never include <bits/termios_c_cc.h> directly; use <termios.h> instead */
 #include <string.h>
 #include <errno.h>
 #include <sys/select.h>
@@ -10,11 +9,12 @@
 #include "status_handler.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
-#include "utils/circular_linked_list.h"
 #include "utils/packet.h"
-#include "utils/string_utils.h"
-#include "utils/visualizer.h"
 #include "utils/formats.h"
+#include "utils/circular_linked_list.h"
+#include "utils/command.h"
+#include "utils/custom_dissectors.h"
+#include "utils/shared_lib.h"
 
 /*
 	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)

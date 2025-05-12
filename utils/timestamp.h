@@ -1,7 +1,8 @@
 #ifndef TIMESTAMP_H
 #define TIMESTAMP_H
 
-#include <sys/time.h>
+struct timeval;
+
 
 void print_timestamp(struct timeval timestamp);
 

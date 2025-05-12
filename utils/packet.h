@@ -1,8 +1,11 @@
 #ifndef PACKET_H
 #define PACKET_H
 
+#include <stddef.h>
 #include <stdint.h>
-#include <pcap.h>
+
+
+struct pcap_pkthdr;
 
 typedef struct packet {
     struct pcap_pkthdr *header;

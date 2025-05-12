@@ -1,11 +1,10 @@
-#include <stdio.h>
+#include "shared_lib.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
 
-#include "shared_lib.h"
 #include "../status_handler.h"
-#include "string_utils.h"
 
 
 shared_libs *create_shared_libs_obj(void) {

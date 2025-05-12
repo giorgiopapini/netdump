@@ -1,11 +1,11 @@
-#include <string.h>
-#include <stdio.h>
+#include "command_handler.h"
+
 #include <stdlib.h>
+#include <string.h>
 
 #include "status_handler.h"
 #include "utils/string_utils.h"
 #include "utils/formats.h"
-
 #include "command_handler.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"

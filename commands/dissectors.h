@@ -1,9 +1,9 @@
 #ifndef DISSECTORS_H
 #define DISSECTORS_H
 
-#include "../command_handler.h"
 #include "../utils/custom_dissectors.h"
 #include "../utils/shared_lib.h"
+#include "../utils/command.h"
 
 #define LIB_ACTIVE      "active"
 #define LIB_DEACTIVE    "deactive"

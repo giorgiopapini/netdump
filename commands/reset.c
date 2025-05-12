@@ -1,6 +1,9 @@
 #include "reset.h"
+
 #include "../status_handler.h"
 #include "../utils/packet.h"
+#include "../utils/raw_array.h"
+
 
 void execute_reset(raw_array *packets) {
     if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS);

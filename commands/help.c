@@ -1,9 +1,9 @@
+#include "help.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "help.h"
 #include "../utils/colors.h"
-#include "../command_handler.h"
 #include "../utils/formats.h"
 
 

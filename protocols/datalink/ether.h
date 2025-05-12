@@ -1,7 +1,9 @@
 #ifndef ETHER_H
 #define ETHER_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define ETHER_HEADER_LABEL      "Ether Header"

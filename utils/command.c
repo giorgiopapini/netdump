@@ -1,8 +1,8 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "command.h"
+
+#include <stdlib.h>
+#include <string.h>
+
 #include "../status_handler.h"
 #include "string_utils.h"
 

@@ -1,6 +1,8 @@
 #ifndef VISUALIZER_H
 #define VISUALIZER_H
 
+#include <stddef.h>
+
 #define MARGIN "  "
 #define HORIZONTAL_BORDER "-"
 #define VERTICAL_BORDER "|"

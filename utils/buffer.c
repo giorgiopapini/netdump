@@ -1,11 +1,10 @@
+#include "buffer.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
-#include "buffer.h"
 #include "../status_handler.h"
-#include "../command_handler.h"
 #include "string_utils.h"
 #include "formats.h"
 

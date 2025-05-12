@@ -1,6 +1,9 @@
 #ifndef PROTOCOL_HANDLER_H
 #define PROTOCOL_HANDLER_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "utils/command.h"
 #include "utils/packet.h"
 #include "utils/custom_dissectors.h"

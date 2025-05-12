@@ -1,8 +1,10 @@
+#include "telnet.h"
+
 #include <stdio.h>
 #include <string.h>
 
-#include "telnet.h"
 #include "../../utils/visualizer.h"
+#include "../../utils/protocol.h"
 
 
 const char *telnet_commands[] = {

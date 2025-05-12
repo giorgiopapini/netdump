@@ -1,7 +1,7 @@
+#include "formats.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#include "formats.h"
 
 
 void print_ipv4(const uint32_t addr) {

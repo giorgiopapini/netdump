@@ -1,8 +1,10 @@
+#include "dhcp.h"
+
 #include <stdio.h>
 
-#include "dhcp.h"
-#include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
+#include "../../utils/visualizer.h"
+#include "../../utils/protocol.h"
 
 
 void print_options(const uint8_t *pkt, size_t len);

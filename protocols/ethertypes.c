@@ -1,5 +1,8 @@
 #include "ethertypes.h"
 
+#include <stddef.h>
+
+#include "../utils/protocol.h"
 #include "datalink/ppp.h"
 #include "datalink/vlan.h"
 #include "network/ip.h"

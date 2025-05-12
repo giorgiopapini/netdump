@@ -1,5 +1,8 @@
 #include "nlpid_protos.h"
 
+#include <stddef.h>
+
+#include "../utils/protocol.h"
 #include "datalink/ppp.h"
 #include "datalink/snap.h"
 #include "network/ip.h"

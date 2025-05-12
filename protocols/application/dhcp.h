@@ -1,7 +1,9 @@
 #ifndef DHCP_H
 #define DHCP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define DHCP_HEADER_LABEL       "DHCP Header"

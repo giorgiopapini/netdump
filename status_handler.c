@@ -1,8 +1,9 @@
+#include "status_handler.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include "status_handler.h"
 #include "utils/colors.h"
 #include "utils/formats.h"
 

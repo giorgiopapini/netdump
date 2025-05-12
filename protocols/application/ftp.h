@@ -1,6 +1,7 @@
 #ifndef FTP_H
 #define FTP_H
 
+#include <stddef.h>
 #include <stdint.h>
 #include "../../utils/protocol.h"
 

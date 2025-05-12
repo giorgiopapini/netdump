@@ -1,7 +1,9 @@
 #ifndef PPP_H
 #define PPP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define PPP_HEADER_LABEL        "PPP Header"

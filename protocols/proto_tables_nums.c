@@ -1,6 +1,15 @@
 #include "proto_tables_nums.h"
 
+#include <stddef.h>
+
 #include "../utils/formats.h"
+#include "../utils/protocol.h"
+#include "dlt_protos.h"
+#include "ethertypes.h"
+#include "ip_protos.h"
+#include "net_ports.h"
+#include "nlpid_protos.h"
+#include "ppp_protos.h"
 
 
 protocol_handler *get_proto_table(int proto_table_num) {

@@ -1,9 +1,10 @@
+#include "arp.h"
+
 #include <stdio.h>
 
-#include "arp.h"
-#include "../ethertypes.h"
 #include "../../utils/formats.h"
 #include "../../utils/visualizer.h"
+#include "../../utils/protocol.h"
 
 
 void print_arp_hdr(const uint8_t *pkt, size_t pkt_len);

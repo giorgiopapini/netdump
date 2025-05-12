@@ -1,7 +1,9 @@
 #ifndef TELNET_H
 #define TELNET_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define TELNET_HEADER_LABEL         "Telnet Header"

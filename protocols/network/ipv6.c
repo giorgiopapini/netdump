@@ -1,10 +1,11 @@
+#include "ipv6.h"
+
 #include <stdio.h>
 
-#include "ipv6.h"
-#include "../ip_protos.h"
-#include "../../utils/visualizer.h"
 #include "../../utils/formats.h"
+#include "../../utils/visualizer.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h" 
 
 
 void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);

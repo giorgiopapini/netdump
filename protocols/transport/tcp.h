@@ -1,7 +1,9 @@
 #ifndef TCP_H
 #define TCP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define TCP_HEADER_LABEL            "TCP Header"

@@ -1,8 +1,10 @@
+#include "vlan.h"
+
 #include <stdio.h>
 
-#include "vlan.h"
 #include "../../utils/visualizer.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h"
 
 
 void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len);

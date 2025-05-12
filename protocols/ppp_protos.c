@@ -1,5 +1,8 @@
 #include "ppp_protos.h"
 
+#include <stddef.h>
+
+#include "../utils/protocol.h"
 #include "network/ip.h"
 #include "network/ipv6.h"
 #include "network/icmpv6.h"

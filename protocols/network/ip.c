@@ -1,11 +1,12 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "ip.h"
+
+#include <stdio.h>
+
+#include "../../utils/formats.h"
 #include "../../utils/string_utils.h"
 #include "../../utils/visualizer.h"
-#include "../../utils/formats.h"
 #include "../proto_tables_nums.h"
+#include "../../utils/protocol.h"
 
 
 /*

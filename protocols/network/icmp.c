@@ -1,7 +1,9 @@
+#include "icmp.h"
+
 #include <stdio.h>
 
-#include "icmp.h"
 #include "../../utils/visualizer.h"
+#include "../../utils/protocol.h"
 
 
 void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len);

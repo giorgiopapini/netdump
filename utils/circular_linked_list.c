@@ -1,6 +1,7 @@
+#include "circular_linked_list.h"
+
 #include <stdlib.h>
 
-#include "circular_linked_list.h"
 #include "../status_handler.h"
 
 

@@ -1,7 +1,9 @@
 #ifndef SNAP_H
 #define SNAP_H
 
+#include <stddef.h>
 #include <stdint.h>
+
 #include "../../utils/protocol.h"
 
 #define SNAP_HEADER_LABEL       "SNAP Header"

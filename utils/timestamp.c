@@ -1,7 +1,11 @@
-#include <stdio.h>
-#include <time.h>
 #include "timestamp.h"
+
+#include <stdio.h>
+#include <sys/time.h>
+#include <time.h>
+
 #include "colors.h"
+
 
 void print_timestamp(struct timeval timestamp) {
 	time_t rawtime = timestamp.tv_sec;
