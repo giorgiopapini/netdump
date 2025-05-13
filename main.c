@@ -32,6 +32,8 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
+
+	TODO: 	if (buff->content[i] == ARG_PREFIX[0]). Redo this condition to correctly compare strings, not chars
 */
 
 void deallocate_heap(

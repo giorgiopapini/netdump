@@ -7,7 +7,7 @@
 
 node *create_node(void *content) {
     node *new_node = (node *)malloc(sizeof(node));
-    if (NULL == new_node) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_node), __FILE__);
+    CHECK_NULL_EXIT(new_node);
 
     new_node->content = content;
     new_node->next = NULL;
@@ -44,8 +44,9 @@ void push_node(circular_list *list, node *new_node, size_t max_len, void (*deall
 }
 
 void destroy_node(node *curr, void (*deallocate_content)(void *)) {
-    if (NULL == curr) raise_error(NULL_POINTER, 1, NULL, VARNAME(curr), __FILE__);
-    else {
+    CHECK_NULL_EXIT(curr);
+
+    if (NULL != curr) {
         if (NULL != deallocate_content) deallocate_content(curr->content);
         free(curr);
     }
@@ -54,8 +55,8 @@ void destroy_node(node *curr, void (*deallocate_content)(void *)) {
 void destroy_list(circular_list *list, void (*deallocate_content)(void *)) {
     node *tmp = NULL;
     size_t i;
-
-    if (NULL == list) raise_error(NULL_POINTER, 1, NULL, VARNAME(list), __FILE__);
+    
+    CHECK_NULL_EXIT(list);
     
     for (i = 0; i < list->len; i ++) {
         if (NULL != list->curr) {

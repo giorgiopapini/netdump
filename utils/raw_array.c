@@ -9,7 +9,7 @@ void init_arr(raw_array *arr, int n) {
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
 
     arr->values = (void **)malloc((size_t)n * sizeof(void *));  /* At this point n is certain to be > 0 */
-    if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, VARNAME(arr->values), __FILE__);
+    CHECK_NULL_EXIT(arr->values);
 
     arr->allocated = (size_t)n;
 }
@@ -17,25 +17,28 @@ void init_arr(raw_array *arr, int n) {
 void allocate(raw_array *arr, int n) {
     void *new_ptr;
 
+    CHECK_NULL_EXIT(arr);
+
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
     if (0 == arr->allocated) init_arr(arr, n);
     else {        
         new_ptr = realloc(arr->values, (arr->allocated + (size_t)n) * sizeof(void *));  /* At this point n is certain to be > 0 */
-        if (NULL == new_ptr) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_ptr), __FILE__);
+        CHECK_NULL_EXIT(new_ptr);
 
         /* realloc copied everything to a different memory block, update arr-values to point to the freshly allocated block */
         if (new_ptr != arr->values) arr->values = new_ptr;
-        if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, VARNAME(arr->values), __FILE__);
+        CHECK_NULL_EXIT(arr->values);
         
         arr->allocated += (size_t)n;
     }
 }
 
 void insert(raw_array *arr, void *pkt) {
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, VARNAME(arr), __FILE__);
+    CHECK_NULL_CONTINUE(arr);
     if ((arr->len + 1) > arr->allocated) allocate(arr, 1);
     /* allocating only 1 slot each time is suboptimal, should only happen (for now) when scanning infinite amount of packets */
     
+    CHECK_NULL_EXIT(arr->values);
     arr->values[arr->len] = pkt;
     arr->len ++;
 }
@@ -52,10 +55,11 @@ void * get(raw_array *arr, size_t n) {
 
 void reset_arr(raw_array *arr, void (*deallocate_content)(void *)) {
     size_t i;
+    
+    CHECK_NULL_EXIT(arr);
 
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, VARNAME(arr), __FILE__);
     for (i = 0; i < arr->len; i ++) deallocate_content(arr->values[i]);
-    free(arr->values);
+    if (NULL != arr->values) free(arr->values);
 
     arr->allocated = 0;
     arr->len = 0;

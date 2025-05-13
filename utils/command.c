@@ -24,7 +24,8 @@ arg * create_arg_from_token(char *token) {
     token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
 
     new_arg = (arg *)malloc(sizeof(arg));
-    if (NULL == new_arg) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_arg), __FILE__);
+    CHECK_NULL_EXIT(new_arg);
+
     new_arg->label = NULL;
     new_arg->val = NULL;
     new_arg->next = NULL;
@@ -42,7 +43,8 @@ arg * create_arg_from_token(char *token) {
     value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
     if (0 < value_len) {
         new_arg->val = (char *)malloc(value_len);
-        if (NULL == new_arg->val) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_arg->val), __FILE__);
+        CHECK_NULL_EXIT(new_arg->val);
+
         memset(new_arg->val, '\0', value_len);
         strcpy(new_arg->val, token + label_len + 1);    /* +1 needed to skip the first whitespace that separates -<key> to <value> */
     }
@@ -118,7 +120,7 @@ void reset_cmd(command *cmd) {
     arg *curr = NULL;
     size_t i;
 
-    if (NULL == cmd) raise_error(NULL_POINTER, 0, NULL, VARNAME(cmd), __FILE__);
+    CHECK_NULL_EXIT(cmd);
 
     /* deallocate hashmap */
     for (i = 0; i < cmd->n_hashes; i ++) {

@@ -12,7 +12,8 @@ void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_
 
 custom_dissectors *create_custom_dissectors(void) {
     custom_dissectors *dissectors = (custom_dissectors *)malloc(sizeof(custom_dissectors));
-    if (NULL == dissectors) raise_error(NULL_POINTER, 1, NULL, VARNAME(dissectors), __FILE__);
+    CHECK_NULL_EXIT(dissectors);
+
     dissectors->len = 0;
     dissectors->table = NULL;
     return dissectors;
@@ -50,9 +51,9 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
 
 dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto, char *filename) {
     dissectors_entry *new_entry = (dissectors_entry *)malloc(sizeof(dissectors_entry));
-    if (NULL == new_entry) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_entry), __FILE__);
-    if (NULL == proto_table) raise_error(NULL_POINTER, 1, NULL, VARNAME(proto_table), __FILE__);
-    if (NULL == new_custom_proto) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_custom_proto), __FILE__);
+    CHECK_NULL_EXIT(new_entry);
+    CHECK_NULL_EXIT(proto_table);
+    CHECK_NULL_EXIT(new_custom_proto);
     
     new_entry->proto_table = proto_table;
     new_entry->custom_protos = NULL;
@@ -81,7 +82,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     size_t i;
 
     dest_table = get_proto_table(dest_table_val);
-    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, VARNAME(custom_diss), __FILE__);
+    CHECK_NULL_EXIT(custom_diss);
 
     if (NULL == custom_diss->table) add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
@@ -113,13 +114,13 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
     protocol_handler_mapping **(*get_custom_protocols_mapping)(void);
     char *error;
 
-    if (NULL == handle) return;
-    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, VARNAME(custom_diss), __FILE__);
+    CHECK_NULL_EXIT(handle);
+    CHECK_NULL_EXIT(custom_diss);
 
     get_custom_protocols_mapping = (protocol_handler_mapping **(*)(void))dlsym(handle, FUNCTION_NAME);
 
     error = dlerror();
-    if (error != NULL) {
+    if (NULL != error) {
         raise_error(FUNCTION_NOT_FOUND_ERROR, 0, NULL, error);
         dlclose(handle);
         return;

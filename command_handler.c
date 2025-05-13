@@ -23,6 +23,9 @@
 int check_compliance(buffer *buff) {
     size_t i;
 
+    CHECK_NULL_RET(buff, 1);
+    CHECK_NULL_RET(buff->content, 1);
+
     for (i = 1; i < buff->len; i ++) {
         /* if char at (i - 1) is not empty and is not the leading char (which may happen, because of the buffer trim func) */
         if (buff->content[i - 1] == ' ' && 0 != (i - 1)) {
@@ -36,12 +39,18 @@ int check_compliance(buffer *buff) {
 
 int create_cmd_from_buff(command *cmd, buffer *buff) {
     size_t args_num = 0;
-    char temp[buff->len + 1];  /* including null terminator */
+    char *temp;
     size_t i;
     int j;
     int str_arg_value = 0;  /* flag to check if " already showed up */
     int writing_arg = 0;  /* flag to check if ARG_PREFIX alredy showed up */
     int status = 0;
+
+    CHECK_NULL_RET(cmd, 1);
+    CHECK_NULL_RET(buff, 1);
+
+    temp = (char *)malloc(buff->len + 1);  /* including null terminator */
+    CHECK_NULL_EXIT(temp);
 
     /* if there is <command> <arg> without the PREFIX separator than raise a formatting error */
     if (!check_compliance(buff)) {
@@ -56,7 +65,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
             if (j > 0 && ' ' == temp[j]) {
                 temp[j] = '\0';
                 cmd->label = (char *)malloc((size_t)j + 1); /* (j > 0) is certain at this point */
-                if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, VARNAME(cmd->label), __FILE__);
+                CHECK_NULL_EXIT(cmd->label);
                 strcpy(cmd->label, temp);
                 j = -1;
             }
@@ -87,14 +96,20 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
     temp[j] = '\0';
     if (NULL == cmd->label) {
         cmd->label = (char *)malloc((size_t)j + 1);
-        if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, VARNAME(cmd->label), __FILE__);
+        CHECK_NULL_EXIT(cmd->label);
         strncpy(cmd->label, temp, (size_t)j);
         cmd->label[(size_t)j] = '\0';
     }
     else {
         if (strlen(temp) > 0) status = add_arg_from_token(cmd, temp, &args_num);
+        if (NULL != temp) {
+            free(temp);
+            temp = NULL;
+        }
         if (status) return 1;
     }
+
+    if (NULL != temp) free(temp);
     return 0;
 }
 

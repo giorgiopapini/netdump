@@ -9,6 +9,37 @@
 #define ABSOLUTE_PATH_HINT "Make sure to start with the '/' character if you intend to insert an absolute path"
 #define CSTM_DISSECTORS_CONFLICT_HINT "Resolve the conflicts to ensure the program operates correctly (deterministically)"
 
+#define VARNAME(x) ((void)sizeof(&(x)), #x)  /* forces the compiler to check if x is an lvalue */
+#define GET_MACRO(_1, _2, NAME, ...) NAME
+
+#define CHECK_NULL(var_name, exit) \
+    do { \
+        if ((var_name) == NULL) { \
+            raise_error(NULL_POINTER, exit, NULL, VARNAME(var_name), __FILE__); \
+        } \
+    } while (0)
+
+#define MACRO_NULL_RET1(var_name) \
+    do { \
+        if ((var_name) == NULL) { \
+            raise_error(NULL_POINTER, 0, NULL, VARNAME(var_name), __FILE__); \
+            return; \
+        } \
+    } while (0)
+
+#define MACRO_NULL_RET2(var_name, retval) \
+    do { \
+        if ((var_name) == NULL) { \
+            raise_error(NULL_POINTER, 0, NULL, VARNAME(var_name), __FILE__); \
+            return (retval); \
+        } \
+    } while (0)
+
+/* these are the interfaces intended for developer use */
+#define CHECK_NULL_RET(...) GET_MACRO(__VA_ARGS__, MACRO_NULL_RET2, MACRO_NULL_RET1)(__VA_ARGS__)  /* return value or empty if var is NULL */
+#define CHECK_NULL_CONTINUE(var_name)       CHECK_NULL(var_name, 0)  /* doesn't return nor exit the program, simply prints the error message */
+#define CHECK_NULL_EXIT(var_name)           CHECK_NULL(var_name, 1)  /* it exits the program after showing the error message */
+
 typedef enum {
     SELECT_FAILED_ERROR,
     UNKNOWN_COMMAND_ERROR,
@@ -67,7 +98,6 @@ typedef enum {
 } success_code;
 
 
-#define VARNAME(x) ((void)sizeof(&(x)), #x)  /* forces the compiler to check if x is an lvalue */
 void raise_error(err_code code, int should_exit, const char *hint, ...);
 
 void print_warning_msg(warning_code code);

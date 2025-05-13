@@ -60,7 +60,7 @@ size_t calc_rows(const char *str) {
     size_t usable_cols;
     size_t max_len;
     
-    if (!str) raise_error(NULL_POINTER, 1, NULL, VARNAME(str), __FILE__);
+    CHECK_NULL_EXIT(str);
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
     get_terminal_size(&cols, &rows);
@@ -149,15 +149,9 @@ void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
 
 void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
     printf("\n");  /* creates new line if no more rows available in terminal */
-    
-    if (NULL == curr_x) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(curr_x), __FILE__);
-        return;
-    }
-    if (NULL == curr_x || NULL == curr_y) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(curr_y), __FILE__);
-        return;
-    }
+
+    CHECK_NULL_RET(curr_x);
+    CHECK_NULL_RET(curr_y);
 
     *curr_y += 1; 
     MOVE_CURSOR(*curr_x, *curr_y);
@@ -177,14 +171,8 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
     size_t partial_i;
     size_t i;
 
-    if (NULL == label) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(label), __FILE__);
-        return;
-    }
-    if (NULL == content) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(content), __FILE__);
-        return;
-    }
+    CHECK_NULL_RET(label);
+    CHECK_NULL_RET(content);
 
     label_len = strlen(label);
     content_len = strlen(content);
@@ -243,14 +231,9 @@ void print_field(const char *label, const char *content, int newline) {
     size_t initial_y;
 
     if (unsupported_terminal) return;
-    if (NULL == label) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(label), __FILE__);
-        return;
-    }
-    if (NULL == content) {
-        raise_error(NULL_POINTER, 0, NULL, VARNAME(content), __FILE__);
-        return;
-    }
+
+    CHECK_NULL_RET(label);
+    CHECK_NULL_RET(content);
 
     label_len = strlen(label);
     content_len = strlen(content);

@@ -9,7 +9,7 @@
 
 shared_libs *create_shared_libs_obj(void) {
     shared_libs *libs = (shared_libs *)malloc(sizeof(shared_libs));
-    if (NULL == libs) raise_error(NULL_POINTER, 1, NULL, VARNAME(libs), __FILE__);
+    CHECK_NULL_EXIT(libs);
 
     libs->handles = NULL;
     libs->filenames = NULL;
@@ -32,14 +32,16 @@ int is_active(shared_libs *libs, char *filename) {
 }
 
 void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int new_status) {
+    CHECK_NULL_EXIT(libs);
+
     libs->handles = (void **)realloc(libs->handles, (libs->count + 1) * sizeof(void *));
-    if (NULL == libs->handles) raise_error(NULL_POINTER, 1, NULL, VARNAME(libs->handles), __FILE__);
-    
+    CHECK_NULL_EXIT(libs->handles);
+
     libs->filenames = (char **)realloc(libs->filenames, (libs->count + 1) * sizeof(char *));
-    if (NULL == libs->filenames) raise_error(NULL_POINTER, 1, NULL, VARNAME(libs->filenames), __FILE__);
+    CHECK_NULL_EXIT(libs->filenames);
 
     libs->statuses = (int *)realloc(libs->statuses, (libs->count + 1) * sizeof(int));
-    if (NULL == libs->statuses) raise_error(NULL_POINTER, 1, NULL, VARNAME(libs->statuses), __FILE__);
+    CHECK_NULL_EXIT(libs->statuses);
 
     libs->handles[libs->count] = new_handle;
     libs->filenames[libs->count] = new_filename;
