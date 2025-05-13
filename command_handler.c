@@ -56,7 +56,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
             if (j > 0 && ' ' == temp[j]) {
                 temp[j] = '\0';
                 cmd->label = (char *)malloc((size_t)j + 1); /* (j > 0) is certain at this point */
-                if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
+                if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, VARNAME(cmd->label), __FILE__);
                 strcpy(cmd->label, temp);
                 j = -1;
             }
@@ -87,7 +87,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
     temp[j] = '\0';
     if (NULL == cmd->label) {
         cmd->label = (char *)malloc((size_t)j + 1);
-        if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, "cmd->label", __FILE__);
+        if (NULL == cmd->label) raise_error(NULL_POINTER, 1, NULL, VARNAME(cmd->label), __FILE__);
         strncpy(cmd->label, temp, (size_t)j);
         cmd->label[(size_t)j] = '\0';
     }

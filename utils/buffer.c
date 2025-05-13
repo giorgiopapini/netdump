@@ -27,7 +27,7 @@ int literal_key(buffer *buff, int c);
 
 buffer *create_buffer(void) {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
-    if (NULL == new_buff) raise_error(NULL_POINTER, 1, NULL, "new_buff", __FILE__);
+    if (NULL == new_buff) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_buff), __FILE__);
     
     memset(new_buff->content, 0, sizeof(new_buff->content));
     new_buff->len = 0;
@@ -53,7 +53,8 @@ buffer *copy_to_heap(buffer *src) {
 }
 
 int compare_buffers(buffer *b1, buffer *b2) {
-    if (NULL == b1 || NULL == b2) raise_error(NULL_POINTER, 1, NULL, "b1 || b2", __FILE__);
+    if (NULL == b1) raise_error(NULL_POINTER, 1, NULL, VARNAME(b1), __FILE__);
+    if (NULL == b2) raise_error(NULL_POINTER, 1, NULL, VARNAME(b2), __FILE__);
     
     if (b1->len != b2->len) return 0;
     if (b1->status != b2->status) return 0;
@@ -241,6 +242,6 @@ void clear_buffer(buffer *buff) {
 }
 
 void destroy_buffer(void *buff) { /* it could be more complex in a future version */
-    if (NULL == buff) raise_error(NULL_POINTER, 1, NULL, "buff", __FILE__);
+    if (NULL == buff) raise_error(NULL_POINTER, 1, NULL, VARNAME(buff), __FILE__);
     else free(buff);
 }

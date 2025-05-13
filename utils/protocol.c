@@ -55,7 +55,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 
 protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array */
 	protocol_handler_mapping **new_mappings = (protocol_handler_mapping **)malloc(sizeof(protocol_handler_mapping *) * 2);
-    if (!new_mappings) raise_error(NULL_POINTER, 1, NULL, "**new_mappings", __FILE__);
+    if (!new_mappings) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_mappings), __FILE__);
 
     new_mappings[0] = NULL;
     new_mappings[1] = NULL;
@@ -67,7 +67,7 @@ void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *
 	while (*arr_ptr && (*arr_ptr)[count] != NULL) count ++;
 
 	*arr_ptr = (protocol_handler_mapping **)realloc(*arr_ptr, (size_t)(count + 2) * sizeof(protocol_handler_mapping *));
-    if (!*arr_ptr) raise_error(NULL_POINTER, 1, NULL, "*arr_ptr", __FILE__);
+    if (!*arr_ptr) raise_error(NULL_POINTER, 1, NULL, VARNAME(arr_ptr), __FILE__);
 
     (*arr_ptr)[count] = new_mapping;
     (*arr_ptr)[count + 1] = NULL;

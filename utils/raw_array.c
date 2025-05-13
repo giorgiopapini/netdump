@@ -9,7 +9,7 @@ void init_arr(raw_array *arr, int n) {
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
 
     arr->values = (void **)malloc((size_t)n * sizeof(void *));  /* At this point n is certain to be > 0 */
-    if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, "arr->values", __FILE__);
+    if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, VARNAME(arr->values), __FILE__);
 
     arr->allocated = (size_t)n;
 }
@@ -21,18 +21,18 @@ void allocate(raw_array *arr, int n) {
     if (0 == arr->allocated) init_arr(arr, n);
     else {        
         new_ptr = realloc(arr->values, (arr->allocated + (size_t)n) * sizeof(void *));  /* At this point n is certain to be > 0 */
-        if (NULL == new_ptr) raise_error(NULL_POINTER, 1, NULL, "new_ptr", __FILE__);
+        if (NULL == new_ptr) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_ptr), __FILE__);
 
         /* realloc copied everything to a different memory block, update arr-values to point to the freshly allocated block */
         if (new_ptr != arr->values) arr->values = new_ptr;
-        if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, "arr->values", __FILE__);
+        if (NULL == arr->values) raise_error(NULL_POINTER, 1, NULL, VARNAME(arr->values), __FILE__);
         
         arr->allocated += (size_t)n;
     }
 }
 
 void insert(raw_array *arr, void *pkt) {
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
+    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, VARNAME(arr), __FILE__);
     if ((arr->len + 1) > arr->allocated) allocate(arr, 1);
     /* allocating only 1 slot each time is suboptimal, should only happen (for now) when scanning infinite amount of packets */
     
@@ -42,8 +42,8 @@ void insert(raw_array *arr, void *pkt) {
 
 void * get(raw_array *arr, size_t n) {
     size_t index = (n - 1);
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
-    else if (NULL == arr->values) raise_error(NULL_POINTER, 0, UNSCANNED_NET_HINT, "arr->values", __FILE__);
+    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, VARNAME(arr), __FILE__);
+    else if (NULL == arr->values) raise_error(NULL_POINTER, 0, UNSCANNED_NET_HINT, VARNAME(arr->values), __FILE__);
     else if (index >= arr->len) raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, n, arr->len);
     else return arr->values[index];
     
@@ -53,7 +53,7 @@ void * get(raw_array *arr, size_t n) {
 void reset_arr(raw_array *arr, void (*deallocate_content)(void *)) {
     size_t i;
 
-    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, "arr", __FILE__);
+    if (NULL == arr) raise_error(NULL_POINTER, 0, NULL, VARNAME(arr), __FILE__);
     for (i = 0; i < arr->len; i ++) deallocate_content(arr->values[i]);
     free(arr->values);
 

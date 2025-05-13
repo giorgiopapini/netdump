@@ -128,7 +128,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
 		if (NULL == dev) {
 			if (NULL == alldevs) {
-				raise_error(NULL_POINTER, 0, NULL, "alldevs", __FILE__);
+				raise_error(NULL_POINTER, 0, NULL, VARNAME(alldevs), __FILE__);
 				goto exit;
 			}
 			else dev = alldevs->name;

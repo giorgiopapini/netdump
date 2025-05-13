@@ -54,7 +54,7 @@ void lower_str_except_interval(char *str, char interval_symbol) {
 
 void copy_str_n(char **dest, char *src, size_t n) {
     *dest = (char *)malloc(n + 1);
-    if (NULL == *dest) raise_error(NULL_POINTER, 1, NULL, "char **dest", __FILE__);
+    if (NULL == *dest) raise_error(NULL_POINTER, 1, NULL, VARNAME(dest), __FILE__);
     memset(*dest, '\0', n + 1);
     strncpy(*dest, src, n);
 }
@@ -86,7 +86,7 @@ char * get_trimmed_str(char *str, size_t str_len) {
 
     if (' ' == new_str[0] && new_index > 0) new_index --;
     result = (char *)malloc(new_index  + 1);
-    if (NULL == result) raise_error(NULL_POINTER, 1, NULL, "char *result", __FILE__);
+    if (NULL == result) raise_error(NULL_POINTER, 1, NULL, VARNAME(result), __FILE__);
 
     memset(result, '\0', new_index + 1);
     if (' ' == new_str[0]) strncpy(result, new_str + 1, new_index);  /* does not copy the first char, which is an empty space */
@@ -141,7 +141,7 @@ char *str_concat(const char **str_arr, const char *prefix, const char *separator
     total_len ++; /* For null terminator */
 
     new_str = (char *)malloc(total_len);
-    if (new_str == NULL) raise_error(NULL_POINTER, 1, NULL, "new_str", __FILE__);
+    if (new_str == NULL) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_str), __FILE__);
 
     new_str[0] = '\0';
     for (i = 0; i < n_str; i ++) {

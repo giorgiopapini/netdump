@@ -67,7 +67,9 @@ typedef enum {
 } success_code;
 
 
+#define VARNAME(x) ((void)sizeof(&(x)), #x)  /* forces the compiler to check if x is an lvalue */
 void raise_error(err_code code, int should_exit, const char *hint, ...);
+
 void print_warning_msg(warning_code code);
 void print_success_msg(success_code code);
 

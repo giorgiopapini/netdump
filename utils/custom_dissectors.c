@@ -12,7 +12,7 @@ void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_
 
 custom_dissectors *create_custom_dissectors(void) {
     custom_dissectors *dissectors = (custom_dissectors *)malloc(sizeof(custom_dissectors));
-    if (NULL == dissectors) raise_error(NULL_POINTER, 1, NULL, "dissectors", __FILE__);
+    if (NULL == dissectors) raise_error(NULL_POINTER, 1, NULL, VARNAME(dissectors), __FILE__);
     dissectors->len = 0;
     dissectors->table = NULL;
     return dissectors;
@@ -50,9 +50,9 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
 
 dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto, char *filename) {
     dissectors_entry *new_entry = (dissectors_entry *)malloc(sizeof(dissectors_entry));
-    if (NULL == new_entry) raise_error(NULL_POINTER, 1, NULL, "new_entry", __FILE__);
-    if (NULL == proto_table) raise_error(NULL_POINTER, 1, NULL, "proto_table", __FILE__);
-    if (NULL == new_custom_proto) raise_error(NULL_POINTER, 1, NULL, "new_custom_proto", __FILE__);
+    if (NULL == new_entry) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_entry), __FILE__);
+    if (NULL == proto_table) raise_error(NULL_POINTER, 1, NULL, VARNAME(proto_table), __FILE__);
+    if (NULL == new_custom_proto) raise_error(NULL_POINTER, 1, NULL, VARNAME(new_custom_proto), __FILE__);
     
     new_entry->proto_table = proto_table;
     new_entry->custom_protos = NULL;
@@ -81,7 +81,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     size_t i;
 
     dest_table = get_proto_table(dest_table_val);
-    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, "custom_dissectors", __FILE__);
+    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, VARNAME(custom_diss), __FILE__);
 
     if (NULL == custom_diss->table) add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
     else {
@@ -114,7 +114,7 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
     char *error;
 
     if (NULL == handle) return;
-    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, "custom_diss", __FILE__);
+    if (NULL == custom_diss) raise_error(NULL_POINTER, 1, NULL, VARNAME(custom_diss), __FILE__);
 
     get_custom_protocols_mapping = (protocol_handler_mapping **(*)(void))dlsym(handle, FUNCTION_NAME);
 

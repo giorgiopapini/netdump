@@ -60,7 +60,7 @@ size_t calc_rows(const char *str) {
     size_t usable_cols;
     size_t max_len;
     
-    if (!str) raise_error(NULL_POINTER, 1, NULL);
+    if (!str) raise_error(NULL_POINTER, 1, NULL, VARNAME(str), __FILE__);
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
     get_terminal_size(&cols, &rows);
@@ -125,7 +125,7 @@ cleanup:
 void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
     size_t x, y;
 
-    if (NULL == curr_x && NULL == curr_y) {
+    if (NULL == curr_x || NULL == curr_y) {
         get_cursor_position(&x, &y);
         MOVE_CURSOR(0, y + Y_DEVIATION(used_rows));
         printf("\n");
@@ -150,6 +150,15 @@ void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
 void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
     printf("\n");  /* creates new line if no more rows available in terminal */
     
+    if (NULL == curr_x) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(curr_x), __FILE__);
+        return;
+    }
+    if (NULL == curr_x || NULL == curr_y) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(curr_y), __FILE__);
+        return;
+    }
+
     *curr_y += 1; 
     MOVE_CURSOR(*curr_x, *curr_y);
     
@@ -161,12 +170,24 @@ void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_l
 }
 
 void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len) {
-    size_t label_len = strlen(label);
-    size_t content_len = strlen(content);
+    size_t label_len;
+    size_t content_len;
     size_t used_rows;
     char partial_str[MAX_X];
     size_t partial_i;
     size_t i;
+
+    if (NULL == label) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(label), __FILE__);
+        return;
+    }
+    if (NULL == content) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(content), __FILE__);
+        return;
+    }
+
+    label_len = strlen(label);
+    content_len = strlen(content);
 
     partial_i = (max_len - (2 * strlen(MARGIN)) - (2 * strlen(VERTICAL_BORDER)));
 
@@ -222,7 +243,14 @@ void print_field(const char *label, const char *content, int newline) {
     size_t initial_y;
 
     if (unsupported_terminal) return;
-    if (NULL == label || NULL == content) return;
+    if (NULL == label) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(label), __FILE__);
+        return;
+    }
+    if (NULL == content) {
+        raise_error(NULL_POINTER, 0, NULL, VARNAME(content), __FILE__);
+        return;
+    }
 
     label_len = strlen(label);
     content_len = strlen(content);
