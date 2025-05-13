@@ -91,11 +91,11 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     char path[MAX_HTTP_HDR_LEN];
     char version[MAX_HTTP_HDR_LEN];
 
-    if (!pkt) return;
-
     const uint8_t *ptr = pkt;
     const uint8_t *end = pkt + pkt_len;
     size_t len;
+
+    if (!pkt) return;
 
     len = strcspn((const char *)ptr, "\r\n");
     if (len >= sizeof(line)) len = sizeof(line) - 1;

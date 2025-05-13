@@ -32,8 +32,6 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
-
-	TODO: 	Check for pkt not be null everywhere in the protocols
 */
 
 void deallocate_heap(
