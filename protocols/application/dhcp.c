@@ -22,7 +22,7 @@ void print_options(const uint8_t *pkt, size_t len) {
 }
 
 void print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (pkt_len < MIN_DHCP_HDR_LEN) return;
+    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return;
 
     printf("op: %u", DHCP_OP(pkt));
     if (1 == DHCP_OP(pkt)) printf(" (BOOTREQUEST)");
@@ -73,7 +73,7 @@ void visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char boot_file[129];
     char magic_cookie[11];
     
-    if (pkt_len < MIN_DHCP_HDR_LEN) return;
+    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return;
 
     snprintf(operation, sizeof(operation), "%u", DHCP_OP(pkt));
     snprintf(htype, sizeof(htype), "0x%02x", DHCP_HTYPE(pkt));
@@ -114,6 +114,8 @@ void visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return NO_ENCAP_PROTO;
+    
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_dhcp_hdr, visualize_dhcp_hdr);
     return NO_ENCAP_PROTO;
 }

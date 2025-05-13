@@ -124,7 +124,7 @@ size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     size_t buff_len;
 
     buff_len = 0;
-    for (i = 0; i < telnet_len; i++) {
+    for (i = 0; i < telnet_len; i ++) {
         if (buff_len >= sizeof(buff) - 1) break;
         
         if (pkt[i] == '\r' && (i < telnet_len - 1) && pkt[i + 1] == '\n') {
@@ -149,6 +149,8 @@ size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
 void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     int data_segment_len = 0;
     size_t i;
+
+    if (!pkt) return;
 
     /*
         +3 because (1 byte = flag 0xff, 1 byte = command, 1 byte = subcommand)
@@ -195,6 +197,8 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
 void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i;
 
+    if (!pkt) return;
+
     start_printing();
     for (i = 0; i < pkt_len;) {
         if (TELNET_IAC == pkt[i]) {
@@ -207,6 +211,8 @@ void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_telnet(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt) return NO_ENCAP_PROTO;
+    
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_telnet_hdr, visualize_telnet_hdr);
     return NO_ENCAP_PROTO;
 }

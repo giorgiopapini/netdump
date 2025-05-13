@@ -32,18 +32,8 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
-	
-	TODO: 	In analize.c 'execute_analize()' I have a dangerous behaviur I should avoid. returning prematurely.
-			Suppose the following script
 
-			int *a = (int *)malloc(sizeof(int) * 3);
-			...
-			if (generic_condition(a) == true) return;
-			...
-			free(a);
-
-			I'm exiting prematurely WITHOUT DEALLOCATING (a). THIS CAUSES A MEMORY LEAKEAGE.
-			(FIX THIS BEHAVIOUR EVERYWHERE!!!!).
+	TODO: 	Check for pkt not be null everywhere in the protocols
 */
 
 void deallocate_heap(

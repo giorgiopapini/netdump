@@ -32,7 +32,7 @@ void print_type(uint8_t type) {
 }
 
 void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (pkt_len < ICMPV6_HDR_LEN) return;
+    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return;
     
     print_type(ICMPV6_TYPE(pkt));
     printf(
@@ -57,7 +57,7 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char id[7];  /* 0x0000'\0' 7 chars */
     char seq[6];  /* 65535'\0' 6 chars */
     
-    if (pkt_len < ICMPV6_HDR_LEN) return;
+    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return;
     
     snprintf(type, sizeof(type), "%u", ICMPV6_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMPV6_CODE(pkt));
@@ -79,6 +79,8 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return NO_ENCAP_PROTO;
+
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmpv6_hdr, visualize_icmpv6_hdr);
     return NO_ENCAP_PROTO;
 }

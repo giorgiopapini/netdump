@@ -63,7 +63,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i, j;
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     
-    if (pkt_len < DNS_HDR_LEN) return;
+    if (!pkt || pkt_len < DNS_HDR_LEN) return;
 
     printf("transaction_id: 0x%04x", DNS_TRANSACTION_ID(pkt));
 
@@ -179,7 +179,7 @@ void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char auth_rrs[6];
     char additional_rrs[6];
     
-    if (pkt_len < DNS_HDR_LEN) return;
+    if (!pkt || pkt_len < DNS_HDR_LEN) return;
     
     snprintf(transaction_id, sizeof(transaction_id), "0x%04x", DNS_TRANSACTION_ID(pkt));
     snprintf(qr, sizeof(qr), "%u", (DNS_FLAGS(pkt)) & DNS_QR ? 1 : 0);
@@ -216,6 +216,8 @@ void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt_len < DNS_HDR_LEN) return NO_ENCAP_PROTO;
+    
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_dns_hdr, visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

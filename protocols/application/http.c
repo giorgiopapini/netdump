@@ -80,7 +80,7 @@ void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_H
 
 void print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i;
-    for (i = 0; i < pkt_len; i ++) printf("%c", pkt[i]);
+    if (pkt) for (i = 0; i < pkt_len; i ++) printf("%c", pkt[i]);
 }
 
 void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
@@ -90,6 +90,8 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     char method[MAX_HTTP_HDR_LEN];
     char path[MAX_HTTP_HDR_LEN];
     char version[MAX_HTTP_HDR_LEN];
+
+    if (!pkt) return;
 
     const uint8_t *ptr = pkt;
     const uint8_t *end = pkt + pkt_len;
@@ -133,6 +135,8 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt) return NO_ENCAP_PROTO;
+
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_http_hdr, visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

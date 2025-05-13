@@ -41,6 +41,8 @@ void print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t hdr_len;
     size_t offset;
     uint16_t protocol;
+
+    if (!pkt) return;
     
     hdr_len = snap_hdr_len(pkt);
     if (hdr_len > pkt_len) return;
@@ -73,6 +75,8 @@ void visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t hdr_len;
     size_t offset;
     uint16_t protocol;
+
+    if (!pkt) return;
 
     hdr_len = snap_hdr_len(pkt);
     if (hdr_len > pkt_len) return;
@@ -108,8 +112,14 @@ protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format f
     int table_num;
     uint16_t protocol;
 
+    if (!pkt) return NO_ENCAP_PROTO;
+
     hdr_len = snap_hdr_len(pkt);
+    if (hdr_len > pkt_len) return NO_ENCAP_PROTO;
+
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
+    if ((offset + (size_t)1) > pkt_len) return NO_ENCAP_PROTO;  /* +1 is needed because FRELAY_PROTO(...) access offset + 1 */
+
     protocol = FRELAY_PROTO(pkt, offset);
     
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_frelay_hdr, visualize_frelay_hdr);

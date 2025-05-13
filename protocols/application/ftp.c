@@ -105,6 +105,8 @@ void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt[0] == '\0') return NO_ENCAP_PROTO;
+
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_ftp_hdr, visualize_ftp_hdr);
     return NO_ENCAP_PROTO;
 }

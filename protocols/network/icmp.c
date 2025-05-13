@@ -12,7 +12,7 @@ void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len);
 void print_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint8_t type;
 
-    if (pkt_len < ICMP_HDR_LEN) return;
+    if (!pkt || pkt_len < ICMP_HDR_LEN) return;
 
     printf("ICMP echo ");
     type = ICMP_TYPE(pkt);
@@ -30,7 +30,7 @@ void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char id[7];  /* 0x0000'\0' are 7 chars */
     char seq[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     
-    if (pkt_len < ICMP_HDR_LEN) return;
+    if (!pkt || pkt_len < ICMP_HDR_LEN) return;
     
     snprintf(type, sizeof(type), "%u", ICMP_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMP_CODE(pkt));
@@ -48,6 +48,8 @@ void visualize_icmp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_icmp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt_len < ICMP_HDR_LEN) return NO_ENCAP_PROTO;
+
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmp_hdr, visualize_icmp_hdr);
     return NO_ENCAP_PROTO;
 }

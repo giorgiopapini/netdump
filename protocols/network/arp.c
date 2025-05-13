@@ -13,7 +13,7 @@ void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len);
 void print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint16_t operation;
     
-    if (pkt_len < ARP_LEN) return;
+    if (!pkt || pkt_len < ARP_LEN) return;
     
     operation = (uint16_t)OPERATION(pkt);
     if (operation == ARP_REQUEST) {
@@ -54,7 +54,7 @@ void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char target_hw_addr[MAC_ADDR_STR_LEN];
     char target_p_addr[IP_ADDR_STR_LEN];
     
-    if (pkt_len < ARP_LEN) return;
+    if (!pkt || pkt_len < ARP_LEN) return;
 
     snprintf(hw_type, sizeof(hw_type), "0x%04x", HW_TYPE(pkt));
     snprintf(p_type, sizeof(p_type), "0x%04x", P_TYPE(pkt));
@@ -80,6 +80,8 @@ void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+    if (!pkt || pkt_len < ARP_LEN) return NO_ENCAP_PROTO;
+
     SHOW_OUTPUT(pkt, pkt_len, fmt, print_arp_hdr, visualize_arp_hdr);
     return NO_ENCAP_PROTO;
 }
