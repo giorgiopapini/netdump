@@ -7,34 +7,41 @@
 #include "../../utils/protocol.h"
 
 
-size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain);
+size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain);
 void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len);
 void print_dns_hdr(const uint8_t *pkt, size_t pkt_len);
 void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len);
 
-size_t extract_domain_name(const uint8_t *payload, size_t offset, char *domain) {
-    size_t i = 0, start_offset = offset;
-    uint8_t len;
-    uint16_t pointer_offset;
+size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain) {
+    size_t start_offset = offset;
+    size_t label_len;
+    size_t pointer;
+    size_t domain_pos = 0;
 
-    while ((len = payload[offset]) > 0) {
-        if (len & 0xC0) {
-            pointer_offset = ((uint16_t)(((uint16_t)(payload)[offset] & 0x3F) << 8) | (uint16_t)(payload)[offset + 1]);
-            offset += 2;
+    if (offset >= pkt_len) return 0;
 
-            i += extract_domain_name(payload, pointer_offset, domain + i);
-            return offset - start_offset;
-        } 
-        else {
-            if (i > 0) domain[i ++] = '.';
-            offset ++;
-            memcpy(&domain[i], &payload[offset], (size_t)len);
-            i += len;
-            offset += len;
+    while (offset < pkt_len) {
+        label_len = pkt[offset ++];
+        if (0 == label_len) break;
+
+        if (label_len & 0xC0) {
+            if (offset >= pkt_len) return 0;
+            pointer = ((label_len & 0x3F) << 8) | pkt[offset ++];
+            if (pointer >= pkt_len) return 0;
+            extract_domain_name(pkt, pointer, pkt_len, domain + domain_pos);
+            return offset - start_offset + 1;
         }
+
+        if (offset > pkt_len - label_len) return 0;
+
+        if (0 != domain_pos) domain[domain_pos ++] = '.';
+        memcpy(domain + domain_pos, pkt + offset, label_len);
+        domain_pos += label_len;
+        offset += label_len;
     }
-    domain[i] = '\0';
-    return (offset - start_offset) + 1;
+
+    domain[domain_pos] = '\0';
+    return offset - start_offset;
 }
 
 void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) {
@@ -44,7 +51,8 @@ void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) 
     if (data_len < 6) return;
     
     target_offset = offset + 6;
-    extract_domain_name(payload, target_offset, target);
+    
+    extract_domain_name(payload, target_offset, data_len, target);
 
     printf(", priority: %u", payload[offset]);
     printf(", weight: %u", payload[offset + 2]);
@@ -99,7 +107,8 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     /* print queries */
     offset = DNS_HDR_LEN;
     for (i = 0; i < (size_t)DNS_QUESTIONS(pkt); i ++) {
-        offset += extract_domain_name(pkt, offset, domain);
+        offset += extract_domain_name(pkt, offset, pkt_len, domain);
+        if (offset > pkt_len - 4) return;
         printf(
             ", query %ld: {name: %s, type: %u, class: %u}",
             i + 1,
@@ -112,7 +121,9 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 
     /* print answers */
     for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i ++) {
-        offset += extract_domain_name(pkt, offset, domain);
+        offset += extract_domain_name(pkt, offset, pkt_len, domain);
+
+        if (offset > pkt_len - 10) return;
 
         type = ((uint16_t)((uint16_t)(pkt)[offset] << 8) | (uint16_t)(pkt)[offset + 1]),
         class = ((uint16_t)((uint16_t)(pkt)[offset + 2] << 8) | (uint16_t)(pkt)[offset + 3]),
@@ -133,11 +144,13 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
         if (33 == type) extract_srv_record(pkt, offset, data_len);
         printf("}");
 
+        if (offset > pkt_len - data_len) return;
         offset += data_len;
     }
 
     /* print additional records */
     for (i = 0; i < (size_t)DNS_ADDITIONAL_RRS(pkt); i ++) {
+        if (offset > pkt_len - 9) return;
         rdlength = pkt[offset + 8];
 
         printf(
@@ -153,6 +166,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
         offset += 10;
 
         if (rdlength > 0) {
+            if (offset > pkt_len - rdlength) return;
             printf(", rdata: (");
             for (j = 0; j < rdlength; j ++) printf("%02x ", pkt[offset + j]);
             printf(")");

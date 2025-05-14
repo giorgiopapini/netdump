@@ -9,19 +9,16 @@
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
         be recognizable)    */
-
     size_t len;
-    size_t token_len;
     size_t label_len;
     size_t value_len;
-    char copy[strlen(token) + 1];
     arg *new_arg;
 
+    CHECK_NULL_EXIT(token);
     len = strlen(token);
+    
     if (0 == len) return NULL;
     if (' ' == token[len - 1]) token[len - 1] = '\0';
-
-    token_len = strlen(token) + 1;  /* strlen() does NOT count null terminator (this is why the +1 is needed) */
 
     new_arg = (arg *)malloc(sizeof(arg));
     CHECK_NULL_EXIT(new_arg);
@@ -29,8 +26,6 @@ arg * create_arg_from_token(char *token) {
     new_arg->label = NULL;
     new_arg->val = NULL;
     new_arg->next = NULL;
-    
-    memcpy(copy, token, token_len);
 
     label_len = find_word_len(token, 0);
     if (0 >= label_len) {
@@ -57,7 +52,7 @@ unsigned long djb2_hash(const char *str) {  /* Bernstein algorithm */
     unsigned long hash;
     int c;
 
-    if (!str) return 0;
+    CHECK_NULL_RET(str, 0);
     
     hash = 5381;
     while ((c = *str++)) hash = ((hash << 5) + hash) + (unsigned char)c;
@@ -66,8 +61,12 @@ unsigned long djb2_hash(const char *str) {  /* Bernstein algorithm */
 
 void add_arg(command *cmd, arg *new_arg) {
     char *old_label;
-    unsigned long hash = djb2_hash(new_arg->label);
+    unsigned long hash;
+    
+    CHECK_NULL_EXIT(new_arg);
+    hash = djb2_hash(new_arg->label);
 
+    CHECK_NULL_EXIT(cmd);  /* cmd->args can't be NULL as it is defined in command data structure */
     if (NULL == cmd->args[hash]) {
         cmd->args[hash] = new_arg;
         cmd->hashes[cmd->n_hashes] = hash;  /* if hash is new, than add it to the hashes array (no duplicates) */
@@ -98,7 +97,8 @@ char *get_raw_val(command *cmd, const char *label) {
 
 int add_arg_from_token(command *cmd, char *temp, size_t *args_num) {
     arg *new_arg = create_arg_from_token(temp);
-    if (NULL == new_arg) return 1;
+
+    CHECK_NULL_EXIT(args_num);
     *args_num = *args_num + 1;
 
     if (MAX_ARGS < *args_num) {
@@ -110,7 +110,7 @@ int add_arg_from_token(command *cmd, char *temp, size_t *args_num) {
 }
 
 int is_command(command *cmd, const char *raw_cmd_label) {
-    if (NULL == cmd->label || NULL == raw_cmd_label) return 0;
+    if (NULL == cmd || NULL == cmd->label || NULL == raw_cmd_label) return 0;
     if (0 == strcmp(cmd->label, raw_cmd_label)) return 1;
     return 0;
 }

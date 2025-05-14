@@ -10,6 +10,8 @@ void print_raw_pkt(const uint8_t *pkt, size_t len);
 
 void print_raw_pkt(const uint8_t *pkt, size_t len) {
 	size_t i;
+
+	CHECK_NULL_RET(pkt);
 	if (len > 0) printf("[%02x", *pkt);
 	for (i = 1; i < len; i ++) printf(" %02x", pkt[i]);
 	printf("]");
@@ -36,6 +38,8 @@ protocol_handler *create_protocol_handler(
 	const char *protocol_name
 ) {
 	protocol_handler *new_handler = (protocol_handler *)malloc(sizeof(protocol_handler));
+	CHECK_NULL_EXIT(new_handler);
+
 	new_handler->protocol = proto;
 	new_handler->layer = layer;
 	new_handler->dissect_proto = dissect_proto;
@@ -48,6 +52,8 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 	int proto_table_num
 ) {
 	protocol_handler_mapping *new_mapping = (protocol_handler_mapping *)malloc(sizeof(protocol_handler_mapping));
+	CHECK_NULL_EXIT(new_mapping);
+
 	new_mapping->handler = handler;
 	new_mapping->proto_table_num = proto_table_num;
 	return new_mapping;
@@ -64,6 +70,8 @@ protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array
 
 void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *new_mapping) {
 	int count = 0;
+
+	CHECK_NULL_EXIT(arr_ptr);
 	while (*arr_ptr && (*arr_ptr)[count] != NULL) count ++;
 
 	*arr_ptr = (protocol_handler_mapping **)realloc(*arr_ptr, (size_t)(count + 2) * sizeof(protocol_handler_mapping *));
@@ -76,7 +84,7 @@ void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *
 void destroy_mappings(protocol_handler_mapping **mappings) {
 	size_t i;
 
-	if (mappings) {
+	if (NULL != mappings) {
         for (i = 0; mappings[i] != NULL; i ++) {
             /* 
 				free(mappings[i]->handler); Im not doing this because the actual handler is stored inside custom_dissectors 

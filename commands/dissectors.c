@@ -73,6 +73,7 @@ void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissect
     filename = get_filename(path);
     if (!has_shared_lib_ext((const char *)filename)) return;  /* ADD MESSAGE ERROR! */
 
+    CHECK_NULL_RET(path);
     handle = dlopen(path, RTLD_LAZY);
     if (NULL != handle) {
         add_shared_lib(libs, handle, strdup(filename), 1);
@@ -95,7 +96,7 @@ void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissector
         return;
     }
 
-    while ((entry = readdir(dir)) != NULL) {
+    while (NULL != (entry = readdir(dir))) {
         if (entry->d_type == DT_REG || entry->d_type == DT_LNK || entry->d_type == DT_UNKNOWN) {
             if (has_shared_lib_ext(entry->d_name)) {
                 if (dir_path[strlen(dir_path) - 1] == '/')
@@ -156,6 +157,8 @@ void print_dissectors_list(shared_libs *libs) {
     }
 
     printf("\n");
+    CHECK_NULL_RET(libs->filenames);
+    CHECK_NULL_RET(libs->statuses);
     for (i = 0; i < libs->count; i ++) {
         if (NULL != libs->filenames[i]) {
             printf(PREFIX_STR);
@@ -170,11 +173,14 @@ void print_dissectors_list(shared_libs *libs) {
 }
 
 void execute_dissectors(command *cmd, shared_libs *libs, custom_dissectors *custom_diss) {
-    int show_list = (NULL != get_arg(cmd, DISSECTOR_LIST_ARG) || 0 == cmd->n_hashes);
+    int show_list;
     arg *activate_arg = get_arg(cmd, ACTIVATE_LIB_ARG);
     arg *deactivate_arg = get_arg(cmd, DEACTIVATE_LIB_ARG);
     char *add_paths = get_raw_val(cmd, ADD_DISSECTOR_ARG);
 
+    CHECK_NULL_EXIT(cmd);
+    show_list = (NULL != get_arg(cmd, DISSECTOR_LIST_ARG) || 0 == cmd->n_hashes);
+    
     /* first deactivate, than eventually activate. Deactivation has priority over activation */
     if (NULL != deactivate_arg) change_dissector_status(0, deactivate_arg->val, libs);
     if (NULL != activate_arg) change_dissector_status(1, activate_arg->val, libs);

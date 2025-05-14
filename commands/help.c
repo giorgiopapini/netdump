@@ -5,6 +5,7 @@
 
 #include "../utils/colors.h"
 #include "../utils/formats.h"
+#include "../status_handler.h"
 
 
 void print_cmd(const char *cmd, const char *desc) {
@@ -20,8 +21,10 @@ void print_arg(const char *arg_value, const char *desc, const char *prefix_space
     if (NULL != arg_value) printf(CYAN " %s" RESET_COLOR, arg_value);
     if (NULL != desc) printf(" (%s)", desc);
     if (NULL != example) printf(YELLOW " (e.g. '%s')" RESET_COLOR, example);
-    if (strcmp(prefix_str, DEFAULT_CORNER) == 0) printf("\n");
-    /* this is a pointer comparison, not a string comparison, strcmp is not needed */
+
+    CHECK_NULL_RET(prefix_str);
+    CHECK_NULL_RET(DEFAULT_CORNER);
+    if (0 == strcmp(prefix_str, DEFAULT_CORNER)) printf("\n");
 }
 
 void analize_help(void) {

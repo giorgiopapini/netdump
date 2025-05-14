@@ -21,14 +21,19 @@ custom_dissectors *create_custom_dissectors(void) {
 
 void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto) {
     size_t i;
-
+    
+    CHECK_NULL_EXIT(arr);
     if (NULL == arr->custom_protos) {
         arr->custom_protos = (protocol_handler **)malloc(sizeof(protocol_handler *));
+        CHECK_NULL_EXIT(arr->custom_protos);
         arr->custom_protos[0] = new_custom_proto;
         arr->len = 1;
     }
     else {
         for (i = 0; i < arr->len; i ++) {
+            CHECK_NULL_RET(arr->custom_protos[i]);
+            CHECK_NULL_RET(new_custom_proto);
+
             if (arr->custom_protos[i]->protocol == new_custom_proto->protocol) {
                 raise_error(
                     CSTM_DISSECTORS_CONFLICT_ERROR, 
@@ -45,6 +50,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
 
         arr->len ++;
         arr->custom_protos = realloc(arr->custom_protos, arr->len * sizeof(protocol_handler *));
+        CHECK_NULL_EXIT(arr->custom_protos);
         arr->custom_protos[arr->len - 1] = new_custom_proto;
     }
 }
@@ -65,14 +71,17 @@ dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protoco
 }
 
 void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_dissectors_entry) {
+    CHECK_NULL_EXIT(custom_diss);
     if (NULL == custom_diss->table) {
         custom_diss->table = (dissectors_entry **)malloc(sizeof(dissectors_entry *));
+        CHECK_NULL_EXIT(custom_diss->table);
         custom_diss->table[0] = new_dissectors_entry;
         custom_diss->len = 1;
     }
     else {
         custom_diss->len ++;
         custom_diss->table = realloc(custom_diss->table, custom_diss->len * sizeof(dissectors_entry *));
+        CHECK_NULL_EXIT(custom_diss->table);
         custom_diss->table[custom_diss->len - 1] = new_dissectors_entry;
     }
 }
@@ -99,6 +108,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
 void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
     size_t i;
 
+    CHECK_NULL_EXIT(mappings);
     for (i = 0; mappings[i] != NULL; i ++) {
         dissector_add(
             mappings[i]->handler, 

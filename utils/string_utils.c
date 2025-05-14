@@ -15,6 +15,7 @@
 size_t find_word_len(char *sentence, int word_pos) {
     size_t i;
 
+    CHECK_NULL_EXIT(sentence);
     for (i = 0; i < strlen(sentence) + 1; i ++) {
         if (' ' == sentence[i] || '\n' == sentence[i]) {
             if (word_pos > 0) word_pos --;
@@ -39,12 +40,17 @@ char *get_filename(char *path) {
 }
 
 int has_shared_lib_ext(const char *filename) {
-    const char *ext = strrchr(filename, '.');
+    const char *ext;
+    
+    CHECK_NULL_EXIT(filename);
+    ext = strrchr(filename, '.');
     return ext && (0 == strcmp(ext, ".so") || 0 == strcmp(ext, ".dylib"));
 }
 
 void lower_str_except_interval(char *str, char interval_symbol) {
     int locked = 0;
+
+    CHECK_NULL_EXIT(str);
     while ('\0' != *str) {
         if (*str == interval_symbol) locked = !locked;
         if (0 == locked) *str = (char)tolower((unsigned char)*str);
@@ -53,6 +59,7 @@ void lower_str_except_interval(char *str, char interval_symbol) {
 }
 
 void copy_str_n(char **dest, char *src, size_t n) {
+    CHECK_NULL_EXIT(dest);
     *dest = (char *)malloc(n + 1);
     CHECK_NULL_EXIT(*dest);
 
@@ -107,6 +114,8 @@ long str_to_num(char *str) {
 void uint_to_bin_str(char *str, uint64_t num, size_t dest_str_size) {
     size_t i;
     
+    CHECK_NULL_EXIT(str);
+
     if (dest_str_size > (sizeof(num) * 8 + 1)) {
         raise_error(BUFFER_OVERFLOW_ERROR, 1, NULL, __FILE__, dest_str_size);
         return;
@@ -125,6 +134,9 @@ char *str_concat(const char **str_arr, const char *prefix, const char *separator
     size_t prefix_len;
     size_t separator_len;
     size_t i;
+
+    CHECK_NULL_EXIT(prefix);
+    CHECK_NULL_EXIT(separator);
 
     total_len = 0;
     prefix_len = prefix ? strlen(prefix) : 0;
@@ -177,23 +189,29 @@ int getch(void) {
 }
 
 void delete_char(char *str, size_t pos) {  /* deleting by shifting every other char */
+    size_t len;
     size_t i;
-    size_t len = strlen(str);
+    
+    CHECK_NULL_EXIT(str);
+    len = strlen(str);
 
     if (pos == len) return;
     for (i = pos; i < len; i ++) str[i] = str[i + 1];
 }
 
 void push_char(char *str, size_t buffer_size, size_t pos, int c) {
-    size_t len = strlen(str);
+    size_t len;
     size_t i;
+
+    CHECK_NULL_EXIT(str);
+    len = strlen(str);
 
     if (c < CHAR_MIN || c > CHAR_MAX) {
         raise_error(INT_TO_CHAR_CAST_ERROR, 0, NULL);
         return;
     }    
     
-    if (len + 1 >= buffer_size) {
+    if (len >= buffer_size - 1) {
         raise_error(BUFFER_OVERFLOW_ERROR, 0, NULL, __FILE__, buffer_size);
         return;
     }

@@ -14,14 +14,14 @@
 
 #define CHECK_NULL(var_name, exit) \
     do { \
-        if ((var_name) == NULL) { \
+        if (NULL == (var_name)) { \
             raise_error(NULL_POINTER, exit, NULL, VARNAME(var_name), __FILE__); \
         } \
     } while (0)
 
 #define MACRO_NULL_RET1(var_name) \
     do { \
-        if ((var_name) == NULL) { \
+        if (NULL == (var_name)) { \
             raise_error(NULL_POINTER, 0, NULL, VARNAME(var_name), __FILE__); \
             return; \
         } \
@@ -29,7 +29,7 @@
 
 #define MACRO_NULL_RET2(var_name, retval) \
     do { \
-        if ((var_name) == NULL) { \
+        if (NULL == (var_name)) { \
             raise_error(NULL_POINTER, 0, NULL, VARNAME(var_name), __FILE__); \
             return (retval); \
         } \

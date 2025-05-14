@@ -51,6 +51,8 @@ void get_terminal_size(size_t *cols, size_t *rows) {
     struct winsize w;
     if (-1 == ioctl(STDOUT_FILENO, TIOCGWINSZ, &w)) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
 
+    CHECK_NULL_EXIT(cols);
+    CHECK_NULL_EXIT(rows);
     *cols = w.ws_col;
     *rows = w.ws_row;
 }
@@ -61,6 +63,8 @@ size_t calc_rows(const char *str) {
     size_t max_len;
     
     CHECK_NULL_EXIT(str);
+    CHECK_NULL_EXIT(MARGIN);
+    CHECK_NULL_EXIT(VERTICAL_BORDER);
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
     get_terminal_size(&cols, &rows);
@@ -111,6 +115,8 @@ int get_cursor_position(size_t *col, size_t *row) {
     buf[i] = '\0';
 
     if (buf[0] == '\033' && buf[1] == '[') {
+        if (NULL == row || NULL == col) goto cleanup;
+
         if (sscanf(buf + 2, "%zu;%zu", row, col) == 2) {
             tcsetattr(STDIN_FILENO, TCSANOW, &saved);
             return 0;
@@ -140,6 +146,9 @@ void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
 void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     size_t i;
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
+
+    CHECK_NULL_EXIT(curr_x);
+    CHECK_NULL_EXIT(curr_y);
 
     MOVE_CURSOR(*curr_x, *curr_y);
     printf(CONT_JUNCTION);
@@ -171,12 +180,16 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
     size_t partial_i;
     size_t i;
 
+    CHECK_NULL_EXIT(curr_x);
+    CHECK_NULL_EXIT(curr_y);
+    
     CHECK_NULL_RET(label);
     CHECK_NULL_RET(content);
-
     label_len = strlen(label);
     content_len = strlen(content);
 
+    CHECK_NULL_EXIT(MARGIN);
+    CHECK_NULL_EXIT(VERTICAL_BORDER);
     partial_i = (max_len - (2 * strlen(MARGIN)) - (2 * strlen(VERTICAL_BORDER)));
 
     if (label_len > content_len) {
@@ -190,6 +203,7 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
                 strncpy(partial_str, label, partial_i);
                 partial_str[partial_i] = '\0';
 
+                CHECK_NULL_EXIT(partial_str);
                 print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 label += partial_i;
             }
@@ -209,6 +223,7 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
                 strncpy(partial_str, content, partial_i);
                 partial_str[partial_i] = '\0';
 
+                CHECK_NULL_EXIT(partial_str);
                 print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 content += partial_i;
             }

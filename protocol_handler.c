@@ -8,6 +8,7 @@
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/proto_tables_nums.h"
+#include "status_handler.h"
 
 #define INLINE_SEPARATOR 		" | "
 #define SPACE_SEPARATOR 		"\n"
@@ -118,6 +119,9 @@ void dissect(
 }
 
 void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
+	CHECK_NULL_EXIT(pkt);
+	CHECK_NULL_EXIT(pkt->header);
+
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%ld) " RESET_COLOR, pkt->num);
 	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */

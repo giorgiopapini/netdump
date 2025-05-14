@@ -34,6 +34,7 @@ void execute_save(command *cmd, raw_array *packets) {
     if (raw_pkt_num < 0) { raise_error(NEGATIVE_N_PACKETS, 0, NULL, raw_pkt_num); return; }
     else pkt_num = (size_t)raw_pkt_num;
 
+    CHECK_NULL_EXIT(packets);
     if (packets->len <= 0) { raise_error(SAVING_EMPTY_PACKETS_ERROR, 0, NULL); return; }
     if (pkt_num > packets->len) { raise_error(INDEX_OUT_OF_BOUNDS, 0, NULL, pkt_num, packets->len); return; }
 
@@ -49,11 +50,13 @@ void execute_save(command *cmd, raw_array *packets) {
     /* pcap_dump overwrites the previously stored data, maybe find a way to append it instead of overwriting it? */
     if (0 != pkt_num) {
         tmp_pkt = get(packets, pkt_num);
+        CHECK_NULL_EXIT(tmp_pkt);
         pcap_dump((uint8_t *) dumper, tmp_pkt->header, tmp_pkt->bytes);
     }
     else {
         for (i = 0; i < packets->len; i ++) {
             tmp_pkt = (packet *)packets->values[i];
+            CHECK_NULL_EXIT(tmp_pkt);
             pcap_dump((uint8_t *) dumper, tmp_pkt->header, tmp_pkt->bytes);
         }
     }

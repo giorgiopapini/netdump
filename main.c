@@ -34,6 +34,9 @@
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
 
 	TODO: 	if (buff->content[i] == ARG_PREFIX[0]). Redo this condition to correctly compare strings, not chars
+			else if (ARG_PREFIX[0] == temp[j] && 0 == str_arg_value). Also this line in command_handler.c
+
+	TODO: 	strlen(str); --> Check that str != NULL everywhere in the codebase
 */
 
 void deallocate_heap(
@@ -119,22 +122,27 @@ cmd_retval run(
 	custom_dissectors *custom_diss
 ) {
 	cmd_retval retval = RET_UNKNOWN;
-	int pressed_key = populate(buff, history);
+	int pressed_key;
 
+	pressed_key = populate(buff, history);
 	if (-1 == pressed_key) return RET_UNKNOWN;  /* if an error occoured, exit function */
 	if (ENTER_KEY != pressed_key) return RET_UNKNOWN;  /* if enter is not pressed, than do not start executing partial cmd */
 
 	reset_cmd(cmd);  /* ensure that cmd structure is empty when new command entered */
 
+	CHECK_NULL_EXIT(buff);
+	CHECK_NULL_EXIT(buff->content);
 	if (buff->len == 0 || '\0' == buff->content[0]) {
 		prompt();
 		return RET_UNKNOWN;
 	}
 
+	CHECK_NULL_EXIT(history);
 	if (NULL != history->curr) history->curr = history->head;  /* at each cmd execution reset history->curr position */
 
 	/* if history.head != NULL, buffer not equal to last buffer in history and buffer longer than 0 than push to history */
 	if (NULL != history->head) {
+		CHECK_NULL_EXIT(history->head->prev);
 		if (!compare_buffers(history->head->prev->content, buff) && buff->len > 0) {
 			push_node(history, create_node(copy_to_heap(buff)), MAX_BUFFER_LEN, destroy_buffer);
 		}

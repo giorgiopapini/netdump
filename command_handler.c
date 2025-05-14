@@ -55,6 +55,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
     /* if there is <command> <arg> without the PREFIX separator than raise a formatting error */
     if (!check_compliance(buff)) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+        free(temp);
         return 1;
     }
 
@@ -80,7 +81,10 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
                 temp[j] = '\0';
                 if (strlen(temp) > 0) {
                     status = add_arg_from_token(cmd, temp, &args_num);
-                    if (status) return 1;
+                    if (status) {
+                        free(temp);
+                        return 1;
+                    }
                     writing_arg = !writing_arg;
                 }
                 j = -1;  /* next iteration j=>0 */
@@ -90,6 +94,8 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
 
     if (0 > j) {
         raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, j);
+        free(temp);
+        temp = NULL;
         return 0;
     }
 

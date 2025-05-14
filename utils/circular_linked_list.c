@@ -16,8 +16,12 @@ node *create_node(void *content) {
 }
 
 void push_node(circular_list *list, node *new_node, size_t max_len, void (*deallocate_content_func)(void *)) {
-    node *tmp = list->head;
+    node *tmp;
 
+    CHECK_NULL_EXIT(list);
+    CHECK_NULL_EXIT(new_node);
+    
+    tmp = list->head;
     if (NULL == list->head) {
         new_node->next = new_node;
         new_node->prev = new_node;

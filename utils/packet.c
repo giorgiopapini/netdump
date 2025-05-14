@@ -15,6 +15,7 @@ packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t n
     /* dinamically allocate a new struct pcap_pkthdr */
     new_hdr = (struct pcap_pkthdr *)malloc(sizeof(struct pcap_pkthdr));
     CHECK_NULL_EXIT(new_hdr);
+    CHECK_NULL_EXIT(hdr);
 
     new_hdr->caplen = hdr->caplen;
     new_hdr->len = hdr->len;
@@ -38,6 +39,7 @@ packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t n
 }
 
 void destroy_packet(void *pkt) {
+    CHECK_NULL_RET(pkt);
     free(((packet *)pkt)->header);
     free(((packet *)pkt)->bytes);
     free((packet *)pkt);

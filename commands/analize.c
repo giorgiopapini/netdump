@@ -68,6 +68,8 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	packet *pkt;
 
 	memcpy(&data, args, sizeof(custom_data));
+	
+	CHECK_NULL_EXIT(data.packets);
 	/* data->packets->len + 1 because otherwise it would start from 0 */
 	pkt = create_packet(header, pcap_datalink(handle), data.packets->len + 1, bytes);
 	insert(data.packets, pkt);
@@ -176,6 +178,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	else if (-1 == pcap_loop(handle, pkt_num, get_packet, (uint8_t *)&custom_args)) raise_error(PCAP_LOOP_ERROR, 1, NULL);
 	else {
 		clock_gettime(CLOCK_MONOTONIC, &end);
+		CHECK_NULL_EXIT(packets);
 		printf("\ntotal packets: %ld\n", packets->len);
 		elapsed = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
     	printf("elapsed time: %.6f seconds\n", elapsed);
