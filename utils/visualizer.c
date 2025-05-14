@@ -145,6 +145,7 @@ void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
 
 void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     size_t i;
+    CHECK_NULL_EXIT(JUNCTION);
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
 
     CHECK_NULL_EXIT(curr_x);
@@ -263,6 +264,8 @@ void print_field(const char *label, const char *content, int newline) {
 
     initial_y = curr_y; 
 
+    CHECK_NULL_EXIT(VERTICAL_BORDER);
+    CHECK_NULL_EXIT(MARGIN);
     max_len = (2 * strlen(VERTICAL_BORDER)) + (2 * strlen(MARGIN));
     max_len += MAX(label_len, content_len);
 

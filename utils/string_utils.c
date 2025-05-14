@@ -142,10 +142,10 @@ char *str_concat(const char **str_arr, const char *prefix, const char *separator
     prefix_len = prefix ? strlen(prefix) : 0;
     separator_len = separator ? strlen(separator) : 0;
 
-    if (n_str == 0 || str_arr == NULL) return NULL;
+    if (0 == n_str || NULL == str_arr) return NULL;
 
     for (i = 0; i < n_str; i ++) {
-        if (str_arr[i] == NULL) return NULL;
+        if (NULL == str_arr[i]) return NULL;
         total_len += strlen(str_arr[i]) + prefix_len;
     }
     if (n_str > 1) {
