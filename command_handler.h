@@ -120,7 +120,8 @@
 #define REQUIRED_HELP_ARGS          NONE_ARG
 
 typedef enum {
-    RET_UNKNOWN,
+    RET_NONE,  /* when the command is known but has undefined retval (it doesn't trigger UNKOWN_COMMAND_ERROR, skips iteration instead) */
+    RET_UNKNOWN,  /* when the command is unknown */
     RET_ANALIZE,
     RET_DEVLIST,
     RET_DISSECTORS,

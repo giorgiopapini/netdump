@@ -25,6 +25,21 @@ size_t find_word_len(char *sentence, int word_pos) {
     return strlen(sentence);
 }
 
+size_t count_words(const char *str, size_t len) {
+    size_t i, count = 0;
+    int in_word = 0;
+    
+    CHECK_NULL_EXIT(str);
+    for (i = 0; i < len; i ++) {
+        if (isspace(str[i])) in_word = 0;
+        else if (!in_word) {
+            in_word = 1;
+            count ++;
+        }
+    }
+    return count;
+}
+
 char *get_filename(char *path) {
     char *filename;
     char *filename_win;

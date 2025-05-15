@@ -21,18 +21,17 @@
 
 
 int check_compliance(buffer *buff) {
-    size_t i;
+    char *start_substr;
 
     CHECK_NULL_RET(buff, 1);
     CHECK_NULL_RET(buff->content, 1);
+    CHECK_NULL_RET(ARG_PREFIX, 1);
 
-    for (i = 1; i < buff->len; i ++) {
-        /* if char at (i - 1) is not empty and is not the leading char (which may happen, because of the buffer trim func) */
-        if (buff->content[i - 1] == ' ' && 0 != (i - 1)) {
-            if (buff->content[i] == ARG_PREFIX[0]) return 1;
-            else return 0;
-        }
-    }
+    /* if words count > 0 than the words after the first should be arguments, otherwise it means the user executed command without args */
+    if (0 < count_words(buff->content, buff->len)) return 1;
+
+    start_substr = strstr(buff->content, ARG_PREFIX);
+    if (NULL == start_substr) return 0;
 
     return 1;
 }
@@ -133,7 +132,10 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
     const char *unrecognized_args[MAX_ARGS];
     char *unrecognized_args_message = NULL;
 
-    if (0 < len && 0 == strcmp(expected_args[0], NONE_ARG)) return valid;
+    CHECK_NULL_EXIT(cmd);
+    CHECK_NULL_EXIT(expected_args);
+
+    //if (0 < len && 0 == strcmp(expected_args[0], NONE_ARG)) return valid;
 
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
@@ -170,8 +172,13 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
     unrecognized_args_message = str_concat(unrecognized_args, ARG_PREFIX, " ", m);
 
     if (!opt_args && NULL != missing_args_message) {       // if opt_args is false --> expected args are not optional
-        raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
-        valid = 0;
+        CHECK_NULL_EXIT(expected_args[0]);
+        CHECK_NULL_EXIT(NONE_ARG);
+        if (0 < len && 0 == strcmp(expected_args[0], NONE_ARG)) valid = 1;
+        else {
+            raise_error(MISSING_ARGS_ERROR, 0, NULL, missing_args_message);
+            valid = 0;
+        }
     }
     else if (opt_args && NULL != unrecognized_args_message) {
         raise_error(UNRECOGNIZED_ARGS_ERROR, 0, NULL, unrecognized_args_message);
@@ -224,11 +231,9 @@ cmd_retval execute_command(
         if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) execute_clear();
     }
     else if (is_command(cmd, EXIT_COMMAND)) {
-        retval = RET_EXIT;
-        /*
-        if (CHECK_ARGS(cmd, EXIT_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_EXIT_ARGS)) execute_exit();
-        */
+        retval = RET_NONE;
+        if (CHECK_ARGS(cmd, CLEAR_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_CLEAR_ARGS)) retval = RET_EXIT;
     }
     else if (is_command(cmd, SAVE_COMMAND)) {
         retval = RET_SAVE;
