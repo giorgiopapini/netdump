@@ -47,6 +47,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
 
     CHECK_NULL_RET(cmd, 1);
     CHECK_NULL_RET(buff, 1);
+    CHECK_NULL_EXIT(ARG_PREFIX);
 
     temp = (char *)malloc(buff->len + 1);  /* including null terminator */
     CHECK_NULL_EXIT(temp);
@@ -76,7 +77,7 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
                 j --;
                 str_arg_value = !str_arg_value;
             }
-            else if (ARG_PREFIX[0] == temp[j] && 0 == str_arg_value) {
+            else if (0 == strncmp(&temp[j], ARG_PREFIX, strlen(ARG_PREFIX)) && 0 == str_arg_value) {
                 temp[j] = '\0';
                 if (strlen(temp) > 0) {
                     status = add_arg_from_token(cmd, temp, &args_num);

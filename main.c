@@ -33,11 +33,8 @@
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
 
-	TODO: 	rewrite int create_cmd_from_buff(command *cmd, buffer *buff) function in 'command_handler.c' because of this
-			line:
-				else if (ARG_PREFIX[0] == temp[j] && 0 == str_arg_value). Also this line in command_handler.c line 79
-			ARG_PREFIX is a string, modify the function in order to check for a string (not specifically long 1 char)
-			as prefix
+	TODO: 	int create_cmd_from_buff(command *cmd, buffer *buff) function now checks strings, not chars. (ARG_PREFIX, not
+			ARG_PREFIX[0]). Btw it should be refactored because it's too messy
 */
 
 void deallocate_heap(
