@@ -28,10 +28,10 @@
     ((size_t)(((max % min) == 0) ? round((double)(max - min) / 2.0) : round((double)(max - min) / 2.0)))
 
 
-void get_terminal_size(size_t *cols, size_t *rows);
-void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y);
-void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right);
-void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len);
+static void _get_terminal_size(size_t *cols, size_t *rows);
+static void _print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y);
+static void _print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right);
+static void _print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len);
 
 int unsupported_terminal = 0;
 size_t prev_used_rows = 0;
@@ -47,7 +47,7 @@ void end_printing(void) {
     prev_used_rows = 0;
 }
 
-void get_terminal_size(size_t *cols, size_t *rows) {
+static void _get_terminal_size(size_t *cols, size_t *rows) {
     struct winsize w;
     if (-1 == ioctl(STDOUT_FILENO, TIOCGWINSZ, &w)) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
 
@@ -67,7 +67,7 @@ size_t calc_rows(const char *str) {
     CHECK_NULL_EXIT(VERTICAL_BORDER);
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
-    get_terminal_size(&cols, &rows);
+    _get_terminal_size(&cols, &rows);
 
     usable_cols = MIN(cols, MAX_X);
     if (usable_cols == 0) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
@@ -143,7 +143,7 @@ void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
     }
 }
 
-void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
+static void _print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     size_t i;
     CHECK_NULL_EXIT(JUNCTION);
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
@@ -157,7 +157,7 @@ void print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     printf(CONT_JUNCTION);
 }
 
-void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
+static void _print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
     printf("\n");  /* creates new line if no more rows available in terminal */
 
     CHECK_NULL_RET(curr_x);
@@ -173,7 +173,7 @@ void print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_l
     printf(MARGIN CONT_VERTICAL_BORDER);
 }
 
-void print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len) {
+static void _print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len) {
     size_t label_len;
     size_t content_len;
     size_t used_rows;
@@ -196,8 +196,8 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
     if (label_len > content_len) {
         used_rows = calc_rows(label);
         if (1 == used_rows) {
-            print_line(label, curr_x, curr_y, 0, 0);
-            print_line(content, curr_x, curr_y, OFFSET_LEFT(label_len, content_len), OFFSET_RIGHT(label_len, content_len));
+            _print_line(label, curr_x, curr_y, 0, 0);
+            _print_line(content, curr_x, curr_y, OFFSET_LEFT(label_len, content_len), OFFSET_RIGHT(label_len, content_len));
         }
         else {
             for (i = 1; i <= used_rows; i ++) {
@@ -205,27 +205,27 @@ void print_value(const char *label, const char *content, size_t *curr_x, size_t 
                 partial_str[partial_i] = '\0';
 
                 CHECK_NULL_EXIT(partial_str);
-                print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
+                _print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 label += partial_i;
             }
-            print_line(content, curr_x, curr_y, OFFSET_LEFT(partial_i, content_len), OFFSET_RIGHT(partial_i, content_len));
+            _print_line(content, curr_x, curr_y, OFFSET_LEFT(partial_i, content_len), OFFSET_RIGHT(partial_i, content_len));
         }
     }
     else {
         used_rows = calc_rows(content);
         if (1 == used_rows) {
-            print_line(label, curr_x, curr_y, OFFSET_LEFT(content_len, label_len), OFFSET_RIGHT(content_len, label_len));
-            print_line(content, curr_x, curr_y, 0, 0);
+            _print_line(label, curr_x, curr_y, OFFSET_LEFT(content_len, label_len), OFFSET_RIGHT(content_len, label_len));
+            _print_line(content, curr_x, curr_y, 0, 0);
         }
         else {
-            print_line(label, curr_x, curr_y, OFFSET_LEFT(partial_i, label_len), OFFSET_RIGHT(partial_i, label_len));
+            _print_line(label, curr_x, curr_y, OFFSET_LEFT(partial_i, label_len), OFFSET_RIGHT(partial_i, label_len));
 
             for (i = 1; i <= used_rows; i ++) {
                 strncpy(partial_str, content, partial_i);
                 partial_str[partial_i] = '\0';
 
                 CHECK_NULL_EXIT(partial_str);
-                print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
+                _print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 content += partial_i;
             }
         }
@@ -254,7 +254,7 @@ void print_field(const char *label, const char *content, int newline) {
     label_len = strlen(label);
     content_len = strlen(content);
 
-    get_terminal_size(&term_cols, &term_rows);
+    _get_terminal_size(&term_cols, &term_rows);
 
     if (0 != get_cursor_position(&curr_x, &curr_y)) {
         raise_error(CURSOR_POSITION_ERROR, 0, UNCOMPATIBLE_TERMINAL_HINT);
@@ -278,9 +278,9 @@ void print_field(const char *label, const char *content, int newline) {
     else initial_y = curr_y;
 
     max_len = PRINTABLE_CHARS(max_len, term_cols, MAX_X);
-    print_horizontal_border(max_len, &curr_x, &curr_y);
-    print_value(label, content, &curr_x, &curr_y, max_len);
-    print_horizontal_border(max_len, &curr_x, &curr_y);
+    _print_horizontal_border(max_len, &curr_x, &curr_y);
+    _print_value(label, content, &curr_x, &curr_y, max_len);
+    _print_horizontal_border(max_len, &curr_x, &curr_y);
 
     curr_y = initial_y;
     curr_x += max_len - 1;  /* -1 because it has to rewrite the last vertical line of the previous printed field */

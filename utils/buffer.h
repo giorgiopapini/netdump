@@ -6,14 +6,14 @@
 
 #define MAX_BUFFER_LEN 256
 
-#define ARROW_UP_KEY 'A'
-#define ARROW_DOWN_KEY 'B'
-#define ARROW_RIGHT_KEY 'C'
-#define ARROW_LEFT_KEY 'D'
-#define CANC_KEY '3'
+#define _arrow_up_KEY 'A'
+#define _arrow_down_KEY 'B'
+#define _arrow_right_KEY 'C'
+#define _arrow_left_KEY 'D'
+#define _canc_KEY '3'
 #define TILDE_KEY '~'
 #define ENTER_KEY '\n'
-#define BACKSPACE_KEY 127
+#define _backspace_KEY 127
 
 typedef struct buffer {
     char content[MAX_BUFFER_LEN];

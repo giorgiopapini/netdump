@@ -16,14 +16,14 @@
 #define CLEAR_STRN(len)                     do { for (size_t z = (size_t)len; z > 0; z --) printf("\b \b"); } while (0)
 
 
-void refresh_output(buffer *buff, size_t old_len);
-int arrow_up(buffer *buff, circular_list *list, int *end);
-int arrow_down(buffer *buff, circular_list *list, int *end);
-int arrow_right(buffer *buff);
-int arrow_left(buffer *buff);
-int canc(buffer *buff);
-int backspace(buffer *buff);
-int literal_key(buffer *buff, int c);
+static void _refresh_output(buffer *buff, size_t old_len);
+static int _arrow_up(buffer *buff, circular_list *list, int *end);
+static int _arrow_down(buffer *buff, circular_list *list, int *end);
+static int _arrow_right(buffer *buff);
+static int _arrow_left(buffer *buff);
+static int _canc(buffer *buff);
+static int _backspace(buffer *buff);
+static int _literal_key(buffer *buff, int c);
 
 buffer *create_buffer(void) {
     buffer *new_buff = (buffer *)malloc(sizeof(buffer));
@@ -94,7 +94,7 @@ void normalize_content(buffer *buff) {
     buff->content[buff->len] = '\0';
 }
 
-void refresh_output(buffer *buff, size_t old_len) {   /* refresh string, the cursor is kept at the end of string */
+static void _refresh_output(buffer *buff, size_t old_len) {   /* refresh string, the cursor is kept at the end of string */
     size_t i;
 
     CHECK_NULL_EXIT(buff);
@@ -103,7 +103,7 @@ void refresh_output(buffer *buff, size_t old_len) {   /* refresh string, the cur
     for (i = 0; i < buff->len; i ++) printf("%c", buff->content[i]);  /* print new string (prints also final '\0') */; 
 }
 
-int arrow_up(buffer *buff, circular_list *list, int *end) {
+static int _arrow_up(buffer *buff, circular_list *list, int *end) {
     size_t old_len;
     size_t prev_pos;
 
@@ -112,19 +112,19 @@ int arrow_up(buffer *buff, circular_list *list, int *end) {
     prev_pos = buff->cursor_pos;
 
     CHECK_NULL_EXIT(list);
-    if (NULL == list->head) return ARROW_UP_KEY;
+    if (NULL == list->head) return _arrow_up_KEY;
 
     CHECK_NULL_EXIT(list->curr);
     *end = 0;  /* not at the end of history */
     list->curr = list->curr->prev;
     memcpy(buff, list->curr->content, sizeof(buffer));
     buff->cursor_pos = prev_pos;
-    refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
+    _refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
     buff->cursor_pos = buff->len;
-    return ARROW_UP_KEY;
+    return _arrow_up_KEY;
 }
 
-int arrow_down(buffer *buff, circular_list *list, int *end) {
+static int _arrow_down(buffer *buff, circular_list *list, int *end) {
     size_t old_len;
     size_t prev_pos;
 
@@ -133,10 +133,10 @@ int arrow_down(buffer *buff, circular_list *list, int *end) {
     prev_pos = buff->cursor_pos;
 
     CHECK_NULL_EXIT(list);
-    if (NULL == list->head) return ARROW_DOWN_KEY;
+    if (NULL == list->head) return _arrow_down_KEY;
     if (list->curr == list->head) {
         CHECK_NULL_EXIT(end);
-        if (*end) return ARROW_DOWN_KEY;
+        if (*end) return _arrow_down_KEY;
         /* if at the end of history than nop. Otherwise execute arrow down behaviour */
     }
 
@@ -151,72 +151,72 @@ int arrow_down(buffer *buff, circular_list *list, int *end) {
 
         CHECK_NULL_EXIT(end);
         *end = 1;  /* currently at the end of history */
-        return ARROW_DOWN_KEY;
+        return _arrow_down_KEY;
     }
 
     list->curr = list->curr->next;
     memcpy(buff, list->curr->content, sizeof(buffer));
     buff->cursor_pos = prev_pos;
-    refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
+    _refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
     buff->cursor_pos = buff->len;
-    return ARROW_DOWN_KEY;
+    return _arrow_down_KEY;
 }
 
-int arrow_right(buffer *buff) {
+static int _arrow_right(buffer *buff) {
     CHECK_NULL_EXIT(buff);
 
     if (buff->cursor_pos < buff->len && *(buff->content + buff->cursor_pos) != 0) {
         printf("\033[C");
         buff->cursor_pos ++;
     }
-    return ARROW_RIGHT_KEY;
+    return _arrow_right_KEY;
 }
 
-int arrow_left(buffer *buff) {
+static int _arrow_left(buffer *buff) {
     CHECK_NULL_EXIT(buff);
 
     if (buff->cursor_pos > 0) {
         printf("\033[D");
         buff->cursor_pos --;
     }
-    return ARROW_LEFT_KEY;
+    return _arrow_left_KEY;
 }
 
-int canc(buffer *buff) {
+static int _canc(buffer *buff) {
     size_t old_len;
 
     CHECK_NULL_EXIT(buff);
     old_len = buff->len;
     getch();
-    if (buff->len == buff->cursor_pos) return CANC_KEY;
+    if (buff->len == buff->cursor_pos) return _canc_KEY;
 
     delete_char(buff->content, buff->cursor_pos);
     buff->len --;
-    refresh_output(buff, old_len);
+    _refresh_output(buff, old_len);
     MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, old_len);
-    return CANC_KEY;
+    return _canc_KEY;
 }
 
-int backspace(buffer *buff) {
+static int _backspace(buffer *buff) {
     size_t old_len;
 
     CHECK_NULL_EXIT(buff);
     old_len = buff->len;
-    if (0 >= buff->cursor_pos) return BACKSPACE_KEY;
+    if (0 >= buff->cursor_pos) return _backspace_KEY;
 
     delete_char(buff->content, buff->cursor_pos - 1);
     buff->len --;
-    refresh_output(buff, old_len);
+    _refresh_output(buff, old_len);
 
     if (buff->cursor_pos < old_len){
         MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, old_len);
-        arrow_left(buff);
+        _arrow_left(buff);
     }
     else buff->cursor_pos --;
-    return BACKSPACE_KEY;
+    return _backspace_KEY;
 }
 
-int literal_key(buffer *buff, int c) {
+static int _literal_key(buffer *buff, int c) {
     size_t old_len;
 
     CHECK_NULL_EXIT(buff);
@@ -230,7 +230,7 @@ int literal_key(buffer *buff, int c) {
     else {
         push_char(buff->content, MAX_BUFFER_LEN, buff->cursor_pos, c);
         buff->len ++;
-        refresh_output(buff, buff->len);
+        _refresh_output(buff, buff->len);
         MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, buff->len);
         buff->cursor_pos ++;
     }
@@ -255,21 +255,21 @@ int populate(buffer *buff, circular_list *history) {
         ret = ENTER_KEY;
         printf("\n");
     }
-    else if (127 == c || 8 == c) {  /* if pressed key == backspace */
-        if (buff->len > 0) ret = backspace(buff);
+    else if (127 == c || 8 == c) {  /* if pressed key == _backspace */
+        if (buff->len > 0) ret = _backspace(buff);
     }
     else if ('\033' == c) {  /* catch special keys, add behaviour only to arrow keys (for now) */
         c = getch();
         switch(c = getch()) {
-            case ARROW_UP_KEY:          ret = arrow_up(buff, history, &end); break;
-            case ARROW_DOWN_KEY:        ret = arrow_down(buff, history, &end); break;
-            case ARROW_RIGHT_KEY:       ret = arrow_right(buff); break;
-            case ARROW_LEFT_KEY:        ret = arrow_left(buff); break;
-            case CANC_KEY:              ret = canc(buff); break;
+            case _arrow_up_KEY:          ret = _arrow_up(buff, history, &end); break;
+            case _arrow_down_KEY:        ret = _arrow_down(buff, history, &end); break;
+            case _arrow_right_KEY:       ret = _arrow_right(buff); break;
+            case _arrow_left_KEY:        ret = _arrow_left(buff); break;
+            case _canc_KEY:              ret = _canc(buff); break;
             default:                    ret = -1; break;
         }
     }
-    else if (IS_LITERAL(c)) literal_key(buff, c);
+    else if (IS_LITERAL(c)) _literal_key(buff, c);
 
     fflush(stdout);
     return ret;

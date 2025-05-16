@@ -6,9 +6,9 @@
 #include "../status_handler.h"
 
 
-void print_raw_pkt(const uint8_t *pkt, size_t len);
+static void _print_raw_pkt(const uint8_t *pkt, size_t len);
 
-void print_raw_pkt(const uint8_t *pkt, size_t len) {
+static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
 	size_t i;
 
 	CHECK_NULL_RET(pkt);
@@ -24,7 +24,7 @@ output_func_t select_output_func(
 ) {
 	switch (fmt) {
 		case OUTPUT_FORMAT_NONE: 		return NULL;
-		case OUTPUT_FORMAT_RAW:			return print_raw_pkt;
+		case OUTPUT_FORMAT_RAW:			return _print_raw_pkt;
 		case OUTPUT_FORMAT_BASIC: 		return print_func;
 		case OUTPUT_FORMAT_ACII_ART:	return visualize_func;
 		default:						return NULL;

@@ -5,7 +5,6 @@
 #include "../utils/raw_array.h"
 
 
-void print_cwd(void);
 void execute_save(command *cmd, raw_array *packets);
 
 #endif

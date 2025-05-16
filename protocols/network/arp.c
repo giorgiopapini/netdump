@@ -7,10 +7,10 @@
 #include "../../utils/protocol.h"
 
 
-void print_arp_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_arp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint16_t operation;
     
     if (!pkt || pkt_len < ARP_LEN) return;
@@ -43,7 +43,7 @@ void print_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     else printf("(unrecognized operation = %u)", operation);
 }
 
-void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char hw_type[7];
     char p_type[7];
     char hw_len[5];
@@ -82,6 +82,6 @@ void visualize_arp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < ARP_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_arp_hdr, visualize_arp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_arp_hdr, _visualize_arp_hdr);
     return NO_ENCAP_PROTO;
 }

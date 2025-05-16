@@ -6,11 +6,11 @@
 #include "../../utils/protocol.h"
 
 
-void print_type(uint8_t type);
-void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_type(uint8_t type);
+static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_type(uint8_t type) {
+static void _print_type(uint8_t type) {
     switch (type) {
         case ICMPV6_DEST_UNREACH_CODE:      printf("destination unreachable"); break;
         case ICMPV6_TOO_LARGE_CODE:         printf("size greater than MTU"); break;
@@ -31,10 +31,10 @@ void print_type(uint8_t type) {
     printf(" (%u)", type);
 }
 
-void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (!pkt || pkt_len < ICMPV6_HDR_LEN) return;
     
-    print_type(ICMPV6_TYPE(pkt));
+    _print_type(ICMPV6_TYPE(pkt));
     printf(
         ", code: %u, checksum: 0x%04x",
         ICMPV6_CODE(pkt),
@@ -50,7 +50,7 @@ void print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char type[4];  /* 4 bits --> max: 255'\0' 4 chars */
     char code[4];
     char checksum[7];  /* 0x0000'\0' 7 chars */
@@ -81,6 +81,6 @@ void visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < ICMPV6_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_icmpv6_hdr, visualize_icmpv6_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_icmpv6_hdr, _visualize_icmpv6_hdr);
     return NO_ENCAP_PROTO;
 }

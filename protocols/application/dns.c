@@ -7,12 +7,12 @@
 #include "../../utils/protocol.h"
 
 
-size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain);
-void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len);
-void print_dns_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len);
+static size_t _extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain);
+static void _extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len);
+static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len);
 
-size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain) {
+static size_t _extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain) {
     size_t start_offset = offset;
     size_t label_len;
     size_t pointer;
@@ -28,7 +28,7 @@ size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, ch
             if (offset >= pkt_len) return 0;
             pointer = ((label_len & 0x3F) << 8) | pkt[offset ++];
             if (pointer >= pkt_len) return 0;
-            extract_domain_name(pkt, pointer, pkt_len, domain + domain_pos);
+            _extract_domain_name(pkt, pointer, pkt_len, domain + domain_pos);
             return offset - start_offset + 1;
         }
 
@@ -44,7 +44,7 @@ size_t extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, ch
     return offset - start_offset;
 }
 
-void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) {
+static void _extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) {
     char target[256];
     size_t target_offset;
 
@@ -52,7 +52,7 @@ void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) 
     
     target_offset = offset + 6;
     
-    extract_domain_name(payload, target_offset, data_len, target);
+    _extract_domain_name(payload, target_offset, data_len, target);
 
     printf(", priority: %u", payload[offset]);
     printf(", weight: %u", payload[offset + 2]);
@@ -60,7 +60,7 @@ void extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len) 
     printf(", target: %s", target);
 }
 
-void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char opcode_str[16];
     char rcode_str[16];
     char domain[256];
@@ -107,7 +107,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     /* print queries */
     offset = DNS_HDR_LEN;
     for (i = 0; i < (size_t)DNS_QUESTIONS(pkt); i ++) {
-        offset += extract_domain_name(pkt, offset, pkt_len, domain);
+        offset += _extract_domain_name(pkt, offset, pkt_len, domain);
         if (offset > pkt_len - 4) return;
         printf(
             ", query %ld: {name: %s, type: %u, class: %u}",
@@ -121,7 +121,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 
     /* print answers */
     for (i = 0; i < (size_t)DNS_ANSWER_RRS(pkt); i ++) {
-        offset += extract_domain_name(pkt, offset, pkt_len, domain);
+        offset += _extract_domain_name(pkt, offset, pkt_len, domain);
 
         if (offset > pkt_len - 10) return;
 
@@ -141,7 +141,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
         );
         
         offset += 10;
-        if (33 == type) extract_srv_record(pkt, offset, data_len);
+        if (33 == type) _extract_srv_record(pkt, offset, data_len);
         printf("}");
 
         if (offset > pkt_len - data_len) return;
@@ -177,7 +177,7 @@ void print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char transaction_id[7];  /* 0x0000'\0' 7 chars */
     char qr[2];
     char opcode[3];
@@ -232,6 +232,6 @@ void visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < DNS_HDR_LEN) return NO_ENCAP_PROTO;
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_dns_hdr, visualize_dns_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_dns_hdr, _visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -19,8 +19,8 @@
 
 
 
-void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path);
-void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path);
+static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path);
+static void _add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path);
 
 void change_dissector_status(int new_status, char *filenames, shared_libs *libs) {
     char *token;
@@ -66,7 +66,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     }
 }
 
-void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path) {
+static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path) {
     char *filename;
     void *handle;
 
@@ -83,7 +83,7 @@ void add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissect
     else raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, filename, dlerror());
 }
 
-void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path) {
+static void _add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path) {
     struct dirent *entry;
     char full_path[PATH_MAX];
     DIR *dir;
@@ -103,7 +103,7 @@ void add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissector
                     snprintf(full_path, sizeof(full_path), "%s%s", dir_path, entry->d_name);
                 else
                     snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
-                add_and_load_single_dissector(libs, dissectors, full_path);
+                _add_and_load_single_dissector(libs, dissectors, full_path);
             }
         }
     }
@@ -127,8 +127,8 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
             return;
         }
 
-        if (S_ISDIR(path_stat.st_mode)) add_and_load_dissectors_dir(libs, dissectors, trimmed);
-        else if (S_ISREG(path_stat.st_mode)) add_and_load_single_dissector(libs, dissectors, trimmed);
+        if (S_ISDIR(path_stat.st_mode)) _add_and_load_dissectors_dir(libs, dissectors, trimmed);
+        else if (S_ISREG(path_stat.st_mode)) _add_and_load_single_dissector(libs, dissectors, trimmed);
 
         token = strtok(NULL, STRINGS_SEPARATOR);
         free(trimmed);

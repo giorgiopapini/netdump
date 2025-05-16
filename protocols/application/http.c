@@ -8,12 +8,12 @@
 #include "../../utils/protocol.h"
 
 
-int extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]);
-void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]);
-void print_http_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len);
+static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]);
+static void _split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]);
+static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len);
 
-int extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]) {
+static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]) {
     ptrdiff_t path_len;
     char *first_space;
     const char *path_start;
@@ -51,7 +51,7 @@ int extract_http_request_line(const char *request_line, char *method, char *path
     return 1;
 }
 
-void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]) {
+static void _split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]) {
     ptrdiff_t key_len;
     const char *value_start;
     const char *colon_pos;
@@ -78,12 +78,12 @@ void split_header_line(const char *header_line, char *key, char value[MAX_HTTP_H
     }
 }
 
-void print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i;
     if (pkt) for (i = 0; i < pkt_len; i ++) printf("%c", pkt[i]);
 }
 
-void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     char line[MAX_HTTP_HDR_LEN];
     char key[MAX_HTTP_HDR_LEN];
     char value[MAX_HTTP_HDR_LEN];
@@ -107,7 +107,7 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (ptr < end && *ptr == '\n') ptr ++;
 
 
-    if (0 == extract_http_request_line(line, method, path, version)) return;
+    if (0 == _extract_http_request_line(line, method, path, version)) return;
 
     start_printing();
     print_additional_info("Payload not represented in ascii art");
@@ -128,7 +128,7 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
 
         if (line[0] == '\0') break;
 
-        split_header_line(line, key, value);
+        _split_header_line(line, key, value);
         if (key[0] != '\0') print_field(key, value, 0);
     }
     end_printing();
@@ -137,6 +137,6 @@ void visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_http_hdr, visualize_http_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_http_hdr, _visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

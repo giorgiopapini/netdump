@@ -7,10 +7,10 @@
 #include "../../utils/protocol.h"
 
 
-void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (!pkt || pkt_len < VLAN_HDR_LEN) return;
     
     printf(
@@ -20,7 +20,7 @@ void print_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
     char priority[6];
     char dei[6];
     char vlan_id[5];  /* 12 bits, max int value = 4095; so "4095'\0'" = 5 chars */
@@ -44,6 +44,6 @@ void visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_vlan(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < VLAN_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_vlan_hdr, visualize_vlan_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_vlan_hdr, _visualize_vlan_hdr);
     return (protocol_info){ .protocol = VLAN_ETHERTYPE(pkt), .offset = VLAN_HDR_LEN, .proto_table_num = ETHERTYPES };
 }

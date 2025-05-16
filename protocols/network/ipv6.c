@@ -8,10 +8,10 @@
 #include "../../utils/protocol.h" 
 
 
-void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     uint32_t vtc_flow;
 
     if (!pkt || pkt_len < IPV6_HDR_LEN) return;
@@ -32,7 +32,7 @@ void print_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     char version[3];  /* 4 bits --> max = 15 --> 16'\0' 3 chars */
     char traffic_class[4];  /* 8 bits --> max = 255 --> 255'\0' 4 chars */
     char flow_label[8];  /* 20 bits --> max = 1048575 --> 1048575'\0' 8 chars */
@@ -70,6 +70,6 @@ void visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < IPV6_HDR_LEN) return NO_ENCAP_PROTO;
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ipv6_hdr, visualize_ipv6_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ipv6_hdr, _visualize_ipv6_hdr);
     return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HDR_LEN, .proto_table_num = IP_PROTOS };
 }

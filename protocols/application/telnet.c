@@ -7,7 +7,7 @@
 #include "../../utils/protocol.h"
 
 
-const char *telnet_commands[] = {
+static const char *telnet_commands[] = {
     "SE",
     "NOP",
     "Data Mark",
@@ -27,7 +27,7 @@ const char *telnet_commands[] = {
 };
 
 /* from 0 to 49 */
-const char *telnet_options_first_segment[] = {
+static const char *telnet_options_first_segment[] = {
     "Binary Transmission",
     "Echo",
     "Reconnection",
@@ -81,19 +81,19 @@ const char *telnet_options_first_segment[] = {
 };
 
 /* from 138 to 140 */
-const char *telnet_options_second_segment[] = {
+static const char *telnet_options_second_segment[] = {
     "TELOPT PRAGMA LOGON",
     "TELOPT SSPI LOGON",
     "TELOPT PRAGMA HEARTBEAT"
 };
 
-void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
-void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
-size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len);
-void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
+static void _visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd);
+static size_t _visualize_telnet_data(const uint8_t *pkt, size_t telnet_len);
+static void _print_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
+static void _print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     printf("%s (", telnet_commands[cmd - TELNET_COMMAND_OFFSET]);
     if (sub_cmd <= TELNET_END_I_OPTIONS) printf("%s", telnet_options_first_segment[sub_cmd]);
     else if (sub_cmd >= TELNET_START_II_OPTIONS && 
@@ -102,7 +102,7 @@ void print_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     else printf("Unassigned");
 }
 
-void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
+static void _visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     char res[512] = "";
     
     strncat(res, telnet_commands[cmd - TELNET_COMMAND_OFFSET], sizeof(res) - strlen(res) - 1);
@@ -117,7 +117,7 @@ void visualize_telnet_cmd(const uint8_t cmd, const uint8_t sub_cmd) {
     print_field(TELNET_COMMAND_LABEL, res, 0);
 }
 
-size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
+static size_t _visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     char buff[512] = "";
     char temp[4];
     size_t i = 0;
@@ -146,7 +146,7 @@ size_t visualize_telnet_data(const uint8_t *pkt, size_t telnet_len) {
     return i;
 }
 
-void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     int data_segment_len = 0;
     size_t i;
 
@@ -158,7 +158,7 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     */
     for (i = 0; (i < pkt_len) && !(i > pkt_len - 4);) {
         if (TELNET_IAC == pkt[i]) {
-            print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
+            _print_telnet_cmd(pkt[i + 1], pkt[i + 2]);
         
             if ((pkt_len >= 4) && (i <= pkt_len - 4)) printf("), ");
             else printf(")");
@@ -194,7 +194,7 @@ void print_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i;
 
     if (!pkt) return;
@@ -202,10 +202,10 @@ void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
     start_printing();
     for (i = 0; i < pkt_len;) {
         if (TELNET_IAC == pkt[i]) {
-            visualize_telnet_cmd(pkt[i + 1], pkt[i + 2]);
+            _visualize_telnet_cmd(pkt[i + 1], pkt[i + 2]);
             i += 3;
         }
-        else i += visualize_telnet_data(pkt, pkt_len);
+        else i += _visualize_telnet_data(pkt, pkt_len);
     }
     end_printing();
 }
@@ -213,6 +213,6 @@ void visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_telnet(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt) return NO_ENCAP_PROTO;
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_telnet_hdr, visualize_telnet_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_telnet_hdr, _visualize_telnet_hdr);
     return NO_ENCAP_PROTO;
 }

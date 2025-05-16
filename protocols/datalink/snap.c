@@ -7,11 +7,11 @@
 #include "../../utils/protocol.h"
 
 
-void print_snap_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_snap_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (!pkt || pkt_len < SNAP_HDR_LEN) return;
+static void _print_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < _snap_hdr_len) return;
     
     printf(
         "oui: %02x:%02x:%02x, ethertype: 0x%04x", 
@@ -20,11 +20,11 @@ void print_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-void visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
     char oui[9];  /* 00:00:00'\0' 9 chars */
     char ethertype[7];
     
-    if (!pkt || pkt_len < SNAP_HDR_LEN) return;
+    if (!pkt || pkt_len < _snap_hdr_len) return;
     
     snprintf(oui, sizeof(oui), "%02x:%02x:%02x", SNAP_OUI(pkt, 0), SNAP_OUI(pkt, 1), SNAP_OUI(pkt, 2));
     snprintf(ethertype, sizeof(ethertype), "0x%04x", SNAP_TYPE(pkt));
@@ -36,8 +36,8 @@ void visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len) {
 }
 
 protocol_info dissect_snap(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < SNAP_HDR_LEN) return NO_ENCAP_PROTO;
+    if (!pkt || pkt_len < _snap_hdr_len) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_snap_hdr, visualize_snap_hdr);
-    return (protocol_info){ .protocol = SNAP_TYPE(pkt), .offset = SNAP_HDR_LEN, .proto_table_num = ETHERTYPES };
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_snap_hdr, _visualize_snap_hdr);
+    return (protocol_info){ .protocol = SNAP_TYPE(pkt), .offset = _snap_hdr_len, .proto_table_num = ETHERTYPES };
 }

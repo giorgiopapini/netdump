@@ -33,7 +33,9 @@ typedef struct custom_data {
 	pcap_dumper_t *pcap_dump;
 } custom_data;
 
-void handle_sigint(int sig) {
+static void _handle_sigint(int sig);
+
+static void _handle_sigint(int sig) {
 	(void)sig;
 	pcap_breakloop(handle);
 	printf("\n");
@@ -162,7 +164,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 
 	if (-1 == pcap_datalink(handle)) raise_error(DATALINK_HEADER_ERROR, 1, NULL, pcap_geterr(handle));
 	
-	signal(SIGINT, handle_sigint);
+	signal(SIGINT, _handle_sigint);
 
 	if (NULL != write_file) {
 		custom_args.pcap_dump = pcap_dump_open(handle, write_file);

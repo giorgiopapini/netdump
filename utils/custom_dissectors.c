@@ -8,7 +8,7 @@
 #include "shared_lib.h"
 
 
-void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
+static void _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
 
 custom_dissectors *create_custom_dissectors(void) {
     custom_dissectors *dissectors = (custom_dissectors *)malloc(sizeof(custom_dissectors));
@@ -105,7 +105,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     }
 }
 
-void populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
+static void _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
     size_t i;
 
     CHECK_NULL_EXIT(mappings);
@@ -137,7 +137,7 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
     }
 
     mappings = get_custom_protocols_mapping();
-    populate_custom_dissectors(custom_diss, mappings, filename);
+    _populate_custom_dissectors(custom_diss, mappings, filename);
     
     destroy_mappings(mappings);
 }

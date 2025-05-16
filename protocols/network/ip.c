@@ -15,10 +15,10 @@ void print_ip_options(const uint8_t *pkt) {
 }
 */
 
-void print_ip_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ip_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char flags[9] = { 0 };  /* max: "DF, MF, \0" */
     int raw_offset = 0;
     size_t offset = 0;
@@ -55,7 +55,7 @@ void print_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     /*if (IP_HLEN(pkt) > 5) print_ip_options(pkt);*/
 }
 
-void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
     char version[4];
     char ihl[4];
     char tos[5];  /* 0x00'\0' are 5 chars */
@@ -111,6 +111,6 @@ void visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < IP_HDR_LEN(pkt)) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ip_hdr, visualize_ip_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ip_hdr, _visualize_ip_hdr);
     return (protocol_info){ .protocol = NP_IP_PROTOCOL(pkt), .offset = IP_HDR_LEN(pkt), .proto_table_num = IP_PROTOS };
 }

@@ -17,7 +17,7 @@
 #include "utils/shared_lib.h"
 
 /*
-	TODO (optional):	(prevent the shift + arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
+	TODO (optional):	(prevent the shift + _arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
 
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
 			received in a specific amount of time, than raise timeout error
@@ -28,20 +28,20 @@
 			The save command still works btw, even if the packet can't be parsed
 
 	TODO: 	I need the source and destination IPs for the UDP checksum, but they're unavailable 
-			by the time I reach print_udp_hdr(). How can I solve the problem?
+			by the time I reach _print_udp_hdr(). How can I solve the problem?
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
 */
 
-void deallocate_heap(
+static void _deallocate_heap(
 	command *cmd,
 	raw_array *packets,
 	circular_list *history,
 	shared_libs *libs,
 	custom_dissectors *custom_diss
 );
-cmd_retval run(
+static cmd_retval _run(
 	buffer *buff, 
 	command *cmd, 
 	raw_array *packets, 
@@ -49,7 +49,7 @@ cmd_retval run(
 	shared_libs *libs,
 	custom_dissectors *custom_diss
 );
-void prompt(void);
+static void _prompt(void);
 
 
 int main(void) {
@@ -73,7 +73,7 @@ int main(void) {
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 	
 	retval = RET_UNKNOWN;
-	prompt();
+	_prompt();
     while (1) {
         FD_ZERO(&readfds);
         FD_SET(STDIN_FILENO, &readfds);
@@ -84,17 +84,17 @@ int main(void) {
 			if (EINTR == errno) break;
 			else raise_error(SELECT_FAILED_ERROR, 0, NULL, __FILE__, strerror(errno));
 		}
-		else retval = run(&buff, &cmd, &packets, &history, &libs, &custom_diss);
+		else retval = _run(&buff, &cmd, &packets, &history, &libs, &custom_diss);
 		if (RET_EXIT == retval) break;
     }
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original);
-	deallocate_heap(&cmd, &packets, &history, &libs, &custom_diss);
+	_deallocate_heap(&cmd, &packets, &history, &libs, &custom_diss);
 	return 0;
 }
 
 
-void deallocate_heap(
+static void _deallocate_heap(
 	command *cmd,
 	raw_array *packets,
 	circular_list *history,
@@ -108,7 +108,7 @@ void deallocate_heap(
 	destroy_custom_dissectors(custom_diss);
 }
 
-cmd_retval run(
+static cmd_retval _run(
 	buffer *buff, 
 	command *cmd, 
 	raw_array *packets, 
@@ -128,7 +128,7 @@ cmd_retval run(
 	CHECK_NULL_EXIT(buff);
 	CHECK_NULL_EXIT(buff->content);
 	if (buff->len == 0 || '\0' == buff->content[0]) {
-		prompt();
+		_prompt();
 		return RET_UNKNOWN;
 	}
 
@@ -152,11 +152,11 @@ cmd_retval run(
 	}
 
 	clear_buffer(buff);
-	if (RET_EXIT != retval) prompt();
+	if (RET_EXIT != retval) _prompt();
 	return retval;
 }
 
-void prompt(void) { 
+static void _prompt(void) { 
 	printf(PROMPT_STRING); 
 	fflush(stdout);
 }

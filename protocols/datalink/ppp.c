@@ -7,10 +7,10 @@
 #include "../../utils/protocol.h"
 
 
-void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (!pkt || pkt_len < PPP_HDR_LEN) return;
     
     printf(
@@ -21,7 +21,7 @@ void print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char address[5];  /* 0x00'\0' are 5 chars */
     char control[5];
     char protocol[7];  /* 0x0000'\0' are 7 chars */
@@ -42,6 +42,6 @@ void visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ppp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < PPP_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ppp_hdr, visualize_ppp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ppp_hdr, _visualize_ppp_hdr);
     return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = PPP_HDR_LEN, .proto_table_num = PPP_PROTOS };
 }

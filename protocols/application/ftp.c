@@ -8,12 +8,12 @@
 #include "../../utils/protocol.h"
 
 
-void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size);
-void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size);
-void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size);
+static void _parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size);
+static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size) {
+static void _parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size) {
     size_t code_len;
     size_t i;
     size_t msg_end;
@@ -39,7 +39,7 @@ void parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, siz
     message[copy_len] = '\0';
 }
 
-void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size) {
+static void _parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size) {
     size_t i;
     size_t arg_len;
     
@@ -65,7 +65,7 @@ void parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, si
     else argument[0] = '\0';
 }
 
-void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i;
     (void)pkt_len;
 
@@ -81,7 +81,7 @@ void print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char str1[MAX_FTP_HDR_LEN];
     char str2[MAX_FTP_HDR_LEN];
     
@@ -90,13 +90,13 @@ void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
     
     start_printing();
     if (isdigit(pkt[0])) {
-        parse_ftp_response(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
+        _parse_ftp_response(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
         print_field(FTP_TYPE_LABEL, "Response", 0);
         if (strlen(str1) > 0) print_field(FTP_RES_CODE_LABEL, str1, 0);
         if (strlen(str2) > 0) print_field(FTP_TYPE_LABEL, str2, 0);
     }
     else if (isupper(pkt[0])) {
-        parse_ftp_request(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
+        _parse_ftp_request(pkt, pkt_len, str1, sizeof(str1), str2, sizeof(str2));
         print_field(FTP_TYPE_LABEL, "Response", 0);
         if (strlen(str1) > 0) print_field(FTP_COMMAND_LABEL, str1, 0);
         if (strlen(str2) > 0) print_field(FTP_ARGUMENT_LABEL, str2, 0);
@@ -107,6 +107,6 @@ void visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt[0] == '\0') return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_ftp_hdr, visualize_ftp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ftp_hdr, _visualize_ftp_hdr);
     return NO_ENCAP_PROTO;
 }

@@ -14,7 +14,9 @@
 #include "../utils/raw_array.h"
 
 
-void print_cwd(void) {
+static void _print_cwd(void);
+
+static void _print_cwd(void) {
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL) printf("Current working directory: %s\n", cwd);
     else raise_error(CURR_WORK_DIR_ERROR, 1, NULL);
@@ -29,7 +31,7 @@ void execute_save(command *cmd, raw_array *packets) {
     size_t pkt_num;  /* if pkt_num == 0 than save ALL the packets */
     size_t i;
 
-    print_cwd(); 
+    _print_cwd(); 
 
     if (raw_pkt_num < 0) { raise_error(NEGATIVE_N_PACKETS, 0, NULL, raw_pkt_num); return; }
     else pkt_num = (size_t)raw_pkt_num;

@@ -8,10 +8,10 @@
 #include "../../utils/protocol.h"
 
 
-void print_udp_hdr(const uint8_t *pkt, size_t pkt_len);
-void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_udp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len);
 
-void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (!pkt || pkt_len < UDP_HDR_LEN) return;
 
     printf(
@@ -23,7 +23,7 @@ void print_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-void visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char length[6];
@@ -50,7 +50,7 @@ protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt)
     proto_info.proto_table_num = NET_PORTS;
 
     if (!pkt || pkt_len < UDP_HDR_LEN) return NO_ENCAP_PROTO;
-    SHOW_OUTPUT(pkt, pkt_len, fmt, print_udp_hdr, visualize_udp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_udp_hdr, _visualize_udp_hdr);
 
     if (IS_WELL_DEFINED_PORT(UDP_DEST_PORT(pkt))) proto_info.protocol = UDP_DEST_PORT(pkt);
     else if (IS_WELL_DEFINED_PORT(UDP_SRC_PORT(pkt))) proto_info.protocol = UDP_SRC_PORT(pkt);

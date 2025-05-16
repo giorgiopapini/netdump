@@ -20,8 +20,8 @@
 #define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 #define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 
-void load_cmd_label(command *cmd, buffer *buff);
-void load_cmd_args(command *cmd, buffer *buff);
+static void _load_cmd_label(command *cmd, buffer *buff);
+static void _load_cmd_args(command *cmd, buffer *buff);
 
 
 int check_compliance(buffer *buff) {
@@ -40,7 +40,7 @@ int check_compliance(buffer *buff) {
     return 1;
 }
 
-void load_cmd_label(command *cmd, buffer *buff) {
+void _load_cmd_label(command *cmd, buffer *buff) {
     /* cmd and buff should not be NULL */
     size_t i;
     
@@ -54,7 +54,7 @@ void load_cmd_label(command *cmd, buffer *buff) {
     cmd->label[i] = '\0';
 }
 
-void load_cmd_args(command *cmd, buffer *buff) {
+void _load_cmd_args(command *cmd, buffer *buff) {
     char *temp_arg;
     char *temp_next_arg;
     char token[MAX_BUFFER_LEN];
@@ -99,8 +99,8 @@ int create_cmd_from_buff(command *cmd, buffer *buff) {
         return 1;
     }
 
-    load_cmd_label(cmd, buff);
-    load_cmd_args(cmd, buff);
+    _load_cmd_label(cmd, buff);
+    _load_cmd_args(cmd, buff);
     
     return 0;
 }
