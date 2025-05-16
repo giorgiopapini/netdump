@@ -32,9 +32,6 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
-
-	TODO: 	int create_cmd_from_buff(command *cmd, buffer *buff) function now checks strings, not chars. (ARG_PREFIX, not
-			ARG_PREFIX[0]). Btw it should be refactored because it's too messy
 */
 
 void deallocate_heap(

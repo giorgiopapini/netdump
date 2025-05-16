@@ -1,5 +1,6 @@
 #include "command_handler.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -19,6 +20,9 @@
 #define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 #define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 
+void load_cmd_label(command *cmd, buffer *buff);
+void load_cmd_args(command *cmd, buffer *buff);
+
 
 int check_compliance(buffer *buff) {
     char *start_substr;
@@ -36,86 +40,68 @@ int check_compliance(buffer *buff) {
     return 1;
 }
 
-int create_cmd_from_buff(command *cmd, buffer *buff) {
-    size_t args_num = 0;
-    char *temp;
+void load_cmd_label(command *cmd, buffer *buff) {
+    /* cmd and buff should not be NULL */
     size_t i;
-    int j;
-    int str_arg_value = 0;  /* flag to check if " already showed up */
-    int writing_arg = 0;  /* flag to check if ARG_PREFIX alredy showed up */
-    int status = 0;
+    
+    for (i = 0; i < buff->len; i ++)
+        if (' ' == buff->content[i]) break;
 
+    cmd->label = (char *)malloc(i + 1);
+    CHECK_NULL_EXIT(cmd->label);
+
+    strncpy(cmd->label, buff->content, i);
+    cmd->label[i] = '\0';
+}
+
+void load_cmd_args(command *cmd, buffer *buff) {
+    char *temp_arg;
+    char *temp_next_arg;
+    char token[MAX_BUFFER_LEN];
+    ptrdiff_t delta;
+    ptrdiff_t token_delta;
+    size_t copy_len;
+    size_t args_num = 0;  /* should always be initialized */
+
+    temp_arg = strstr(buff->content, ARG_PREFIX);
+    while (NULL != temp_arg) {
+        delta = temp_arg - buff->content;
+        if (delta > 0 && (size_t)delta >= buff->len - 1) break;
+        
+        temp_next_arg = strstr(temp_arg + 1, ARG_PREFIX);
+
+        if (NULL == temp_next_arg)
+            token_delta = (buff->content + buff->len) - temp_arg; 
+        else token_delta = temp_next_arg - temp_arg;
+
+        if (token_delta >= 0) {
+            copy_len = (token_delta < MAX_BUFFER_LEN - 1) ? (size_t)token_delta : MAX_BUFFER_LEN - 1;
+            strncpy(token, temp_arg, copy_len);
+            token[copy_len] = '\0';
+
+            add_arg_from_token(cmd, token + 1, &args_num);
+        }
+
+        memset(token, '\0', MAX_BUFFER_LEN);
+        temp_arg = strstr(temp_arg + 1, ARG_PREFIX);
+        /* reset token, find next temp_arg and go next iteration */
+    }
+}
+
+int create_cmd_from_buff(command *cmd, buffer *buff) {
     CHECK_NULL_RET(cmd, 1);
     CHECK_NULL_RET(buff, 1);
     CHECK_NULL_EXIT(ARG_PREFIX);
 
-    temp = (char *)malloc(buff->len + 1);  /* including null terminator */
-    CHECK_NULL_EXIT(temp);
-
     /* if there is <command> <arg> without the PREFIX separator than raise a formatting error */
     if (!check_compliance(buff)) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
-        free(temp);
         return 1;
     }
 
-    cmd->label = NULL;
-    for (i = 0, j = 0; i < buff->len; i ++, j ++) {
-        temp[j] = buff->content[i];
-        if (NULL == cmd->label) {
-            if (j > 0 && ' ' == temp[j]) {
-                temp[j] = '\0';
-                cmd->label = (char *)malloc((size_t)j + 1); /* (j > 0) is certain at this point */
-                CHECK_NULL_EXIT(cmd->label);
-                strcpy(cmd->label, temp);
-                j = -1;
-            }
-        }
-        else {
-            if (STRING_DELIMITER == temp[j]) {
-                temp[j] = ' ';
-                j --;
-                str_arg_value = !str_arg_value;
-            }
-            else if (0 == strncmp(&temp[j], ARG_PREFIX, strlen(ARG_PREFIX)) && 0 == str_arg_value) {
-                temp[j] = '\0';
-                if (strlen(temp) > 0) {
-                    status = add_arg_from_token(cmd, temp, &args_num);
-                    if (status) {
-                        free(temp);
-                        return 1;
-                    }
-                    writing_arg = !writing_arg;
-                }
-                j = -1;  /* next iteration j=>0 */
-            }
-        }
-    }
-
-    if (0 > j) {
-        raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, j);
-        free(temp);
-        temp = NULL;
-        return 0;
-    }
-
-    temp[j] = '\0';
-    if (NULL == cmd->label) {
-        cmd->label = (char *)malloc((size_t)j + 1);
-        CHECK_NULL_EXIT(cmd->label);
-        strncpy(cmd->label, temp, (size_t)j);
-        cmd->label[(size_t)j] = '\0';
-    }
-    else {
-        if (strlen(temp) > 0) status = add_arg_from_token(cmd, temp, &args_num);
-        if (NULL != temp) {
-            free(temp);
-            temp = NULL;
-        }
-        if (status) return 1;
-    }
-
-    if (NULL != temp) free(temp);
+    load_cmd_label(cmd, buff);
+    load_cmd_args(cmd, buff);
+    
     return 0;
 }
 
