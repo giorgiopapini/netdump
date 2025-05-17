@@ -6,8 +6,6 @@
 
 #include "status_handler.h"
 #include "utils/string_utils.h"
-#include "utils/formats.h"
-#include "command_handler.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"
 #include "commands/dissectors.h"
@@ -122,8 +120,6 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
     CHECK_NULL_EXIT(cmd);
     CHECK_NULL_EXIT(expected_args);
 
-    //if (0 < len && 0 == strcmp(expected_args[0], NONE_ARG)) return valid;
-
     /* populate missing_args */
     for (i = 0; i < len; i ++) {
         tmp = get_arg(cmd, expected_args[i]);
@@ -176,7 +172,6 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
     if (NULL != unrecognized_args_message) free(unrecognized_args_message);
     return valid;
 }
-
 
 /* CHECK_ARGS() checks for unkown args; CHECK_REQ_ARGS() checks for required args missing */
 cmd_retval execute_command(

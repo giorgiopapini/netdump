@@ -32,6 +32,11 @@
 
 	TODO:	Command to compile shared library
 			gcc -fPIC -shared -o diss_prova.so diss_prova.c -lnetdump
+
+	TODO: 	Fix the "non literal string" warning in vfprintf(stderr, (const char *)error_formats[code], args);
+			in 'status_handler.c'
+
+	TODO: 	Why if I set ARG_PREFIX to "--" the buffer is not correctly interpreted into a command?
 */
 
 static void _deallocate_heap(
@@ -147,7 +152,8 @@ static cmd_retval _run(
 	if (0 == check_buffer_status(buff)) {
 		if (0 == create_cmd_from_buff(cmd, buff)) {
 			retval = execute_command(cmd, packets, libs, custom_diss);
-			if (RET_UNKNOWN == retval) raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
+			if (RET_UNKNOWN == retval)
+				raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd->label);
 		}
 	}
 

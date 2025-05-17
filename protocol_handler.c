@@ -124,8 +124,18 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%ld) " RESET_COLOR, pkt->num);
-	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");  /* if "ascii_art" than it adds a bit of spacing */
+	/* if "ascii_art" than it adds a bit of spacing */
+	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");
 
-	dissect(cmd, pkt->bytes, (size_t)pkt->header->caplen, pkt->datalink_type, DLT_PROTOS, libs, custom_diss, 0);
+	dissect(
+		cmd,
+		pkt->bytes,
+		(size_t)pkt->header->caplen,
+		pkt->datalink_type,
+		DLT_PROTOS,
+		libs,
+		custom_diss,
+		0
+	);
 	printf("\n");
 }
