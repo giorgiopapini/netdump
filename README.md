@@ -56,7 +56,7 @@ The following table lists the allowed arguments for this command.
 | `-nprom` | none | Turn off libpcap promiscuos mode |
 | `-ntime` | none | Hide timestamp |
 | `-npname` | none | Hide protocol name in the output |
-| `-#` | none | Show packet number |
+| `-pktnum` | none | Show packet number |
 | `-r` | str | Read a .pcap file |
 | `-w` | str | Write a .pcap file with all the scanned packets |
 
@@ -74,7 +74,7 @@ The following table lists the allowed arguments for this command.
 | `-ntime` | none | Hide timestamp |
 | `-npname` | none | Hide protocol name in the output |
 | `-output` | (std, raw, art) | Select output format |
-| `-#` | none | Show packet number |
+| `-pktnum` | none | Show packet number |
 
 ### ```dissectors```
 This command is used to manage custom dissectors.

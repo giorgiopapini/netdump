@@ -28,6 +28,10 @@
 #define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
 
+/*
+    ATTENTION:
+        Arguments must be alphanumeric because of the way the "_check_prefix_validity" function is implemented.
+*/
 #define ARG_PREFIX                  "-"
 #define NONE_ARG                    ""
 #define NUMBER_ARG                  "n"
@@ -41,7 +45,7 @@
 #define NO_TIMESTAMP_ARG            "ntime"  /* do not show formatted time next to packet */
 #define NO_PROTOCOL_NAME_ARG        "npname"  /* do not show the protocol name during the printing */
 #define OUTPUT_FORMAT_ARG           "output"  /* choose the output format (std / raw / art) */
-#define PACKET_NUM_ARG              "#"  /* show packet number next to packet */
+#define PACKET_NUM_ARG              "pktnum"  /* show packet number next to packet */
 #define READ_FILE_ARG               "r"
 #define WRITE_FILE_ARG              "w"
 #define DEST_FILE_ARG               "to"  /* (e.g. used to select the file where the scanned packets will be saved "save -to "dummy.pcap"") */
