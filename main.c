@@ -36,7 +36,7 @@
 	TODO: 	Fix the "non literal string" warning in vfprintf(stderr, (const char *)error_formats[code], args);
 			in 'status_handler.c'
 
-	TODO: 	Why if I set ARG_PREFIX to "--" the buffer is not correctly interpreted into a command?
+	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
 */
 
 static void _deallocate_heap(

@@ -79,6 +79,7 @@ typedef enum {
     DELETE_FILE_ERROR,
     LONG_TO_INT_CAST_ERROR,
     INT_TO_CHAR_CAST_ERROR,
+    REGEX_COMPILE_ERROR,
     UNKNOWN_ERROR
 } err_code;
 

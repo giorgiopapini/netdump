@@ -6,7 +6,7 @@
 
 
 node *create_node(void *content) {
-    node *new_node = (node *)malloc(sizeof(node));
+    node *new_node = malloc(sizeof *new_node);
     CHECK_NULL_EXIT(new_node);
 
     new_node->content = content;

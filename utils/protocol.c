@@ -37,7 +37,7 @@ protocol_handler *create_protocol_handler(
 	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len, output_format fmt),
 	const char *protocol_name
 ) {
-	protocol_handler *new_handler = (protocol_handler *)malloc(sizeof(protocol_handler));
+	protocol_handler *new_handler = malloc(sizeof *new_handler);
 	CHECK_NULL_EXIT(new_handler);
 
 	new_handler->protocol = proto;
@@ -51,7 +51,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 	protocol_handler *handler,
 	int proto_table_num
 ) {
-	protocol_handler_mapping *new_mapping = (protocol_handler_mapping *)malloc(sizeof(protocol_handler_mapping));
+	protocol_handler_mapping *new_mapping = malloc(sizeof *new_mapping);
 	CHECK_NULL_EXIT(new_mapping);
 
 	new_mapping->handler = handler;
@@ -60,7 +60,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 }
 
 protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array */
-	protocol_handler_mapping **new_mappings = (protocol_handler_mapping **)malloc(sizeof(protocol_handler_mapping *) * 2);
+	protocol_handler_mapping **new_mappings = malloc(2 * sizeof *new_mappings);
 	CHECK_NULL_EXIT(new_mappings);
 
     new_mappings[0] = NULL;

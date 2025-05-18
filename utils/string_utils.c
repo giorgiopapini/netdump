@@ -75,7 +75,7 @@ void lower_str_except_interval(char *str, char interval_symbol) {
 
 void copy_str_n(char **dest, char *src, size_t n) {
     CHECK_NULL_EXIT(dest);
-    *dest = (char *)malloc(n + 1);
+    *dest = malloc(n + 1);
     CHECK_NULL_EXIT(*dest);
 
     memset(*dest, '\0', n + 1);
@@ -108,7 +108,7 @@ char * get_trimmed_str(char *str, size_t str_len) {
     if (new_index > 0 && new_str[new_index - 1] == ' ') new_str[new_index - 1] = '\0';
 
     if (' ' == new_str[0] && new_index > 0) new_index --;
-    result = (char *)malloc(new_index  + 1);
+    result = malloc(new_index  + 1);
     CHECK_NULL_EXIT(result);
 
     memset(result, '\0', new_index + 1);
@@ -168,7 +168,7 @@ char *str_concat(const char **str_arr, const char *prefix, const char *separator
     }
     total_len ++; /* For null terminator */
 
-    new_str = (char *)malloc(total_len);
+    new_str = malloc(total_len);
     CHECK_NULL_EXIT(new_str);
 
     new_str[0] = '\0';

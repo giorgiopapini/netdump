@@ -28,7 +28,7 @@
 #define SAVE_COMMAND_DESC           "Save scanned packets in a .pcap file"
 #define EXIT_COMMAND_DESC           "Exit program"
 
-#define ARG_PREFIX                  "-"  /* it has to be ONE char */
+#define ARG_PREFIX                  "-"
 #define NONE_ARG                    ""
 #define NUMBER_ARG                  "n"
 #define FILTER_ARG                  "filter"
@@ -134,7 +134,6 @@ typedef enum {
 } cmd_retval;
 
 
-int check_compliance(buffer *buff);
 int create_cmd_from_buff(command *cmd, buffer *buff);
 int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len);
 cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);

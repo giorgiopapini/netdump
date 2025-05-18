@@ -16,7 +16,7 @@
 #define _backspace_KEY 127
 
 typedef struct buffer {
-    char content[MAX_BUFFER_LEN];
+    char content[MAX_BUFFER_LEN];  /* set to 0 using memset in create_buffer() function */
     size_t len;
     size_t cursor_pos;
     int status;

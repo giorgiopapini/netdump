@@ -20,7 +20,7 @@ arg * create_arg_from_token(char *token) {
     if (0 == len) return NULL;
     if (' ' == token[len - 1]) token[len - 1] = '\0';
 
-    new_arg = (arg *)malloc(sizeof(arg));
+    new_arg = malloc(sizeof *new_arg);
     CHECK_NULL_EXIT(new_arg);
 
     new_arg->label = NULL;
@@ -30,6 +30,7 @@ arg * create_arg_from_token(char *token) {
     label_len = find_word_len(token, 0);
     if (0 >= label_len) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
+        free(new_arg);
         return NULL;
     }
 
@@ -37,7 +38,7 @@ arg * create_arg_from_token(char *token) {
     
     value_len = strlen(token) - label_len;  /* it alredy includes the null terminator */
     if (0 < value_len) {
-        new_arg->val = (char *)malloc(value_len);
+        new_arg->val = malloc(value_len);
         CHECK_NULL_EXIT(new_arg->val);
 
         memset(new_arg->val, '\0', value_len);
@@ -63,7 +64,7 @@ void add_arg(command *cmd, arg *new_arg) {
     char *old_label;
     unsigned long hash;
     
-    CHECK_NULL_EXIT(new_arg);
+    if (NULL == new_arg) return;
     hash = djb2_hash(new_arg->label);
 
     CHECK_NULL_EXIT(cmd);  /* cmd->args can't be NULL as it is defined in command data structure */
@@ -97,6 +98,7 @@ char *get_raw_val(command *cmd, const char *label) {
 
 int add_arg_from_token(command *cmd, char *temp, size_t *args_num) {
     arg *new_arg = create_arg_from_token(temp);
+    if (NULL == new_arg) return 1;  /* it means that temp was to properly formatted */
 
     CHECK_NULL_EXIT(args_num);
     *args_num = *args_num + 1;

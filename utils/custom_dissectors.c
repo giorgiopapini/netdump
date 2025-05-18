@@ -11,7 +11,7 @@
 static void _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
 
 custom_dissectors *create_custom_dissectors(void) {
-    custom_dissectors *dissectors = (custom_dissectors *)malloc(sizeof(custom_dissectors));
+    custom_dissectors *dissectors = malloc(sizeof *dissectors);
     CHECK_NULL_EXIT(dissectors);
 
     dissectors->len = 0;
@@ -24,7 +24,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
     
     CHECK_NULL_EXIT(arr);
     if (NULL == arr->custom_protos) {
-        arr->custom_protos = (protocol_handler **)malloc(sizeof(protocol_handler *));
+        arr->custom_protos = malloc(sizeof *(arr->custom_protos));
         CHECK_NULL_EXIT(arr->custom_protos);
         arr->custom_protos[0] = new_custom_proto;
         arr->len = 1;
@@ -56,7 +56,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
 }
 
 dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto, char *filename) {
-    dissectors_entry *new_entry = (dissectors_entry *)malloc(sizeof(dissectors_entry));
+    dissectors_entry *new_entry = malloc(sizeof *new_entry);
     CHECK_NULL_EXIT(new_entry);
     CHECK_NULL_EXIT(proto_table);
     CHECK_NULL_EXIT(new_custom_proto);
@@ -73,7 +73,7 @@ dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protoco
 void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_dissectors_entry) {
     CHECK_NULL_EXIT(custom_diss);
     if (NULL == custom_diss->table) {
-        custom_diss->table = (dissectors_entry **)malloc(sizeof(dissectors_entry *));
+        custom_diss->table = malloc(sizeof *(custom_diss->table));
         CHECK_NULL_EXIT(custom_diss->table);
         custom_diss->table[0] = new_dissectors_entry;
         custom_diss->len = 1;

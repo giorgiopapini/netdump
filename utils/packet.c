@@ -13,7 +13,7 @@ packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t n
     void *new_bytes;
 
     /* dinamically allocate a new struct pcap_pkthdr */
-    new_hdr = (struct pcap_pkthdr *)malloc(sizeof(struct pcap_pkthdr));
+    new_hdr = malloc(sizeof *new_hdr);
     CHECK_NULL_EXIT(new_hdr);
     CHECK_NULL_EXIT(hdr);
 
@@ -22,13 +22,13 @@ packet *create_packet(const struct pcap_pkthdr *hdr, int datalink_type, size_t n
     new_hdr->ts = hdr->ts;
 
     /* dinamically allocate a copy of uint8_t *bytes string */
-    new_bytes = (void *)malloc(hdr->len);
+    new_bytes = malloc(hdr->len);
     CHECK_NULL_EXIT(new_bytes);
 
 	memcpy(new_bytes, bytes, hdr->len);
 
     /* dinamically allocate a new packet and populate members with freshly allocated header and bytes string */
-    new_pkt = (packet *)malloc(sizeof(packet));
+    new_pkt = malloc(sizeof *new_pkt);
     CHECK_NULL_EXIT(new_pkt);
 
     new_pkt->header = new_hdr;

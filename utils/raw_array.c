@@ -9,7 +9,7 @@ void init_arr(raw_array *arr, int n) {
     if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
 
     CHECK_NULL_EXIT(arr);
-    arr->values = (void **)malloc((size_t)n * sizeof(void *));  /* At this point n is certain to be > 0 */
+    arr->values = malloc((size_t)n * sizeof *(arr->values));  /* At this point n is certain to be > 0 */
     CHECK_NULL_EXIT(arr->values);
 
     arr->allocated = (size_t)n;

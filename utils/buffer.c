@@ -26,7 +26,7 @@ static int _backspace(buffer *buff);
 static int _literal_key(buffer *buff, int c);
 
 buffer *create_buffer(void) {
-    buffer *new_buff = (buffer *)malloc(sizeof(buffer));
+    buffer *new_buff = malloc(sizeof *new_buff);
     CHECK_NULL_EXIT(new_buff);
 
     memset(new_buff->content, 0, sizeof(new_buff->content));
