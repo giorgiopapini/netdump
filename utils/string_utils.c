@@ -62,14 +62,25 @@ int has_shared_lib_ext(const char *filename) {
     return ext && (0 == strcmp(ext, ".so") || 0 == strcmp(ext, ".dylib"));
 }
 
-void lower_str_except_interval(char *str, char interval_symbol) {
+void lower_str_except_interval(char *str, const char *interval_delim) {
+    char *p;
     int locked = 0;
+    size_t delim_len = strlen(interval_delim);
 
     CHECK_NULL_EXIT(str);
-    while ('\0' != *str) {
-        if (*str == interval_symbol) locked = !locked;
-        if (0 == locked) *str = (char)tolower((unsigned char)*str);
-        str += 1;
+    CHECK_NULL_EXIT(interval_delim);
+
+    p = str;
+    while (*p) {
+        if (0 == strncmp(p, interval_delim, delim_len)) {
+            locked = !locked;
+            p += delim_len;
+        } else {
+            if (!locked) {
+                *p = (char)tolower((unsigned char)*p);
+            }
+            p ++;
+        }
     }
 }
 

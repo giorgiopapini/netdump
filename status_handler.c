@@ -47,7 +47,7 @@ static const char *error_formats[] = {
     [DELETE_FILE_ERROR] = "Couldn't delete '%s'",
     [LONG_TO_INT_CAST_ERROR] = "Failed to cast from long to int: value exceeds the range of int",
     [INT_TO_CHAR_CAST_ERROR] = "Failed to cast from int to char: value exceeds the range of char",
-    [REGEX_COMPILE_ERROR] = "Could not compile regex",
+    [NON_CLOSING_STR_ERROR] = "A string was not properly closed, expected a closing '%s'",
     [UNKNOWN_ERROR] = "Unknown error, please report this issue to mantainers",
 };
 

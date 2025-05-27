@@ -90,7 +90,7 @@ void normalize_content(buffer *buff) {
     free(normalized_str);
     
     buff->len = strlen(buff->content);
-    lower_str_except_interval(buff->content, STRING_DELIMITER);
+    lower_str_except_interval(buff->content, ARG_STR_DELIMITER);
     buff->content[buff->len] = '\0';
 }
 

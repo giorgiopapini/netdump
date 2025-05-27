@@ -4,7 +4,19 @@
 #include <string.h>
 
 #include "../status_handler.h"
+#include "formats.h"
 #include "string_utils.h"
+
+static void _remove_string_delimiter(char *str, const char *delimeter);
+
+
+static void _remove_string_delimiter(char *str, const char *delimeter) {
+    char *match;
+    size_t len = strlen(delimeter);
+    
+    while ((match = strstr(str, delimeter)))
+        memmove(match, match + len, strlen(match + len) + 1);
+}
 
 arg * create_arg_from_token(char *token) {
     /*  check if token ends with a whitespace (which is mandatory when multiple args exists, otherwise '-<label> <value>' wouldn't 
@@ -15,8 +27,9 @@ arg * create_arg_from_token(char *token) {
     arg *new_arg;
 
     CHECK_NULL_EXIT(token);
+
+    _remove_string_delimiter(token, ARG_STR_DELIMITER);
     len = strlen(token);
-    
     if (0 == len) return NULL;
     if (' ' == token[len - 1]) token[len - 1] = '\0';
 

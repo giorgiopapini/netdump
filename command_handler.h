@@ -8,6 +8,7 @@
 #include "utils/custom_dissectors.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
+#include "utils/formats.h"
 
 #define ANALIZE_COMMAND             "analize"
 #define DEVICES_LIST_COMMAND        "devlist"
@@ -32,7 +33,6 @@
     ATTENTION:
         Arguments must be alphanumeric because of the way the "_check_prefix_validity" function is implemented.
 */
-#define ARG_PREFIX                  "-"
 #define NONE_ARG                    ""
 #define NUMBER_ARG                  "n"
 #define FILTER_ARG                  "filter"

@@ -37,6 +37,10 @@
 			in 'status_handler.c'
 
 	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
+
+	TODO: 	- dissectors -add prova.so is not working when I install netdump using dnf (system wide).
+			It correctly understands that he is the the current working directory but seems like it cant
+			load the library. Maybe trying to reconstruct the whole path?
 */
 
 static void _deallocate_heap(

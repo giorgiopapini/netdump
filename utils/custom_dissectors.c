@@ -49,7 +49,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
         }
 
         arr->len ++;
-        arr->custom_protos = realloc(arr->custom_protos, arr->len * sizeof(protocol_handler *));
+        arr->custom_protos = realloc(arr->custom_protos, arr->len * sizeof arr->custom_protos);
         CHECK_NULL_EXIT(arr->custom_protos);
         arr->custom_protos[arr->len - 1] = new_custom_proto;
     }
@@ -80,7 +80,7 @@ void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_d
     }
     else {
         custom_diss->len ++;
-        custom_diss->table = realloc(custom_diss->table, custom_diss->len * sizeof(dissectors_entry *));
+        custom_diss->table = realloc(custom_diss->table, custom_diss->len * sizeof custom_diss->table);
         CHECK_NULL_EXIT(custom_diss->table);
         custom_diss->table[custom_diss->len - 1] = new_dissectors_entry;
     }

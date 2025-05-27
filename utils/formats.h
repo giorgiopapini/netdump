@@ -21,12 +21,13 @@
 
 #define IPV6_ADDR_STR_LEN 40  /* 0000:0000:0000:0000:0000:0000:0000:0000'\0' */
 
-#define UNKNOWN "unknown"  /* it should NEVER be NULL */
-#define PREFIX_STR "* "
+#define UNKNOWN                     "unknown"  /* it should NEVER be NULL */
+#define PREFIX_STR                  "* "
 
-#define COMMAND_FORMAT "<command> " ARG_PREFIX "<arg> <value>"
-#define STRING_DELIMITER '"'
-#define STRINGS_SEPARATOR ","
+#define COMMAND_FORMAT              "<command> " ARG_PREFIX "<arg> <value>"
+#define ARG_PREFIX                  "-"
+#define ARG_STR_DELIMITER           "\""
+#define STRINGS_SEPARATOR           ","
 
 void print_ipv4(const uint32_t addr);
 void print_ipv6(const uint8_t addr[16], char output[IPV6_ADDR_STR_LEN]);
