@@ -2,12 +2,16 @@
 
 #include <ctype.h>
 #include <fcntl.h>
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <termios.h>
-#include <unistd.h>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <limits.h>
+    #include <unistd.h>
+#endif
 
 #include "../status_handler.h"
 
@@ -38,6 +42,42 @@ size_t count_words(const char *str, size_t len) {
         }
     }
     return count;
+}
+
+int is_abs_path(const char *path) {
+    if (NULL == path) return 0;
+
+#ifdef _WIN32
+    if (':' == isalpha(path[0]) && path[1] && 
+        ('\\' == path[2] || '/' == path[2])
+    ) return 1;
+    if ('\\' == path[0] && '\\' == path[1]) return 1;
+#else
+    if ('/' == path[0]) return 1;
+#endif
+    
+    return 0;
+}
+
+int get_absolute_path(const char *relative_path, char *abs_path, size_t max_len) {
+#ifdef _WIN32
+    DWORD len;
+#else
+    char *res;
+#endif
+    
+    if (NULL == relative_path || NULL == abs_path || 0 == max_len)
+        return -1;
+
+#ifdef _WIN32
+    len = GetFullPathNameA(relative_path, (DWORD)max_len, abs_path, NULL);
+    if (0 == len || max_len <= len) return -1;
+    return 0;
+#else
+    res = realpath(relative_path, abs_path);
+    if (NULL == res || max_len <= strlen(abs_path)) return -1;
+    return 0;
+#endif
 }
 
 char *get_filename(char *path) {

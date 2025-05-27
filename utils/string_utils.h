@@ -6,6 +6,8 @@
 
 size_t find_word_len(char *sentence, int word_pos);    /* first word len? -> word_pos should be 0 (first index) */
 size_t count_words(const char *str, size_t len);
+int is_abs_path(const char *path);
+int get_absolute_path(const char *relative_path, char *abs_path, size_t max_len);
 char *get_filename(char *path);
 int has_shared_lib_ext(const char *filename);
 void copy_str_n(char **dest, char *src, size_t end_index);

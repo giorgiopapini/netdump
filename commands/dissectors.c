@@ -19,7 +19,7 @@
 
 
 
-static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path);
+static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char path[PATH_MAX]);
 static void _add_and_load_dissectors_dir(shared_libs *libs, custom_dissectors *dissectors, char *dir_path);
 
 void change_dissector_status(int new_status, char *filenames, shared_libs *libs) {
@@ -66,15 +66,20 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     }
 }
 
-static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char *path) {
+static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char path[PATH_MAX]) {
+    char abs_path[PATH_MAX];
     char *filename;
     void *handle;
 
-    filename = get_filename(path);
+    CHECK_NULL_RET(path);
+
+    if (is_abs_path(path)) snprintf(abs_path, PATH_MAX, "%s", path);
+    else get_absolute_path(path, abs_path, PATH_MAX);
+
+    filename = get_filename(abs_path);
     if (!has_shared_lib_ext((const char *)filename)) return;  /* ADD MESSAGE ERROR! */
 
-    CHECK_NULL_RET(path);
-    handle = dlopen(path, RTLD_LAZY);
+    handle = dlopen(abs_path, RTLD_LAZY);
     if (NULL != handle) {
         add_shared_lib(libs, handle, strdup(filename), 1);
         load_dissector(dissectors, handle, strdup(filename));
@@ -123,7 +128,7 @@ void add_and_load_dissectors(shared_libs *libs, custom_dissectors *dissectors, c
         trimmed = get_trimmed_str(token, strlen(token));
 
         if (0 != stat(trimmed, &path_stat)) {
-            raise_error(NO_SUCH_FILE_OR_DIR_ERROR, 0, NULL, trimmed);
+            raise_error(NO_SUCH_FILE_OR_DIR_ERROR, 0, ABSOLUTE_PATH_HINT, trimmed);
             return;
         }
 
