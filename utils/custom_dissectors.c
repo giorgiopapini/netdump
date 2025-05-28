@@ -124,8 +124,9 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
     protocol_handler_mapping **(*get_custom_protocols_mapping)(void);
     char *error;
 
-    CHECK_NULL_EXIT(handle);
     CHECK_NULL_EXIT(custom_diss);
+    CHECK_NULL_EXIT(handle);
+    CHECK_NULL_EXIT(filename);
 
     get_custom_protocols_mapping = (protocol_handler_mapping **(*)(void))dlsym(handle, FUNCTION_NAME);
 
@@ -171,9 +172,9 @@ protocol_handler *get_custom_protocol_handler(
 
 void destroy_dissectors_entry(dissectors_entry *entry) {
     size_t i;
-    if (entry == NULL) return;
+    if (NULL == entry) return;
     
-    if (entry->custom_protos != NULL) {
+    if (NULL != entry->custom_protos) {
         for (i = 0; i < entry->len; i ++) {
             free(entry->custom_protos[i]);
             entry->custom_protos[i] = NULL;
@@ -181,7 +182,7 @@ void destroy_dissectors_entry(dissectors_entry *entry) {
         free(entry->custom_protos);
         entry->custom_protos = NULL;
     }
-    /* free(curr_entry->lib_filename); it is alredy deallocated in shared_libs destroy function? */
+    if (NULL != entry->lib_filename) free(entry->lib_filename);
     free(entry);
 }
 

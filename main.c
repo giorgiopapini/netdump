@@ -38,7 +38,7 @@
 
 	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
 
-	TODO:  	Add message error in _add_and_load_single_dissector function (instead of the comment)
+	TODO: 	Add a way to reset terminal to std mode (not raw mode) when CHECK_NULL_EXIT is triggered
 */
 
 static void _deallocate_heap(

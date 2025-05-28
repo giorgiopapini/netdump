@@ -99,7 +99,11 @@ int has_shared_lib_ext(const char *filename) {
     
     CHECK_NULL_EXIT(filename);
     ext = strrchr(filename, '.');
-    return ext && (0 == strcmp(ext, ".so") || 0 == strcmp(ext, ".dylib"));
+    return ext && (
+        0 == strcmp(ext, ".so") ||
+        0 == strcmp(ext, ".dylib") ||
+        0 == strcmp(ext, ".dll")
+    );
 }
 
 void lower_str_except_interval(char *str, const char *interval_delim) {

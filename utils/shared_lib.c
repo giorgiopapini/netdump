@@ -33,6 +33,8 @@ int is_active(shared_libs *libs, char *filename) {
 
 void add_shared_lib(shared_libs *libs, void *new_handle, char *new_filename, int new_status) {
     CHECK_NULL_EXIT(libs);
+    CHECK_NULL_EXIT(new_handle);
+    CHECK_NULL_EXIT(new_filename);
 
     libs->handles = (void **)realloc(libs->handles, (libs->count + 1) * sizeof(void *));
     CHECK_NULL_EXIT(libs->handles);

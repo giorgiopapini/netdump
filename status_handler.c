@@ -41,6 +41,7 @@ static const char *error_formats[] = {
     [DIR_OPEN_ERROR] = "Couldn't open '%s' directory",
     [CSTM_DISSECTORS_CONFLICT_ERROR] = "Dissectors conflict between '%s' and '%s', both have same key: %d in '%s' table",
     [LOADING_SHARED_LIB_ERROR] = "Error loading '%s' lib (%s)",
+    [FILE_NOT_SHARED_LIB_ERROR] = "File '%s' is not a shared library",
     [FUNCTION_NOT_FOUND_ERROR] = "Error finding function (%s)",
     [LIB_NOT_FOUND_ERROR] = "Library '%s' not found",
     [NO_SUCH_FILE_OR_DIR_ERROR] = "No such file or directory (%s)",

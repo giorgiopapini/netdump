@@ -77,10 +77,19 @@ static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors 
     else get_absolute_path(path, abs_path, PATH_MAX);
 
     filename = get_filename(abs_path);
-    if (!has_shared_lib_ext((const char *)filename)) return;  /* ADD MESSAGE ERROR! */
+    if (!has_shared_lib_ext((const char *)filename)) {
+        raise_error(FILE_NOT_SHARED_LIB_ERROR, 0, NULL, filename);
+        return;
+    }
 
     handle = dlopen(abs_path, RTLD_LAZY);
     if (NULL != handle) {
+        /*
+            strdup dynamically allocates a copy of filename, which is later freed in the exit function.
+            Two copies are created because each destroy function calls free on the filename pointer.
+            If both functions point to the same memory and attempt to free it, a double free error will occur.
+            (NULL check executed inside add_shared_lib and load_dissector functions)
+        */
         add_shared_lib(libs, handle, strdup(filename), 1);
         load_dissector(dissectors, handle, strdup(filename));
         print_success_msg(DISSECTOR_LOADED_SUCCESS);
