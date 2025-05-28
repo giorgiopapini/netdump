@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>  /* Never include <bits/termios_c_cc.h> directly; use <termios.h> instead */
 #include <string.h>
@@ -15,6 +16,7 @@
 #include "utils/command.h"
 #include "utils/custom_dissectors.h"
 #include "utils/shared_lib.h"
+#include "utils/terminal_handler.h"
 
 /*
 	TODO (optional):	(prevent the shift + _arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
@@ -37,8 +39,6 @@
 			in 'status_handler.c'
 
 	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
-
-	TODO: 	Add a way to reset terminal to std mode (not raw mode) when CHECK_NULL_EXIT is triggered
 */
 
 static void _deallocate_heap(
@@ -63,7 +63,6 @@ int main(void) {
 	fd_set readfds;
 	cmd_retval retval;
     int ret;
-	struct termios original, term;
 
 	buffer buff = { 0 };
 	command cmd = { 0 };
@@ -72,12 +71,8 @@ int main(void) {
 	shared_libs libs = { 0 };
 	custom_dissectors custom_diss = { 0 };
 
-    tcgetattr(STDIN_FILENO, &original);
-	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= (tcflag_t)~(ICANON | ECHO);
-    term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	enable_raw_mode();
+    atexit(restore_terminal_mode);
 	
 	retval = RET_UNKNOWN;
 	_prompt();
@@ -95,7 +90,7 @@ int main(void) {
 		if (RET_EXIT == retval) break;
     }
 	
-	tcsetattr(STDIN_FILENO, TCSANOW, &original);
+	restore_terminal_mode();  /* maybe superfluous? */
 	_deallocate_heap(&cmd, &packets, &history, &libs, &custom_diss);
 	return 0;
 }
