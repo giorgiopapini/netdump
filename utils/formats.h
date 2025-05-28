@@ -24,6 +24,15 @@
 #define UNKNOWN                     "unknown"  /* it should NEVER be NULL */
 #define PREFIX_STR                  "* "
 
+#define DEFAULT_SPACE               "  "  /* DEFAULT_SPACE len corresponds to PREFIX_STR len */
+
+#define BAR                         "─"
+#define PIPE                        "├"
+#define CORNER                      "└"
+
+#define DEFAULT_PIPE                PIPE BAR BAR
+#define DEFAULT_CORNER              CORNER BAR BAR
+
 #define COMMAND_FORMAT              "<command> " ARG_PREFIX "<arg> <value>"
 #define ARG_PREFIX                  "-"
 #define ARG_STR_DELIMITER           "\""

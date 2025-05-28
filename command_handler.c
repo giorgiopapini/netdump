@@ -9,6 +9,7 @@
 #include "utils/string_utils.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"
+#include "commands/protolist.h"
 #include "commands/dissectors.h"
 #include "commands/reset.h"
 #include "commands/print.h"
@@ -288,6 +289,11 @@ cmd_retval execute_command(
         retval = RET_DEVLIST;
         if (CHECK_ARGS(cmd, DEVICES_LIST_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist();
+    }
+    else if (is_command(cmd, PROTOLIST_COMMAND)) {
+        retval = RET_PROTOLIST;
+        if (CHECK_ARGS(cmd, PROTOLIST_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PROTOLIST_ARGS)) execute_protolist(cmd);
     }
     else if (is_command(cmd, DISSECTORS_COMMAND)) {
         retval = RET_DISSECTORS;

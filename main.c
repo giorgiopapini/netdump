@@ -39,6 +39,9 @@
 			in 'status_handler.c'
 
 	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
+
+	TODO: 	Add arguments that let the user filter protolist based on a specific prototable, than a specific number.
+			if it is contained print the data, otherwise print "protocol not supported"
 */
 
 static void _deallocate_heap(

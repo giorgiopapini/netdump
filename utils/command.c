@@ -94,7 +94,10 @@ void add_arg(command *cmd, arg *new_arg) {
 }
 
 arg * get_arg(command *cmd, const char *label) {
-    arg *res = cmd->args[djb2_hash(label)];
+    arg *res = NULL;
+    CHECK_NULL_EXIT(cmd);
+
+    res = cmd->args[djb2_hash(label)];
     while (NULL != res) {
         if (0 == strcmp(res->label, label)) return res;
         res = res->next;

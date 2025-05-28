@@ -106,6 +106,28 @@ int has_shared_lib_ext(const char *filename) {
     );
 }
 
+char *new_lower_str(const char *str) {
+    const char *src;
+    char *dst;
+    char *lower;
+
+    CHECK_NULL_EXIT(str);
+    lower = malloc(strlen(str) + 1);
+    CHECK_NULL_EXIT(lower);
+
+    src = str;
+    dst = lower;
+
+    while (*src) {
+        *dst = (char)tolower((unsigned char)*src);
+        src ++;
+        dst ++;
+    }
+
+    *dst = '\0';
+    return lower;
+}
+
 void lower_str_except_interval(char *str, const char *interval_delim) {
     char *p;
     int locked = 0;

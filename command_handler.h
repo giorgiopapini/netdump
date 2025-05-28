@@ -12,6 +12,7 @@
 
 #define ANALIZE_COMMAND             "analize"
 #define DEVICES_LIST_COMMAND        "devlist"
+#define PROTOLIST_COMMAND           "protolist"
 #define DISSECTORS_COMMAND          "dissectors"
 #define RESET_COMMAND               "reset"         /* erase currently stored packets (if command analize alredy run) */
 #define PRINT_COMMAND               "print"         /* print the packets as done in analize (without re-analizing the net) */
@@ -22,6 +23,7 @@
 
 #define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
+#define PROTOLIST_COMMAND_DESC      "Retrieve a list of supported protocols"
 #define DISSECTORS_COMMAND_DESC     "Manage custom dissectors"
 #define RESET_COMMAND_DESC          "Reset stored packets"
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
@@ -53,6 +55,7 @@
 #define ADD_DISSECTOR_ARG           "add"
 #define ACTIVATE_LIB_ARG            "on"
 #define DEACTIVATE_LIB_ARG          "off"
+#define PROTO_TABLE_ARG             "tables"
 
 #define NUMBER_ARG_DESC             "Choose a packet by its scanning order number"
 #define PACKET_AMOUNT_ARG_DESC      "Set a packet scanning limit"
@@ -74,6 +77,7 @@
 #define ADD_DISSECTOR_ARG_DESC      "Add custom dissector"
 #define ACTIVATE_LIB_ARG_DESC       "Activate custom dissector (empty = all)"
 #define DEACTIVATE_LIB_ARG_DESC     "Deactivate custom dissector (empty = all)"
+#define PROTO_TABLE_ARG_DESC        "Show supported protocols for given tables"
 
 #define NUMBER_ARG_EG               ARG_PREFIX NUMBER_ARG               " 7"
 #define FILTER_ARG_EG               ARG_PREFIX FILTER_ARG               " \"tcp port 80\""
@@ -85,6 +89,7 @@
 #define ADD_DISSECTOR_ARG_EG        ARG_PREFIX ADD_DISSECTOR_ARG        " \"/dir/file-7.so" STRINGS_SEPARATOR " /dir/file-8.so\""
 #define ACTIVATE_LIB_ARG_EG         ARG_PREFIX ACTIVATE_LIB_ARG         " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
 #define DEACTIVATE_LIB_ARG_EG       ARG_PREFIX DEACTIVATE_LIB_ARG       " \"file-7.so" STRINGS_SEPARATOR " file-8.so\""
+#define PROTO_TABLE_ARG_EG          ARG_PREFIX PROTO_TABLE_ARG          " \"dlt_protos" STRINGS_SEPARATOR " ethertypes\"" 
 
 #define OUTPUT_ARG_VAL_STD          "std"
 #define OUTPUT_ARG_VAL_RAW          "raw"
@@ -101,6 +106,9 @@
 
 #define DEVICES_LIST_ARGS           NONE_ARG
 #define REQUIRED_DEVICES_LIST_ARGS  NONE_ARG
+
+#define PROTOLIST_ARGS              PROTO_TABLE_ARG
+#define REQUIRED_PROTOLIST_ARGS     NONE_ARG
 
 #define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG
 #define REQUIRED_DISSECTORS_ARGS    NONE_ARG
@@ -128,6 +136,7 @@ typedef enum {
     RET_UNKNOWN,  /* when the command is unknown */
     RET_ANALIZE,
     RET_DEVLIST,
+    RET_PROTOLIST,
     RET_DISSECTORS,
     RET_RESET,
     RET_PRINT,

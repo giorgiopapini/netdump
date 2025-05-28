@@ -51,6 +51,7 @@ static const char *error_formats[] = {
     [LONG_TO_INT_CAST_ERROR] = "Failed to cast from long to int: value exceeds the range of int",
     [INT_TO_CHAR_CAST_ERROR] = "Failed to cast from int to char: value exceeds the range of char",
     [NON_CLOSING_STR_ERROR] = "A string was not properly closed, expected a closing '%s'",
+    [PROTO_TABLE_NOT_FOUND_ERROR] = "Protocols table named '%s' was not found",
     [UNKNOWN_ERROR] = "Unknown error, please report this issue to mantainers",
 };
 

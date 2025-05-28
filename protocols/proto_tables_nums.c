@@ -1,9 +1,14 @@
 #include "proto_tables_nums.h"
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
+#include "../status_handler.h"
 #include "../utils/formats.h"
 #include "../utils/protocol.h"
+#include "../utils/string_utils.h"
 #include "dlt_protos.h"
 #include "ethertypes.h"
 #include "ip_protos.h"
@@ -33,4 +38,23 @@ const char *get_table_name(protocol_handler *proto_table) {
     else if (proto_table == ppp_protos)     return PPP_PROTOS_LABEL;
     
     return UNKNOWN;
+}
+
+protocol_handler *get_proto_table_from_name(const char *name) {
+    char *lower_str;
+    protocol_handler *res = NULL;
+
+    CHECK_NULL_EXIT(name);
+    lower_str = new_lower_str(name);
+
+    /* this works until MACROS are lowercase */
+    if (0 == strcmp(lower_str, DLT_PROTOS_LABEL))           res = dlt_protos;
+    else if (0 == strcmp(lower_str, ETHERTYPES_LABEL))      res = ethertypes;
+    else if (0 == strcmp(lower_str, IP_PROTOS_LABEL))       res = ip_protos;
+    else if (0 == strcmp(lower_str, NET_PORTS_LABEL))       res = net_ports;
+    else if (0 == strcmp(lower_str, NLPID_PROTOS_LABEL))    res = nlpid_protos;
+    else if (0 == strcmp(lower_str, PPP_PROTOS_LABEL))      res = ppp_protos;
+    
+    free(lower_str);
+    return res;
 }

@@ -10,15 +10,17 @@
 #define NLPID_PROTOS        5
 #define PPP_PROTOS          6
 
-#define DLT_PROTOS_LABEL    "DLT_PROTOS"
-#define ETHERTYPES_LABEL    "ETHERTYPES"
-#define IP_PROTOS_LABEL     "IP_PROTOS"
-#define NET_PORTS_LABEL     "NET_PORTS"
-#define NLPID_PROTOS_LABEL  "NLPID_PROTOS"
-#define PPP_PROTOS_LABEL    "PPP_PROTOS"
+/* if MACROS are not in lowercase, some functions like get_table_from_name will no longer work */
+#define DLT_PROTOS_LABEL    "dlt_protos"
+#define ETHERTYPES_LABEL    "ethertypes"
+#define IP_PROTOS_LABEL     "ip_protos"
+#define NET_PORTS_LABEL     "net_ports"
+#define NLPID_PROTOS_LABEL  "nlpid_protos"
+#define PPP_PROTOS_LABEL    "ppp_protos"
 
 
 protocol_handler *get_proto_table(int proto_table_num);
 const char *get_table_name(protocol_handler *proto_table);
+protocol_handler *get_proto_table_from_name(const char *name);
 
 #endif
