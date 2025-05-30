@@ -87,6 +87,16 @@ The following table lists the allowed arguments for this command.
 | `-on` | str | Activate custom dissector (empty = all) |
 | `-off` | str | Deactivate custom dissector (empty = all) |
 
+## ```protocols```
+This command is used to retrieve a list of supported protocols.
+The following table lists the allowed arguments for this command.
+
+| Arg | Value | Description |
+|--------|------------|---------|
+| `-tables` | none | Show supported protocol tables |
+| `-from` | str | Show supported protocols from the specified tables |
+| `-search` | int | Looks up a protocol by number. If 'from' is set, the search is limited to the specified tables |
+
 ### ```save```
 This command is used to save scanned packets to a .pcap file.
 The following table lists the allowed arguments for this command.

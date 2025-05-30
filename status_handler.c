@@ -52,6 +52,7 @@ static const char *error_formats[] = {
     [INT_TO_CHAR_CAST_ERROR] = "Failed to cast from int to char: value exceeds the range of char",
     [NON_CLOSING_STR_ERROR] = "A string was not properly closed, expected a closing '%s'",
     [PROTO_TABLE_NOT_FOUND_ERROR] = "Protocols table named '%s' was not found",
+    [PROTOCOL_NOT_FOUND_ERROR] = "Protocol (%d) not found in '%s' proto table",
     [UNKNOWN_ERROR] = "Unknown error, please report this issue to mantainers",
 };
 
@@ -67,7 +68,8 @@ static const char *success_formats[] = {
     [DISSECTOR_ACTIVATED_SUCCESS] = "Custom dissector successfully activated",
     [DISSECTOR_DEACTIVATED_SUCCESS] = "Custom dissector successfully deactivated",
     [DISSECTOR_LOADED_SUCCESS] = "Custom dissector successfully loaded",
-    [DISSECTOR_DELETED_SUCCESS] = "Custom dissector successfully deleted"
+    [DISSECTOR_DELETED_SUCCESS] = "Custom dissector successfully deleted",
+    [PROTOCOL_FOUND_SUCCESS] = "Protocol found"
 };
 
 
@@ -96,12 +98,14 @@ void raise_error(err_code code, int should_exit, const char *hint, ...) {
     */
 }
 
-void print_warning_msg(warning_code code) {
+void print_warning_msg(warning_code code, int newline) {
     const char *msg = warning_formats[code];
-    printf(YELLOW "[WARNING] -> %s\n" RESET_COLOR, msg);
+    printf(YELLOW "[WARNING] -> %s" RESET_COLOR, msg);
+    if (0 != newline) printf("\n");
 }
 
-void print_success_msg(success_code code) {
+void print_success_msg(success_code code, int newline) {
     const char *msg = success_formats[code];
-    printf(GREEN "[SUCCESS] -> %s\n" RESET_COLOR, msg);
+    printf(GREEN "[SUCCESS] -> %s" RESET_COLOR, msg);
+    if (0 != newline) printf("\n");
 }

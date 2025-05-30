@@ -29,14 +29,14 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
     size_t i;
 
     if (NULL == libs) {
-        print_warning_msg(DISSECTORS_EMPTY_WARNING);
+        print_warning_msg(DISSECTORS_EMPTY_WARNING, 1);
         return;
     }
 
     if (NULL == filenames) {
         for (i = 0; i < libs->count; i ++) libs->statuses[i] = new_status;
-        if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS);
-        else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS);
+        if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS, 1);
+        else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS, 1);
         return;
     }
 
@@ -56,8 +56,8 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
 
         if (!found) raise_error(LIB_NOT_FOUND_ERROR, 0, NULL, trimmed);
         else {
-            if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS);
-            else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS);
+            if (0 == new_status) print_success_msg(DISSECTOR_DEACTIVATED_SUCCESS, 1);
+            else print_success_msg(DISSECTOR_ACTIVATED_SUCCESS, 1);
             libs->statuses[i] = new_status;
         }
 
@@ -92,7 +92,7 @@ static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors 
         */
         add_shared_lib(libs, handle, strdup(filename), 1);
         load_dissector(dissectors, handle, strdup(filename));
-        print_success_msg(DISSECTOR_LOADED_SUCCESS);
+        print_success_msg(DISSECTOR_LOADED_SUCCESS, 1);
     }
     else raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, filename, dlerror());
 }
@@ -154,7 +154,7 @@ void print_dissectors_list(shared_libs *libs) {
     size_t i;
 
     if (NULL == libs) {
-        print_warning_msg(DISSECTORS_EMPTY_WARNING);
+        print_warning_msg(DISSECTORS_EMPTY_WARNING, 1);
         return;
     }
 
@@ -166,7 +166,7 @@ void print_dissectors_list(shared_libs *libs) {
     }
 
     if (empty) {
-        print_warning_msg(DISSECTORS_EMPTY_WARNING);
+        print_warning_msg(DISSECTORS_EMPTY_WARNING, 1);
         return;
     }
 

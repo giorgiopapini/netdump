@@ -14,7 +14,8 @@ void copy_str_n(char **dest, char *src, size_t end_index);
 char * get_trimmed_str(char *str, size_t str_len);
 char *new_lower_str(const char *str);
 void lower_str_except_interval(char *str, const char *interval_delim);  /* interval_symbol is the opening and closing char that delimitates the interval */
-long str_to_num(char *str);
+long str_to_long(char *str);
+int long_to_int(long num);
 void uint_to_bin_str(char *str, uint64_t num, size_t size);
 char *str_concat(const char **str_arr, const char *prefix, const char *separator, size_t n_str);
 int getch(void);   /* simulates behaviour of getch() function in <conio.h> for Win systems. Get char without the enter */

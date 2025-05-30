@@ -27,7 +27,7 @@ void execute_save(command *cmd, raw_array *packets) {
     pcap_dumper_t *dumper;
     packet *tmp_pkt;
     char *dest_path = get_raw_val(cmd, DEST_FILE_ARG);
-    long raw_pkt_num = str_to_num(get_raw_val(cmd, NUMBER_ARG));
+    long raw_pkt_num = str_to_long(get_raw_val(cmd, NUMBER_ARG));
     size_t pkt_num;  /* if pkt_num == 0 than save ALL the packets */
     size_t i;
 
@@ -66,5 +66,5 @@ void execute_save(command *cmd, raw_array *packets) {
     pcap_dump_close(dumper);
     pcap_close(handle);
 
-    print_success_msg(PACKETS_DUMP_SUCCESS);
+    print_success_msg(PACKETS_DUMP_SUCCESS, 1);
 }

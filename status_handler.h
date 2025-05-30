@@ -84,6 +84,7 @@ typedef enum {
     INT_TO_CHAR_CAST_ERROR,
     NON_CLOSING_STR_ERROR,
     PROTO_TABLE_NOT_FOUND_ERROR,
+    PROTOCOL_NOT_FOUND_ERROR,
     UNKNOWN_ERROR
 } err_code;
 
@@ -99,13 +100,14 @@ typedef enum {
     DISSECTOR_ACTIVATED_SUCCESS,
     DISSECTOR_DEACTIVATED_SUCCESS,
     DISSECTOR_LOADED_SUCCESS,
-    DISSECTOR_DELETED_SUCCESS
+    DISSECTOR_DELETED_SUCCESS,
+    PROTOCOL_FOUND_SUCCESS
 } success_code;
 
 
 void raise_error(err_code code, int should_exit, const char *hint, ...);
 
-void print_warning_msg(warning_code code);
-void print_success_msg(success_code code);
+void print_warning_msg(warning_code code, int newline);
+void print_success_msg(success_code code, int newline);
 
 #endif

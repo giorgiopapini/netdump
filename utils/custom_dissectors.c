@@ -3,7 +3,7 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 
-#include "../protocols/proto_tables_nums.h"
+#include "../protocols/proto_tables_handler.h"
 #include "../status_handler.h"
 #include "shared_lib.h"
 
@@ -42,7 +42,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
                     arr->custom_protos[i]->protocol_name,
                     new_custom_proto->protocol_name,
                     arr->custom_protos[i]->protocol,
-                    get_table_name(arr->proto_table)
+                    get_table_label_from_table(arr->proto_table)
                 );
                 return;
             }
@@ -90,7 +90,7 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
     protocol_handler *dest_table;
     size_t i;
 
-    dest_table = get_proto_table(dest_table_val);
+    dest_table = get_proto_table_from_id(dest_table_val);
     CHECK_NULL_EXIT(custom_diss);
 
     if (NULL == custom_diss->table) add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));

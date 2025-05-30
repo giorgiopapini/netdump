@@ -16,7 +16,7 @@
 void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
     packet *pkt;
     size_t pkt_num;
-    long raw_pkt_num = str_to_num(get_raw_val(cmd, NUMBER_ARG));
+    long raw_pkt_num = str_to_long(get_raw_val(cmd, NUMBER_ARG));
     
     if (0 > raw_pkt_num) {
         raise_error(NEGATIVE_BUFFER_INDEX, 0, NULL, raw_pkt_num); 

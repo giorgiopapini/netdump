@@ -195,12 +195,18 @@ char * get_trimmed_str(char *str, size_t str_len) {
     return result;
 }
 
-long str_to_num(char *str) {
+long str_to_long(char *str) {
     char *end;
     long num = 0;
     
     if (NULL != str) num = strtol(str, &end, 10);
     return num;
+}
+
+int long_to_int(long num) {
+    if (num > INT_MAX || num < INT_MIN) raise_error(LONG_TO_INT_CAST_ERROR, 1, NULL);
+    
+    return (int)num;
 }
 
 void uint_to_bin_str(char *str, uint64_t num, size_t dest_str_size) {

@@ -8,9 +8,9 @@
 void execute_reset(raw_array *packets) {
     CHECK_NULL_EXIT(packets);
 
-    if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS);
+    if (0 == packets->allocated) print_success_msg(ARRAY_EMPTY_SUCCESS, 1);
     else {
         reset_arr(packets, destroy_packet);
-        print_success_msg(ARRAY_RESET_SUCCESS);
+        print_success_msg(ARRAY_RESET_SUCCESS, 1);
     }
 }

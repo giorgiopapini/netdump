@@ -7,7 +7,7 @@
 #include "command_handler.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
-#include "protocols/proto_tables_nums.h"
+#include "protocols/proto_tables_handler.h"
 #include "status_handler.h"
 
 #define INLINE_SEPARATOR 		" | "
@@ -73,7 +73,7 @@ void dissect(
 	protocol_handler *custom_handler;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
-	protocol_handler *proto_hashmap = get_proto_table(proto_table_num);
+	protocol_handler *proto_hashmap = get_proto_table_from_id(proto_table_num);
 
 	custom_handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
 	
