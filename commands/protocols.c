@@ -78,10 +78,10 @@ static void _print_protos(protocol_handler *table) {
             else printf(DEFAULT_PIPE);
 
             printf(CYAN " %s" RESET_COLOR, table[i].protocol_name ? table[i].protocol_name : UNKNOWN);
-            printf(" (num: " YELLOW "%d" RESET_COLOR ")", table[i].protocol);
-            printf(" (layer: ");
+            printf(" {num: " YELLOW "%d" RESET_COLOR ",", table[i].protocol);
+            printf(" layer: ");
             _print_layer(table[i].layer);
-            printf(")");
+            printf("}");
         }
     }
 }
@@ -129,7 +129,10 @@ static protocol_handler *_simple_proto_search(const char *table_name, const int 
     size_t i;
 
     table = get_proto_table_from_name(table_name);
-    CHECK_NULL_RET(table, NULL);
+    if (NULL == table) {
+        raise_error(PROTO_TABLE_NOT_FOUND_ERROR, 0, NULL, table_name);
+        return NULL;
+    }
     
     for (i = 0; !IS_NULL_HANDLER(table[i]); i ++) {
         if (table[i].protocol == proto && NULL != table[i].dissect_proto)
@@ -142,12 +145,12 @@ static protocol_handler *_simple_proto_search(const char *table_name, const int 
 static void _show_search_result(const protocol_handler *result, const char *table_name) {
     if (NULL == result) return;
 
-    printf("Proto found in '%s' table --> ", table_name);
     printf(CYAN "%s" RESET_COLOR, result->protocol_name ? result->protocol_name : UNKNOWN);
-    printf(" (num: " YELLOW "%d" RESET_COLOR ")", result->protocol);
-    printf(" (layer: ");
+    printf(" {proto_table: " YELLOW "%s" RESET_COLOR, table_name);
+    printf(", num: " YELLOW "%d" RESET_COLOR, result->protocol);
+    printf(", layer: ");
     _print_layer(result->layer);
-    printf(")\n");
+    printf("}\n");
 }
 
 static void _proto_search_wrapper(const char *tables, const int proto) {
