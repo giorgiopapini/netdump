@@ -3,7 +3,6 @@
 
 #include "../utils/protocol.h"
 
-/* label should correspond to the actuals struct name */
 #define DLT_PROTOS_LABEL    "dlt_protos"
 #define ETHERTYPES_LABEL    "ethertypes"
 #define IP_PROTOS_LABEL     "ip_protos"

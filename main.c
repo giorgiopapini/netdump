@@ -40,17 +40,13 @@
 
 	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
 
-	TODO: 	Add arguments that let the user filter protolist based on a specific prototable, than a specific number.
-			if it is contained print the data, otherwise print "protocol not supported"
-
-	TODO: 	Find a way to assure that MACROS like DLT_PROTOS_LABEL, ETHERTYPES_LABEL are the same of the name of the
-			structs (in other words, name the structs based on those MACROS)
-
 	TODO: 	strtok modify the string on which is applied, check if this is a safe behaviour everywhere in the codebase
 			otherwise fix creating a copy using strdup of the string, than running strtok
 
 	TODO: 	Consider if it is better to use a mechanism of lookup table (like status_handler handles errors, success, warning messages) 
 			(which is algorithmically faster for searching) also for proto_tables
+			MAYBE NOT A LOOKUP TABLE (I would have sparse values --> Waste of memory). Think about an HashMap or something?
+			Or maybe a lookup table but with a binary search insted of linear search?
 
 	TODO: 	insted of proto_table_id, a standard int value is used across the codebase, check if it is good (also thinking
 			about the shared lib (libpcap) for custom dissectors)
