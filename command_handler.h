@@ -111,8 +111,8 @@
 #define DEVICES_LIST_ARGS           NONE_ARG
 #define REQUIRED_DEVICES_LIST_ARGS  NONE_ARG
 
-#define PROTOLIST_ARGS              PROTO_TABLES_ARG, PROTO_FROM_ARG, PROTO_SEARCH_ARG
-#define REQUIRED_PROTOLIST_ARGS     NONE_ARG
+#define PROTOCOLS_ARGS              PROTO_TABLES_ARG, PROTO_FROM_ARG, PROTO_SEARCH_ARG
+#define REQUIRED_PROTOCOLS_ARGS     NONE_ARG
 
 #define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG
 #define REQUIRED_DISSECTORS_ARGS    NONE_ARG
@@ -140,7 +140,7 @@ typedef enum {
     RET_UNKNOWN,  /* when the command is unknown */
     RET_ANALIZE,
     RET_DEVLIST,
-    RET_PROTOLIST,
+    RET_PROTOCOLS,
     RET_DISSECTORS,
     RET_RESET,
     RET_PRINT,
@@ -153,6 +153,6 @@ typedef enum {
 
 int create_cmd_from_buff(command *cmd, buffer *buff);
 int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len);
-cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);
+cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
 
 #endif

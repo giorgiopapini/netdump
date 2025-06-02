@@ -1,7 +1,7 @@
 #ifndef IP_PROTOS_H
 #define IP_PROTOS_H
 
-#include "../utils/protocol.h"
+#include "../utils/hashmap.h"
 
 #ifndef IPPROTO_HOPOPTS
 #define IPPROTO_HOPOPTS		0		/* IPv6 hop-by-hop options */
@@ -97,7 +97,12 @@
 #define IPPROTO_MOBILITY	135
 #endif
 
+/* around 256 ip_protos */
+#define IP_PROTOS_BUCKETS_NUM   512
 
-extern protocol_handler ip_protos[];
+
+extern hashmap *ip_protos;
+
+void load_ip_protos(void);
 
 #endif

@@ -19,11 +19,10 @@
 
 static void _print_table_names(void);
 static void _print_layer(protocol_layer layer);
-static void _print_protos(protocol_handler *table);
-static void _print_table(const char *name, protocol_handler *table);
+static void _print_protos(hashmap *table);
+static void _print_table(const char *name, hashmap *table);
 static void _print_selected_tables(char *tables);
 static void _print_all_tables(void);
-static protocol_handler *_simple_proto_search(const char *table_name, const int proto);
 static void _show_search_result(const protocol_handler *result, const char *table_name);
 static void _proto_search_wrapper(const char *tables, const int proto);
 
@@ -59,34 +58,33 @@ static void _print_layer(protocol_layer layer) {
     printf(RESET_COLOR);
 }
 
-static void _print_protos(protocol_handler *table) {
+static void _print_protos(hashmap *table) {
     size_t i;
-    size_t j = 0;
+    hashmap_entry *tmp;
+    protocol_handler *proto_hdl;
 
     if (NULL == table) return;
 
-    for (i = 0; !IS_NULL_HANDLER(table[i]); i ++) {
-        if (NULL != table[i].dissect_proto) {
-            printf("\n");
-            printf(DEFAULT_SPACE);
+    for (i = 0; i < table->buckets_count; i ++) {
+        tmp = table->buckets[i];
+        while (NULL != tmp) {
+            proto_hdl = ((protocol_handler *)tmp->value);
+            if (NULL != proto_hdl && NULL != proto_hdl->dissect_proto) {
+                printf("\n" DEFAULT_SPACE BAR);
 
-            /* discovers if table[i] is the last defined dissector */
-            j = i + 1;
-            while (NULL == table[j].dissect_proto && !IS_NULL_HANDLER(table[j])) j ++;
-
-            if (IS_NULL_HANDLER(table[j])) printf(DEFAULT_CORNER);
-            else printf(DEFAULT_PIPE);
-
-            printf(CYAN " %s" RESET_COLOR, table[i].protocol_name ? table[i].protocol_name : UNKNOWN);
-            printf(" {num: " YELLOW "%d" RESET_COLOR ",", table[i].protocol);
-            printf(" layer: ");
-            _print_layer(table[i].layer);
-            printf("}");
+                printf(CYAN " %s" RESET_COLOR, proto_hdl->protocol_name ? proto_hdl->protocol_name : UNKNOWN);
+                printf(" {num: " YELLOW "%d" RESET_COLOR ",", proto_hdl->protocol);
+                printf(" layer: ");
+                _print_layer(proto_hdl->layer);
+                printf("}");
+                
+            }
+            tmp = tmp->next;
         }
     }
 }
 
-static void _print_table(const char *name, protocol_handler *table) {
+static void _print_table(const char *name, hashmap *table) {
     if (NULL == table) {
         raise_error(PROTO_TABLE_NOT_FOUND_ERROR, 0, NULL, name);
         return;
@@ -124,22 +122,18 @@ static void _print_all_tables(void) {
 }
 
 static protocol_handler *_simple_proto_search(const char *table_name, const int proto) {
-    protocol_handler *table;
-    protocol_handler *res = NULL;
-    size_t i;
+    hashmap *table;
+    hashmap_entry *entry;
 
     table = get_proto_table_from_name(table_name);
     if (NULL == table) {
         raise_error(PROTO_TABLE_NOT_FOUND_ERROR, 0, NULL, table_name);
         return NULL;
     }
-    
-    for (i = 0; !IS_NULL_HANDLER(table[i]); i ++) {
-        if (table[i].protocol == proto && NULL != table[i].dissect_proto)
-            res = &table[i];
-    }
 
-    return res;
+    entry = get_entry(table, proto);
+    if (NULL != entry && NULL != entry->value) return ((protocol_handler *)entry->value);
+    return NULL;
 }
 
 static void _show_search_result(const protocol_handler *result, const char *table_name) {

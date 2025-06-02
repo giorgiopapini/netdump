@@ -1,7 +1,7 @@
 #ifndef NLPID_PROTOS_H
 #define NLPID_PROTOS_H
 
-#include "../utils/protocol.h"
+#include "../utils/hashmap.h"
 
 #ifndef NLPID_NULLNS
 #define	NLPID_NULLNS        0x00
@@ -49,7 +49,12 @@
 #define NLPID_IP6           0x8e
 #endif
 
+/* around 32 nlpid_protos */
+#define NLPID_PROTOS_BUCKETS_NUM    64
 
-extern protocol_handler nlpid_protos[];
+
+extern hashmap *nlpid_protos;
+
+void load_nlpid_protos(void);
 
 #endif

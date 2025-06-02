@@ -4,6 +4,24 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "hashmap.h"
+
+#define DLT_PROTOS_LABEL    "dlt_protos"
+#define ETHERTYPES_LABEL    "ethertypes"
+#define IP_PROTOS_LABEL     "ip_protos"
+#define NET_PORTS_LABEL     "net_ports"
+#define NLPID_PROTOS_LABEL  "nlpid_protos"
+#define PPP_PROTOS_LABEL    "ppp_protos"
+
+typedef enum {
+    DLT_PROTOS,
+    ETHERTYPES,
+    IP_PROTOS,
+    NET_PORTS,
+    NLPID_PROTOS,
+    PPP_PROTOS,
+    PROTO_TABLE_COUNT  /* sentinel value */
+} proto_table_id;
 
 typedef enum output_format {
 	OUTPUT_FORMAT_NONE = -1,
@@ -42,8 +60,6 @@ typedef void (*output_func_t)(const uint8_t *, size_t);
 
 
 #define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .proto_table_num = -1 };
-#define NULL_PROTO_HANDLER		{ .protocol = 0, .layer = PROTOCOL_LAYER_NONE, .dissect_proto = NULL, .protocol_name = NULL }
-#define IS_NULL_HANDLER(hdl)	(0 == hdl.protocol && PROTOCOL_LAYER_NONE == hdl.layer && NULL == hdl.dissect_proto && NULL == hdl.protocol_name)
 #define SHOW_OUTPUT(pkt, len, fmt, print_func, visualize_func) \
 		do { \
 			output_func_t output_func = select_output_func(fmt, print_func, visualize_func); \
@@ -68,6 +84,6 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 protocol_handler_mapping **create_mappings_arr(void);
 void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *new_mapping);
 void destroy_mappings(protocol_handler_mapping **mappings);
-protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table);
+protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table);
 
 #endif

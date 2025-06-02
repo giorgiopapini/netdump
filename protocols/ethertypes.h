@@ -1,7 +1,7 @@
 #ifndef ETHERTYPES_H
 #define ETHERTYPES_H
 
-#include "../utils/protocol.h"
+#include "../utils/hashmap.h"
 
 #ifndef ETHERTYPE_GRE_ISO
 #define ETHERTYPE_GRE_ISO       0x00FE  /* not really an ethertype only used in GRE */
@@ -177,7 +177,12 @@
 #define	ETHERTYPE_ARISTA        0xd28b /*  Arista Networks vendor specific EtherType */
 #endif
 
+/* around (400–600) ethertypes */
+#define ETHERTYPES_BUCKETS_NUM  512
 
-extern protocol_handler ethertypes[];
+
+extern hashmap *ethertypes;
+
+void load_ethertypes(void);
 
 #endif

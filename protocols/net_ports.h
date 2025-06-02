@@ -1,7 +1,7 @@
 #ifndef NET_PORTS_H
 #define NET_PORTS_H
 
-#include "../utils/protocol.h"
+#include "../utils/hashmap.h"
 
 #ifndef PORT_HTTP
 #define PORT_HTTP       80      /* HTTP */
@@ -69,7 +69,12 @@
 
 #define IS_WELL_DEFINED_PORT(port)          (port < 1023)  /* 1023 is the last so called "well defined" port */
 
+/* (0–65535) ports, matching ~100–500 ports */
+#define NET_PORTS_BUCKETS_NUM   1024
 
-extern protocol_handler net_ports[];
+
+extern hashmap *net_ports;
+
+void load_net_ports(void);
 
 #endif

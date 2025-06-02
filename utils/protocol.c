@@ -96,13 +96,9 @@ void destroy_mappings(protocol_handler_mapping **mappings) {
     }
 }
 
-protocol_handler get_protocol_handler(int target_proto, protocol_handler *proto_table) {
-	size_t i;
-
-	if (NULL != proto_table) {
-		for (i = 0; !IS_NULL_HANDLER(proto_table[i]); i ++) {
-			if (target_proto == proto_table[i].protocol) return proto_table[i];
-		}
-	}
-	return (protocol_handler){ 0, PROTOCOL_LAYER_NONE, NULL, NULL };
+protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table) {
+	hashmap_entry *entry = get_entry(proto_table, target_proto);
+	if (NULL == entry) return NULL;
+	
+	return (protocol_handler *)entry->value;
 }

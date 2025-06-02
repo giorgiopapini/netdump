@@ -69,18 +69,16 @@ void dissect(
 	custom_dissectors *custom_diss,
 	int proto_shown
 ) {
-	protocol_handler handler;
-	protocol_handler *custom_handler;
+	protocol_handler *handler = NULL;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;
-	protocol_handler *proto_hashmap = get_proto_table_from_id(proto_table_num);
-
-	custom_handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
+	hashmap *proto_hashmap = get_proto_table_from_id(proto_table_num);
 	
-	if (NULL != custom_handler) handler = *custom_handler;
-	else handler = get_protocol_handler(proto_id, proto_hashmap);
+	if (custom_diss->len > 0) handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
+	if (NULL == handler) handler = get_protocol_handler(proto_id, proto_hashmap);
+	if (NULL == handler) return;
 
-	if (NULL == handler.dissect_proto) {
+	if (NULL == handler->dissect_proto) {
 		if (OUTPUT_FORMAT_RAW != get_output_format(cmd)) return;
 		if (pkt_len > 0) {
 			if (proto_shown > 0) print_separator(cmd);
@@ -91,19 +89,19 @@ void dissect(
 		return;
 	}
 	
-	if (should_print_pkt(cmd, handler.layer)) {  /* else -> default output format is OUTPUT_NONE */
+	if (should_print_pkt(cmd, handler->layer)) {  /* else -> default output format is OUTPUT_NONE */
 		out_format = get_output_format(cmd);
 		if (proto_shown > 0) print_separator(cmd);
 		proto_shown ++;
 		
 		if (NULL == get_arg(cmd, NO_PROTOCOL_NAME_ARG)) {
-			printf(CYAN "(%s) " RESET_COLOR, handler.protocol_name);
+			printf(CYAN "(%s) " RESET_COLOR, handler->protocol_name);
 			if (OUTPUT_FORMAT_ACII_ART == out_format) printf("\n");  /* (PROTO_NAME) \n "Actual ASCII art" */
 		}
 	}
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
-	encap_proto_info = handler.dissect_proto(pkt, pkt_len, out_format);
+	encap_proto_info = handler->dissect_proto(pkt, pkt_len, out_format);
 	if (-1 != encap_proto_info.proto_table_num && pkt_len > encap_proto_info.offset) {
 		dissect(
 			cmd,

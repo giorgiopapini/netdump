@@ -275,7 +275,7 @@ int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len)
 cmd_retval execute_command(
     command *cmd, 
     raw_array *packets,
-    shared_libs *libs, 
+    shared_libs *libs,
     custom_dissectors *custom_diss
 ) {
     cmd_retval retval = RET_UNKNOWN;
@@ -291,9 +291,9 @@ cmd_retval execute_command(
         if (CHECK_REQ_ARGS(cmd, REQUIRED_DEVICES_LIST_ARGS)) execute_devlist();
     }
     else if (is_command(cmd, PROTOCOLS_COMMAND)) {
-        retval = RET_PROTOLIST;
-        if (CHECK_ARGS(cmd, PROTOLIST_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_PROTOLIST_ARGS)) execute_protocols(cmd);
+        retval = RET_PROTOCOLS;
+        if (CHECK_ARGS(cmd, PROTOCOLS_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_PROTOCOLS_ARGS)) execute_protocols(cmd);
     }
     else if (is_command(cmd, DISSECTORS_COMMAND)) {
         retval = RET_DISSECTORS;

@@ -14,9 +14,10 @@
 #include "utils/formats.h"
 #include "utils/circular_linked_list.h"
 #include "utils/command.h"
-#include "utils/custom_dissectors.h"
 #include "utils/shared_lib.h"
 #include "utils/terminal_handler.h"
+#include "utils/custom_dissectors.h"
+#include "protocols/proto_tables_handler.h"
 
 /*
 	TODO (optional):	(prevent the shift + _arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
@@ -42,11 +43,6 @@
 
 	TODO: 	strtok modify the string on which is applied, check if this is a safe behaviour everywhere in the codebase
 			otherwise fix creating a copy using strdup of the string, than running strtok
-
-	TODO: 	Consider if it is better to use a mechanism of lookup table (like status_handler handles errors, success, warning messages) 
-			(which is algorithmically faster for searching) also for proto_tables
-			MAYBE NOT A LOOKUP TABLE (I would have sparse values --> Waste of memory). Think about an HashMap or something?
-			Or maybe a lookup table but with a binary search insted of linear search?
 
 	TODO: 	insted of proto_table_id, a standard int value is used across the codebase, check if it is good (also thinking
 			about the shared lib (libpcap) for custom dissectors)
@@ -82,6 +78,7 @@ int main(void) {
 	shared_libs libs = { 0 };
 	custom_dissectors custom_diss = { 0 };
 
+	load_proto_hashmaps();
 	enable_raw_mode();
     atexit(restore_terminal_mode);
 	
@@ -119,6 +116,7 @@ static void _deallocate_heap(
 	reset_arr(packets, destroy_packet);
 	destroy_shared_libs(libs);
 	destroy_custom_dissectors(custom_diss);
+	destroy_proto_hashmaps();
 }
 
 static cmd_retval _run(

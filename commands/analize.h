@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#include "../utils/custom_dissectors.h"
 #include "../utils/shared_lib.h"
 #include "../utils/command.h"
 #include "../utils/raw_array.h"
+#include "../utils/custom_dissectors.h"
 
 struct pcap_pkthdr;
 
@@ -17,6 +17,6 @@ struct pcap_pkthdr;
 
 int device_exists(char *dev);
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes);
-void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_dissectors);
+void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
 
 #endif

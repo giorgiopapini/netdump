@@ -16,29 +16,55 @@
 #include "nlpid_protos.h"
 #include "ppp_protos.h"
 
-static protocol_handler *proto_tables[PROTO_TABLE_COUNT] = {
-    [DLT_PROTOS] = dlt_protos,
-    [ETHERTYPES] = ethertypes,
-    [IP_PROTOS] = ip_protos,
-    [NET_PORTS] = net_ports,
-    [NLPID_PROTOS] = nlpid_protos,
-    [PPP_PROTOS] = ppp_protos
-};
 
-static const char *proto_table_labels[PROTO_TABLE_COUNT] = {
-    [DLT_PROTOS] = DLT_PROTOS_LABEL,
-    [ETHERTYPES] = ETHERTYPES_LABEL,
-    [IP_PROTOS] = IP_PROTOS_LABEL,
-    [NET_PORTS] = NET_PORTS_LABEL,
-    [NLPID_PROTOS] = NLPID_PROTOS_LABEL,
-    [PPP_PROTOS] = PPP_PROTOS_LABEL
-};
+static hashmap *proto_tables[PROTO_TABLE_COUNT];
+static const char *proto_table_labels[PROTO_TABLE_COUNT];
 
-proto_table_id _get_id_from_proto_table(protocol_handler *target_table);
+void _load_proto_hashmaps_table(void);
+void _load_proto_hashmaps_labels(void);
+proto_table_id _get_id_from_proto_table(hashmap *target_table);
 proto_table_id _get_id_from_label(const char *label);
 
 
-proto_table_id _get_id_from_proto_table(protocol_handler *target_table) {
+void _load_proto_hashmaps_table(void) {
+    proto_tables[DLT_PROTOS] = dlt_protos;
+    proto_tables[ETHERTYPES] = ethertypes;
+    proto_tables[IP_PROTOS] = ip_protos;
+    proto_tables[NET_PORTS] = net_ports;
+    proto_tables[NLPID_PROTOS] = nlpid_protos;
+    proto_tables[PPP_PROTOS] = ppp_protos;
+}
+
+void _load_proto_hashmaps_labels(void) {
+    proto_table_labels[DLT_PROTOS] = DLT_PROTOS_LABEL;
+    proto_table_labels[ETHERTYPES] = ETHERTYPES_LABEL;
+    proto_table_labels[IP_PROTOS] = IP_PROTOS_LABEL;
+    proto_table_labels[NET_PORTS] = NET_PORTS_LABEL;
+    proto_table_labels[NLPID_PROTOS] = NLPID_PROTOS_LABEL;
+    proto_table_labels[PPP_PROTOS] = PPP_PROTOS_LABEL;
+}
+
+void load_proto_hashmaps(void) {
+    load_dlt_protos();
+    load_ethertypes();
+    load_ip_protos();
+    load_net_ports();
+    load_nlpid_protos();
+    load_ppp_protos();
+    _load_proto_hashmaps_table();
+    _load_proto_hashmaps_labels();
+}
+
+void destroy_proto_hashmaps(void) {
+    destroy_hashmap(dlt_protos, free);
+    destroy_hashmap(ethertypes, free);
+    destroy_hashmap(ip_protos, free);
+    destroy_hashmap(net_ports, free);
+    destroy_hashmap(nlpid_protos, free);
+    destroy_hashmap(ppp_protos, free);
+}
+
+proto_table_id _get_id_from_proto_table(hashmap *target_table) {
     proto_table_id i;
     
     for (i = 0; i < PROTO_TABLE_COUNT; i ++) {
@@ -63,21 +89,21 @@ const char *get_table_label_from_id(proto_table_id id) {
     return proto_table_labels[id];
 }
 
-const char *get_table_label_from_table(protocol_handler *target_table) {
+const char *get_table_label_from_table(hashmap *target_table) {
     proto_table_id id = _get_id_from_proto_table(target_table);
 
     if (0 > id || PROTO_TABLE_COUNT <= id || NULL == proto_tables[id]) return UNKNOWN;
     return proto_table_labels[id];
 }
 
-protocol_handler *get_proto_table_from_id(proto_table_id id) {
+hashmap *get_proto_table_from_id(proto_table_id id) {
     if (0 > id || PROTO_TABLE_COUNT <= id || NULL == proto_tables[id]) return NULL;
     return proto_tables[id];
 }
 
-protocol_handler *get_proto_table_from_name(const char *name) {
+hashmap *get_proto_table_from_name(const char *name) {
     char *lower_str;
-    protocol_handler *res = NULL;
+    hashmap *res = NULL;
     proto_table_id id;
 
     CHECK_NULL_EXIT(name);

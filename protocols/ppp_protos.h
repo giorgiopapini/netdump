@@ -1,7 +1,7 @@
 #ifndef PPP_PROTOS_H
 #define PPP_PROTOS_H
 
-#include "../utils/protocol.h"
+#include "../utils/hashmap.h"
 
 #ifndef PPP_IP
 #define PPP_IP		    0x0021	/* Raw IP */
@@ -127,7 +127,12 @@
 #define PPP_EAP         0xc227
 #endif
 
+/* around 100–200 known values */
+#define PPP_PROTOS_BUCKETS_NUM  512
 
-extern protocol_handler ppp_protos[];
+
+extern hashmap *ppp_protos;
+
+void load_ppp_protos(void);
 
 #endif

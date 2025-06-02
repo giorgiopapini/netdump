@@ -55,7 +55,7 @@ void add_custom_proto(dissectors_entry *arr, protocol_handler *new_custom_proto)
     }
 }
 
-dissectors_entry *create_dissectors_entry(protocol_handler *proto_table, protocol_handler *new_custom_proto, char *filename) {
+dissectors_entry *create_dissectors_entry(hashmap *proto_table, protocol_handler *new_custom_proto, char *filename) {
     dissectors_entry *new_entry = malloc(sizeof *new_entry);
     CHECK_NULL_EXIT(new_entry);
     CHECK_NULL_EXIT(proto_table);
@@ -87,7 +87,7 @@ void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_d
 }
 
 void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_diss, char *filename) {
-    protocol_handler *dest_table;
+    hashmap *dest_table;
     size_t i;
 
     dest_table = get_proto_table_from_id(dest_table_val);
@@ -146,7 +146,7 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
 protocol_handler *get_custom_protocol_handler(
     custom_dissectors *custom_diss, 
     int target_proto, 
-    protocol_handler *proto_table,
+    hashmap *proto_table,
     shared_libs *libs
 ) {
     dissectors_entry *curr_entry = NULL;

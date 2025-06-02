@@ -15,9 +15,9 @@
 #include "../utils/packet.h"
 #include "../utils/string_utils.h"
 #include "../utils/command.h"
-#include "../utils/custom_dissectors.h"
 #include "../utils/raw_array.h"
 #include "../utils/shared_lib.h"
+#include "../utils/custom_dissectors.h"
 
 
 #define LOOP_TO_INFINITY -1
@@ -29,7 +29,7 @@ typedef struct custom_data {
 	command *cmd;
 	raw_array *packets;
 	shared_libs *libs;
-	custom_dissectors *custom_dissectors;
+	custom_dissectors *custom_diss;
 	pcap_dumper_t *pcap_dump;
 } custom_data;
 
@@ -78,12 +78,12 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	
 	if (NULL != data.pcap_dump) pcap_dump((uint8_t *)data.pcap_dump, header, bytes);
 
-	dissect_packet(data.cmd, pkt, data.libs, data.custom_dissectors);
+	dissect_packet(data.cmd, pkt, data.libs, data.custom_diss);
 }
 
 void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
 	/* ==============================  Getting args values from cmd  ================================ */
-	custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_dissectors = custom_diss, .pcap_dump = NULL };
+	custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_diss = custom_diss, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
 	struct pcap_if *alldevs = NULL;
 	struct bpf_program fp;
