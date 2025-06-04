@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "command_handler.h"
+#include "utils/hashmap.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/proto_tables_handler.h"
@@ -84,7 +85,10 @@ void dissect(
 	protocol_handler *handler = NULL;
 	protocol_info encap_proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;  /* layer specific */
-	hashmap *proto_hashmap = get_proto_table_from_id(proto_table_num);
+	hashmap *proto_hashmap = NULL;
+
+	if (0 <= proto_table_num && PROTO_TABLE_COUNT >= proto_table_num)
+		proto_hashmap = get_proto_table_from_id((proto_table_id)proto_table_num);
 	
 	if (custom_diss->len > 0) handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
 	if (NULL == handler) handler = get_protocol_handler(proto_id, proto_hashmap);

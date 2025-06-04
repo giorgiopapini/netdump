@@ -1,21 +1,19 @@
 #include "protocols.h"
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h>                                                // for free
 #include <string.h>
 
-#include "../status_handler.h"
-#include "../utils/protocol.h"
-#include "../utils/formats.h"
-#include "../utils/colors.h"
-#include "../utils/string_utils.h"
-#include "../protocols/dlt_protos.h"
-#include "../protocols/ethertypes.h"
-#include "../protocols/ppp_protos.h"
-#include "../protocols/nlpid_protos.h"
-#include "../protocols/ip_protos.h"
-#include "../protocols/net_ports.h"
 #include "../protocols/proto_tables_handler.h"
+#include "../status_handler.h"
+#include "../utils/colors.h"
+#include "../utils/formats.h"
+#include "../utils/protocol.h"
+#include "../utils/string_utils.h"
+#include "../command_handler.h"
+#include "../utils/command.h"
+#include "../utils/hashmap.h"
+
 
 static void _print_table_names(void);
 static void _print_layer(protocol_layer layer);
@@ -33,7 +31,8 @@ static void _print_table_names(void) {
     printf("\n");
     for (i = 0; i < PROTO_TABLE_COUNT; i ++) {
         printf(PREFIX_STR);
-        printf(GREEN "%s\n" RESET_COLOR, get_table_label_from_id(i));
+        printf(GREEN "%s\n" RESET_COLOR, get_table_label_from_id((proto_table_id)i));
+        /* i < PROTO_TABLE_COUNT in this loop, so it is safe to cast */
     }
     printf("\n");
 }
@@ -117,7 +116,11 @@ static void _print_all_tables(void) {
 
     printf("\n");
     for (i = 0; i < PROTO_TABLE_COUNT; i ++) {
-        _print_table(get_table_label_from_id(i), get_proto_table_from_id(i));
+        _print_table(
+            get_table_label_from_id((proto_table_id)i),
+            get_proto_table_from_id((proto_table_id)i)
+        );
+        /* i < PROTO_TABLE_COUNT, so it is safe to cast */
     }
 }
 
@@ -158,7 +161,8 @@ static void _proto_search_wrapper(const char *tables, const int proto) {
 
     if (NULL == tables) {
         for (i = 0; i < PROTO_TABLE_COUNT; i ++) {
-            table_label = get_table_label_from_id(i);
+            /* i < PROTO_TABLE_COUNT, so it is safe to cast */
+            table_label = get_table_label_from_id((proto_table_id)i);
             res = _simple_proto_search(table_label, proto);
             _show_search_result(res, table_label);
         }

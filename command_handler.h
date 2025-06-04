@@ -8,7 +8,6 @@
 #include "utils/custom_dissectors.h"
 #include "utils/buffer.h"
 #include "utils/raw_array.h"
-#include "utils/formats.h"
 
 #define ANALIZE_COMMAND             "analize"
 #define DEVICES_LIST_COMMAND        "devlist"

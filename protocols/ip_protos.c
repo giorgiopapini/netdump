@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 
+#include "../utils/hashmap.h"
+#include "../utils/protocol.h"
 #include "network/ip.h"
 #include "network/icmp.h"
 #include "network/ipv6.h"

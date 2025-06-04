@@ -1,6 +1,7 @@
 #include "terminal_handler.h"
 
-#include <termios.h>
+#include <stddef.h>
+#include <termios.h>  /* never include just <bits/termios-c_cc.h> (for safety reasons). Even if iwyu says otherwise */
 #include <unistd.h>
 
 #include "../status_handler.h"

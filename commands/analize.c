@@ -1,6 +1,5 @@
 #include "analize.h"
 
-#include <limits.h>
 #include <sys/types.h>  /* needed for u_int/u_char used in <pcap/bpf.h> */
 #include <pcap/bpf.h>
 #include <pcap/pcap.h>

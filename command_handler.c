@@ -7,6 +7,7 @@
 
 #include "status_handler.h"
 #include "utils/string_utils.h"
+#include "utils/formats.h"
 #include "commands/analize.h"
 #include "commands/devlist.h"
 #include "commands/protocols.h"

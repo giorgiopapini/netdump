@@ -1,9 +1,10 @@
 #include "dlt_protos.h"
 
+#include <stddef.h>
 #include <pcap/dlt.h>
 
 #include "../utils/hashmap.h"
-#include "../status_handler.h"
+#include "../utils/protocol.h"
 #include "datalink/ether.h"
 #include "datalink/ppp.h"
 #include "datalink/frame_relay.h"
@@ -12,7 +13,7 @@
 
 hashmap *dlt_protos = NULL;
 
-void load_dlt_protos() {
+void load_dlt_protos(void) {
     dlt_protos = create_hashmap(DLT_PROTOS_BUCKETS_NUM);
     ADD_PROTO_HANDLER_ENTRY(dlt_protos, DLT_EN10MB, PROTOCOL_LAYER_DATALINK, dissect_ether, "Ethernet");
     ADD_PROTO_HANDLER_ENTRY(dlt_protos, DLT_PPP, PROTOCOL_LAYER_DATALINK, dissect_ppp, "PPP");

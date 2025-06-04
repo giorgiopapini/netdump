@@ -47,6 +47,7 @@ static const char *error_formats[] = {
     [FILE_NOT_SHARED_LIB_ERROR] = "File '%s' is not a shared library",
     [FUNCTION_NOT_FOUND_ERROR] = "Error finding function (%s)",
     [LIB_NOT_FOUND_ERROR] = "Library '%s' not found",
+    [PROTO_TABLE_ID_NOT_FOUND_ERROR] = "Protocol table '%d' not found, protocol table ids range is [%d, %d]",
     [NO_SUCH_FILE_OR_DIR_ERROR] = "No such file or directory (%s)",
     [DELETE_FILE_ERROR] = "Couldn't delete '%s'",
     [LONG_TO_INT_CAST_ERROR] = "Failed to cast from long to int: value exceeds the range of int",

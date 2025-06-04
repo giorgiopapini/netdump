@@ -8,7 +8,7 @@
 #include "shared_lib.h"
 
 
-static void _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
+static int _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename);
 
 custom_dissectors *create_custom_dissectors(void) {
     custom_dissectors *dissectors = malloc(sizeof *dissectors);
@@ -86,9 +86,15 @@ void add_dissector_entry(custom_dissectors *custom_diss, dissectors_entry *new_d
     }
 }
 
-void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_diss, char *filename) {
+int dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_dissectors *custom_diss, char *filename) {
     hashmap *dest_table;
     size_t i;
+
+    if (0 > dest_table_val || PROTO_TABLE_COUNT < dest_table_val) {
+        raise_error(PROTO_TABLE_ID_NOT_FOUND_ERROR, 0, NULL, dest_table_val, 0, PROTO_TABLE_COUNT);
+        free(custom_handler);  /* instead of loading the custom_handler, free it and return the error status */
+        return 0;
+    }
 
     dest_table = get_proto_table_from_id(dest_table_val);
     CHECK_NULL_EXIT(custom_diss);
@@ -98,31 +104,36 @@ void dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_
         for (i = 0; i < custom_diss->len; i ++) {
             if (NULL != custom_diss->table[i] && custom_diss->table[i]->proto_table == dest_table) {
                 add_custom_proto(custom_diss->table[i], custom_handler);
-                return;
+                return 1;
             }
         }
         add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
     }
+    return 1;
 }
 
-static void _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
+static int _populate_custom_dissectors(custom_dissectors *dissectors, protocol_handler_mapping **mappings, char *filename) {
+    int status = 1;
     size_t i;
 
     CHECK_NULL_EXIT(mappings);
     for (i = 0; mappings[i] != NULL; i ++) {
-        dissector_add(
+        status = dissector_add(
             mappings[i]->handler, 
             mappings[i]->proto_table_num, 
             dissectors,
             filename
         );
+        if (0 == status) return status;
     }
+    return status;
 }
 
-void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename) {
+int load_dissector(custom_dissectors *custom_diss, void *handle, char *filename) {
     protocol_handler_mapping **mappings;
     protocol_handler_mapping **(*get_custom_protocols_mapping)(void);
     char *error;
+    int status = 1;
 
     CHECK_NULL_EXIT(custom_diss);
     CHECK_NULL_EXIT(handle);
@@ -134,13 +145,14 @@ void load_dissector(custom_dissectors *custom_diss, void *handle, char *filename
     if (NULL != error) {
         raise_error(FUNCTION_NOT_FOUND_ERROR, 0, NULL, error);
         dlclose(handle);
-        return;
+        return 0;
     }
 
     mappings = get_custom_protocols_mapping();
-    _populate_custom_dissectors(custom_diss, mappings, filename);
-    
+    status = _populate_custom_dissectors(custom_diss, mappings, filename);
+
     destroy_mappings(mappings);
+    return status;
 }
 
 protocol_handler *get_custom_protocol_handler(

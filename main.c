@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termios.h>  /* Never include <bits/termios_c_cc.h> directly; use <termios.h> instead */
 #include <string.h>
 #include <errno.h>
 #include <sys/select.h>
@@ -44,6 +43,8 @@
 
 	TODO: 	insted of proto_table_id, a standard int value is used across the codebase, check if it is good (also thinking
 			about the shared lib (libpcap) for custom dissectors)
+
+	TODO: 	Return value from dissector_add to avoid proceeding the execution of the command even if an error occoured
 */
 
 static void _deallocate_heap(

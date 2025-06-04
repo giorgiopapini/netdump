@@ -5,7 +5,6 @@
 
 #include "../../utils/visualizer.h"
 #include "../../utils/string_utils.h"
-#include "../proto_tables_handler.h"
 #include "../net_ports.h"
 #include "../../utils/protocol.h"
 

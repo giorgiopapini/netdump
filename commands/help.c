@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../command_handler.h"
+#include "../status_handler.h"
 #include "../utils/formats.h"
 #include "../utils/colors.h"
-#include "../status_handler.h"
 
 static void _print_cmd(const char *cmd, const char *desc);
 static void _print_arg(

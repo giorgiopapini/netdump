@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 
+#include "../utils/hashmap.h"
+#include "../utils/protocol.h"
 #include "application/dhcp.h"
 #include "application/http.h"
 #include "application/ftp.h"

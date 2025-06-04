@@ -69,6 +69,7 @@ void change_dissector_status(int new_status, char *filenames, shared_libs *libs)
 static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors *dissectors, char path[PATH_MAX]) {
     char abs_path[PATH_MAX];
     char *filename;
+    char *filename_copy;
     void *handle;
 
     CHECK_NULL_RET(path);
@@ -90,9 +91,13 @@ static void _add_and_load_single_dissector(shared_libs *libs, custom_dissectors 
             If both functions point to the same memory and attempt to free it, a double free error will occur.
             (NULL check executed inside add_shared_lib and load_dissector functions)
         */
-        add_shared_lib(libs, handle, strdup(filename), 1);
-        load_dissector(dissectors, handle, strdup(filename));
-        print_success_msg(DISSECTOR_LOADED_SUCCESS, 1);
+        filename_copy = strdup(filename);
+        if (load_dissector(dissectors, handle, filename_copy)) {
+            add_shared_lib(libs, handle, strdup(filename), 1);
+            print_success_msg(DISSECTOR_LOADED_SUCCESS, 1);
+        }
+        else free(filename_copy);
+        
     }
     else raise_error(LOADING_SHARED_LIB_ERROR, 0, NULL, filename, dlerror());
 }

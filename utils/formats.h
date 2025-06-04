@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#include "../command_handler.h"
-
 #define PROMPT_STRING "netdump > "
 
 #define MAC_TO_STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]

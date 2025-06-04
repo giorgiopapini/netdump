@@ -2,6 +2,8 @@
 
 #include <stddef.h>
 
+#include "../utils/hashmap.h"
+#include "../utils/protocol.h"
 #include "datalink/ppp.h"
 #include "datalink/vlan.h"
 #include "network/ip.h"
@@ -11,7 +13,7 @@
 
 hashmap *ethertypes = NULL;
 
-void load_ethertypes() {
+void load_ethertypes(void) {
     ethertypes = create_hashmap(ETHERTYPES_BUCKETS_NUM);
     ADD_PROTO_HANDLER_ENTRY(ethertypes, ETHERTYPE_IP, PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4");
     ADD_PROTO_HANDLER_ENTRY(ethertypes, ETHERTYPE_IPV6, PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6");

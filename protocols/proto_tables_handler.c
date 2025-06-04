@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include "../status_handler.h"
+#include "../utils/hashmap.h"
 #include "../utils/formats.h"
 #include "../utils/protocol.h"
 #include "../utils/string_utils.h"
