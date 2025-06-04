@@ -5,6 +5,7 @@
 
 #include "../protocols/proto_tables_handler.h"
 #include "../status_handler.h"
+#include "hashmap.h"
 #include "shared_lib.h"
 
 
@@ -96,7 +97,8 @@ int dissector_add(protocol_handler *custom_handler, int dest_table_val, custom_d
         return 0;
     }
 
-    dest_table = get_proto_table_from_id(dest_table_val);
+    /* safe casting, if dest_table_val not in PROTO_TABLE_COUNT range the error above gets triggered */
+    dest_table = get_proto_table_from_id((proto_table_id)dest_table_val);
     CHECK_NULL_EXIT(custom_diss);
 
     if (NULL == custom_diss->table) add_dissector_entry(custom_diss, create_dissectors_entry(dest_table, custom_handler, filename));
