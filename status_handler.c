@@ -33,6 +33,7 @@ static const char *error_formats[] = {
     [TOO_MANY_ARGS] = "Too many args (MAX_ARGS=%d)",
     [MISSING_ARGS_ERROR] = "Missing arguments: %s",
     [UNRECOGNIZED_ARGS_ERROR] = "Unrecognized arguments: %s",
+    [UNRECOGNIZED_OUTPUT_ERROR] = "Unrecognized '%s' output mode",
     [BUFFER_OVERFLOW_ERROR] = "Buffer overflowed in file '%s' (max characters allowed = %d)",
     [NEGATIVE_BUFFER_INDEX] = "Buffer index cannot be a negative number '(%d < 0)'",
     [CURSOR_POSITION_ERROR] = "Couldn't retrieve the current cursor position",

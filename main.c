@@ -39,8 +39,6 @@
 	TODO: 	Fix the "non literal string" warning in vfprintf(stderr, (const char *)error_formats[code], args);
 			in 'status_handler.c'
 
-	TODO: 	Check if every function consider 0 as SUCCESS and != 0 (likely 1) as FAILURE as ret val
-
 	TODO: 	strtok modify the string on which is applied, check if this is a safe behaviour everywhere in the codebase
 			otherwise fix creating a copy using strdup of the string, than running strtok
 

@@ -15,6 +15,18 @@
 #define UNKNOWN_PROTO_LABEL 	"Unknown"
 
 
+int _is_output_arg_valid(const char *raw_val);
+
+int _is_output_arg_valid(const char *raw_val) {
+	if (NULL == raw_val) return 1;  /* will be set as std output by default */
+	if (
+		0 != strcmp(raw_val, OUTPUT_ARG_VAL_STD) &&
+		0 != strcmp(raw_val, OUTPUT_ARG_VAL_RAW) &&
+		0 != strcmp(raw_val, OUTPUT_ARG_VAL_ART)
+	) return 0;
+	return 1;
+}
+
 output_format get_output_format(command *cmd) {
 	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	if (NULL == out_format) return OUTPUT_FORMAT_BASIC;
@@ -71,7 +83,7 @@ void dissect(
 ) {
 	protocol_handler *handler = NULL;
 	protocol_info encap_proto_info;
-	output_format out_format = OUTPUT_FORMAT_NONE;
+	output_format out_format = OUTPUT_FORMAT_NONE;  /* layer specific */
 	hashmap *proto_hashmap = get_proto_table_from_id(proto_table_num);
 	
 	if (custom_diss->len > 0) handler = get_custom_protocol_handler(custom_diss, proto_id, proto_hashmap, libs);
@@ -117,8 +129,15 @@ void dissect(
 }
 
 void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
+	const char *raw_output_val = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
+
 	CHECK_NULL_EXIT(pkt);
 	CHECK_NULL_EXIT(pkt->header);
+
+	if (!_is_output_arg_valid(raw_output_val)) {
+		raise_error(UNRECOGNIZED_OUTPUT_ERROR, 0, NULL, raw_output_val);
+		return;
+	}
 
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%ld) " RESET_COLOR, pkt->num);
