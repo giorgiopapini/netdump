@@ -141,7 +141,7 @@ The following are some of the comparisons I made. For others, check the assets f
   <img src="./assets/tcp_tcpdump.png" width="400"/>
 </p>
 
-However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump traverses while dissecting a TCP packet. I placed the TCP, IPv4, and Ethernet protocols at the end of their respective proto_tables to simulate the worst-case scenario.
+However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump queries while dissecting a TCP packet.
 The result is still amazing.
 [Watch the video](./assets/netdump_benchmark.mp4)
 
