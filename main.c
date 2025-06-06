@@ -45,6 +45,31 @@
 			about the shared lib (libpcap) for custom dissectors)
 
 	TODO: 	Return value from dissector_add to avoid proceeding the execution of the command even if an error occoured
+
+	TODO: 	Fix the string overflowing the terminal cols bug
+
+	TODO: 	Implement a command like "stats" to print statistics about a determined scanned session
+
+			(e.g.) Capture Statistics:
+				-------------------
+				Total packets captured: 5347
+				Duration: 120.3 seconds
+				Average packets/sec: 44.45
+
+				Protocol Breakdown:
+				- TCP: 4012 packets (75%)
+				- UDP: 982 packets (18%)
+				- ICMP: 353 packets (7%)
+
+				Top 5 Source IPs:
+				1. 192.168.0.10 (1240 packets)
+				2. 10.0.0.5 (902 packets)
+				...
+
+				Top 5 Destination Ports:
+				1. 443 (HTTPS) - 1894 packets
+				2. 53 (DNS) - 850 packets
+				3. 22 (SSH) - 312 packets
 */
 
 static void _deallocate_heap(

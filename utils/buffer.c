@@ -112,7 +112,7 @@ static int _arrow_up(buffer *buff, circular_list *list, int *end) {
     prev_pos = buff->cursor_pos;
 
     CHECK_NULL_EXIT(list);
-    if (NULL == list->head) return _arrow_up_KEY;
+    if (NULL == list->head) return ARROW_UP_KEY;
 
     CHECK_NULL_EXIT(list->curr);
     *end = 0;  /* not at the end of history */
@@ -121,7 +121,7 @@ static int _arrow_up(buffer *buff, circular_list *list, int *end) {
     buff->cursor_pos = prev_pos;
     _refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
     buff->cursor_pos = buff->len;
-    return _arrow_up_KEY;
+    return ARROW_UP_KEY;
 }
 
 static int _arrow_down(buffer *buff, circular_list *list, int *end) {
@@ -133,10 +133,10 @@ static int _arrow_down(buffer *buff, circular_list *list, int *end) {
     prev_pos = buff->cursor_pos;
 
     CHECK_NULL_EXIT(list);
-    if (NULL == list->head) return _arrow_down_KEY;
+    if (NULL == list->head) return ARROW_DOWN_KEY;
     if (list->curr == list->head) {
         CHECK_NULL_EXIT(end);
-        if (*end) return _arrow_down_KEY;
+        if (*end) return ARROW_DOWN_KEY;
         /* if at the end of history than nop. Otherwise execute arrow down behaviour */
     }
 
@@ -151,7 +151,7 @@ static int _arrow_down(buffer *buff, circular_list *list, int *end) {
 
         CHECK_NULL_EXIT(end);
         *end = 1;  /* currently at the end of history */
-        return _arrow_down_KEY;
+        return ARROW_DOWN_KEY;
     }
 
     list->curr = list->curr->next;
@@ -159,7 +159,7 @@ static int _arrow_down(buffer *buff, circular_list *list, int *end) {
     buff->cursor_pos = prev_pos;
     _refresh_output(buff, old_len);  /* buff len is updated, but i need old length to make refresh work */
     buff->cursor_pos = buff->len;
-    return _arrow_down_KEY;
+    return ARROW_DOWN_KEY;
 }
 
 static int _arrow_right(buffer *buff) {
@@ -169,7 +169,7 @@ static int _arrow_right(buffer *buff) {
         printf("\033[C");
         buff->cursor_pos ++;
     }
-    return _arrow_right_KEY;
+    return ARROW_RIGHT_KEY;
 }
 
 static int _arrow_left(buffer *buff) {
@@ -179,7 +179,7 @@ static int _arrow_left(buffer *buff) {
         printf("\033[D");
         buff->cursor_pos --;
     }
-    return _arrow_left_KEY;
+    return ARROW_LEFT_KEY;
 }
 
 static int _canc(buffer *buff) {
@@ -188,13 +188,13 @@ static int _canc(buffer *buff) {
     CHECK_NULL_EXIT(buff);
     old_len = buff->len;
     getch();
-    if (buff->len == buff->cursor_pos) return _canc_KEY;
+    if (buff->len == buff->cursor_pos) return CANC_KEY;
 
     delete_char(buff->content, buff->cursor_pos);
     buff->len --;
     _refresh_output(buff, old_len);
     MOVE_CURSOR_TO_PREV_POS(buff->cursor_pos, old_len);
-    return _canc_KEY;
+    return CANC_KEY;
 }
 
 static int _backspace(buffer *buff) {
@@ -202,7 +202,7 @@ static int _backspace(buffer *buff) {
 
     CHECK_NULL_EXIT(buff);
     old_len = buff->len;
-    if (0 >= buff->cursor_pos) return _backspace_KEY;
+    if (0 >= buff->cursor_pos) return BACKSPACE_KEY;
 
     delete_char(buff->content, buff->cursor_pos - 1);
     buff->len --;
@@ -213,7 +213,7 @@ static int _backspace(buffer *buff) {
         _arrow_left(buff);
     }
     else buff->cursor_pos --;
-    return _backspace_KEY;
+    return BACKSPACE_KEY;
 }
 
 static int _literal_key(buffer *buff, int c) {
@@ -261,11 +261,11 @@ int populate(buffer *buff, circular_list *history) {
     else if ('\033' == c) {  /* catch special keys, add behaviour only to arrow keys (for now) */
         c = getch();
         switch(c = getch()) {
-            case _arrow_up_KEY:          ret = _arrow_up(buff, history, &end); break;
-            case _arrow_down_KEY:        ret = _arrow_down(buff, history, &end); break;
-            case _arrow_right_KEY:       ret = _arrow_right(buff); break;
-            case _arrow_left_KEY:        ret = _arrow_left(buff); break;
-            case _canc_KEY:              ret = _canc(buff); break;
+            case ARROW_UP_KEY:          ret = _arrow_up(buff, history, &end); break;
+            case ARROW_DOWN_KEY:        ret = _arrow_down(buff, history, &end); break;
+            case ARROW_RIGHT_KEY:       ret = _arrow_right(buff); break;
+            case ARROW_LEFT_KEY:        ret = _arrow_left(buff); break;
+            case CANC_KEY:              ret = _canc(buff); break;
             default:                    ret = -1; break;
         }
     }

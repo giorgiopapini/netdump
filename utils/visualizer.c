@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include "../status_handler.h"
+#include "terminal_handler.h"
 #include "colors.h"
 
 
@@ -28,7 +29,6 @@
     ((size_t)(((max % min) == 0) ? round((double)(max - min) / 2.0) : round((double)(max - min) / 2.0)))
 
 
-static void _get_terminal_size(size_t *cols, size_t *rows);
 static void _print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y);
 static void _print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right);
 static void _print_value(const char *label, const char *content, size_t *curr_x, size_t *curr_y, size_t max_len);
@@ -47,16 +47,6 @@ void end_printing(void) {
     prev_used_rows = 0;
 }
 
-static void _get_terminal_size(size_t *cols, size_t *rows) {
-    struct winsize w;
-    if (-1 == ioctl(STDOUT_FILENO, TIOCGWINSZ, &w)) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
-
-    CHECK_NULL_EXIT(cols);
-    CHECK_NULL_EXIT(rows);
-    *cols = w.ws_col;
-    *rows = w.ws_row;
-}
-
 size_t calc_rows(const char *str) {
     size_t cols, rows;
     size_t usable_cols;
@@ -67,65 +57,12 @@ size_t calc_rows(const char *str) {
     CHECK_NULL_EXIT(VERTICAL_BORDER);
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
-    _get_terminal_size(&cols, &rows);
+    get_terminal_size(&cols, &rows);
 
     usable_cols = MIN(cols, MAX_X);
     if (usable_cols == 0) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
 
     return (max_len + usable_cols - 1) / usable_cols;
-}
-
-int get_cursor_position(size_t *col, size_t *row) {
-    char buf[64];
-    struct timeval tv;
-    fd_set fds;
-    ssize_t ret;
-    size_t i;
-    int sel;
-    struct termios saved, raw;
-
-    if (tcgetattr(STDIN_FILENO, &saved) == -1) return -1;
-    raw = saved;
-    raw.c_lflag &= (tcflag_t)~(ICANON | ECHO);
-    if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) == -1) return -1;
-
-    printf("\033[6n");
-    fflush(stdout);
-
-    i = 0;
-    while (i < sizeof(buf) - 1) {
-        FD_ZERO(&fds);
-        FD_SET(STDIN_FILENO, &fds);
-        tv.tv_sec = 1;
-        tv.tv_usec = 0;
-
-        sel = select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
-        if (sel <= 0) goto cleanup;
-
-        ret = read(STDIN_FILENO, buf + i, 1);
-        if (ret != 1) goto cleanup;
-
-        if (buf[i] == 'R') {
-            i ++;
-            break;
-        }
-        i ++;
-    }
-
-    buf[i] = '\0';
-
-    if (buf[0] == '\033' && buf[1] == '[') {
-        if (NULL == row || NULL == col) goto cleanup;
-
-        if (sscanf(buf + 2, "%zu;%zu", row, col) == 2) {
-            tcsetattr(STDIN_FILENO, TCSANOW, &saved);
-            return 0;
-        }
-    }
-
-cleanup:
-    tcsetattr(STDIN_FILENO, TCSANOW, &saved);
-    return -1;
 }
 
 void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
@@ -254,7 +191,7 @@ void print_field(const char *label, const char *content, int newline) {
     label_len = strlen(label);
     content_len = strlen(content);
 
-    _get_terminal_size(&term_cols, &term_rows);
+    get_terminal_size(&term_cols, &term_rows);
 
     if (0 != get_cursor_position(&curr_x, &curr_y)) {
         raise_error(CURSOR_POSITION_ERROR, 0, UNCOMPATIBLE_TERMINAL_HINT);

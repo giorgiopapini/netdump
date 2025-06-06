@@ -20,7 +20,6 @@ typedef enum {
 } border_type;
 
 size_t calc_rows(const char *str);
-int get_cursor_position(size_t *col, size_t *row);
 void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows);
 void start_printing(void);
 void end_printing(void);
