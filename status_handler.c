@@ -100,13 +100,13 @@ void raise_error(err_code code, int should_exit, const char *hint, ...) {
     */
 }
 
-void print_warning_msg(warning_code code, int newline) {
+void print_warning_msg(const warning_code code, const int newline) {
     const char *msg = warning_formats[code];
     printf(YELLOW "[WARNING] -> %s" RESET_COLOR, msg);
     if (0 != newline) printf("\n");
 }
 
-void print_success_msg(success_code code, int newline) {
+void print_success_msg(const success_code code, const int newline) {
     const char *msg = success_formats[code];
     printf(GREEN "[SUCCESS] -> %s" RESET_COLOR, msg);
     if (0 != newline) printf("\n");

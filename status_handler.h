@@ -109,7 +109,7 @@ typedef enum {
 
 void raise_error(err_code code, int should_exit, const char *hint, ...);
 
-void print_warning_msg(warning_code code, int newline);
-void print_success_msg(success_code code, int newline);
+void print_warning_msg(const warning_code code, const int newline);
+void print_success_msg(const success_code code, const int newline);
 
 #endif

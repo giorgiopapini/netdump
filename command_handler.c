@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "lib/easycli.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
 #include "utils/formats.h"
@@ -21,23 +22,37 @@
 #define CHECK_REQ_ARGS(cmd, ...)            (is_valid(cmd, 0, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 #define CHECK_ARGS(cmd, ...)                (is_valid(cmd, 1, (const char *[]){__VA_ARGS__}, LEN(char *, __VA_ARGS__)))
 
-static int _word_count_matches(command *cmd, buffer *buff);
-static int _check_prefix_validity(buffer *buff);
-static void _load_str_val_pointers(char **start, char **end, char *str);
-static void _load_cmd_label(command *cmd, buffer *buff);
-static int _load_cmd_args(command *cmd, buffer *buff);
+static void _normalize_content(char *str, const size_t len);
+static int _word_count_matches(command *cmd, const char *str, const size_t len);
+static int _check_prefix_validity(const char *str, const size_t len);
+static void _load_str_val_pointers(char **start, char **end, const char *str);
+static void _load_cmd_label(command *cmd, const char *str, const size_t len);
+static int _load_cmd_args(command *cmd, const char *str, const size_t len);
 
 
-static int _word_count_matches(command *cmd, buffer *buff) {
+static void _normalize_content(char *str, const size_t len) {
+    char *normalized_str;
+
+    CHECK_NULL_EXIT(str);
+    normalized_str = get_trimmed_str(str, len);
+    if (NULL == normalized_str) return;
+
+    strncpy(str, normalized_str, len);
+    free(normalized_str);
+    
+    lower_str_except_interval(str, ARG_STR_DELIMITER);
+    str[len] = '\0';
+}
+
+static int _word_count_matches(command *cmd, const char *str, const size_t len) {
     arg *tmp;
     size_t count = 0;
     size_t i;
 
     CHECK_NULL_RET(cmd, 1);
-    CHECK_NULL_RET(buff, 1);
-    CHECK_NULL_RET(buff->content, 1);
+    CHECK_NULL_RET(str, 1);
 
-    if (NULL != cmd->label) count ++;
+    if (NULL != cmd->label && '\0' != cmd->label[0]) count ++;
 
     for (i = 0; i < cmd->n_hashes; i ++) {
         tmp = cmd->args[cmd->hashes[i]];
@@ -47,35 +62,34 @@ static int _word_count_matches(command *cmd, buffer *buff) {
             tmp = tmp->next;
         }
     }
-    return !(count == count_words(buff->content, buff->len));
+    return !(count == count_words(str, len));
     /* success = 0, failure = 1 (or !0 in general) */
 }
 
-int _check_prefix_validity(buffer *buff) {  /* "Fil-1.pcap" is not correctly interpreted */
+int _check_prefix_validity(const char *str, const size_t len) {  /* "Fil-1.pcap" is not correctly interpreted */
     char *start_substr;
     size_t prefix_len;
     ptrdiff_t delta;
 
-    CHECK_NULL_RET(buff, 1);
-    CHECK_NULL_RET(buff->content, 1);
+    CHECK_NULL_RET(str, 1);
     CHECK_NULL_RET(ARG_PREFIX, 0);
 
     prefix_len = strlen(ARG_PREFIX);
 
     /* if words count > 0 than the words after the first should be arguments,
     otherwise it means the user executed command without args */
-    if (1 >= count_words(buff->content, buff->len)) return 0;
+    if (1 >= count_words(str, len)) return 0;
 
-    start_substr = strstr(buff->content, ARG_PREFIX);
+    start_substr = strstr(str, ARG_PREFIX);
     while (NULL != start_substr) {
-        delta = start_substr - buff->content;
-        if (delta > 0 && (size_t)delta >= buff->len - 1) break;
+        delta = start_substr - str;
+        if (delta > 0 && (size_t)delta >= len - 1) break;
 
         if (delta >= 0) {
-            if (0 == strncmp(start_substr, ARG_PREFIX, prefix_len) && ((size_t)delta + prefix_len) < buff->len) {
+            if (0 == strncmp(start_substr, ARG_PREFIX, prefix_len) && ((size_t)delta + prefix_len) < len) {
                 if (
-                    !isdigit(buff->content[(size_t)delta + prefix_len]) &&
-                    !isalpha(buff->content[(size_t)delta + prefix_len])
+                    !isdigit(str[(size_t)delta + prefix_len]) &&
+                    !isalpha(str[(size_t)delta + prefix_len])
                 ) return 1;
             }
         }
@@ -86,7 +100,7 @@ int _check_prefix_validity(buffer *buff) {  /* "Fil-1.pcap" is not correctly int
     return 0;
 }
 
-static void _load_str_val_pointers(char **start, char **end, char *str) {
+static void _load_str_val_pointers(char **start, char **end, const char *str) {
     /* loads starting and ending position of the string value of an arg like -r "tests-1.pcap" */
     char *tmp = NULL;
     
@@ -106,24 +120,25 @@ static void _load_str_val_pointers(char **start, char **end, char *str) {
     }
 }
 
-static void _load_cmd_label(command *cmd, buffer *buff) {
+static void _load_cmd_label(command *cmd, const char *str, const size_t len) {
     /* cmd and buff should not be NULL */
-    size_t i;
+    size_t i = 0;
     
-    for (i = 0; i < buff->len; i ++)
-        if (' ' == buff->content[i]) break;
+    CHECK_NULL_EXIT(str);
+    for (i = 0; i < len; i ++)
+        if (' ' == str[i]) break;
 
     cmd->label = malloc(i + 1);
     CHECK_NULL_EXIT(cmd->label);
 
-    strncpy(cmd->label, buff->content, i);
+    strncpy(cmd->label, str, i);
     cmd->label[i] = '\0';
 }
 
-static int _load_cmd_args(command *cmd, buffer *buff) {
+static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
     char *temp_arg;
     char *temp_next_arg;
-    char token[MAX_BUFFER_LEN];
+    char token[E_DEFAULT_MAX_INPUT_LEN];
     ptrdiff_t delta;
     ptrdiff_t token_delta;
     size_t copy_len;
@@ -133,15 +148,15 @@ static int _load_cmd_args(command *cmd, buffer *buff) {
     char *start_str_val = NULL;
     char *end_str_val = NULL;
 
-    CHECK_NULL_EXIT(buff);
+    CHECK_NULL_EXIT(str);
     CHECK_NULL_EXIT(ARG_PREFIX);
 
-    _load_str_val_pointers(&start_str_val, &end_str_val, buff->content);
+    _load_str_val_pointers(&start_str_val, &end_str_val, str);
 
-    temp_arg = strstr(buff->content, ARG_PREFIX);
+    temp_arg = strstr(str, ARG_PREFIX);
     while (NULL != temp_arg) {
-        delta = temp_arg - buff->content;
-        if (delta > 0 && (size_t)delta >= buff->len - 1) break;
+        delta = temp_arg - str;
+        if (delta > 0 && (size_t)delta >= len - 1) break;
         
         /* if inside str delimiter than skip */
         temp_next_arg = strstr(temp_arg + strlen(ARG_PREFIX), ARG_PREFIX);
@@ -158,11 +173,11 @@ static int _load_cmd_args(command *cmd, buffer *buff) {
         }
 
         if (NULL == temp_next_arg)
-            token_delta = (buff->content + buff->len) - temp_arg; 
+            token_delta = (str + len) - temp_arg; 
         else token_delta = temp_next_arg - temp_arg;
 
         if (token_delta >= 0) {
-            copy_len = (token_delta < MAX_BUFFER_LEN - 1) ? (size_t)token_delta : MAX_BUFFER_LEN - 1;
+            copy_len = (token_delta < E_DEFAULT_MAX_INPUT_LEN - 1) ? (size_t)token_delta : E_DEFAULT_MAX_INPUT_LEN - 1;
             strncpy(token, temp_arg, copy_len);
             token[copy_len] = '\0';
 
@@ -171,33 +186,36 @@ static int _load_cmd_args(command *cmd, buffer *buff) {
             if (0 != status) return 1;  /* if argument insertions failed, than exit the loop */
         }
 
-        memset(token, '\0', MAX_BUFFER_LEN);
+        memset(token, '\0', E_DEFAULT_MAX_INPUT_LEN);
         temp_arg = temp_next_arg;
         /* reset token, find next temp_arg and go next iteration */
     }
     return 0;
 }
 
-int create_cmd_from_buff(command *cmd, buffer *buff) {
+int create_cmd_from_str(command *cmd, char *str, const size_t len) {
     int status = 0;
 
     CHECK_NULL_RET(cmd, 1);
-    CHECK_NULL_RET(buff, 1);
+    CHECK_NULL_RET(str, 1);
     CHECK_NULL_EXIT(ARG_PREFIX);
 
+    _normalize_content(str, len);
+    if ('\0' == str[0]) return 1;
+
     /* if there is <command> <arg> without the PREFIX separator than raise a formatting error */
-    if (0 != _check_prefix_validity(buff)) {
+    if (0 != _check_prefix_validity(str, len)) {
         raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
         return 1;
     }
 
-    _load_cmd_label(cmd, buff);  /* always true, it just copy the first word from buff->content to cmd->label */
-    status = _load_cmd_args(cmd, buff);
+    _load_cmd_label(cmd, str, len);  /* always true, it just copy the first word from buff->content to cmd->label */
+    status = _load_cmd_args(cmd, str, len);
     if (0 != status) return status;
     /* early exit to avoid printing another error message */
 
     /* 0 if equal, !0 if not equal */
-    status = _word_count_matches(cmd, buff);
+    status = _word_count_matches(cmd, str, len);
     if (0 != status) raise_error(WRONG_OPTIONS_FORMAT_ERROR, 0, NULL);
     return status;
 }
