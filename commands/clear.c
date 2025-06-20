@@ -1,14 +1,9 @@
 #include "clear.h"
 
 #include <stdlib.h>
+#include <unistd.h>
 
 
 void execute_clear(void) {
-    #if defined(_WIN32) || defined(_WIN64)
-        system("cls");
-        #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
-        system("clear");
-    #else
-        raise(COMMAND_NOT_SUPPORTED_ERROR, 0, CLEAN_COMMAND);
-    #endif
+    if (write(STDOUT_FILENO,"\x1b[H\x1b[2J",7) <= 0) return;
 }

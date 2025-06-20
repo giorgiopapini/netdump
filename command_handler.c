@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "lib/easycli.h"
+#include "libs/easycli.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
 #include "utils/formats.h"

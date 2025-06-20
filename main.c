@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "lib/easycli.h"
+#include "libs/easycli.h"
 #include "command_handler.h"
 #include "status_handler.h"
 #include "utils/raw_array.h"
@@ -42,14 +42,6 @@
 
 	TODO: 	Return value from dissector_add to avoid proceeding the execution of the command even if an error occoured
 
-	TODO: 	Fix the string overflowing the terminal cols bug in buffer.c
-			- Implement a full line repaint strategy to handle line wrapping & scrolling properly.
-			- Add terminal size querying (ioctl with TIOCGWINSZ) to adapt dynamically.
-			- Handle SIGWINCH (window resize) signal to redraw correctly.
-
-			(so instead of writing char by char, modify and update buffer->content char by char but visually
-			print the entire content considering newlines, terminal size changes, etc...)
-
 	TODO: 	Implement a command like "stats" to print statistics about a determined scanned session
 
 			(e.g.) Capture Statistics:
@@ -72,9 +64,6 @@
 				1. 443 (HTTPS) - 1894 packets
 				2. 53 (DNS) - 850 packets
 				3. 22 (SSH) - 312 packets
-
-	TODO: 	Implement CLEAN SCREEN in easycli.c. DELETE terminal_handler and define what is needed for the visulize.c module
-			directly inside the visualize.c module
 */
 
 static void _deallocate_heap(

@@ -94,7 +94,7 @@ struct e_history *glob_history = NULL;
 /* ========================================================================= */
 /* ========================== terminal management ========================== */
 static void _get_terminal_size(size_t *cols, size_t *rows);
-static void _clear_terminal_screen(void);
+void _clear_easycli_screen(void);
 static void _enable_raw_mode(void);
 static void _restore_terminal_mode(void);
 
@@ -336,7 +336,7 @@ void _e_free_history(struct e_history **p_history) {
 }
 /* ========================================================================= */
 /* ========================== terminal management ========================== */
-void _clear_terminal_screen(void) {
+void _clear_easycli_screen(void) {
     if (write(STDOUT_FILENO,"\x1b[H\x1b[2J",7) <= 0) return;
 }
 
@@ -726,7 +726,7 @@ static e_stat_code _handle_display(
         break;
     case CTRL_F:                _right_arrow(cli); break;
     case CTRL_K:                _ctrl_k(cli); break;
-    case CTRL_L:                _clear_terminal_screen(); break;
+    case CTRL_L:                _clear_easycli_screen(); break;
     case CTRL_N:                _down_arrow(cli, history); break;
     case CTRL_P:                _up_arrow(cli, history); break;
     case CTRL_T:                _ctrl_t(cli); break;
