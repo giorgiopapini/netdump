@@ -75,9 +75,6 @@
 
 	TODO: 	Implement CLEAN SCREEN in easycli.c. DELETE terminal_handler and define what is needed for the visulize.c module
 			directly inside the visualize.c module
-
-	TODO: 	When inserting a wrong command, the command is not correctly printed in the error message, than if enter key is
-			pressed with empty input it keeps printing the error (which shouldn't because empty string is a valid input)
 */
 
 static void _deallocate_heap(
@@ -98,18 +95,20 @@ int main(void) {
 	load_proto_hashmaps();
 
 	while (NULL != (line = easycli(PROMPT_STRING, E_DEFAULT_MAX_INPUT_LEN))) {
+		retval = RET_NONE;
 		len = (NULL != line) ? strlen(line) : 0;
-		
+
 		if (0 == create_cmd_from_str(&cmd, line, len))
 			retval = execute_command(&cmd, &packets, &libs, &custom_diss);
-		reset_cmd(&cmd);
 
 		if (RET_UNKNOWN == retval)
 			raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd.label);
 		else if (RET_EXIT == retval) {
+			reset_cmd(&cmd);
 			free(line);
 			break;
 		}
+		reset_cmd(&cmd);
 		free(line);
 	}
 

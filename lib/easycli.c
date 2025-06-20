@@ -466,6 +466,7 @@ static void _enter(struct e_cli_state *cli, struct e_history *history, const cha
     (*cli->p_line)->content[(*cli->p_line)->len] = '\0';
     _move_cursor_last_line(cli, c);
     _e_add_entry(history, *cli->p_line);
+    history->curr = (history->len > 0) ? history->len - 1 : 0;
     write(STDOUT_FILENO, "\r\n", 2);
 }
 

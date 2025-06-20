@@ -137,5 +137,5 @@ void execute_help(void) {
     _reset_help();
     _clear_help();
     _exit_help();
-    printf("\n");
+    printf("\n\n");
 }
