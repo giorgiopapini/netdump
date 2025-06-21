@@ -458,8 +458,6 @@ static void _move_cursor_last_line(struct e_cli_state *cli, const char pressed_k
         len = snprintf(buf, sizeof buf, "\r\033[%ldC", ((*cli->p_line)->len + prompt_len) % (cli->term_cols * (used_rows - 1)));
     else len = snprintf(buf, sizeof buf, "\r\033[%ldC", ((*cli->p_line)->len + prompt_len));
     write(STDOUT_FILENO, buf, (size_t)len);
-
-    fflush(stdout);
 }
 
 static void _enter(struct e_cli_state *cli, struct e_history *history, const char c) {
@@ -474,7 +472,11 @@ static void _enter(struct e_cli_state *cli, struct e_history *history, const cha
 
 static void _up_arrow(struct e_cli_state *cli, struct e_history *history) {
     if (NULL == history) return;
-    if (history->curr == history->len) _e_clean_line(*cli->p_line);
+    if (history->curr == history->len) {
+        _e_clean_line(*cli->p_line);
+        cli->curs->x = 0;
+        cli->curs->y = 0;
+    }
     else _set_line_to_history_curr(cli, history);
     
     if (0 == history->curr) history->curr = history->len;
@@ -486,6 +488,8 @@ static void _down_arrow(struct e_cli_state *cli, struct e_history *history) {
     if (history->curr == history->len) history->curr = 0;
     if (history->curr == history->len - 1) {
         _e_clean_line(*cli->p_line);
+        cli->curs->x = 0;
+        cli->curs->y = 0;
         return;
     }
     
@@ -738,7 +742,6 @@ static e_stat_code _handle_display(
     }
 
     if (!is_enter) _write_line(cli, masked);
-    fflush(stdout);
     return status;
 }
 

@@ -14,8 +14,6 @@
 #include "protocols/proto_tables_handler.h"
 
 /*
-	TODO (optional):	(prevent the shift + _arrow_up to print ;2A in terminal) (in general prevent shift + arrow printing)
-
 	TODO: 	Add a timeout error (and a flag to deactivate the timeout feature) when analizing for packets. If no packets are
 			received in a specific amount of time, than raise timeout error
 
@@ -38,8 +36,6 @@
 
 	TODO: 	insted of proto_table_id, a standard int value is used across the codebase, check if it is good (also thinking
 			about the shared lib (libpcap) for custom dissectors)
-
-	TODO: 	Return value from dissector_add to avoid proceeding the execution of the command even if an error occoured
 
 	TODO: 	Implement a command like "stats" to print statistics about a determined scanned session
 
