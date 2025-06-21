@@ -38,6 +38,9 @@
 			about the shared lib (libpcap) for custom dissectors)
 
 	TODO: 	Implement a command like "stats" to print statistics about a determined scanned session
+			(Search for Wireshark statistics tool for insights)
+			(STATS AND ANALIZE SHOULD BE STRICTLY SEPARATED, STATS SHOULDN'T BE RUN AT THE SAME TIME OF THE SCANNING.
+			OTHERWISE IT WILL SLOW THINGS DOWN)
 
 			(e.g.) Capture Statistics:
 				-------------------

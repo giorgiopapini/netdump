@@ -11,7 +11,7 @@ If your system stores those files in different locations, you can run ```make in
 Remember that these commands might need to be run with elevated privileges.
 
 ## Installation
-netdump can be executed on the vast majority of Linux machines. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
+Netdump can be executed on Unix-like operating systems conforming to the POSIX standard. It can be installed manually using make, or installed by using a package manager (RPM on Fedora, CentOS and RHEL).
 You can install netdump in several ways depending on your goal:
 
 1) Clone the repo and compile the program using ```make```.
