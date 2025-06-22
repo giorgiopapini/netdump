@@ -1,5 +1,6 @@
 .env
 /.vscode
+/assets
 netdump_key.txt
 main
 netdump
