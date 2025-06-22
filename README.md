@@ -143,10 +143,10 @@ The following are some of the comparisons I made. For others, check the assets f
 
 However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump queries while dissecting a TCP packet.
 The result is still amazing.
-[Watch the video](./assets/netdump_benchmark.mp4)
+[Watch the video](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/netdump_benchmark.mp4)
 
 ## Screenshots
-![Screenshot](./assets/screen1.png)
-![Screenshot](./assets/screen2.png)
-![Screenshot](./assets/screen3.png)
-![Screenshot](./assets/screen4.png)
+![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen1.png)
+![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen2.png)
+![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen3.png)
+![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen4.png)
