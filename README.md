@@ -129,16 +129,16 @@ I compared netdump with tcpdump in terms of speed, and these are the results I o
 The following are some of the comparisons I made. For others, check the assets folder.
 
 <p float="left">
-  <img src="./assets/arp_netdump.png" width="400"/>
-  <img src="./assets/arp_tcpdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/arp_netdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/arp_tcpdump.png" width="400"/>
 </p>
 <p float="left">
-  <img src="./assets/dns_netdump.png" width="400"/>
-  <img src="./assets/dns_tcpdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/dns_netdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/dns_tcpdump.png" width="400"/>
 </p>
 <p float="left">
-  <img src="./assets/tcp_netdump.png" width="400"/>
-  <img src="./assets/tcp_tcpdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/tcp_netdump.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/tcp_tcpdump.png" width="400"/>
 </p>
 
 However, the problem is that netdump does not support the extensive range of protocols that tcpdump does. Therefore, I focused on measuring TCP packets by adding "dummy" protocol handlers to the proto_tables that netdump queries while dissecting a TCP packet.
