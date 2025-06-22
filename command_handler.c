@@ -9,7 +9,7 @@
 #include "status_handler.h"
 #include "utils/string_utils.h"
 #include "utils/formats.h"
-#include "commands/analize.h"
+#include "commands/analyze.h"
 #include "commands/devlist.h"
 #include "commands/protocols.h"
 #include "commands/dissectors.h"
@@ -299,10 +299,10 @@ cmd_retval execute_command(
 ) {
     cmd_retval retval = RET_UNKNOWN;
 
-    if (is_command(cmd, ANALIZE_COMMAND)) {
+    if (is_command(cmd, ANALYZE_COMMAND)) {
         retval = RET_ANALIZE;
-        if (CHECK_ARGS(cmd, ANALIZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALIZE_ARGS)) execute_analize(cmd, packets, libs, custom_diss);
+        if (CHECK_ARGS(cmd, ANALYZE_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALYZE_ARGS)) execute_analyze(cmd, packets, libs, custom_diss);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         retval = RET_DEVLIST;

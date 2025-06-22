@@ -1,4 +1,4 @@
-#include "analize.h"
+#include "analyze.h"
 
 #include <sys/types.h>  /* needed for u_int/u_char used in <pcap/bpf.h> */
 #include <pcap/bpf.h>
@@ -80,7 +80,7 @@ void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *
 	dissect_packet(data.cmd, pkt, data.libs, data.custom_diss);
 }
 
-void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
+void execute_analyze(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss) {
 	/* ==============================  Getting args values from cmd  ================================ */
 	custom_data custom_args = { .cmd = cmd, .packets = packets, .libs = libs, .custom_diss = custom_diss, .pcap_dump = NULL };
 	char errbuff[PCAP_ERRBUF_SIZE];
@@ -101,7 +101,7 @@ void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom
 	char *write_file = get_raw_val(cmd, WRITE_FILE_ARG);
     int prom_mode = NULL == get_arg(cmd, NO_PROM_ARG);
 	
-	handle = NULL;  /* reset global var handle to NULL at each 'execute_analize' call */
+	handle = NULL;  /* reset global var handle to NULL at each 'execute_analyze' call */
 
 	tmp = long_to_int(raw_tmp);
 

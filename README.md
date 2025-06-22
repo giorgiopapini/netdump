@@ -40,7 +40,7 @@ The general command format is this ```netdump <command> -<arg_1> <value_1> ... -
 Run the ```help``` command from anywhere inside the CLI tool to get a small doc about every command and its supported arguments.
 Strings should be enclosed in "" to prevent netdump from misinterpreting uppercase letters, -, and other symbols.
 
-### ```analize```
+### ```analyze```
 This command is used to scan incoming and outgoing network traffic for a selected device.
 The following table lists the allowed arguments for this command.
 

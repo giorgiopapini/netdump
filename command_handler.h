@@ -8,7 +8,7 @@
 #include "utils/custom_dissectors.h"
 #include "utils/raw_array.h"
 
-#define ANALIZE_COMMAND             "analize"
+#define ANALYZE_COMMAND             "analyze"
 #define DEVICES_LIST_COMMAND        "devlist"
 #define PROTOCOLS_COMMAND           "protocols"
 #define DISSECTORS_COMMAND          "dissectors"
@@ -19,7 +19,7 @@
 #define SAVE_COMMAND                "save"
 #define HELP_COMMAND                "help"
 
-#define ANALIZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
+#define ANALYZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
 #define PROTOCOLS_COMMAND_DESC      "Retrieve a list of supported protocols"
 #define DISSECTORS_COMMAND_DESC     "Manage custom dissectors"
@@ -103,8 +103,8 @@
     The REQUIRED_EXIT_ARGS are the obligatory args required for the cmd to run
 */
                    
-#define ANALIZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
-#define REQUIRED_ANALIZE_ARGS       NONE_ARG
+#define ANALYZE_ARGS                NUMBER_ARG, FILTER_ARG, DEVICE_ARG, DATALINK_HDR_ARG, NETWORK_HDR_ARG, TRANSPORT_HDR_ARG, APPLICATION_HDR_ARG, NO_PROM_ARG, NO_TIMESTAMP_ARG, NO_PROTOCOL_NAME_ARG, PACKET_NUM_ARG, READ_FILE_ARG, WRITE_FILE_ARG
+#define REQUIRED_ANALYZE_ARGS       NONE_ARG
 
 #define DEVICES_LIST_ARGS           NONE_ARG
 #define REQUIRED_DEVICES_LIST_ARGS  NONE_ARG

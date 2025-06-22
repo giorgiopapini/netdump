@@ -54,7 +54,7 @@ static void _print_arg(
 }
 
 static void _analize_help(void) {
-    _print_cmd(ANALIZE_COMMAND, ANALIZE_COMMAND_DESC);
+    _print_cmd(ANALYZE_COMMAND, ANALYZE_COMMAND_DESC);
 
     _print_arg(NUMBER_ARG, PACKET_AMOUNT_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, NUMBER_ARG_EG);
     _print_arg(FILTER_ARG, FILTER_ARG_DESC, DEFAULT_SPACE, DEFAULT_PIPE, FILTER_ARG_EG);

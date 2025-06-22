@@ -62,6 +62,8 @@
 				1. 443 (HTTPS) - 1894 packets
 				2. 53 (DNS) - 850 packets
 				3. 22 (SSH) - 312 packets
+
+	TODO: 	Command to show protocol hierarchy like wireshark
 */
 
 static void _deallocate_heap(

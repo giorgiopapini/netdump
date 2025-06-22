@@ -1,5 +1,5 @@
-#ifndef ANALIZE_H
-#define ANALIZE_H
+#ifndef ANALYZE_H
+#define ANALYZE_H
 
 #include <stdint.h>
 
@@ -17,6 +17,6 @@ struct pcap_pkthdr;
 
 int device_exists(char *dev);
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes);
-void execute_analize(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
+void execute_analyze(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
 
 #endif

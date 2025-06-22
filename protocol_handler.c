@@ -32,7 +32,7 @@ output_format get_output_format(command *cmd) {
 	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	if (NULL == out_format) return OUTPUT_FORMAT_BASIC;
 
-	if (is_command(cmd, ANALIZE_COMMAND)) return OUTPUT_FORMAT_BASIC;
+	if (is_command(cmd, ANALYZE_COMMAND)) return OUTPUT_FORMAT_BASIC;
 	else {
 		if (0 == strcmp(out_format, OUTPUT_ARG_VAL_STD)) return OUTPUT_FORMAT_BASIC;
 		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) return OUTPUT_FORMAT_RAW;
@@ -48,7 +48,7 @@ void print_separator(command *cmd) {
 		return;
 	}
 
-	if (is_command(cmd, ANALIZE_COMMAND)) printf(INLINE_SEPARATOR);
+	if (is_command(cmd, ANALYZE_COMMAND)) printf(INLINE_SEPARATOR);
 	else {
 		if (0 == strcmp(out_format, OUTPUT_ARG_VAL_STD)) printf(INLINE_SEPARATOR);
 		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) printf(INLINE_SEPARATOR);
