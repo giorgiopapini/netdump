@@ -51,7 +51,7 @@ void print_separator(command *cmd) {
 	if (is_command(cmd, ANALYZE_COMMAND)) printf(INLINE_SEPARATOR);
 	else {
 		if (0 == strcmp(out_format, OUTPUT_ARG_VAL_STD)) printf(INLINE_SEPARATOR);
-		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) printf(INLINE_SEPARATOR);
+		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_RAW)) printf(SPACE_SEPARATOR);
 		else if (0 == strcmp(out_format, OUTPUT_ARG_VAL_ART)) printf(SPACE_SEPARATOR);
 	}
 }
@@ -134,6 +134,7 @@ void dissect(
 
 void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
 	const char *raw_output_val = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
+	const output_format fmt = get_output_format(cmd);
 
 	CHECK_NULL_EXIT(pkt);
 	CHECK_NULL_EXIT(pkt->header);
@@ -146,7 +147,7 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 	if (NULL == get_arg(cmd, NO_TIMESTAMP_ARG)) print_timestamp(pkt->header->ts);
 	if (NULL != get_arg(cmd, PACKET_NUM_ARG)) printf(GREEN "(#%ld) " RESET_COLOR, pkt->num);
 	/* if "ascii_art" than it adds a bit of spacing */
-	if (OUTPUT_FORMAT_ACII_ART == get_output_format(cmd)) printf("\n\n");
+	if (OUTPUT_FORMAT_ACII_ART == fmt || OUTPUT_FORMAT_RAW == fmt) printf("\n\n");
 
 	dissect(
 		cmd,

@@ -2,19 +2,59 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "../status_handler.h"
+#include "colors.h"
 
 
+static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len);
 static void _print_raw_pkt(const uint8_t *pkt, size_t len);
 
-static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
+
+static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len) {
 	size_t i;
 
+	for (i = 0; i < len; i ++) {
+		if (isprint(pkt[i])) printf("%c", pkt[i]);
+		else printf(".");
+	}
+}
+
+static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
+	const uint8_t *tmp_pkt = pkt;
+	size_t line_chars = 4 * 8 + 7;
+	size_t padding;
+	size_t hex_chars;
+	size_t whitespaces;
+	size_t i, j;
+
 	CHECK_NULL_RET(pkt);
-	if (len > 0) printf("[%02x", *pkt);
-	for (i = 1; i < len; i ++) printf(" %02x", pkt[i]);
-	printf("]");
+	for (i = 0; i < len; i ++) {
+		if (0 == i % 16) {
+			tmp_pkt = &pkt[i];
+			printf(YELLOW "\n0x%04lx: " RESET_COLOR, i);
+		}
+		printf("%02x", pkt[i]);
+		fflush(stdout);
+
+		if (0 == (i + 1) % 2) {
+			if (0 == (i + 1) % 16) {
+				printf(" | ");
+				_print_ascii_raw_pkt(tmp_pkt, 16);
+			}
+			else if (i < len - 1) printf(" ");
+			else {
+				hex_chars = (len % 16) * 2;
+				whitespaces = (hex_chars / 4) - 1;
+				padding = line_chars - hex_chars - whitespaces;
+				for (j = 0; j < padding; j ++) printf(" ");
+				printf(" | ");
+				_print_ascii_raw_pkt(tmp_pkt, (len % 16));
+			}
+		}
+	}
+	printf("\n");
 }
 
 output_func_t select_output_func(
