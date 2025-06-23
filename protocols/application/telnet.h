@@ -6,7 +6,6 @@
 
 #include "../../utils/protocol.h"
 
-#define TELNET_HEADER_LABEL         "Telnet Header"
 #define TELNET_COMMAND_LABEL        "Command"
 #define TELNET_DATA_LABEL           "Data (', ' separator)"
 

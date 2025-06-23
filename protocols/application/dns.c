@@ -9,8 +9,8 @@
 
 static size_t _extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain);
 static void _extract_srv_record(const uint8_t *payload, size_t offset, size_t data_len);
-static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static size_t _extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain) {
     size_t start_offset = offset;
@@ -60,7 +60,7 @@ static void _extract_srv_record(const uint8_t *payload, size_t offset, size_t da
     printf(", target: %s", target);
 }
 
-static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char opcode_str[16];
     char rcode_str[16];
     char domain[256];
@@ -71,7 +71,7 @@ static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     size_t i, j;
     char flags[128] = "";  /* IMPORTANT! Initialize flags to empty str, otherwiese strcat could lead to undefined behaviours */
     
-    if (!pkt || pkt_len < DNS_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
 
     printf("transaction_id: 0x%04x", DNS_TRANSACTION_ID(pkt));
 
@@ -105,7 +105,7 @@ static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 
     /* print queries */
-    offset = DNS_HDR_LEN;
+    offset = hdr_len;
     for (i = 0; i < (size_t)DNS_QUESTIONS(pkt); i ++) {
         offset += _extract_domain_name(pkt, offset, pkt_len, domain);
         if (offset > pkt_len - 4) return;
@@ -177,7 +177,7 @@ static void _print_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char transaction_id[7];  /* 0x0000'\0' 7 chars */
     char qr[2];
     char opcode[3];
@@ -193,7 +193,7 @@ static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
     char auth_rrs[6];
     char additional_rrs[6];
     
-    if (!pkt || pkt_len < DNS_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
     
     snprintf(transaction_id, sizeof(transaction_id), "0x%04x", DNS_TRANSACTION_ID(pkt));
     snprintf(qr, sizeof(qr), "%u", (DNS_FLAGS(pkt)) & DNS_QR ? 1 : 0);
@@ -232,6 +232,6 @@ static void _visualize_dns_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < DNS_HDR_LEN) return NO_ENCAP_PROTO;
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_dns_hdr, _visualize_dns_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, DNS_HDR_LEN, fmt, _print_dns_hdr, _visualize_dns_hdr);
     return NO_ENCAP_PROTO;
 }

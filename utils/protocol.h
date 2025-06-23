@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "hashmap.h"
-
 #define DLT_PROTOS_LABEL    "dlt_protos"
 #define ETHERTYPES_LABEL    "ethertypes"
 #define IP_PROTOS_LABEL     "ip_protos"
@@ -56,20 +54,20 @@ typedef struct protocol_handler_mapping {
 	int proto_table_num;
 } protocol_handler_mapping;
 
-typedef void (*output_func_t)(const uint8_t *, size_t);
+typedef void (*output_func_t)(const uint8_t *, size_t, size_t);
 
 
 #define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .proto_table_num = -1 };
-#define SHOW_OUTPUT(pkt, len, fmt, print_func, visualize_func) \
+#define SHOW_OUTPUT(pkt, len, hdr_len, fmt, print_func, visualize_func) \
 		do { \
 			output_func_t output_func = select_output_func(fmt, print_func, visualize_func); \
-    		if (NULL != output_func && len > 0) output_func(pkt, len); \
+    		if (NULL != output_func && len > 0) output_func(pkt, len, hdr_len); \
 		} while(0)
 
 output_func_t select_output_func(
     output_format fmt,
-    void (*print_func)(const uint8_t *, size_t), 
-    void (*visualize_func)(const uint8_t *, size_t)
+    void (*print_func)(const uint8_t *, size_t, size_t), 
+    void (*visualize_func)(const uint8_t *, size_t, size_t)
 );
 protocol_handler *create_protocol_handler(
 	int proto, 
@@ -84,6 +82,4 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 protocol_handler_mapping **create_mappings_arr(void);
 void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *new_mapping);
 void destroy_mappings(protocol_handler_mapping **mappings);
-protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table);
-
 #endif

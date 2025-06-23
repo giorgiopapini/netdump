@@ -10,8 +10,8 @@
 
 static void _parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size);
 static void _parse_ftp_request(const uint8_t *request, size_t pkt_len, char *command, size_t command_size, char *argument, size_t argument_size);
-static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static void _parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size) {
     size_t code_len;
@@ -65,9 +65,10 @@ static void _parse_ftp_request(const uint8_t *request, size_t pkt_len, char *com
     else argument[0] = '\0';
 }
 
-static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     size_t i;
     (void)pkt_len;
+    (void)hdr_len;
 
     i = 0;
     if (!pkt || pkt[0] == '\0') return;
@@ -81,11 +82,12 @@ static void _print_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    char str1[MAX_FTP_HDR_LEN];
-    char str2[MAX_FTP_HDR_LEN];
+static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    char str1[MAX_FTP_LINE_LEN];
+    char str2[MAX_FTP_LINE_LEN];
     
     (void)pkt_len;
+    (void)hdr_len;
     if (!pkt || pkt[0] == '\0') return;
     
     start_printing();
@@ -107,6 +109,6 @@ static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt[0] == '\0') return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ftp_hdr, _visualize_ftp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, 0, fmt, _print_ftp_hdr, _visualize_ftp_hdr);
     return NO_ENCAP_PROTO;
 }

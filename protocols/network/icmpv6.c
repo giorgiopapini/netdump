@@ -7,8 +7,8 @@
 
 
 static void _print_type(uint8_t type);
-static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static void _print_type(uint8_t type) {
     switch (type) {
@@ -31,8 +31,8 @@ static void _print_type(uint8_t type) {
     printf(" (%u)", type);
 }
 
-static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return;
+static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    if (!pkt || pkt_len < hdr_len) return;
     
     _print_type(ICMPV6_TYPE(pkt));
     printf(
@@ -50,14 +50,14 @@ static void _print_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
     }
 }
 
-static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char type[4];  /* 4 bits --> max: 255'\0' 4 chars */
     char code[4];
     char checksum[7];  /* 0x0000'\0' 7 chars */
     char id[7];  /* 0x0000'\0' 7 chars */
     char seq[6];  /* 65535'\0' 6 chars */
     
-    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
     
     snprintf(type, sizeof(type), "%u", ICMPV6_TYPE(pkt));
     snprintf(code, sizeof(code), "%u", ICMPV6_CODE(pkt));
@@ -81,6 +81,6 @@ static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < ICMPV6_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_icmpv6_hdr, _visualize_icmpv6_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, ICMPV6_HDR_LEN, fmt, _print_icmpv6_hdr, _visualize_icmpv6_hdr);
     return NO_ENCAP_PROTO;
 }

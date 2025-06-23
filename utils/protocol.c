@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "../status_handler.h"
 #include "colors.h"
+
+/* NULL checks are not done using "status_handler.c" because it has to be included inside "libnetdump.so" */
 
 
 static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len);
-static void _print_raw_pkt(const uint8_t *pkt, size_t len);
+static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len);
 
 
 static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len) {
@@ -21,7 +22,7 @@ static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len) {
 	}
 }
 
-static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
+static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len) {
 	const uint8_t *tmp_pkt = pkt;
 	size_t line_chars = 4 * 8 + 7;
 	size_t padding;
@@ -29,14 +30,16 @@ static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
 	size_t whitespaces;
 	size_t i, j;
 
-	CHECK_NULL_RET(pkt);
+	if (NULL == pkt) return;
+
 	for (i = 0; i < len; i ++) {
 		if (0 == i % 16) {
 			tmp_pkt = &pkt[i];
 			printf(YELLOW "\n0x%04lx: " RESET_COLOR, i);
 		}
-		printf("%02x", pkt[i]);
-		fflush(stdout);
+
+		if (i < hdr_len) printf(MAGENTA);
+		printf("%02x" RESET_COLOR, pkt[i]);
 
 		if (0 == (i + 1) % 2) {
 			if (0 == (i + 1) % 16) {
@@ -54,7 +57,7 @@ static void _print_raw_pkt(const uint8_t *pkt, size_t len) {
 			}
 		}
 	}
-	printf("\n");
+	printf(RESET_COLOR "\n");
 }
 
 output_func_t select_output_func(
@@ -78,7 +81,7 @@ protocol_handler *create_protocol_handler(
 	const char *protocol_name
 ) {
 	protocol_handler *new_handler = malloc(sizeof *new_handler);
-	CHECK_NULL_EXIT(new_handler);
+	if (NULL == new_handler) return NULL;
 
 	new_handler->protocol = proto;
 	new_handler->layer = layer;
@@ -92,7 +95,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 	int proto_table_num
 ) {
 	protocol_handler_mapping *new_mapping = malloc(sizeof *new_mapping);
-	CHECK_NULL_EXIT(new_mapping);
+	if (NULL == new_mapping) return NULL;
 
 	new_mapping->handler = handler;
 	new_mapping->proto_table_num = proto_table_num;
@@ -101,7 +104,7 @@ protocol_handler_mapping *create_protocol_handler_mapping(
 
 protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array */
 	protocol_handler_mapping **new_mappings = malloc(2 * sizeof *new_mappings);
-	CHECK_NULL_EXIT(new_mappings);
+	if (NULL == new_mappings) return NULL;
 
     new_mappings[0] = NULL;
     new_mappings[1] = NULL;
@@ -111,11 +114,11 @@ protocol_handler_mapping **create_mappings_arr(void) {  /* NULL terminated array
 void add_mapping(protocol_handler_mapping ***arr_ptr, protocol_handler_mapping *new_mapping) {
 	int count = 0;
 
-	CHECK_NULL_EXIT(arr_ptr);
+	if (NULL == arr_ptr) return;
 	while (*arr_ptr && (*arr_ptr)[count] != NULL) count ++;
 
 	*arr_ptr = (protocol_handler_mapping **)realloc(*arr_ptr, (size_t)(count + 2) * sizeof(protocol_handler_mapping *));
-	CHECK_NULL_EXIT(*arr_ptr);
+	if (NULL == *arr_ptr) return;
 
     (*arr_ptr)[count] = new_mapping;
     (*arr_ptr)[count + 1] = NULL;
@@ -134,11 +137,4 @@ void destroy_mappings(protocol_handler_mapping **mappings) {
         }
         free(mappings);
     }
-}
-
-protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table) {
-	hashmap_entry *entry = get_entry(proto_table, target_proto);
-	if (NULL == entry) return NULL;
-	
-	return (protocol_handler *)entry->value;
 }

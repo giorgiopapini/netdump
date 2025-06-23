@@ -11,8 +11,8 @@
 
 static size_t _tcp_options_len(const uint8_t *pkt);
 static void _print_tcp_options(const uint8_t *pkt);
-static void _print_tcp_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_tcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static size_t _tcp_options_len(const uint8_t *pkt) {
     int raw_len;
@@ -130,10 +130,10 @@ static void _print_tcp_options(const uint8_t *pkt) {
     printf("]");
 }
 
-static void _print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_tcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char flags[41] = "";  /* IMPORTANT! Initialize flags to empty str, otherwise strcat could lead to undefined behaviours */
     
-    if (!pkt || pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return;
+    if (!pkt || pkt_len < 12 || pkt_len < hdr_len) return;
 
     printf("src_port: %u, dest_port: %u", TCP_SRC_PORT(pkt), TCP_DEST_PORT(pkt));
     printf(", flags: [");
@@ -156,7 +156,7 @@ static void _print_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     if (0 < _tcp_options_len(pkt)) _print_tcp_options(pkt);
 }
 
-static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char src_port[6];  /* 16 bit ==> max = 65536 (5 chars + '\0') */
     char dest_port[6];
     char seq[11];  /* 32 bit can represent a max of 4294967295'\0' ==> len = 11 */
@@ -176,7 +176,7 @@ static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char urgent_pointer[7];
     /* char options[];  */
 
-    if (!pkt || pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return;
+    if (!pkt || pkt_len < 12 || pkt_len < hdr_len) return;
 
     snprintf(src_port, sizeof(src_port), "%u", TCP_SRC_PORT(pkt));
     snprintf(dest_port, sizeof(dest_port), "%u", TCP_DEST_PORT(pkt));
@@ -223,7 +223,7 @@ protocol_info dissect_tcp(const uint8_t *pkt, size_t pkt_len, output_format fmt)
     protocol_info proto_info;
 
     if (!pkt || pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return NO_ENCAP_PROTO;
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_tcp_hdr, _visualize_tcp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, TCP_HDR_LEN(pkt), fmt, _print_tcp_hdr, _visualize_tcp_hdr);
     
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
     proto_info.offset = TCP_HDR_LEN(pkt);

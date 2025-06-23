@@ -8,8 +8,8 @@
 
 static size_t _snap_hdr_len(const uint8_t *pkt);
 static uint16_t _extract_dlci(const uint8_t *pkt, size_t hdr_len);
-static void _print_frelay_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_frelay_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static size_t _snap_hdr_len(const uint8_t *pkt) {
     size_t hdr_len;
@@ -36,14 +36,11 @@ static uint16_t _extract_dlci(const uint8_t *pkt, size_t hdr_len) {
     return dlci;
 }
 
-static void _print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
-    size_t hdr_len;
+static void _print_frelay_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     size_t offset;
     uint16_t protocol;
 
     if (!pkt) return;
-    
-    hdr_len = _snap_hdr_len(pkt);
     if (hdr_len > pkt_len) return;
 
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
@@ -64,20 +61,17 @@ static void _print_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {
     else printf(", ethertype: 0x%04x", protocol);
 }
 
-static void _visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len) {    
+static void _visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {    
     char dlci[7];  /* 2 bytes, max = 65535'\0' 7 chars */
     char fecn[2];
     char becn[2];
     char de[2];
     char protocol_ether[7];  /* 0x0000'\0' 7 chars */
     char protocol_nlpid[5];  /* 0x00'\0' 4 chars */
-    size_t hdr_len;
     size_t offset;
     uint16_t protocol;
 
     if (!pkt) return;
-
-    hdr_len = _snap_hdr_len(pkt);
     if (hdr_len > pkt_len) return;
 
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
@@ -121,7 +115,7 @@ protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format f
 
     protocol = FRELAY_PROTO(pkt, offset);
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_frelay_hdr, _visualize_frelay_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, hdr_len, fmt, _print_frelay_hdr, _visualize_frelay_hdr);
 
     if (protocol <= NLPID_THRESHOLD) table_num = NLPID_PROTOS;
     else table_num = ETHERTYPES;

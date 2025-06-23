@@ -8,8 +8,8 @@
 
 
 static void _print_options(const uint8_t *pkt, size_t len);
-static void _print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
 static void _print_options(const uint8_t *pkt, size_t len) {
     size_t i;
@@ -21,8 +21,8 @@ static void _print_options(const uint8_t *pkt, size_t len) {
     printf("%02x]", pkt[i]);
 }
 
-static void _print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return;
+static void _print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    if (!pkt || pkt_len < hdr_len) return;
 
     printf("op: %u", DHCP_OP(pkt));
     if (1 == DHCP_OP(pkt)) printf(" (BOOTREQUEST)");
@@ -57,7 +57,7 @@ static void _print_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     _print_options(pkt, pkt_len);
 }
 
-static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char operation[5];
     char htype[5];  /* 0x00'\0' */
     char hlen[4];
@@ -73,7 +73,7 @@ static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
     char boot_file[129];
     char magic_cookie[11];
     
-    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
 
     snprintf(operation, sizeof(operation), "%u", DHCP_OP(pkt));
     snprintf(htype, sizeof(htype), "0x%02x", DHCP_HTYPE(pkt));
@@ -116,6 +116,6 @@ static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return NO_ENCAP_PROTO;
     
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_dhcp_hdr, _visualize_dhcp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, MIN_DHCP_HDR_LEN, fmt, _print_dhcp_hdr, _visualize_dhcp_hdr);
     return NO_ENCAP_PROTO;
 }

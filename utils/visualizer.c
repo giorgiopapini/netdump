@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <termios.h> 
 
-#include "../status_handler.h"
 #include "colors.h"
 
 
@@ -27,6 +26,8 @@
 #define OFFSET_RIGHT(max, min) \
     ((size_t)(((max % min) == 0) ? round((double)(max - min) / 2.0) : round((double)(max - min) / 2.0)))
 
+
+/* NULL checks are not done using "status_handler.c" because it has to be included inside "libnetdump.so" */
 
 static int _get_cursor_position(size_t *col, size_t *row);
 static void _get_terminal_size(size_t *cols, size_t *rows);
@@ -57,7 +58,7 @@ static int _get_cursor_position(size_t *col, size_t *row) {
     i = 0;
     while (i < sizeof(buf) - 1) {
         FD_ZERO(&fds);
-        FD_SET(STDIN_FILENO, &fds);
+        FD_SET((unsigned long)STDIN_FILENO, &fds);
         tv.tv_sec = 1;
         tv.tv_usec = 0;
 
@@ -115,16 +116,16 @@ size_t calc_rows(const char *str) {
     size_t usable_cols;
     size_t max_len;
     
-    CHECK_NULL_EXIT(str);
-    CHECK_NULL_EXIT(MARGIN);
-    CHECK_NULL_EXIT(VERTICAL_BORDER);
+    if (NULL == str || NULL == MARGIN || NULL == VERTICAL_BORDER) return 0;
 
     max_len = strlen(str) + (2 * strlen(MARGIN)) + (2 * strlen(VERTICAL_BORDER));
     _get_terminal_size(&cols, &rows);
 
     usable_cols = MIN(cols, MAX_X);
-    if (usable_cols == 0) raise_error(TERMINAL_SIZE_ERROR, 1, NULL);
-
+    if (usable_cols == 0) {
+        printf(RED "[ERROR] -> Couldn't retrieve the current terminal size\n" RESET_COLOR);
+        return 0;
+    }
     return (max_len + usable_cols - 1) / usable_cols;
 }
 
@@ -145,11 +146,10 @@ void move_to_next_line(size_t *curr_x, size_t *curr_y, size_t used_rows) {
 
 static void _print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y) {
     size_t i;
-    CHECK_NULL_EXIT(JUNCTION);
+    if (NULL == JUNCTION) return;
     len -= 2 * strlen(JUNCTION);  /* this exclude space needed for the junctions inside the for loop */
 
-    CHECK_NULL_EXIT(curr_x);
-    CHECK_NULL_EXIT(curr_y);
+    if (NULL == curr_x || NULL == curr_y) return;
 
     MOVE_CURSOR(*curr_x, *curr_y);
     printf(CONT_JUNCTION);
@@ -160,9 +160,7 @@ static void _print_horizontal_border(size_t len, size_t *curr_x, size_t *curr_y)
 static void _print_line(const char *val, size_t *curr_x, size_t *curr_y, size_t offset_left, size_t offset_right) {
     printf("\n");  /* creates new line if no more rows available in terminal */
 
-    CHECK_NULL_RET(curr_x);
-    CHECK_NULL_RET(curr_y);
-
+    if (NULL == curr_x || NULL == curr_y) return;
     *curr_y += 1; 
     MOVE_CURSOR(*curr_x, *curr_y);
     
@@ -181,16 +179,13 @@ static void _print_value(const char *label, const char *content, size_t *curr_x,
     size_t partial_i;
     size_t i;
 
-    CHECK_NULL_EXIT(curr_x);
-    CHECK_NULL_EXIT(curr_y);
-    
-    CHECK_NULL_RET(label);
-    CHECK_NULL_RET(content);
+    if (NULL == curr_x || NULL == curr_y) return;
+    if (NULL == label || NULL == content) return;
+
     label_len = strlen(label);
     content_len = strlen(content);
 
-    CHECK_NULL_EXIT(MARGIN);
-    CHECK_NULL_EXIT(VERTICAL_BORDER);
+    if (NULL == MARGIN || NULL == VERTICAL_BORDER) return;
     partial_i = (max_len - (2 * strlen(MARGIN)) - (2 * strlen(VERTICAL_BORDER)));
 
     if (label_len > content_len) {
@@ -204,7 +199,6 @@ static void _print_value(const char *label, const char *content, size_t *curr_x,
                 strncpy(partial_str, label, partial_i);
                 partial_str[partial_i] = '\0';
 
-                CHECK_NULL_EXIT(partial_str);
                 _print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 label += partial_i;
             }
@@ -224,7 +218,6 @@ static void _print_value(const char *label, const char *content, size_t *curr_x,
                 strncpy(partial_str, content, partial_i);
                 partial_str[partial_i] = '\0';
 
-                CHECK_NULL_EXIT(partial_str);
                 _print_line(partial_str, curr_x, curr_y, OFFSET_LEFT(partial_i, strlen(partial_str)), OFFSET_RIGHT(partial_i, strlen(partial_str)));
                 content += partial_i;
             }
@@ -246,10 +239,7 @@ void print_field(const char *label, const char *content, int newline) {
     size_t curr_y;
     size_t initial_y;
 
-    if (unsupported_terminal) return;
-
-    CHECK_NULL_RET(label);
-    CHECK_NULL_RET(content);
+    if (unsupported_terminal || NULL == label || NULL == content) return;
 
     label_len = strlen(label);
     content_len = strlen(content);
@@ -257,15 +247,15 @@ void print_field(const char *label, const char *content, int newline) {
     _get_terminal_size(&term_cols, &term_rows);
 
     if (0 != _get_cursor_position(&curr_x, &curr_y)) {
-        raise_error(CURSOR_POSITION_ERROR, 0, UNCOMPATIBLE_TERMINAL_HINT);
+        printf(RED "[ERROR] -> Couldn't retrieve the current cursor position\n" RESET_COLOR);
+        printf(YELLOW "Check if your terminal supports ANSI escape sequences\n" RESET_COLOR);
         unsupported_terminal = 1;
         return;
     }
 
     initial_y = curr_y; 
 
-    CHECK_NULL_EXIT(VERTICAL_BORDER);
-    CHECK_NULL_EXIT(MARGIN);
+    if (NULL == VERTICAL_BORDER || NULL == MARGIN) return;
     max_len = (2 * strlen(VERTICAL_BORDER)) + (2 * strlen(MARGIN));
     max_len += MAX(label_len, content_len);
 

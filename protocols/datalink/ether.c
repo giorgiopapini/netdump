@@ -7,11 +7,11 @@
 #include "../../utils/protocol.h"
 
 
-static void _print_ether_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ether_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
-static void _print_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (!pkt || pkt_len < ETHER_HDR_LEN) return;
+static void _print_ether_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    if (!pkt || pkt_len < hdr_len) return;
     /* ========================= printing src (MAC) > dest (MAC) ========================= */
     print_mac(SRC_ADDR(pkt));
     printf(" > ");
@@ -23,12 +23,12 @@ static void _print_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
     /* =================================================================================== */
 }
 
-static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char dest_addr[MAC_ADDR_STR_LEN];
     char src_addr[MAC_ADDR_STR_LEN];
     char ethertype[7];  /* 0xXXXX'\0' */
 
-    if (!pkt || pkt_len < ETHER_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
     
     snprintf(dest_addr, sizeof(dest_addr), MAC_ADDR_FORMAT, MAC_TO_STR(DEST_ADDR(pkt)));
     snprintf(src_addr, sizeof(src_addr), MAC_ADDR_FORMAT, MAC_TO_STR(SRC_ADDR(pkt)));
@@ -44,6 +44,6 @@ static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ether(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < ETHER_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ether_hdr, _visualize_ether_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, ETHER_HDR_LEN, fmt, _print_ether_hdr, _visualize_ether_hdr);
     return (protocol_info){ .protocol = ETHERTYPE(pkt), .offset = ETHER_HDR_LEN, .proto_table_num = ETHERTYPES };
 }

@@ -41,6 +41,13 @@ output_format get_output_format(command *cmd) {
 	return OUTPUT_FORMAT_BASIC;
 }
 
+protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table) {
+	hashmap_entry *entry = get_entry(proto_table, target_proto);
+	if (NULL == entry) return NULL;
+	
+	return (protocol_handler *)entry->value;
+}
+
 void print_separator(command *cmd) {
 	char *out_format = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	if (NULL == out_format) {
@@ -99,7 +106,7 @@ void dissect(
 		if (pkt_len > 0) {
 			if (proto_shown > 0) print_separator(cmd);
 			printf(CYAN "(%s) " RESET_COLOR, UNKNOWN_PROTO_LABEL);
-			SHOW_OUTPUT(pkt, pkt_len, get_output_format(cmd), NULL, NULL);
+			SHOW_OUTPUT(pkt, pkt_len, 0, get_output_format(cmd), NULL, NULL);
 			proto_shown ++;
 		}
 		return;

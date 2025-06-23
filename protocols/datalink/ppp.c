@@ -6,11 +6,11 @@
 #include "../../utils/protocol.h"
 
 
-static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len);
+static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
-static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
-    if (!pkt || pkt_len < PPP_HDR_LEN) return;
+static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    if (!pkt || pkt_len < hdr_len) return;
     
     printf(
         "addr: 0x%02x, control: 0x%02x, protocol: 0x%04x",
@@ -20,12 +20,12 @@ static void _print_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
     );
 }
 
-static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     char address[5];  /* 0x00'\0' are 5 chars */
     char control[5];
     char protocol[7];  /* 0x0000'\0' are 7 chars */
     
-    if (!pkt || pkt_len < PPP_HDR_LEN) return;
+    if (!pkt || pkt_len < hdr_len) return;
     
     snprintf(address, sizeof(address), "0x%02x", ADDRESS(pkt));
     snprintf(control, sizeof(control), "0x%02x", CONTROL(pkt));
@@ -41,6 +41,6 @@ static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_ppp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt || pkt_len < PPP_HDR_LEN) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_ppp_hdr, _visualize_ppp_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, PPP_HDR_LEN, fmt, _print_ppp_hdr, _visualize_ppp_hdr);
     return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = PPP_HDR_LEN, .proto_table_num = PPP_PROTOS };
 }

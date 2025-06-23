@@ -8,12 +8,12 @@
 #include "../../utils/protocol.h"
 
 
-static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]);
-static void _split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]);
-static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len);
-static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len);
+static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_VERSION_LEN]);
+static void _split_header_line(const char *header_line, char *key, char value[MAX_VALUE_LEN]);
+static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
 
-static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_HTTP_HDR_LEN]) {
+static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_VERSION_LEN]) {
     ptrdiff_t path_len;
     char *first_space;
     const char *path_start;
@@ -44,14 +44,14 @@ static int _extract_http_request_line(const char *request_line, char *method, ch
     }
 
     if (version_start != NULL) {
-        strncpy(version, version_start + 1, MAX_HTTP_HDR_LEN - 1);
-        version[MAX_HTTP_HDR_LEN - 1] = '\0';
+        strncpy(version, version_start + 1, MAX_VERSION_LEN - 1);
+        version[MAX_VERSION_LEN - 1] = '\0';
     }
     else version[0] = '\0';
     return 1;
 }
 
-static void _split_header_line(const char *header_line, char *key, char value[MAX_HTTP_HDR_LEN]) {
+static void _split_header_line(const char *header_line, char *key, char value[MAX_VALUE_LEN]) {
     ptrdiff_t key_len;
     const char *value_start;
     const char *colon_pos;
@@ -67,8 +67,8 @@ static void _split_header_line(const char *header_line, char *key, char value[MA
             while (*value_start == ' ') value_start ++;
 
             if (value_start != NULL) {
-                strncpy(value, value_start + 1, MAX_HTTP_HDR_LEN - 1);
-                value[MAX_HTTP_HDR_LEN - 1] = '\0';
+                strncpy(value, value_start + 1, MAX_VALUE_LEN - 1);
+                value[MAX_VALUE_LEN - 1] = '\0';
             }
         }
     } 
@@ -78,23 +78,25 @@ static void _split_header_line(const char *header_line, char *key, char value[MA
     }
 }
 
-static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len) {
+static void _print_http_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
     size_t i;
+    (void)hdr_len;
     if (pkt) for (i = 0; i < pkt_len; i ++) printf("%c", pkt[i]);
 }
 
-static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
-    char line[MAX_HTTP_HDR_LEN];
-    char key[MAX_HTTP_HDR_LEN];
-    char value[MAX_HTTP_HDR_LEN];
-    char method[MAX_HTTP_HDR_LEN];
-    char path[MAX_HTTP_HDR_LEN];
-    char version[MAX_HTTP_HDR_LEN];
+static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len) {
+    char line[MAX_LINE_LEN];
+    char key[MAX_KEY_LEN];
+    char value[MAX_VALUE_LEN];
+    char method[MAX_METHOD_LEN];
+    char path[MAX_PATH_LEN];
+    char version[MAX_VERSION_LEN];
 
     const uint8_t *ptr = pkt;
     const uint8_t *end = pkt + pkt_len;
     size_t len;
 
+    (void)hdr_len;
     if (!pkt) return;
 
     len = strcspn((const char *)ptr, "\r\n");
@@ -137,6 +139,6 @@ static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len) {
 protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
     if (!pkt) return NO_ENCAP_PROTO;
 
-    SHOW_OUTPUT(pkt, pkt_len, fmt, _print_http_hdr, _visualize_http_hdr);
+    SHOW_OUTPUT(pkt, pkt_len, 0, fmt, _print_http_hdr, _visualize_http_hdr);
     return NO_ENCAP_PROTO;
 }

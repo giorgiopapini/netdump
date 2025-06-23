@@ -32,7 +32,7 @@
 #define TARGET_HW_ADDR(pkt)     ((const uint8_t *)(pkt + 18))  /* 6 bytes */
 #define TARGET_P_ADDR(pkt)      (((uint32_t)pkt[24] << 24) | ((uint32_t)pkt[25] << 16) | ((uint32_t)pkt[26] << 8) | (uint32_t)pkt[27])
 
-#define ARP_LEN                 28
+#define ARP_HDR_LEN                 28
 
 
 protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
