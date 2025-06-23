@@ -9,16 +9,19 @@
 /* NULL checks are not done using "status_handler.c" because it has to be included inside "libnetdump.so" */
 
 
-static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len);
+static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len, size_t partial_hdr);
 static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len);
 
 
-static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len) {
+static void _print_ascii_raw_pkt(const uint8_t *pkt, size_t len, size_t partial_hdr) {
 	size_t i;
+	(void)partial_hdr;
 
 	for (i = 0; i < len; i ++) {
+		if (i < partial_hdr) printf(MAGENTA);
 		if (isprint(pkt[i])) printf("%c", pkt[i]);
 		else printf(".");
+		printf(RESET_COLOR);
 	}
 }
 
@@ -28,6 +31,7 @@ static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len) {
 	size_t padding;
 	size_t hex_chars;
 	size_t whitespaces;
+	size_t partial_hdr_len = hdr_len;
 	size_t i, j;
 
 	if (NULL == pkt) return;
@@ -44,7 +48,10 @@ static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len) {
 		if (0 == (i + 1) % 2) {
 			if (0 == (i + 1) % 16) {
 				printf(" | ");
-				_print_ascii_raw_pkt(tmp_pkt, 16);
+
+				if (partial_hdr_len > (i - 15)) partial_hdr_len -= (i - 15);
+				else partial_hdr_len = 0;
+				_print_ascii_raw_pkt(tmp_pkt, 16, partial_hdr_len);
 			}
 			else if (i < len - 1) printf(" ");
 			else {
@@ -53,7 +60,10 @@ static void _print_raw_pkt(const uint8_t *pkt, size_t len, size_t hdr_len) {
 				padding = line_chars - hex_chars - whitespaces;
 				for (j = 0; j < padding; j ++) printf(" ");
 				printf(" | ");
-				_print_ascii_raw_pkt(tmp_pkt, (len % 16));
+
+				if (partial_hdr_len > (i - 15)) partial_hdr_len -= (i - 15);
+				else partial_hdr_len = 0;
+				_print_ascii_raw_pkt(tmp_pkt, (len % 16), partial_hdr_len);
 			}
 		}
 	}
