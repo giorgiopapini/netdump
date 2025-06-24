@@ -145,6 +145,34 @@ However, the problem is that netdump does not support the extensive range of pro
 The result is still amazing.
 [Watch the video](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/netdump_benchmark.mp4)
 
+## Contributing
+Contributions are welcome and really appreciated. To increase the popularity and usefulness of netdump, support for additional protocols is highly encouraged. Contributions of new protocol dissectors are especially welcome and appreciated, though all types of contributions are valued.
+The following is a quick start guide explaining how to practically contribute to the project:
+
+### 1. Fork the repo
+Click the fork button to create your own fork of the project
+
+### 2. Clone your own fork
+```bash
+git clone git@github.com:YOUR-USERNAME/netdump.git
+cd netdump
+```
+
+### 3. Create a new branch
+```bash
+git checkout -b your-branch-name
+```
+
+### 4. Make your changes and push
+Make your improvements or bug fixes than commit and push.
+```bash
+git add .
+git commit -m "Describe your changes precisely"
+git push origin your-branch-name
+```
+### 5. Submit a Pull Request
+Go to the original repository and open a pull request from your fork.
+
 ## Screenshots
 ![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen1.png)
 ![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen2.png)

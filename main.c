@@ -64,9 +64,6 @@
 				3. 22 (SSH) - 312 packets
 
 	TODO: 	Command to show protocol hierarchy like wireshark
-
-	TODO: 	The ascii representation and hex representation SHOULD also highlight which bytes are
-			HEADER BYTES and which are payload. Need to pass partial header length in _print_ascii_raw_pkt
 */
 
 static void _deallocate_heap(
