@@ -1,5 +1,6 @@
 # Compiler and flags
-CC = gcc  # clang is also supported
+# clang is also supported
+CC = gcc
 LDFLAGS = -lpcap -lm
 LDFLAGS += -L. -lnetdump
 
@@ -55,17 +56,23 @@ LIBDIR = $(PREFIX)/lib64
 # Default target
 all: ${TARGET} ${LIB_TARGET}
 
+utils/protocol.o: utils/protocol.c
+	${CC} ${CFLAGS} -fPIC -c $< -o $@
+
+utils/visualizer.o: utils/visualizer.c
+	${CC} ${CFLAGS} -fPIC -c $< -o $@
+
 # Compile object files
-.c.o:
-	${CC} -fPIC ${CFLAGS} -c $< -o $@
+%.o: %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
 # Create shared library
 ${LIB_TARGET}: ${LIB_OBJ}
-	${CC} -shared -fPIC -o $@ ${LIB_OBJ}
+	${CC} -shared -o $@ ${LIB_OBJ}
 
 # Link target with shared library
 ${TARGET}: ${OBJ} ${LIB_TARGET}
-	${CC} -fPIC -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIBDIR}
+	${CC} -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIBDIR}
 
 show-config:
 	@echo "Configuration:"
