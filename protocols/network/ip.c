@@ -4,8 +4,8 @@
 
 #include "../../utils/formats.h"
 #include "../../utils/string_utils.h"
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 /*

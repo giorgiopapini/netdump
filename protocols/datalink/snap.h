@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define SNAP_HEADER_LABEL       "SNAP Header"
 #define SNAP_OUI_LABEL          "OUI"

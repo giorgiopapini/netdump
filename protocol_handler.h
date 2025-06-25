@@ -7,7 +7,7 @@
 #include "utils/command.h"
 #include "utils/packet.h"
 #include "utils/shared_lib.h"
-#include "utils/protocol.h"
+#include "libs/libnetdump/protocol.h"
 #include "utils/custom_dissectors.h"
 #include "utils/hashmap.h"
 

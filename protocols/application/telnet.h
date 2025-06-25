@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define TELNET_COMMAND_LABEL        "Command"
 #define TELNET_DATA_LABEL           "Data (', ' separator)"

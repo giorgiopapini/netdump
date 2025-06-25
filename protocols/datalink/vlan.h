@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define VLAN_HEADER_LABEL       "VLAN Header"
 #define VLAN_TPID_LABEL         "Tag Protocol ID"

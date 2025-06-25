@@ -3,7 +3,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "../../utils/protocol.h"
+
+#include "../../libs/libnetdump/protocol.h"
 
 #define FTP_TYPE_LABEL          "Type"
 #define FTP_RES_CODE_LABEL      "Code"

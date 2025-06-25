@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static size_t _extract_domain_name(const uint8_t *pkt, size_t offset, size_t pkt_len, char *domain);

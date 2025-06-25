@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define ARP_REQUEST             1
 #define ARP_RESPONSE            2

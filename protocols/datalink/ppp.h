@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define PPP_HEADER_LABEL        "PPP Header"
 #define ADDRESS_LABEL           "Address"

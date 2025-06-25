@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "colors.h"
+#include "../../utils/colors.h"
 
 /* NULL checks are not done using "status_handler.c" because it has to be included inside "libnetdump.so" */
 

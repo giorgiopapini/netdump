@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static size_t _snap_hdr_len(const uint8_t *pkt);

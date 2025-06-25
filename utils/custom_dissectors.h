@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include "protocol.h"
+#include "../libs/libnetdump/protocol.h"
 #include "../utils/hashmap.h"
 #include "../utils/shared_lib.h"
 

@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 #include "../../utils/formats.h"
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static void _print_arp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);

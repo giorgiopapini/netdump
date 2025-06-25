@@ -4,8 +4,8 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static void _parse_ftp_response(const uint8_t *response, size_t pkt_len, char *code, size_t code_size, char *message, size_t message_size);

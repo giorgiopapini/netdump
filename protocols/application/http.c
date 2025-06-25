@@ -4,8 +4,8 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_VERSION_LEN]);

@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <termios.h> 
 
-#include "colors.h"
+#include "../../utils/colors.h"
 
 
 #define STARTING_X_VAL 1

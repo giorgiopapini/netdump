@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define ETHER_HEADER_LABEL      "Ether Header"
 #define DEST_ADDR_LABEL         "Destination MAC Address"

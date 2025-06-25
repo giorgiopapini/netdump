@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define HTTP_METHOD_LABEL       "Method"
 #define HTTP_PATH_LABEL         "Path"

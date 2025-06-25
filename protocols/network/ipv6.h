@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define IPV6_HEADER_LABEL               "IPv6 Header"
 #define IPV6_VERSION_LABEL              "Version"

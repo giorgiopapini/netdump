@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define DHCP_HEADER_LABEL       "DHCP Header"
 #define DHCP_OP_LABEL           "Operation"

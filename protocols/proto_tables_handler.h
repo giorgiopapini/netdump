@@ -1,7 +1,7 @@
 #ifndef proto_tables_handler_H
 #define proto_tables_handler_H
 
-#include "../utils/protocol.h"
+#include "../libs/libnetdump/protocol.h"
 #include "../utils/hashmap.h"
 
 

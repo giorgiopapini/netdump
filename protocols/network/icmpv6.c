@@ -2,8 +2,8 @@
 
 #include <stdio.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static void _print_type(uint8_t type);

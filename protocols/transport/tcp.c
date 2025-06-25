@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../utils/visualizer.h"
 #include "../../utils/string_utils.h"
 #include "../net_ports.h"
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 
 static size_t _tcp_options_len(const uint8_t *pkt);

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define IP_HEADER_LABEL         "IP Header"
 #define IP_VERSION_LABEL        "Version"

@@ -3,9 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../utils/visualizer.h"
-#include "../../utils/protocol.h"
-
+#include "../../libs/libnetdump/visualizer.h"
+#include "../../libs/libnetdump/protocol.h"
 
 static const char *telnet_commands[] = {
     "SE",

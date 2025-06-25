@@ -42,10 +42,10 @@ CFLAGS += -Wconversion -Wsign-conversion
 UNAME_S := $(shell uname -s)
 
 # Source files (recursive find using shell, for portability)
-SRC != find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c'
+SRC != find . -name '*.c' | grep -v 'libs/libnetdump/protocol.c' | grep -v 'libs/libnetdump/visualizer.c'
 OBJ = ${SRC:.c=.o}
 
-LIB_SRC = utils/protocol.c utils/visualizer.c
+LIB_SRC = libs/libnetdump/protocol.c libs/libnetdump/visualizer.c
 LIB_OBJ = ${LIB_SRC:.c=.o}
 
 ifeq ($(UNAME_S),Darwin)
@@ -73,10 +73,10 @@ endif
 # Default target
 all: ${TARGET} ${LIB_TARGET}
 
-utils/protocol.o: utils/protocol.c
+libs/libnetdump/protocol.o: libs/libnetdump/protocol.c
 	${CC} ${CFLAGS} -fPIC -c $< -o $@
 
-utils/visualizer.o: utils/visualizer.c
+libs/libnetdump/visualizer.o: libs/libnetdump/visualizer.c
 	${CC} ${CFLAGS} -fPIC -c $< -o $@
 
 # Compile object files

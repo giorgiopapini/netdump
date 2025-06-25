@@ -4,11 +4,11 @@
 #include <stdlib.h>                                                // for free
 #include <string.h>
 
+#include "../libs/libnetdump/protocol.h"
 #include "../protocols/proto_tables_handler.h"
 #include "../status_handler.h"
 #include "../utils/colors.h"
 #include "../utils/formats.h"
-#include "../utils/protocol.h"
 #include "../utils/string_utils.h"
 #include "../command_handler.h"
 #include "../utils/command.h"

@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define DNS_HEADER_LABEL                "DNS Header"
 #define DNS_TRANSACTION_ID_LABEL        "Transaction ID"

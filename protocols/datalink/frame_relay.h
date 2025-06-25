@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define FRELAY_HEADER_LABEL     "Frame Relay Header"
 #define FRELAY_DE_LABEL         "DE"

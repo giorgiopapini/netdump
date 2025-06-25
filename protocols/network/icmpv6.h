@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../../utils/protocol.h"
+#include "../../libs/libnetdump/protocol.h"
 
 #define ICMPV6_HEADER_LABEL         "ICMPv6 Header"
 #define ICMPV6_TYPE_LABEL           "Type"
