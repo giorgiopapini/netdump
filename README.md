@@ -5,6 +5,8 @@ netdump is designed to cater to users with varying levels of expertise and backg
 Disclaimer: netdump is entirely independent and unrelated to any other programs named "netdump" or similar.
 
 ## Makefile configuration
+At this time, support is limited to GNU Make only.
+
 Check the default Makefile variable configuration using ```make show-config```.
 If your system stores those files in different locations, you can run ```make install VARIABLE_NAME='/path/'```
 
