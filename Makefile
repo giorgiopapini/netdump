@@ -1,10 +1,10 @@
 # Compiler and flags
 # clang is also supported
-CC = gcc
-LDFLAGS = -lpcap -lm
+CC ?= gcc
+LDFLAGS += -lpcap -lm
 LDFLAGS += -L. -lnetdump
 
-CFLAGS = -g -O2
+CFLAGS += -g -O2
 #CFLAGS += -std=c99
 #CFLAGS += -Wpedantic -pedantic-errors
 CFLAGS += -Werror
@@ -39,6 +39,8 @@ CFLAGS += -Wconversion -Wsign-conversion
 #CFLAGS += -fsanitize=address,undefined
 #CFLAGS += -O0
 
+UNAME_S := $(shell uname -s)
+
 # Source files (recursive find using shell, for portability)
 ifeq ($(origin MAKE_VERSION), undefined)
   # BSD Make
@@ -52,13 +54,28 @@ endif
 
 LIB_SRC = utils/protocol.c utils/visualizer.c
 LIB_OBJ = ${LIB_SRC:.c=.o}
-LIB_EXT = .so
+
+ifeq ($(UNAME_S),Darwin)
+	LIB_EXT = .dylib
+	SHAREDFLAG = -dynamiclib
+	INSTALLNAME = -Wl,-install_name,$(PREFIX)/lib/$(LIB_TARGET)
+else
+	LIB_EXT = .so
+	SHAREDFLAG = -shared
+	RPATH = -Wl,-rpath,\$$ORIGIN:${LIBDIR}
+endif
+
 LIB_TARGET = libnetdump${LIB_EXT}
 TARGET = netdump
 
-PREFIX = /usr/local
+PREFIX ?= /usr/local
 BINDIR = $(PREFIX)/bin
-LIBDIR = $(PREFIX)/lib64
+
+ifeq ($(UNAME_S),Linux)
+	LIBDIR = $(PREFIX)/lib64
+else
+	LIBDIR = $(PREFIX)/lib
+endif
 
 # Default target
 all: ${TARGET} ${LIB_TARGET}
@@ -75,11 +92,11 @@ utils/visualizer.o: utils/visualizer.c
 
 # Create shared library
 ${LIB_TARGET}: ${LIB_OBJ}
-	${CC} -shared -o $@ ${LIB_OBJ}
+	${CC} ${SHAREDFLAG} -o $@ ${LIB_OBJ} ${INSTALLNAME}
 
 # Link target with shared library
 ${TARGET}: ${OBJ} ${LIB_TARGET}
-	${CC} -o $@ ${OBJ} ${LDFLAGS} -Wl,-rpath,\$$ORIGIN:${LIBDIR}
+	${CC} -o $@ ${OBJ} ${LDFLAGS} ${RPATH}
 
 show-config:
 	@echo "Configuration:"
