@@ -40,8 +40,15 @@ CFLAGS += -Wconversion -Wsign-conversion
 #CFLAGS += -O0
 
 # Source files (recursive find using shell, for portability)
-SRC != find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c'
-OBJ = ${SRC:.c=.o}
+ifeq ($(origin MAKE_VERSION), undefined)
+  # BSD Make
+  SRC != find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c'
+  OBJ = ${SRC:.c=.o}
+else
+  # GNU Make
+  SRC := $(shell find . -name '*.c' | grep -v 'utils/protocol.c' | grep -v 'utils/visualizer.c')
+  OBJ = $(SRC:%.c=%.o)
+endif
 
 LIB_SRC = utils/protocol.c utils/visualizer.c
 LIB_OBJ = ${LIB_SRC:.c=.o}
