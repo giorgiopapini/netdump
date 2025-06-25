@@ -58,7 +58,7 @@ static int _get_cursor_position(size_t *col, size_t *row) {
     i = 0;
     while (i < sizeof(buf) - 1) {
         FD_ZERO(&fds);
-        FD_SET((unsigned long)STDIN_FILENO, &fds);
+        FD_SET((int)STDIN_FILENO, &fds);
         tv.tv_sec = 1;
         tv.tv_usec = 0;
 

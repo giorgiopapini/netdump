@@ -762,7 +762,7 @@ static e_stat_code _handle_char_input(struct e_cli_state *cli, struct e_history 
     }
 
     FD_ZERO(&readfds);
-    FD_SET((unsigned long)STDIN_FILENO, &readfds);
+    FD_SET((int)STDIN_FILENO, &readfds);
     ret = select(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL);
 
     if (-1 == ret) {
