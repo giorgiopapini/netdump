@@ -99,27 +99,30 @@ static void _visualize_frelay_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr
     end_printing();
 }
 
-protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len) {
     size_t hdr_len;
     size_t offset;
     int table_num;
     uint16_t protocol;
 
-    if (!pkt) return NO_ENCAP_PROTO;
+    if (!pkt) return NO_PROTO_INFO;
 
     hdr_len = _snap_hdr_len(pkt);
-    if (hdr_len > pkt_len) return NO_ENCAP_PROTO;
+    if (hdr_len > pkt_len) return NO_PROTO_INFO;
 
     offset = 0x03 == pkt[hdr_len] ? hdr_len + 1 : hdr_len;
-    if ((offset + (size_t)1) > pkt_len) return NO_ENCAP_PROTO;  /* +1 is needed because FRELAY_PROTO(...) access offset + 1 */
+    if ((offset + (size_t)1) > pkt_len) return NO_PROTO_INFO;  /* +1 is needed because FRELAY_PROTO(...) access offset + 1 */
 
     protocol = FRELAY_PROTO(pkt, offset);
-    
-    SHOW_OUTPUT(pkt, pkt_len, hdr_len, fmt, _print_frelay_hdr, _visualize_frelay_hdr);
-
     if (protocol <= NLPID_THRESHOLD) table_num = NLPID_PROTOS;
     else table_num = ETHERTYPES;
     
+    return (protocol_info){
+        .print_protocol_func = _print_frelay_hdr,
+        .visualize_protocol_func = _visualize_frelay_hdr,
+        .hdr_len = offset + 2,
+        .encap_protocol = protocol,
+        .encap_proto_table_num = table_num
+    };
     /* hdr_len + 2 (because 2 bytes long the protocol field, even if nlpid (i'm considering also the 0x00 byte)) */
-    return (protocol_info){ .protocol = protocol, .offset = offset + 2, .proto_table_num = table_num };
 }

@@ -40,9 +40,13 @@ static void _visualize_vlan_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_l
     end_printing();
 }
 
-protocol_info dissect_vlan(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < VLAN_HDR_LEN) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, VLAN_HDR_LEN, fmt, _print_vlan_hdr, _visualize_vlan_hdr);
-    return (protocol_info){ .protocol = VLAN_ETHERTYPE(pkt), .offset = VLAN_HDR_LEN, .proto_table_num = ETHERTYPES };
+protocol_info dissect_vlan(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < VLAN_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_vlan_hdr,
+        .visualize_protocol_func = _visualize_vlan_hdr,
+        .hdr_len = VLAN_HDR_LEN,
+        .encap_protocol = VLAN_ETHERTYPE(pkt),
+        .encap_proto_table_num = ETHERTYPES
+    };
 }

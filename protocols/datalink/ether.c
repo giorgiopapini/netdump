@@ -41,9 +41,13 @@ static void _visualize_ether_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_
     end_printing();
 }
 
-protocol_info dissect_ether(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < ETHER_HDR_LEN) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, ETHER_HDR_LEN, fmt, _print_ether_hdr, _visualize_ether_hdr);
-    return (protocol_info){ .protocol = ETHERTYPE(pkt), .offset = ETHER_HDR_LEN, .proto_table_num = ETHERTYPES };
+protocol_info dissect_ether(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < ETHER_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_ether_hdr,
+        .visualize_protocol_func = _visualize_ether_hdr,
+        .hdr_len = ETHER_HDR_LEN,
+        .encap_protocol = ETHERTYPE(pkt),
+        .encap_proto_table_num = ETHERTYPES
+    };
 }

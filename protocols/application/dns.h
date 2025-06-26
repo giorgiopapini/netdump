@@ -42,6 +42,6 @@
 #define DNS_HDR_LEN                     12
 
 
-protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_dns(const uint8_t *pkt, size_t pkt_len);
 
 #endif

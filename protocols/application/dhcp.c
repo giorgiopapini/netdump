@@ -113,9 +113,13 @@ static void _visualize_dhcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_l
     end_printing();
 }
 
-protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return NO_ENCAP_PROTO;
-    
-    SHOW_OUTPUT(pkt, pkt_len, MIN_DHCP_HDR_LEN, fmt, _print_dhcp_hdr, _visualize_dhcp_hdr);
-    return NO_ENCAP_PROTO;
+protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < MIN_DHCP_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_dhcp_hdr,
+        .visualize_protocol_func = _visualize_dhcp_hdr,
+        .hdr_len = 0,
+        .encap_protocol = NO_ENCAP_PROTO,
+        .encap_proto_table_num = NO_ENCAP_PROTO_TABLE
+    };
 }

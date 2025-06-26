@@ -25,7 +25,7 @@
 #define ICMP_HDR_LEN            8
 
 
-protocol_info dissect_icmp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_icmp(const uint8_t *pkt, size_t pkt_len);
 
 /* use command "ping 8.8.8.8" to launch icmp packets in the local network. Than scan using netdump analize -filter "icmp" */
 

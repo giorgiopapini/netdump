@@ -64,6 +64,8 @@
 				3. 22 (SSH) - 312 packets
 
 	TODO: 	Command to show protocol hierarchy like wireshark
+
+	TODO: 	Decouple PRINTING from DISSECTING. Doing so would erase the need of a SHOW_OUTPUT(...) macro
 */
 
 static void _deallocate_heap(

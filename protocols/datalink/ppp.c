@@ -38,9 +38,13 @@ static void _visualize_ppp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_le
     end_printing();
 }
 
-protocol_info dissect_ppp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < PPP_HDR_LEN) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, PPP_HDR_LEN, fmt, _print_ppp_hdr, _visualize_ppp_hdr);
-    return (protocol_info){ .protocol = PROTOCOL(pkt), .offset = PPP_HDR_LEN, .proto_table_num = PPP_PROTOS };
+protocol_info dissect_ppp(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < PPP_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_ppp_hdr,
+        .visualize_protocol_func = _visualize_ppp_hdr,
+        .hdr_len = PPP_HDR_LEN,
+        .encap_protocol = PROTOCOL(pkt),
+        .encap_proto_table_num = PPP_PROTOS
+    };
 }

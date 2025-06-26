@@ -36,16 +36,19 @@ typedef enum protocol_layer {
 	PROTOCOL_LAYER_APPLICATION
 } protocol_layer;
 
+/* protocol_info --> info about current protocol and the encapsulated protocol */
 typedef struct protocol_info {
-    int protocol;
-    size_t offset;
-    int proto_table_num;
+	void (*print_protocol_func)(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+	void (*visualize_protocol_func)(const uint8_t *pkt, size_t pkt_len, size_t hdr_len);
+    size_t hdr_len;
+	int encap_protocol;
+    int encap_proto_table_num;
 } protocol_info;
 
 typedef struct protocol_handler {
     int protocol;
 	protocol_layer layer;
-    protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+    protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len);
     const char *protocol_name;
 } protocol_handler;
 
@@ -56,8 +59,15 @@ typedef struct protocol_handler_mapping {
 
 typedef void (*output_func_t)(const uint8_t *, size_t, size_t);
 
-
-#define NO_ENCAP_PROTO			(protocol_info){ .protocol = -1, .offset = 0, .proto_table_num = -1 };
+#define NO_ENCAP_PROTO 			-1
+#define NO_ENCAP_PROTO_TABLE	-1
+#define NO_PROTO_INFO 		(protocol_info){ \
+	.print_protocol_func = NULL, \
+	.visualize_protocol_func = NULL, \
+	.hdr_len = 0, \
+	.encap_protocol = NO_ENCAP_PROTO, \
+	.encap_proto_table_num = NO_ENCAP_PROTO_TABLE \
+};
 #define SHOW_OUTPUT(pkt, len, hdr_len, fmt, print_func, visualize_func) \
 		do { \
 			output_func_t output_func = select_output_func(fmt, print_func, visualize_func); \
@@ -72,7 +82,7 @@ output_func_t select_output_func(
 protocol_handler *create_protocol_handler(
 	int proto, 
 	protocol_layer layer, 
-	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len, output_format fmt),
+	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len),
 	const char *protocol_name
 );
 protocol_handler_mapping *create_protocol_handler_mapping(

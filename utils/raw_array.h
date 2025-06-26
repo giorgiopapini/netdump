@@ -13,6 +13,7 @@ typedef struct raw_array {
 } raw_array;
 
 
+raw_array *create_raw_array(int n);
 void init_arr(raw_array *arr, int n);
 void allocate(raw_array *arr, int n);   /* n = number of slot to allocate */
 void insert(raw_array *arr, void *pkt);

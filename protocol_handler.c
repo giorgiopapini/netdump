@@ -90,8 +90,9 @@ void dissect(
 	int proto_shown
 ) {
 	protocol_handler *handler = NULL;
-	protocol_info encap_proto_info;
+	protocol_info proto_info;
 	output_format out_format = OUTPUT_FORMAT_NONE;  /* layer specific */
+	output_func_t out_func = NULL;
 	hashmap *proto_hashmap = NULL;
 
 	if (0 <= proto_table_num && PROTO_TABLE_COUNT >= proto_table_num)
@@ -124,14 +125,18 @@ void dissect(
 	}
 
 	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
-	encap_proto_info = handler->dissect_proto(pkt, pkt_len, out_format);
-	if (-1 != encap_proto_info.proto_table_num && pkt_len > encap_proto_info.offset) {
+	proto_info = handler->dissect_proto(pkt, pkt_len);
+
+	out_func = select_output_func(out_format, proto_info.print_protocol_func, proto_info.visualize_protocol_func);
+	if (NULL != out_func) out_func(pkt, pkt_len, proto_info.hdr_len);
+	
+	if (NO_ENCAP_PROTO_TABLE != proto_info.encap_proto_table_num && pkt_len > proto_info.hdr_len) {
 		dissect(
 			cmd,
-			(pkt + encap_proto_info.offset),
-			(pkt_len - encap_proto_info.offset),
-			encap_proto_info.protocol,
-			encap_proto_info.proto_table_num,
+			(pkt + proto_info.hdr_len),
+			(pkt_len - proto_info.hdr_len),
+			proto_info.encap_protocol,
+			proto_info.encap_proto_table_num,
 			libs,
 			custom_diss,
 			proto_shown

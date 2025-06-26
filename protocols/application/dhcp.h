@@ -45,6 +45,6 @@
 #define MIN_DHCP_HDR_LEN        240
 
 
-protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_dhcp(const uint8_t *pkt, size_t pkt_len);
 
 #endif

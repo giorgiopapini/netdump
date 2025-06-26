@@ -18,6 +18,6 @@
 #define MAX_VERSION_LEN         16
 
 
-protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_http(const uint8_t *pkt, size_t pkt_len);
 
 #endif

@@ -30,6 +30,6 @@
 #define IPV6_HDR_LEN                    40
 
 
-protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len);
 
 #endif

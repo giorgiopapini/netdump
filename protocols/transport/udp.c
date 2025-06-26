@@ -43,17 +43,19 @@ static void _visualize_udp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_le
     end_printing();
 }
 
-protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len) {
     protocol_info proto_info;
-    proto_info.offset = UDP_HDR_LEN;
-    proto_info.proto_table_num = NET_PORTS;
+    if (!pkt || pkt_len < UDP_HDR_LEN) return NO_PROTO_INFO;
 
-    if (!pkt || pkt_len < UDP_HDR_LEN) return NO_ENCAP_PROTO;
-    SHOW_OUTPUT(pkt, pkt_len, UDP_HDR_LEN, fmt, _print_udp_hdr, _visualize_udp_hdr);
+    proto_info.hdr_len = UDP_HDR_LEN;
+    proto_info.encap_proto_table_num = NET_PORTS;
 
-    if (IS_WELL_DEFINED_PORT(UDP_DEST_PORT(pkt))) proto_info.protocol = UDP_DEST_PORT(pkt);
-    else if (IS_WELL_DEFINED_PORT(UDP_SRC_PORT(pkt))) proto_info.protocol = UDP_SRC_PORT(pkt);
-    else proto_info = NO_ENCAP_PROTO;
+    if (IS_WELL_DEFINED_PORT(UDP_DEST_PORT(pkt))) proto_info.encap_protocol = UDP_DEST_PORT(pkt);
+    else if (IS_WELL_DEFINED_PORT(UDP_SRC_PORT(pkt))) proto_info.encap_protocol = UDP_SRC_PORT(pkt);
+    else proto_info = NO_PROTO_INFO;
+
+    proto_info.print_protocol_func = _print_udp_hdr;
+    proto_info.visualize_protocol_func = _visualize_udp_hdr;
 
     return proto_info;
 }

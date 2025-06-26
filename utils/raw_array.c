@@ -5,8 +5,15 @@
 #include "../status_handler.h"
 
 
+raw_array *create_raw_array(int n) {
+    raw_array *new_arr = malloc(sizeof *new_arr);
+    CHECK_NULL_RET(new_arr, NULL);
+    init_arr(new_arr, n);
+    return new_arr;
+}
+
 void init_arr(raw_array *arr, int n) {
-    if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
+    if (0 > n) raise_error(NEGATIVE_ARR_LENGTH, 1, NULL, n);
 
     CHECK_NULL_EXIT(arr);
     arr->values = malloc((size_t)n * sizeof *(arr->values));  /* At this point n is certain to be > 0 */
@@ -20,7 +27,7 @@ void allocate(raw_array *arr, int n) {
 
     CHECK_NULL_EXIT(arr);
 
-    if (0 > n) raise_error(NEGATIVE_N_PACKETS, 1, NULL, n);
+    if (0 > n) raise_error(NEGATIVE_ARR_LENGTH, 1, NULL, n);
     if (0 == arr->allocated) init_arr(arr, n);
     else {        
         new_ptr = realloc(arr->values, (arr->allocated + (size_t)n) * sizeof(void *));  /* At this point n is certain to be > 0 */

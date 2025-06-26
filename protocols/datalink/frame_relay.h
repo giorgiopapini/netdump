@@ -23,6 +23,6 @@
 #define NLPID_THRESHOLD         0xfe
 
 
-protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_frelay(const uint8_t *pkt, size_t pkt_len);
 
 #endif

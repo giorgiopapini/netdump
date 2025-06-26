@@ -106,9 +106,14 @@ static void _visualize_ftp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_le
     end_printing();
 }
 
-protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt[0] == '\0') return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, 0, fmt, _print_ftp_hdr, _visualize_ftp_hdr);
-    return NO_ENCAP_PROTO;
+protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    if (!pkt || pkt[0] == '\0') return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_ftp_hdr,
+        .visualize_protocol_func = _visualize_ftp_hdr,
+        .hdr_len = 0,
+        .encap_protocol = NO_ENCAP_PROTO,
+        .encap_proto_table_num = NO_ENCAP_PROTO_TABLE
+    };
 }

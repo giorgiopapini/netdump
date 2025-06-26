@@ -35,7 +35,7 @@
 #define ARP_HDR_LEN                 28
 
 
-protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_arp(const uint8_t *pkt, size_t pkt_len);
 
 /* 
     Currently this arp description only supports ethernet technology and ip technology (no ATM or infiniband, which both have 

@@ -66,9 +66,13 @@ static void _visualize_ipv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_l
     end_printing();
 }
 
-protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < IPV6_HDR_LEN) return NO_ENCAP_PROTO;
-    
-    SHOW_OUTPUT(pkt, pkt_len, IPV6_HDR_LEN, fmt, _print_ipv6_hdr, _visualize_ipv6_hdr);
-    return (protocol_info){ .protocol = IPV6_NEXT_HEADER(pkt), .offset = IPV6_HDR_LEN, .proto_table_num = IP_PROTOS };
+protocol_info dissect_ipv6(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < IPV6_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_ipv6_hdr,
+        .visualize_protocol_func = _visualize_ipv6_hdr,
+        .hdr_len = IPV6_HDR_LEN,
+        .encap_protocol = IPV6_NEXT_HEADER(pkt),
+        .encap_proto_table_num = IP_PROTOS
+    };
 }

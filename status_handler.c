@@ -14,6 +14,7 @@ static const char *error_formats[] = {
     [COMMAND_NOT_SUPPORTED_ERROR] = "Your OS does not support the '%s' command",
     [WRONG_OPTIONS_FORMAT_ERROR] = "Invalid argument format. Usage: " COMMAND_FORMAT,
     [NEGATIVE_N_PACKETS] = "Packets number cannot be a negative quantity '(%d < 0)'",
+    [NEGATIVE_ARR_LENGTH] = "Array length cannot be negative '(%d < 0)'", 
     [SAVING_EMPTY_PACKETS_ERROR] = "Couldn't save packets because packet array is empty",
     [NULL_POINTER] = "NULL pointer '%s' in file '%s'",
     [INPUT_ERROR] = "An error occured while reading input bytes",

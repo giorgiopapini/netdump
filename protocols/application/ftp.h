@@ -15,6 +15,6 @@
 #define MAX_FTP_LINE_LEN        512
 
 
-protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_ftp(const uint8_t *pkt, size_t pkt_len);
 
 #endif

@@ -20,6 +20,6 @@
 #define UDP_HDR_LEN             8
 
 
-protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_udp(const uint8_t *pkt, size_t pkt_len);
 
 #endif

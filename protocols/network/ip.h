@@ -41,6 +41,6 @@
 #define IP_HDR_LEN(pkt)         (NP_IP_HLEN(pkt) * 4)
 
 
-protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt);
+protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len);
 
 #endif

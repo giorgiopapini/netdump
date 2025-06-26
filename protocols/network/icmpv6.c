@@ -78,9 +78,13 @@ static void _visualize_icmpv6_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr
     end_printing();
 }
 
-protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, ICMPV6_HDR_LEN, fmt, _print_icmpv6_hdr, _visualize_icmpv6_hdr);
-    return NO_ENCAP_PROTO;
+protocol_info dissect_icmpv6(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < ICMPV6_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_icmpv6_hdr,
+        .visualize_protocol_func = _visualize_icmpv6_hdr,
+        .hdr_len = 0,
+        .encap_protocol = NO_ENCAP_PROTO,
+        .encap_proto_table_num = NO_ENCAP_PROTO_TABLE
+    };
 }

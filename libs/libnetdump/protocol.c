@@ -87,7 +87,7 @@ output_func_t select_output_func(
 protocol_handler *create_protocol_handler(
 	int proto, 
 	protocol_layer layer, 
-	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len, output_format fmt),
+	protocol_info (*dissect_proto)(const uint8_t *pkt, size_t pkt_len),
 	const char *protocol_name
 ) {
 	protocol_handler *new_handler = malloc(sizeof *new_handler);

@@ -33,9 +33,13 @@ static void _visualize_snap_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_l
     end_printing();
 }
 
-protocol_info dissect_snap(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < SNAP_HDR_LEN) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, SNAP_HDR_LEN, fmt, _print_snap_hdr, _visualize_snap_hdr);
-    return (protocol_info){ .protocol = SNAP_TYPE(pkt), .offset = SNAP_HDR_LEN, .proto_table_num = ETHERTYPES };
+protocol_info dissect_snap(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < SNAP_HDR_LEN) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_snap_hdr,
+        .visualize_protocol_func = _visualize_snap_hdr,
+        .hdr_len = SNAP_HDR_LEN,
+        .encap_protocol = SNAP_TYPE(pkt),
+        .encap_proto_table_num = ETHERTYPES
+    };
 }

@@ -211,9 +211,14 @@ static void _visualize_telnet_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr
     end_printing();
 }
 
-protocol_info dissect_telnet(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt) return NO_ENCAP_PROTO;
-    
-    SHOW_OUTPUT(pkt, pkt_len, 0, fmt, _print_telnet_hdr, _visualize_telnet_hdr);
-    return NO_ENCAP_PROTO;
+protocol_info dissect_telnet(const uint8_t *pkt, size_t pkt_len) {
+    (void)pkt_len;
+    if (!pkt) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_telnet_hdr,
+        .visualize_protocol_func = _visualize_telnet_hdr,
+        .hdr_len = 0,
+        .encap_protocol = NO_ENCAP_PROTO,
+        .encap_proto_table_num = NO_ENCAP_PROTO_TABLE
+    };
 }

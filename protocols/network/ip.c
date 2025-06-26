@@ -107,9 +107,13 @@ static void _visualize_ip_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_len
     end_printing();
 }
 
-protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
-    if (!pkt || pkt_len < IP_HDR_LEN(pkt)) return NO_ENCAP_PROTO;
-
-    SHOW_OUTPUT(pkt, pkt_len, IP_HDR_LEN(pkt), fmt, _print_ip_hdr, _visualize_ip_hdr);
-    return (protocol_info){ .protocol = NP_IP_PROTOCOL(pkt), .offset = IP_HDR_LEN(pkt), .proto_table_num = IP_PROTOS };
+protocol_info dissect_ip(const uint8_t *pkt, size_t pkt_len) {
+    if (!pkt || pkt_len < IP_HDR_LEN(pkt)) return NO_PROTO_INFO;
+    return (protocol_info){
+        .print_protocol_func = _print_ip_hdr,
+        .visualize_protocol_func = _visualize_ip_hdr,
+        .hdr_len = IP_HDR_LEN(pkt),
+        .encap_protocol = NP_IP_PROTOCOL(pkt),
+        .encap_proto_table_num = IP_PROTOS
+    };
 }

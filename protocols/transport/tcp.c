@@ -219,22 +219,23 @@ static void _visualize_tcp_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_le
     end_printing();
 }
 
-protocol_info dissect_tcp(const uint8_t *pkt, size_t pkt_len, output_format fmt) {
+protocol_info dissect_tcp(const uint8_t *pkt, size_t pkt_len) {
     protocol_info proto_info;
-
-    if (!pkt || pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return NO_ENCAP_PROTO;
-    SHOW_OUTPUT(pkt, pkt_len, TCP_HDR_LEN(pkt), fmt, _print_tcp_hdr, _visualize_tcp_hdr);
+    if (!pkt || pkt_len < 12 || pkt_len < TCP_HDR_LEN(pkt)) return NO_PROTO_INFO;
     
     /* Pure TCP handshake (SYN, SYN-ACK, ACK) packets contain no HTTP data. */
-    proto_info.offset = TCP_HDR_LEN(pkt);
-    proto_info.proto_table_num = NET_PORTS;
+    proto_info.hdr_len = TCP_HDR_LEN(pkt);
+    proto_info.encap_proto_table_num = NET_PORTS;
 
     if (((TCP_FLAGS(pkt) & (TCP_ACK | TCP_PSH)) == (TCP_ACK | TCP_PSH)) || ((TCP_FLAGS(pkt) & TCP_ACK) == TCP_ACK)) {
-        if (IS_WELL_DEFINED_PORT(TCP_DEST_PORT(pkt))) proto_info.protocol = TCP_DEST_PORT(pkt);
-        else if (IS_WELL_DEFINED_PORT(TCP_SRC_PORT(pkt))) proto_info.protocol = TCP_SRC_PORT(pkt);
-        else proto_info = NO_ENCAP_PROTO;
+        if (IS_WELL_DEFINED_PORT(TCP_DEST_PORT(pkt))) proto_info.encap_protocol = TCP_DEST_PORT(pkt);
+        else if (IS_WELL_DEFINED_PORT(TCP_SRC_PORT(pkt))) proto_info.encap_protocol = TCP_SRC_PORT(pkt);
+        else proto_info = NO_PROTO_INFO;
     }
-    else proto_info = NO_ENCAP_PROTO;
+    else proto_info = NO_PROTO_INFO;
+
+    proto_info.print_protocol_func = _print_tcp_hdr;
+    proto_info.visualize_protocol_func = _visualize_tcp_hdr;
 
     return proto_info;
 }
