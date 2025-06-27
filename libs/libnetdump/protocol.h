@@ -68,11 +68,6 @@ typedef void (*output_func_t)(const uint8_t *, size_t, size_t);
 	.encap_protocol = NO_ENCAP_PROTO, \
 	.encap_proto_table_num = NO_ENCAP_PROTO_TABLE \
 };
-#define SHOW_OUTPUT(pkt, len, hdr_len, fmt, print_func, visualize_func) \
-		do { \
-			output_func_t output_func = select_output_func(fmt, print_func, visualize_func); \
-    		if (NULL != output_func && len > 0) output_func(pkt, len, hdr_len); \
-		} while(0)
 
 output_func_t select_output_func(
     output_format fmt,

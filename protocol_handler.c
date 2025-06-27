@@ -107,7 +107,9 @@ void dissect(
 		if (pkt_len > 0) {
 			if (proto_shown > 0) print_separator(cmd);
 			printf(CYAN "(%s) " RESET_COLOR, UNKNOWN_PROTO_LABEL);
-			SHOW_OUTPUT(pkt, pkt_len, 0, get_output_format(cmd), NULL, NULL);
+			
+			out_func = select_output_func(get_output_format(cmd), NULL, NULL);
+			if (NULL != out_func) out_func(pkt, pkt_len, 0);
 			proto_shown ++;
 		}
 		return;
@@ -124,7 +126,6 @@ void dissect(
 		}
 	}
 
-	/* if NO_PROTOCOL_NAME_ARG not inserted, than set the proto_name to the actual protocol name */
 	proto_info = handler->dissect_proto(pkt, pkt_len);
 
 	out_func = select_output_func(out_format, proto_info.print_protocol_func, proto_info.visualize_protocol_func);
