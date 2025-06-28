@@ -20,6 +20,7 @@ void init_arr(raw_array *arr, int n) {
     CHECK_NULL_EXIT(arr->values);
 
     arr->allocated = (size_t)n;
+    arr->len = 0;
 }
 
 void allocate(raw_array *arr, int n) {

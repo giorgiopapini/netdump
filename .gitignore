@@ -4,7 +4,4 @@
 netdump_key.txt
 main
 netdump
-arp.pcap
-prova.pcap
-udp.pcap
-tcp.pcapng
+

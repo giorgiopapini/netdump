@@ -65,7 +65,12 @@
 
 	TODO: 	Command to show protocol hierarchy like wireshark
 
-	TODO: 	Decouple PRINTING from DISSECTING. Doing so would erase the need of a SHOW_OUTPUT(...) macro
+			proto_chain: empty;
+			dissect(..., proto_chain, ...) --> Recursive population of proto_chain;
+			...
+			proto_chain: [{ proto_num, name, bytes }, { proto_num, name, bytes }, ..., { proto_num, name, bytes }];
+			...
+			Worker --> Update hierachy based on proto_chain
 */
 
 static void _deallocate_heap(

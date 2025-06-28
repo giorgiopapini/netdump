@@ -2,6 +2,7 @@
 
 #include <pcap/pcap.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "command_handler.h"
@@ -26,6 +27,22 @@ int _is_output_arg_valid(const char *raw_val) {
 		0 != strcmp(raw_val, OUTPUT_ARG_VAL_ART)
 	) return 0;
 	return 1;
+}
+
+proto_chain_node *create_proto_chain_node(int proto_num, const char *proto_name, size_t bytes) {
+	proto_chain_node *new_node = malloc(sizeof *new_node);
+	CHECK_NULL_EXIT(new_node);
+
+	new_node->bytes = bytes;
+	new_node->proto_name = strdup(proto_name);
+	new_node->proto_num = proto_num;
+	return new_node;
+}
+
+void destroy_proto_chain_node(void *node) {
+	CHECK_NULL_RET(node);
+	if (NULL != ((proto_chain_node *)node)->proto_name) free(((proto_chain_node *)node)->proto_name);
+	free(node);
 }
 
 output_format get_output_format(command *cmd) {
@@ -80,7 +97,8 @@ int should_print_pkt(command *cmd, protocol_layer layer) {
 }
 
 void dissect(
-	command *cmd, 
+	command *cmd,
+	raw_array *proto_chain,
 	uint8_t *pkt, 
 	size_t pkt_len, 
 	int proto_id, 
@@ -94,6 +112,7 @@ void dissect(
 	output_format out_format = OUTPUT_FORMAT_NONE;  /* layer specific */
 	output_func_t out_func = NULL;
 	hashmap *proto_hashmap = NULL;
+	size_t tot_bytes;
 
 	if (0 <= proto_table_num && PROTO_TABLE_COUNT >= proto_table_num)
 		proto_hashmap = get_proto_table_from_id((proto_table_id)proto_table_num);
@@ -127,13 +146,17 @@ void dissect(
 	}
 
 	proto_info = handler->dissect_proto(pkt, pkt_len);
-
 	out_func = select_output_func(out_format, proto_info.print_protocol_func, proto_info.visualize_protocol_func);
 	if (NULL != out_func) out_func(pkt, pkt_len, proto_info.hdr_len);
 	
+	if (0 == proto_info.hdr_len) tot_bytes = pkt_len;
+	else tot_bytes = proto_info.hdr_len + pkt_len;
+	insert(proto_chain, create_proto_chain_node(handler->protocol, handler->protocol_name, tot_bytes));
+
 	if (NO_ENCAP_PROTO_TABLE != proto_info.encap_proto_table_num && pkt_len > proto_info.hdr_len) {
 		dissect(
 			cmd,
+			proto_chain,
 			(pkt + proto_info.hdr_len),
 			(pkt_len - proto_info.hdr_len),
 			proto_info.encap_protocol,
@@ -146,6 +169,7 @@ void dissect(
 }
 
 void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
+	raw_array *proto_chain = create_raw_array(DEFAULT_PROTO_CHAIN_DEPTH);
 	const char *raw_output_val = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	const output_format fmt = get_output_format(cmd);
 
@@ -164,6 +188,7 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 
 	dissect(
 		cmd,
+		proto_chain,
 		pkt->bytes,
 		(size_t)pkt->header->caplen,
 		pkt->datalink_type,
@@ -173,4 +198,7 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 		0
 	);
 	printf("\n");
+
+	/* this should be done inside the Hierachy worker? */
+	reset_arr(proto_chain, destroy_proto_chain_node);
 }
