@@ -12,6 +12,7 @@
 #define ANALYZE_COMMAND             "analyze"
 #define DEVICES_LIST_COMMAND        "devlist"
 #define PROTOCOLS_COMMAND           "protocols"
+#define SCANTREE_COMMAND            "scantree"
 #define DISSECTORS_COMMAND          "dissectors"
 #define RESET_COMMAND               "reset"         /* erase currently stored packets (if command analize alredy run) */
 #define PRINT_COMMAND               "print"         /* print the packets as done in analize (without re-analizing the net) */
@@ -23,6 +24,7 @@
 #define ANALYZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
 #define PROTOCOLS_COMMAND_DESC      "Retrieve a list of supported protocols"
+#define SCANTREE_COMMAND_DESC       "Retrieve the currently scanned protocols hierarchy"
 #define DISSECTORS_COMMAND_DESC     "Manage custom dissectors"
 #define RESET_COMMAND_DESC          "Reset stored packets"
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"
@@ -113,6 +115,9 @@
 #define PROTOCOLS_ARGS              PROTO_TABLES_ARG, PROTO_FROM_ARG, PROTO_SEARCH_ARG
 #define REQUIRED_PROTOCOLS_ARGS     NONE_ARG
 
+#define SCANTREE_LIST_ARGS          NONE_ARG
+#define REQUIRED_SCANTREE_LIST_ARGS NONE_ARG
+
 #define DISSECTORS_ARGS             DISSECTOR_LIST_ARG, ADD_DISSECTOR_ARG, ACTIVATE_LIB_ARG, DEACTIVATE_LIB_ARG
 #define REQUIRED_DISSECTORS_ARGS    NONE_ARG
 
@@ -137,9 +142,10 @@
 typedef enum {
     RET_NONE,  /* when the command is known but has undefined retval (it doesn't trigger UNKOWN_COMMAND_ERROR, skips iteration instead) */
     RET_UNKNOWN,  /* when the command is unknown */
-    RET_ANALIZE,
+    RET_ANALYZE,
     RET_DEVLIST,
     RET_PROTOCOLS,
+    RET_SCANTREE,
     RET_DISSECTORS,
     RET_RESET,
     RET_PRINT,

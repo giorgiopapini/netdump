@@ -10,6 +10,7 @@
 #include "utils/string_utils.h"
 #include "utils/formats.h"
 #include "commands/analyze.h"
+#include "commands/scantree.h"
 #include "commands/devlist.h"
 #include "commands/protocols.h"
 #include "commands/dissectors.h"
@@ -301,7 +302,7 @@ cmd_retval execute_command(
     cmd_retval retval = RET_UNKNOWN;
 
     if (is_command(cmd, ANALYZE_COMMAND)) {
-        retval = RET_ANALIZE;
+        retval = RET_ANALYZE;
         if (CHECK_ARGS(cmd, ANALYZE_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALYZE_ARGS)) execute_analyze(cmd, packets, libs, custom_diss, root);
     }
@@ -314,6 +315,11 @@ cmd_retval execute_command(
         retval = RET_PROTOCOLS;
         if (CHECK_ARGS(cmd, PROTOCOLS_ARGS))
         if (CHECK_REQ_ARGS(cmd, REQUIRED_PROTOCOLS_ARGS)) execute_protocols(cmd);
+    }
+    else if (is_command(cmd, SCANTREE_COMMAND)) {
+        retval = RET_SCANTREE;
+        if (CHECK_ARGS(cmd, SCANTREE_LIST_ARGS))
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_SCANTREE_LIST_ARGS)) execute_scantree(root);
     }
     else if (is_command(cmd, DISSECTORS_COMMAND)) {
         retval = RET_DISSECTORS;

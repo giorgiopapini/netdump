@@ -20,6 +20,7 @@ static void _print_arg(
 static void _analize_help(void);
 static void _devlist_help(void);
 static void _protolist_help(void);
+static void _scantree_help(void);
 static void _dissectors_help(void);
 static void _reset_help(void);
 static void _print_help(void);
@@ -83,6 +84,10 @@ static void _protolist_help(void) {
     _print_arg(PROTO_SEARCH_ARG, PROTO_SEARCH_ARG_DESC, DEFAULT_SPACE, DEFAULT_CORNER, NULL);
 }
 
+static void _scantree_help(void) {
+    _print_cmd(SCANTREE_COMMAND, SCANTREE_COMMAND_DESC);
+}
+
 static void _dissectors_help(void) {
     _print_cmd(DISSECTORS_COMMAND, DISSECTORS_COMMAND_DESC);
 
@@ -133,6 +138,7 @@ void execute_help(void) {
     _dissectors_help();
     _save_help();
     _protolist_help();
+    _scantree_help();
     _devlist_help();
     _reset_help();
     _clear_help();
