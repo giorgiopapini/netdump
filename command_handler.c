@@ -295,14 +295,15 @@ cmd_retval execute_command(
     command *cmd, 
     raw_array *packets,
     shared_libs *libs,
-    custom_dissectors *custom_diss
+    custom_dissectors *custom_diss,
+    hierarchy_node *root
 ) {
     cmd_retval retval = RET_UNKNOWN;
 
     if (is_command(cmd, ANALYZE_COMMAND)) {
         retval = RET_ANALIZE;
         if (CHECK_ARGS(cmd, ANALYZE_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALYZE_ARGS)) execute_analyze(cmd, packets, libs, custom_diss);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_ANALYZE_ARGS)) execute_analyze(cmd, packets, libs, custom_diss, root);
     }
     else if (is_command(cmd, DEVICES_LIST_COMMAND)) {
         retval = RET_DEVLIST;

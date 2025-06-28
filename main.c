@@ -10,6 +10,7 @@
 #include "utils/command.h"
 #include "utils/shared_lib.h"
 #include "utils/custom_dissectors.h"
+#include "utils/hierachy.h"
 #include "utils/formats.h"
 #include "protocols/proto_tables_handler.h"
 
@@ -76,7 +77,8 @@
 static void _deallocate_heap(
 	raw_array *packets,
 	shared_libs *libs,
-	custom_dissectors *custom_diss
+	custom_dissectors *custom_diss,
+	hierarchy_node *root
 );
 
 int main(void) {
@@ -87,6 +89,7 @@ int main(void) {
 	shared_libs libs = { 0 };
 	custom_dissectors custom_diss = { 0 };
 	command cmd = { 0 };
+	hierarchy_node *root = create_hierarchy_node(DEFAULT_HIERARCHY_NODE_NAME, 0, 0, 0);
 
 	load_proto_hashmaps();
 
@@ -95,7 +98,7 @@ int main(void) {
 		len = (NULL != line) ? strlen(line) : 0;
 
 		if (0 == create_cmd_from_str(&cmd, line, len))
-			retval = execute_command(&cmd, &packets, &libs, &custom_diss);
+			retval = execute_command(&cmd, &packets, &libs, &custom_diss, root);
 
 		if (RET_UNKNOWN == retval)
 			raise_error(UNKNOWN_COMMAND_ERROR, 0, UNKNOWN_COMMAND_HINT, cmd.label);
@@ -108,17 +111,19 @@ int main(void) {
 		free(line);
 	}
 
-	_deallocate_heap(&packets, &libs, &custom_diss);
+	_deallocate_heap(&packets, &libs, &custom_diss, root);
 	return 0;
 }
 
 static void _deallocate_heap(
 	raw_array *packets,
 	shared_libs *libs,
-	custom_dissectors *custom_diss
+	custom_dissectors *custom_diss,
+	hierarchy_node *root
 ) {
 	reset_arr(packets, destroy_packet);
 	destroy_shared_libs(libs);
 	destroy_custom_dissectors(custom_diss);
 	destroy_proto_hashmaps();
+	destroy_hierarchy_node(root);
 }

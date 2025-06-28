@@ -11,6 +11,7 @@
 #include "utils/raw_array.h"
 #include "utils/custom_dissectors.h"
 #include "utils/hashmap.h"
+#include "utils/hierachy.h"
 
 #define DEFAULT_PROTO_CHAIN_DEPTH		5
 
@@ -27,7 +28,7 @@ output_format get_output_format(command *cmd);
 protocol_handler *get_protocol_handler(int target_proto, hashmap *proto_table);
 void print_separator(command *cmd);
 int should_print_pkt(command *cmd, protocol_layer layer);
-void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custosm_diss);
+void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custosm_diss, hierarchy_node *root);
 void dissect(
 	command *cmd,
 	raw_array *proto_chain,

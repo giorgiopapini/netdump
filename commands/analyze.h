@@ -7,6 +7,7 @@
 #include "../utils/command.h"
 #include "../utils/raw_array.h"
 #include "../utils/custom_dissectors.h"
+#include "../utils/hierachy.h"
 
 struct pcap_pkthdr;
 
@@ -17,6 +18,6 @@ struct pcap_pkthdr;
 
 int device_exists(char *dev);
 void get_packet(uint8_t *args, const struct pcap_pkthdr *header, const uint8_t *bytes);
-void execute_analyze(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
+void execute_analyze(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss, hierarchy_node *root);
 
 #endif

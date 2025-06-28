@@ -6,6 +6,7 @@
 #include "utils/command.h"
 #include "utils/shared_lib.h"
 #include "utils/custom_dissectors.h"
+#include "utils/hierachy.h"
 #include "utils/raw_array.h"
 
 #define ANALYZE_COMMAND             "analyze"
@@ -151,6 +152,6 @@ typedef enum {
 
 int create_cmd_from_str(command *cmd, char *str, const size_t len);
 int is_valid(command *cmd, int opt_args, const char **expected_args, size_t len);
-cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss);
+cmd_retval execute_command(command *cmd, raw_array *packets, shared_libs *libs, custom_dissectors *custom_diss, hierarchy_node *root);
 
 #endif

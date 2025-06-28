@@ -7,6 +7,7 @@
 
 #include "command_handler.h"
 #include "utils/hashmap.h"
+#include "utils/hierachy.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/proto_tables_handler.h"
@@ -18,6 +19,7 @@
 
 
 int _is_output_arg_valid(const char *raw_val);
+void _update_hierarchy(hierarchy_node *root, raw_array *proto_chain);
 
 int _is_output_arg_valid(const char *raw_val) {
 	if (NULL == raw_val) return 1;  /* will be set as std output by default */
@@ -27,6 +29,43 @@ int _is_output_arg_valid(const char *raw_val) {
 		0 != strcmp(raw_val, OUTPUT_ARG_VAL_ART)
 	) return 0;
 	return 1;
+}
+
+void _update_hierarchy(hierarchy_node *root, raw_array *proto_chain) {
+	size_t i, j;
+	hierarchy_node *curr_layer = root;
+	hierarchy_node *curr_h_node = NULL;
+	proto_chain_node *curr_c_node = NULL;
+	int found = 0;
+
+	CHECK_NULL_RET(root);
+	if (NULL == root->children) root->children = create_raw_array(DEFAULT_CHILDREN_SIZE); 
+	CHECK_NULL_RET(proto_chain);
+	CHECK_NULL_RET(proto_chain->values);
+
+	for (i = 0; i < proto_chain->len; i ++) {
+		curr_c_node = ((proto_chain_node *)proto_chain->values[i]);
+		for (j = 0; j < curr_layer->children->len; j ++) {
+			curr_h_node = ((hierarchy_node *)curr_layer->children->values[j]);
+			if (curr_c_node->proto_num == curr_h_node->proto_num) {
+				found = 1;
+				break;
+			}
+		}
+
+		if (!found) {
+			curr_h_node = create_hierarchy_node(curr_c_node->proto_name, curr_c_node->proto_num, curr_c_node->bytes, 1);
+			insert(curr_layer->children, curr_h_node);
+		}
+		else {
+			curr_h_node->tot_bytes += curr_c_node->bytes;
+			curr_h_node->tot_packets ++;
+		}
+
+		root->tot_bytes += curr_c_node->bytes;
+		curr_layer = curr_h_node;
+	}
+	root->tot_packets ++;
 }
 
 proto_chain_node *create_proto_chain_node(int proto_num, const char *proto_name, size_t bytes) {
@@ -150,7 +189,7 @@ void dissect(
 	if (NULL != out_func) out_func(pkt, pkt_len, proto_info.hdr_len);
 	
 	if (0 == proto_info.hdr_len) tot_bytes = pkt_len;
-	else tot_bytes = proto_info.hdr_len + pkt_len;
+	else tot_bytes = proto_info.hdr_len;
 	insert(proto_chain, create_proto_chain_node(handler->protocol, handler->protocol_name, tot_bytes));
 
 	if (NO_ENCAP_PROTO_TABLE != proto_info.encap_proto_table_num && pkt_len > proto_info.hdr_len) {
@@ -168,7 +207,7 @@ void dissect(
 	}
 }
 
-void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss) {
+void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissectors *custom_diss, hierarchy_node *root) {
 	raw_array *proto_chain = create_raw_array(DEFAULT_PROTO_CHAIN_DEPTH);
 	const char *raw_output_val = get_raw_val(cmd, OUTPUT_FORMAT_ARG);
 	const output_format fmt = get_output_format(cmd);
@@ -199,6 +238,8 @@ void dissect_packet(command *cmd, packet *pkt, shared_libs *libs, custom_dissect
 	);
 	printf("\n");
 
-	/* this should be done inside the Hierachy worker? */
+	/* execute this in another thread or process (ALSO THE PROTO_CHAIN DEALLOCATION) */
+	if (NULL != root) _update_hierarchy(root, proto_chain);
 	reset_arr(proto_chain, destroy_proto_chain_node);
+	free(proto_chain);
 }

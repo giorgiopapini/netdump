@@ -25,5 +25,5 @@ void execute_print(command *cmd, raw_array *packets, shared_libs *libs, custom_d
     else pkt_num = (size_t)raw_pkt_num;
 
     pkt = get(packets, (0 == pkt_num ? 1 : pkt_num));  /* if pkt_num = 0, index would be -1. This is prevented */
-    if (NULL != pkt) dissect_packet(cmd, pkt, libs, custom_diss);
+    if (NULL != pkt) dissect_packet(cmd, pkt, libs, custom_diss, NULL);
 }
