@@ -24,7 +24,7 @@
 #define ANALYZE_COMMAND_DESC        "Scan incoming and outgoing network traffic for a specific device"
 #define DEVICES_LIST_COMMAND_DESC   "Retrieve a list of all available devices for scanning"
 #define PROTOCOLS_COMMAND_DESC      "Retrieve a list of supported protocols"
-#define SCANTREE_COMMAND_DESC       "Retrieve the currently scanned protocols hierarchy"
+#define SCANTREE_COMMAND_DESC       "Retrieve the hierarchy of the currently scanned protocols"
 #define DISSECTORS_COMMAND_DESC     "Manage custom dissectors"
 #define RESET_COMMAND_DESC          "Reset stored packets"
 #define PRINT_COMMAND_DESC          "Display detailed information for a specific packet"

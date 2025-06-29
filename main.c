@@ -64,14 +64,8 @@
 				2. 53 (DNS) - 850 packets
 				3. 22 (SSH) - 312 packets
 
-	TODO: 	Command to show protocol hierarchy like wireshark
-
-			proto_chain: empty;
-			dissect(..., proto_chain, ...) --> Recursive population of proto_chain;
-			...
-			proto_chain: [{ proto_num, name, bytes }, { proto_num, name, bytes }, ..., { proto_num, name, bytes }];
-			...
-			Worker --> Update hierarchy based on proto_chain
+	TODO: 	Should '_update_hierarchy' function in 'protocol_handler.c' run in a separate thread? I should profile
+			the code before and after implementing threading to confirm actual performance gains.
 */
 
 static void _deallocate_heap(

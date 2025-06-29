@@ -108,6 +108,9 @@ The following table lists the allowed arguments for this command.
 | `-to` | str | Specify the destination file for saving scanned data |
 | `-n` | int | Choose the single packet to save by its scanning order number |
 
+### ```scantree```
+This command is used to obtain the hierarchical structures of the protocols currently being scanned.
+
 ### ```reset```
 This command is used to reset stored packets.
 
@@ -180,3 +183,4 @@ Go to the original repository and open a pull request from your fork.
 ![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen2.png)
 ![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen3.png)
 ![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen4.png)
+![Screenshot](https://raw.githubusercontent.com/giorgiopapini/netdump/assets/assets/screen5.png)
