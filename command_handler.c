@@ -329,7 +329,7 @@ cmd_retval execute_command(
     else if (is_command(cmd, RESET_COMMAND)) {
         retval = RET_RESET;
         if (CHECK_ARGS(cmd, RESET_ARGS))
-        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(packets);
+        if (CHECK_REQ_ARGS(cmd, REQUIRED_RESET_ARGS)) execute_reset(packets, root);
     }
     else if (is_command(cmd, PRINT_COMMAND)) {
         retval = RET_PRINT;

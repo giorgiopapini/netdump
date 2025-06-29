@@ -20,6 +20,7 @@ typedef struct hierarchy_node {
 
 hierarchy_node *create_hierarchy_node(const char *proto_name, int proto_num, size_t tot_bytes, size_t tot_packets);
 void add_hierarchy_node(hierarchy_node *parent, hierarchy_node *new_node);
+void reset_hierarchy(hierarchy_node *root);
 void destroy_hierarchy_node(void *node);  /* void pointer because it has to be passed to reset_arr */
 
 #endif

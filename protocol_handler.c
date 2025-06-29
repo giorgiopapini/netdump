@@ -7,7 +7,7 @@
 
 #include "command_handler.h"
 #include "utils/hashmap.h"
-#include "utils/hierachy.h"
+#include "utils/hierarchy.h"
 #include "utils/timestamp.h"
 #include "utils/colors.h"
 #include "protocols/proto_tables_handler.h"

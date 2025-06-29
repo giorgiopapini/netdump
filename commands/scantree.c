@@ -25,8 +25,10 @@ void _print_hierarchy_node(hierarchy_node *node, size_t tot_space) {
     );
     new_tot_space = tot_space + strlen(node->proto_name) + strlen(PREFIX_STR);
     
-    for (i = 0; i < node->children->len; i ++) {
-        _print_hierarchy_node(node->children->values[i], new_tot_space);
+    if (NULL != node->children && NULL != node->children->values) {
+        for (i = 0; i < node->children->len; i ++) {
+            _print_hierarchy_node(node->children->values[i], new_tot_space);
+        }
     }
 }
 

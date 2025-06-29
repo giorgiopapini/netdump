@@ -7,7 +7,7 @@
 #include "../utils/command.h"
 #include "../utils/raw_array.h"
 #include "../utils/custom_dissectors.h"
-#include "../utils/hierachy.h"
+#include "../utils/hierarchy.h"
 
 struct pcap_pkthdr;
 

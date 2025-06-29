@@ -6,7 +6,7 @@
 #include "utils/command.h"
 #include "utils/shared_lib.h"
 #include "utils/custom_dissectors.h"
-#include "utils/hierachy.h"
+#include "utils/hierarchy.h"
 #include "utils/raw_array.h"
 
 #define ANALYZE_COMMAND             "analyze"

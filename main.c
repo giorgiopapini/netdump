@@ -10,7 +10,7 @@
 #include "utils/command.h"
 #include "utils/shared_lib.h"
 #include "utils/custom_dissectors.h"
-#include "utils/hierachy.h"
+#include "utils/hierarchy.h"
 #include "utils/formats.h"
 #include "protocols/proto_tables_handler.h"
 
@@ -71,7 +71,7 @@
 			...
 			proto_chain: [{ proto_num, name, bytes }, { proto_num, name, bytes }, ..., { proto_num, name, bytes }];
 			...
-			Worker --> Update hierachy based on proto_chain
+			Worker --> Update hierarchy based on proto_chain
 */
 
 static void _deallocate_heap(

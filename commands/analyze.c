@@ -17,7 +17,7 @@
 #include "../utils/raw_array.h"
 #include "../utils/shared_lib.h"
 #include "../utils/custom_dissectors.h"
-#include "../utils/hierachy.h"
+#include "../utils/hierarchy.h"
 
 
 #define LOOP_TO_INFINITY -1

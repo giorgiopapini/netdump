@@ -11,7 +11,7 @@
 #include "utils/raw_array.h"
 #include "utils/custom_dissectors.h"
 #include "utils/hashmap.h"
-#include "utils/hierachy.h"
+#include "utils/hierarchy.h"
 
 #define DEFAULT_PROTO_CHAIN_DEPTH		5
 
