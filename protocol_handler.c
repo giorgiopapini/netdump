@@ -44,6 +44,7 @@ void _update_hierarchy(hierarchy_node *root, raw_array *proto_chain) {
 	CHECK_NULL_RET(proto_chain->values);
 
 	for (i = 0; i < proto_chain->len; i ++) {
+		found = 0;
 		curr_c_node = ((proto_chain_node *)proto_chain->values[i]);
 		for (j = 0; j < curr_layer->children->len; j ++) {
 			curr_h_node = ((hierarchy_node *)curr_layer->children->values[j]);
