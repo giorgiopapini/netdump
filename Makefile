@@ -1,8 +1,8 @@
 # Compiler and flags
 # clang is also supported
 CC ?= gcc
-LDFLAGS += -lpcap -lm
-LDFLAGS += -L. -lnetdump
+LDFLAGS += -lpcap -ldl
+LDFLAGS += -L. -lnetdump -lm
 
 CFLAGS += -g -O2
 #CFLAGS += -std=c99
