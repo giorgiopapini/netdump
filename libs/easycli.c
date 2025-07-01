@@ -451,14 +451,14 @@ static void _move_cursor_last_line(struct e_cli_state *cli, const char pressed_k
     
     if (move_down > 0) {
         len = snprintf(buf, sizeof buf, "\033[%ldB\r", move_down);
-        (void)write(STDOUT_FILENO, buf, (size_t)len);  /* len can't be negative */
+        if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;  /* len can't be negative */
     }
 
     if (used_rows > 1)
         len = snprintf(buf, sizeof buf, "\r\033[%ldC", ((*cli->p_line)->len + prompt_len) % (cli->term_cols * (used_rows - 1)));
     else len = snprintf(buf, sizeof buf, "\r\033[%ldC", ((*cli->p_line)->len + prompt_len));
 
-    (void)write(STDOUT_FILENO, buf, (size_t)len);  /* len can't be negative */
+    if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;  /* len can't be negative */
 }
 
 static void _enter(struct e_cli_state *cli, struct e_history *history, const char c) {
@@ -468,7 +468,7 @@ static void _enter(struct e_cli_state *cli, struct e_history *history, const cha
     }
     (*cli->p_line)->content[(*cli->p_line)->len] = '\0';
     _move_cursor_last_line(cli, c);
-    (void)write(STDOUT_FILENO, "\r\n", 2);
+    if (write(STDOUT_FILENO, "\r\n", 2) < 0) return;
 }
 
 static void _up_arrow(struct e_cli_state *cli, struct e_history *history) {
@@ -646,10 +646,11 @@ static void _clean_line(struct e_cli_state *cli) {
 
     _move_cursor_last_line(cli, 0);
     for (i = 0; i < used_rows; i ++) {
-        (void)write(STDOUT_FILENO, "\033[2K", 4);
-        if (i < used_rows - 1) write(STDOUT_FILENO, "\033[A", 3);
+        if (write(STDOUT_FILENO, "\033[2K", 4) < 0) return;
+        if (i < used_rows - 1)
+            if (write(STDOUT_FILENO, "\033[A", 3) < 0) return;
     }
-    (void)write(STDOUT_FILENO, "\r", 1);
+    if (write(STDOUT_FILENO, "\r", 1) < 0) return;
 }
 
 static void _write_line(struct e_cli_state *cli, const int masked) {
@@ -661,26 +662,28 @@ static void _write_line(struct e_cli_state *cli, const int masked) {
     int len;
 
     if (write(STDOUT_FILENO, cli->prompt, prompt_len) < 0) return;
-    if (masked) 
-        for (i = 0; i < (*cli->p_line)->len; i ++) (void)write(STDOUT_FILENO, &mask_char, 1);
-    else (void)write(STDOUT_FILENO, (*cli->p_line)->content, (*cli->p_line)->len);
+    if (masked) {
+        for (i = 0; i < (*cli->p_line)->len; i ++)
+            if (write(STDOUT_FILENO, &mask_char, 1) < 0) return;
+    }
+    else if (write(STDOUT_FILENO, (*cli->p_line)->content, (*cli->p_line)->len) < 0) return;
 
     if (1 < used_rows) {
         len = snprintf(buf, sizeof buf, "\033[%ldA\r", used_rows - 1);
-        (void)write(STDOUT_FILENO, buf, (size_t)len);
+        if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;
         
         if (cli->curs->y > 0) {
             len = snprintf(buf, sizeof buf, "\033[%ldB", cli->curs->y);
-            (void)write(STDOUT_FILENO, buf, (size_t)len);
+            if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;
         }
         if (cli->curs->x > 0) {
             len = snprintf(buf, sizeof buf, "\033[%ldC", cli->curs->x);
-            (void)write(STDOUT_FILENO, buf, (size_t)len);
+            if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;
         }
     }
     else if (cli->curs->x > 0) {
         len = snprintf(buf, sizeof buf, "\r\033[%ldC", cli->curs->x);
-        (void)write(STDOUT_FILENO, buf, (size_t)len);
+        if (write(STDOUT_FILENO, buf, (size_t)len) < 0) return;
     }
 }
 
@@ -815,6 +818,6 @@ char *easycli(const char *prompt, size_t max_str_len) {
 
 void easy_print(const char *str) {
     if (NULL == str) return;
-    (void)write(STDOUT_FILENO, str, strlen(str));
-    (void)write(STDOUT_FILENO, "\n", 1);
+    if (write(STDOUT_FILENO, str, strlen(str)) < 0) return;
+    if (write(STDOUT_FILENO, "\n", 1) < 0) return;
 }
