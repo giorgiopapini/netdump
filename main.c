@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libs/easycli.h"
+#include "libs/nanocli.h"
 #include "command_handler.h"
 #include "status_handler.h"
 #include "utils/raw_array.h"
@@ -87,7 +87,7 @@ int main(void) {
 
 	load_proto_hashmaps();
 
-	while (NULL != (line = easycli(PROMPT_STRING, E_DEFAULT_MAX_INPUT_LEN))) {
+	while (NULL != (line = nanocli(PROMPT_STRING, NCLI_DEFAULT_MAX_INPUT_LEN))) {
 		retval = RET_NONE;
 		len = (NULL != line) ? strlen(line) : 0;
 

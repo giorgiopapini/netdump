@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "libs/easycli.h"
+#include "libs/nanocli.h"
 #include "status_handler.h"
 #include "utils/string_utils.h"
 #include "utils/formats.h"
@@ -139,7 +139,7 @@ static void _load_cmd_label(command *cmd, const char *str, const size_t len) {
 static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
     char *temp_arg;
     char *temp_next_arg;
-    char token[E_DEFAULT_MAX_INPUT_LEN];
+    char token[NCLI_DEFAULT_MAX_INPUT_LEN];
     ptrdiff_t delta;
     ptrdiff_t token_delta;
     size_t copy_len;
@@ -178,7 +178,7 @@ static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
         else token_delta = temp_next_arg - temp_arg;
 
         if (token_delta >= 0) {
-            copy_len = (token_delta < E_DEFAULT_MAX_INPUT_LEN - 1) ? (size_t)token_delta : E_DEFAULT_MAX_INPUT_LEN - 1;
+            copy_len = (token_delta < NCLI_DEFAULT_MAX_INPUT_LEN - 1) ? (size_t)token_delta : NCLI_DEFAULT_MAX_INPUT_LEN - 1;
             strncpy(token, temp_arg, copy_len);
             token[copy_len] = '\0';
 
@@ -187,7 +187,7 @@ static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
             if (0 != status) return 1;  /* if argument insertions failed, than exit the loop */
         }
 
-        memset(token, '\0', E_DEFAULT_MAX_INPUT_LEN);
+        memset(token, '\0', NCLI_DEFAULT_MAX_INPUT_LEN);
         temp_arg = temp_next_arg;
         /* reset token, find next temp_arg and go next iteration */
     }
