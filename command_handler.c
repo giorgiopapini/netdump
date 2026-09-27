@@ -26,7 +26,7 @@
 static void _normalize_content(char *str, const size_t len);
 static int _word_count_matches(command *cmd, const char *str, const size_t len);
 static int _check_prefix_validity(const char *str, const size_t len);
-static void _load_str_val_pointers(char **start, char **end, const char *str);
+static void _load_str_val_pointers(const char **start, const char **end, const char *str);
 static void _load_cmd_label(command *cmd, const char *str, const size_t len);
 static int _load_cmd_args(command *cmd, const char *str, const size_t len);
 
@@ -68,7 +68,7 @@ static int _word_count_matches(command *cmd, const char *str, const size_t len) 
 }
 
 int _check_prefix_validity(const char *str, const size_t len) {  /* "Fil-1.pcap" is not correctly interpreted */
-    char *start_substr;
+    const char *start_substr;
     size_t prefix_len;
     ptrdiff_t delta;
 
@@ -101,15 +101,15 @@ int _check_prefix_validity(const char *str, const size_t len) {  /* "Fil-1.pcap"
     return 0;
 }
 
-static void _load_str_val_pointers(char **start, char **end, const char *str) {
+static void _load_str_val_pointers(const char **start, const char **end, const char *str) {
     /* loads starting and ending position of the string value of an arg like -r "tests-1.pcap" */
-    char *tmp = NULL;
-    
+    const char *tmp = NULL;
+
     CHECK_NULL_EXIT(start);
     CHECK_NULL_EXIT(end);
     CHECK_NULL_EXIT(str);
     CHECK_NULL_EXIT(ARG_STR_DELIMITER);
-    
+
     *start = NULL;
     *end = NULL;
 
@@ -137,8 +137,8 @@ static void _load_cmd_label(command *cmd, const char *str, const size_t len) {
 }
 
 static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
-    char *temp_arg;
-    char *temp_next_arg;
+    const char *temp_arg;
+    const char *temp_next_arg;
     char token[NCLI_DEFAULT_MAX_INPUT_LEN];
     ptrdiff_t delta;
     ptrdiff_t token_delta;
@@ -146,8 +146,8 @@ static int _load_cmd_args(command *cmd, const char *str, const size_t len) {
     size_t args_num = 0;  /* should always be initialized */
     int status = 0;  /* if 0 means success and != 0 means failure */
 
-    char *start_str_val = NULL;
-    char *end_str_val = NULL;
+    const char *start_str_val = NULL;
+    const char *end_str_val = NULL;
 
     CHECK_NULL_EXIT(str);
     CHECK_NULL_EXIT(ARG_PREFIX);

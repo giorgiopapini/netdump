@@ -15,7 +15,7 @@ static void _visualize_http_hdr(const uint8_t *pkt, size_t pkt_len, size_t hdr_l
 
 static int _extract_http_request_line(const char *request_line, char *method, char *path, char version[MAX_VERSION_LEN]) {
     ptrdiff_t path_len;
-    char *first_space;
+    const char *first_space;
     const char *path_start;
     const char *path_end;
     const char *version_start;
