@@ -66,6 +66,9 @@
 #ifndef PORT_RTSP
 #define PORT_RTSP       554     /* RTSP */
 #endif
+#ifndef PORT_RIP
+#define PORT_RIP        520     /* RIP */
+#endif
 
 #define IS_WELL_DEFINED_PORT(port)          (port < 1023)  /* 1023 is the last so called "well defined" port */
 
