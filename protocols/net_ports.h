@@ -69,6 +69,9 @@
 #ifndef PORT_RIP
 #define PORT_RIP        520     /* RIP */
 #endif
+#ifndef PORT_RIPNG
+#define PORT_RIPNG      521     /* RIPng */
+#endif
 
 #define IS_WELL_DEFINED_PORT(port)          (port < 1023)  /* 1023 is the last so called "well defined" port */
 

@@ -96,6 +96,9 @@
 #ifndef IPPROTO_MOBILITY
 #define IPPROTO_MOBILITY	135
 #endif
+#ifndef IPPROTO_UDPLITE
+#define IPPROTO_UDPLITE		136		/* Lightweight user datagram protocol */
+#endif
 
 /* around 256 ip_protos */
 #define IP_PROTOS_BUCKETS_NUM   512

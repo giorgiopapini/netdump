@@ -11,6 +11,7 @@
 #include "network/icmpv6.h"
 #include "transport/tcp.h"
 #include "transport/udp.h"
+#include "transport/udplite.h"
 
 
 hashmap *ip_protos = NULL;
@@ -22,6 +23,7 @@ void load_ip_protos(void) {
     ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_IPV4, PROTOCOL_LAYER_NETWORK, dissect_ip, "IPv4");
     ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_TCP, PROTOCOL_LAYER_TRANSPORT, dissect_tcp, "TCP");
     ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_UDP, PROTOCOL_LAYER_TRANSPORT, dissect_udp, "UDP");
+    ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_UDPLITE, PROTOCOL_LAYER_TRANSPORT, dissect_udplite, "UDP-Lite");
     ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_IPV6, PROTOCOL_LAYER_NETWORK, dissect_ipv6, "IPv6");
     ADD_PROTO_HANDLER_ENTRY(ip_protos, IPPROTO_ICMPV6, PROTOCOL_LAYER_NETWORK, dissect_icmpv6, "ICMPv6");
 }
